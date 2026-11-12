@@ -2,6 +2,9 @@ var skulpt = new function() {
   var self = this;
 
   this.externalLibs = {
+    // Sân Robot Ảo (G2): bộ điều khiển đi thẳng/quay chính xác
+    './siro/__init__.py': false,
+    './siro/drivetrain.py': 'san-robot-ao/python/siro/drivetrain.py?v=2',
     './ev3dev2/__init__.py': false,
     './ev3dev2/motor.py': 'ev3dev2/motor.py?v=d118b16a',
     './ev3dev2/sound.py': 'ev3dev2/sound.py?v=ec3085ff',
