@@ -1,0 +1,67 @@
+{
+  "tieuDe": "Tiến tới ô đích",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "dich": {
+      "ten": "ô đích D6",
+      "x": -12.5,
+      "y": 37.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    }
+  },
+  "deBai": "Robot đang đứng ở ô **D2**, mặt hướng lên trên. Hãy lập trình cho robot **đi thẳng tới ô D6** (ô màu xanh) và **dừng lại bên trong ô**.\n\nMỗi ô của lưới rộng 25 cm.",
+  "nguyenLi": "Khi hai bánh quay cùng chiều, cùng tốc độ, robot đi thẳng. Mỗi vòng quay, bánh xe lăn được một đoạn bằng chu vi bánh (π × đường kính). Muốn đi 100 cm, robot cần quay bánh đủ số vòng để tổng quãng đường lăn bằng 100 cm.\n\nNói với học sinh: bánh xe giống cái thước cuộn tròn. Lăn một vòng là đo được một đoạn bằng vòng ngoài của bánh.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot dừng trong ô đích"
+    },
+    {
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        },
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 10
+        }
+      ],
+      "moTa": "Không chạm tường và tới đích trong tối đa 10 giây"
+    },
+    {
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 1
+        }
+      ],
+      "moTa": "Chỉ dùng 1 khối lệnh"
+    }
+  ],
+  "goiY": [
+    "Đếm xem từ ô D2 lên ô D6 robot phải đi qua mấy ô. Mỗi ô 25 cm, vậy quãng đường là bao nhiêu cm?",
+    {
+      "noiDung": "Trong nhóm khối Chuyển động có khối **đi tới … cm**. Một khối này đủ để robot đi thẳng rồi tự dừng.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Quãng đường là 4 × 25 = **100 cm**, nên dùng khối \"đi tới 100 cm\". Ở chế độ Nâng cao (đếm vòng bánh): mỗi vòng bánh lăn được một chu vi = 3,14 × đường kính bánh, số vòng = 100 ÷ chu vi.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 30
+}

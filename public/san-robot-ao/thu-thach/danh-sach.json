@@ -1,0 +1,14 @@
+{
+  "tieuDe": "Sân Robot Ảo",
+  "chang": [
+    {
+      "id": "01-di-chuyen",
+      "ten": "Chặng 1 · Di chuyển",
+      "moTa": "Làm quen với robot: tiến, lùi, quay và đo quãng đường trên lưới tọa độ.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "01-di-chuyen/01-tien-toi-o-dich"
+      ]
+    }
+  ]
+}
