@@ -36,7 +36,7 @@ Danh sách này cập nhật dần theo từng gói việc:
 
 - [ ] Giao diện và khối lệnh tiếng Việt
 - [ ] Khối lệnh kiểu Scratch (Zelos) cho học sinh mới học
-- [ ] Robot chuẩn cho lớp 6
+- [x] Robot chuẩn cho lớp 6 (`public/san-robot-ao/robots/`)
 - [ ] Khung thử thách có chấm sao
 - [ ] Các sân học tập: di chuyển, hiệu chỉnh motor, cảm biến chạm, khoảng cách, màu, gyro, bút vẽ
 - [ ] Mê cung mã 001–100 có kỉ lục
