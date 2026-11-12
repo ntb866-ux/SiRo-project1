@@ -34,8 +34,8 @@ Copyright (C) 2020 Cort Wee. Các phần chỉnh sửa trong Sân Robot Ảo: Co
 
 Danh sách này cập nhật dần theo từng gói việc:
 
-- [ ] Giao diện và khối lệnh tiếng Việt
-- [ ] Khối lệnh kiểu Scratch (Zelos) cho học sinh mới học
+- [x] Giao diện và khối lệnh tiếng Việt (xem [docs/thuat-ngu.md](docs/thuat-ngu.md))
+- [x] Khối lệnh bo tròn (Zelos), màu theo nhóm, chế độ Cơ bản / Nâng cao cho học sinh mới học
 - [x] Robot chuẩn cho lớp 6 (`public/san-robot-ao/robots/`)
 - [ ] Khung thử thách có chấm sao
 - [ ] Các sân học tập: di chuyển, hiệu chỉnh motor, cảm biến chạm, khoảng cách, màu, gyro, bút vẽ
