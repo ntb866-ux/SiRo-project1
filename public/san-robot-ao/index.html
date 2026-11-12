@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chọn bài · Sân Robot Ảo</title>
+  <link rel="icon" href="../favicon-32.png">
+  <link rel="stylesheet" href="core/chon-bai.css?v=1">
+</head>
+<body>
+  <!--
+    Sân Robot Ảo – trang chọn bài theo chặng.
+    Copyright (C) 2026 những người đóng góp cho Sân Robot Ảo. GPL v3.
+    Dựa trên GEARS (GearsBot) của Cort Wee / A Posteriori.
+  -->
+  <header>
+    <div class="dau-trang">
+      <h1>Sân Robot Ảo</h1>
+      <p>Chọn một bài để bắt đầu. Mỗi bài có 3 sao, tiến độ được lưu ngay trên máy này.</p>
+    </div>
+    <div class="tong-ket" id="tongKet"></div>
+  </header>
+
+  <main id="danhSach">
+    <p class="dang-tai">Đang tải danh sách bài…</p>
+  </main>
+
+  <footer>
+    <div class="nut-hang">
+      <button id="nutXuat" class="nut phu">Tải tiến độ về máy (.json)</button>
+      <button id="nutXoa" class="nut phu nguy-hiem">Xóa tiến độ trên máy này</button>
+      <a class="nut phu" href="../index.html">Mở GearsBot tự do</a>
+    </div>
+    <p class="nho">Tiến độ chỉ lưu trong trình duyệt này. Đổi máy, dùng chế độ ẩn danh hoặc xóa dữ liệu trình duyệt thì tiến độ sẽ mất.
+      Sân Robot Ảo dựa trên <a href="https://github.com/QuirkyCort/gears" target="_blank" rel="noopener">GEARS</a> (GPL v3), không liên kết với VEX Robotics hay LEGO.</p>
+  </footer>
+
+  <script src="core/records.js?v=1"></script>
+  <script src="core/chon-bai.js?v=1"></script>
+</body>
+</html>
