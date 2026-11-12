@@ -77,7 +77,8 @@ function angDiff(a, b) { let d = a - b; while (d > 180) d -= 360; while (d < -18
   await page.goto(URL);
   await page.waitForFunction(() => typeof babylon != 'undefined' && babylon.world && robot.body, null, { timeout: 60000 });
   // Đóng hộp thoại chào và mở tab Mô phỏng (vòng lặp vật lí chỉ chạy khi tab này mở)
-  await page.evaluate(() => { $('.dialogScreen').remove(); $('#navSim').click(); });
+  await page.waitForTimeout(3000);   // chờ Blockly nạp xong rồi mới đổi tab
+  await page.evaluate(() => { $('.dialogScreen').remove(); try { $('#navSim').click(); } catch (e) { console.log(e); } });
   await page.waitForTimeout(2000);
   const results = [];
   console.log('FPS:', await page.evaluate(() => babylon.engine.getFps().toFixed(1)));
