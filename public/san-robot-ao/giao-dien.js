@@ -267,7 +267,51 @@ var sanRobotAo = new function() {
     let o = (typeof robot != 'undefined' && robot.options) ? robot.options : {};
     let banh = Number(o.wheelDiameter) || 5.6;
     let truc = (Number(o.bodyWidth) || 14) + (Number(o.wheelWidth) || 0.8) + 2 * (Number(o.wheelToBodyOffset) || 0.2);
-    return { banh: banh, truc: truc };
+    let conQuay = null;
+    if (typeof robot != 'undefined' && robot.getComponentByPort) {
+      for (let i = 1; i <= 10; i++) {
+        let c = robot.getComponentByPort('in' + i);
+        if (!c) break;
+        if (c.type == 'GyroSensor') { conQuay = i; break; }
+      }
+    }
+    return { banh: banh, truc: truc, conQuay: conQuay };
+  };
+
+  // Nếu robot có con quay và có mô-đun siro.drivetrain (G2), khối đi/quay dùng bộ
+  // điều khiển theo con quay: tăng/giảm tốc dần, giữ hướng, sai số ±1 cm, ±2°.
+  // Không có thì giữ cách đổi cm/độ sang góc bánh ở trên.
+  this.maDrivetrain = function(k) {
+    let ma =
+      'def sra_dong_bo_huong():\n' +
+      '    pass\n' +
+      '\n';
+    if (!k.conQuay) return ma;
+    return (
+      '# Bo dieu khien chinh xac theo con quay (siro.drivetrain), neu co\n' +
+      'sra_dt = None\n' +
+      'try:\n' +
+      '    from siro.drivetrain import Drivetrain\n' +
+      '    sra_dt = Drivetrain(gyro_port=\'in' + k.conQuay + '\', wheel_diameter=SRA_BANH_CM, wheel_spacing=SRA_TRUC_CM)\n' +
+      'except Exception:\n' +
+      '    sra_dt = None\n' +
+      '\n' +
+      'def sra_dong_bo_huong():\n' +
+      '    if sra_dt is not None:\n' +
+      '        sra_dt.heading = sra_dt.gyro.angle\n' +
+      '\n' +
+      'if sra_dt is not None:\n' +
+      '    def sra_di(cm):\n' +
+      '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
+      '            sra_dong_bo_huong()\n' +
+      '        sra_dt.drive_for(cm, sra[\'toc_do\'])\n' +
+      '\n' +
+      '    def sra_quay(do):\n' +
+      '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
+      '            sra_dong_bo_huong()\n' +
+      '        sra_dt.turn_for(do, sra[\'toc_do\'])\n' +
+      '\n'
+    );
   };
 
   // Gọi bộ sinh mã có sẵn của GEARS với các trường đặt sẵn (vd. cổng = AUTO),
@@ -330,9 +374,12 @@ var sanRobotAo = new function() {
       sra_dang_cham: uyQuyen(gen, 'touch_state', { port: 'AUTO', state: 'PRESSED' }),
       sra_goc_quay: uyQuyen(gen, 'gyro_sensor', { port: 'AUTO', type: 'ANGLE' }),
       // Bộ sinh mã Pybricks của GEARS quên tham số angle của reset_angle(), nên tự viết.
-      sra_dat_lai_goc: gen === pybricks_generator
-        ? function() { return 'gyro_sensor_in' + gen.getPort('AUTO', 'GyroSensor') + '.reset_angle(0)\n'; }
-        : uyQuyen(gen, 'reset_gyro', { port: 'AUTO' }),
+      sra_dat_lai_goc: function(block) {
+        let ma = gen === pybricks_generator
+          ? 'gyro_sensor_in' + gen.getPort('AUTO', 'GyroSensor') + '.reset_angle(0)\n'
+          : uyQuyen(gen, 'reset_gyro', { port: 'AUTO' })(block);
+        return ma + 'sra_dong_bo_huong()\n';
+      },
     };
   };
 
@@ -411,12 +458,13 @@ var sanRobotAo = new function() {
         let code = genCodeGoc.apply(gen, arguments);
         if (/\bsra(_[a-z]+\(|\[)/.test(code)) {
           let moc = '# Here is where your code starts';
-          code = code.replace(moc, cap[1](self.kichThuocRobot()) + moc);
+          let k = self.kichThuocRobot();
+          code = code.replace(moc, cap[1](k) + self.maDrivetrain(k) + moc);
         }
         return code;
       };
     });
-    Blockly.Python.addReservedWords('sra,sra_di,sra_quay,sra_chay,sra_dung,sra_dps,SRA_BANH_CM,SRA_TRUC_CM');
+    Blockly.Python.addReservedWords('sra,sra_di,sra_quay,sra_chay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
   };
 
   // ==========================================================================
