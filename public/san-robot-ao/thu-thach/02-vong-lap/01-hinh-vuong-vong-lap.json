@@ -1,0 +1,121 @@
+{
+  "tieuDe": "Hình vuông bằng vòng lặp",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -62.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "ô xuất phát B2",
+      "x": -62.5,
+      "y": -62.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    },
+    "goc1": {
+      "ten": "góc B6",
+      "x": -62.5,
+      "y": 37.5,
+      "rong": 15,
+      "dai": 15,
+      "mau": "vang"
+    },
+    "goc2": {
+      "ten": "góc F6",
+      "x": 37.5,
+      "y": 37.5,
+      "rong": 15,
+      "dai": 15,
+      "mau": "vang"
+    },
+    "goc3": {
+      "ten": "góc F2",
+      "x": 37.5,
+      "y": -62.5,
+      "rong": 15,
+      "dai": 15,
+      "mau": "vang"
+    },
+    "giua": {
+      "ten": "giữa hình vuông",
+      "x": -12.5,
+      "y": -12.5,
+      "rong": 50,
+      "dai": 50,
+      "mau": "do"
+    }
+  },
+  "deBai": "Lần này hình vuông to hơn: cạnh **100 cm** (4 ô), xuất phát ở góc **B2**, ba góc còn lại là **B6, F6, F2**.\n\nBạn đã biết vẽ hình vuông bằng 8 khối đi và quay. Hãy viết lại cho gọn bằng khối **lặp lại … lần** (nhóm Điều khiển): chỉ viết **một cạnh** bên trong vòng lặp, robot tự làm lại cho đủ bốn cạnh.",
+  "nguyenLi": "Hình vuông là một chuyển động **lặp lại có chu kì**: mỗi chu kì gồm một đoạn thẳng 100 cm và một lần quay 90°. Bốn chu kì giống hệt nhau, tổng góc quay 4 × 90° = 360°, nên sau 4 lần robot về đúng chỗ cũ và đúng hướng cũ. Vòng lặp chỉ là cách viết gọn cho \"làm lại việc này N lần\"; robot vẫn chạy đủ 8 động tác như trước.\n\nNói với học sinh: bài hát nào cũng có điệp khúc. Thay vì chép điệp khúc 4 lần, ta ghi \"hát điệp khúc × 4\". Vòng lặp là \"× 4\" của robot.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "goc1",
+        "goc2",
+        "goc3"
+      ],
+      "moTa": "Đi qua cả ba góc vàng"
+    },
+    {
+      "loai": "khongVaoVung",
+      "vung": "giua"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "xuatPhat",
+      "moTa": "Quay về ô xuất phát B2"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": [
+        "controls_repeat_ext",
+        "controls_repeat"
+      ]
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi đủ hình vuông bằng vòng lặp, về ô xuất phát"
+    },
+    {
+      "moTa": "Về tới nơi vẫn nhìn lên trên, không chạm tường",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 0,
+          "saiSo": 10
+        },
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Chỉ dùng 3 khối lệnh (cả khối lặp)",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 3
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Nhìn lại bài Vẽ hình vuông: cặp khối nào được lặp lại? Lặp mấy lần?",
+    {
+      "noiDung": "Kéo khối **lặp lại 4 lần** vào dưới khối bắt đầu, rồi đặt **bên trong** nó đúng một cạnh: một khối đi và một khối quay. Cạnh lần này dài 4 ô.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải 3 khối: **lặp lại 4 lần** { **đi tới 100 cm**, **quay phải 90 độ** }. Muốn vẽ thêm vết bút thì đặt **hạ bút** trước vòng lặp (khi đó là 4 khối, vẫn được 2 sao).",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 60
+}

@@ -1,0 +1,118 @@
+{
+  "tieuDe": "Đỗ xe vào bãi",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "bai": {
+      "ten": "bãi đỗ",
+      "x": 72,
+      "y": 12.5,
+      "rong": 44,
+      "dai": 24,
+      "mau": "vang"
+    },
+    "giuaBai": {
+      "ten": "giữa bãi đỗ",
+      "x": 72.5,
+      "y": 12.5,
+      "rong": 10,
+      "dai": 10,
+      "mau": "xanh"
+    }
+  },
+  "vatThe": [
+    {
+      "type": "box",
+      "position": [
+        75.0,
+        31.0,
+        5.0
+      ],
+      "size": [
+        50,
+        3,
+        10
+      ],
+      "color": "#7A8A9A",
+      "physicsOptions": "fixed",
+      "castShadows": false,
+      "receiveShadows": false
+    },
+    {
+      "type": "box",
+      "position": [
+        75.0,
+        -6.0,
+        5.0
+      ],
+      "size": [
+        50,
+        3,
+        10
+      ],
+      "color": "#7A8A9A",
+      "physicsOptions": "fixed",
+      "castShadows": false,
+      "receiveShadows": false
+    }
+  ],
+  "deBai": "Robot là một chiếc ô tô, đang ở ô **D2**, đầu xe hướng lên trên. Bãi đỗ (màu vàng) nằm ở **ô G5**, có tường hai bên.\n\nHãy **lùi xe vào bãi**: lúc dừng, xe nằm trong bãi và **đầu xe quay ra phía cửa bãi** (hướng sang trái), như người lái xe giỏi vẫn đỗ để lúc về chạy thẳng ra được ngay.",
+  "nguyenLi": "Lệnh **đi lùi** cho hai bánh quay ngược lại so với đi tới: quãng đường vẫn bằng số vòng bánh × chu vi bánh, chỉ có chiều chuyển động là ngược với hướng đầu xe. Vì thế hướng của robot (nó đang nhìn về đâu) và chiều chuyển động (nó đang đi về đâu) là hai thứ khác nhau.\n\nNói với học sinh: bạn đi giật lùi trong lớp thì mặt vẫn nhìn bảng nhưng người lại đi về cuối lớp. Muốn lùi vào bãi, trước hết phải quay **lưng xe** về phía bãi.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "bai"
+    },
+    {
+      "loai": "huongCuoi",
+      "goc": 270,
+      "saiSo": 15,
+      "moTa": "Đầu xe quay ra cửa bãi (hướng sang trái)"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Xe lùi vào bãi, đầu xe quay ra cửa"
+    },
+    {
+      "moTa": "Không chạm tường hay thành bãi",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Đỗ ngay ngắn: dừng ở giữa bãi, xe thẳng hàng (lệch tối đa 5°)",
+      "dieuKien": [
+        {
+          "loai": "dungTrongVung",
+          "vung": "giuaBai"
+        },
+        {
+          "loai": "huongCuoi",
+          "goc": 270,
+          "saiSo": 5
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Xe phải vào bãi bằng đuôi. Vậy trước khi lùi, đuôi xe phải hướng về phía nào?",
+    {
+      "noiDung": "Ba bước: đi lên tới hàng 5 (ngang bãi), quay sao cho **đầu xe nhìn sang trái**, rồi **lùi** sang phải vào bãi. Đếm số ô cho từng đoạn.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **đi tới 75 cm** (D2 lên D5), **quay trái 90 độ**, **đi lùi 85 cm** (từ D5 lùi vào giữa bãi ở G5). Robot quay trái thì đuôi xe hướng sang phải, đúng phía bãi.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 40
+}

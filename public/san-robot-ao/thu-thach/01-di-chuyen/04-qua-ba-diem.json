@@ -1,0 +1,92 @@
+{
+  "tieuDe": "Đi qua 3 điểm theo thứ tự",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "diem1": {
+      "ten": "điểm 1 (ô D5)",
+      "x": -12.5,
+      "y": 12.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "do"
+    },
+    "diem2": {
+      "ten": "điểm 2 (ô G5)",
+      "x": 62.5,
+      "y": 12.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "vang"
+    },
+    "diem3": {
+      "ten": "điểm 3 (ô B5)",
+      "x": -62.5,
+      "y": 12.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "tim"
+    }
+  },
+  "deBai": "Robot giao hàng xuất phát ở ô **D2**, mặt hướng lên trên. Hãy đưa hàng **lần lượt** tới điểm 1 (đỏ, D5), rồi điểm 2 (vàng, G5), rồi điểm 3 (tím, B5) và **dừng ở điểm 3**.\n\nĐi sai thứ tự là giao nhầm hàng! Gợi ý: chạy thử sau mỗi chặng để chắc robot tới đúng điểm rồi mới viết tiếp.",
+  "nguyenLi": "Một chuyến đi dài được chia thành nhiều **đoạn thẳng** nối với nhau bằng các **lần quay**. Mỗi đoạn tính riêng: quãng đường = số ô × 25 cm, robot quay bánh đủ số vòng để lăn hết quãng đó. Robot không \"nhìn\" thấy điểm nào cả, nó chỉ làm đúng thứ tự lệnh, nên sai một con số ở đoạn đầu thì mọi đoạn sau đều lệch.\n\nNói với học sinh: robot bị bịt mắt, chỉ nghe lời dặn. Hãy dặn từng chặng một, và nhớ rằng đi lùi cũng là một cách quay về mà không cần xoay người.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "diem1",
+        "diem2",
+        "diem3"
+      ],
+      "theoThuTu": true
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "diem3"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi qua 3 điểm đúng thứ tự, dừng ở điểm 3"
+    },
+    {
+      "moTa": "Không chạm tường, tối đa 25 giây",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        },
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 25
+        }
+      ]
+    },
+    {
+      "moTa": "Chỉ dùng 4 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 4
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Chia bài thành 3 chặng: xuất phát → điểm 1, điểm 1 → điểm 2, điểm 2 → điểm 3. Làm xong chặng nào chạy thử chặng đó.",
+    {
+      "noiDung": "Điểm 1, 2, 3 cùng nằm trên hàng 5. Từ điểm 2 về điểm 3 robot phải đi ngược lại qua điểm 1, mà không bắt buộc phải quay đầu.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải 4 khối: **đi tới 75 cm**, **quay phải 90 độ**, **đi tới 75 cm**, **đi lùi 125 cm** (G5 lùi 5 ô về B5).",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 50
+}

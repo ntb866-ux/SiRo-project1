@@ -12,6 +12,7 @@
 //   soLanCham   : số lần robot chạm tường hoặc vật cản cố định
 //   thoiGian    : thời gian chạy (giây)
 //   soKhoi      : số khối lệnh, hoặc null nếu học sinh viết Python
+//   loaiKhoi    : { loạiKhối: số lần dùng }, hoặc null nếu học sinh viết Python
 //
 // Thêm một luật mới: viết thêm một mục trong SRA.luat với moTa() và kiemTra().
 
@@ -31,6 +32,29 @@ SRA.hieuGoc = function(a, b) {
 SRA.tenVung = function(ctx, ten) {
   let v = ctx.vung[ten];
   return (v && v.ten) ? v.ten : ten;
+};
+
+// Tên khối đọc cho học sinh, dùng trong điều kiện dungKhoi
+SRA.TEN_KHOI = {
+  controls_repeat_ext: '"lặp lại … lần"',
+  controls_repeat: '"lặp lại … lần"',
+  sra_lap_mai: '"lặp mãi"',
+  controls_whileUntil: '"lặp cho đến khi"',
+  sra_ha_but: '"hạ bút"',
+  penDown: '"hạ bút"',
+  sra_di: '"đi … cm"',
+  sra_quay: '"quay … độ"',
+  controls_if: '"nếu … thì"'
+};
+
+SRA.tenKhoi = function(dk) {
+  if (dk.tenKhoi) return dk.tenKhoi;
+  let ten = [];
+  for (let k of [].concat(dk.khoi)) {
+    let t = SRA.TEN_KHOI[k] || k;
+    if (!ten.includes(t)) ten.push(t);
+  }
+  return ten.join(' hoặc ');
 };
 
 SRA.luat = {
@@ -136,6 +160,28 @@ SRA.luat = {
       return {
         dat: dat,
         lyDo: 'Bạn dùng ' + ctx.soKhoi + ' khối' + (dat ? '' : ', cần tối đa ' + dk.khoi + ' khối') + '.'
+      };
+    }
+  },
+
+  // Chương trình có dùng ít nhất `toiThieu` (mặc định 1) khối thuộc một trong các loại `khoi`
+  // (chuỗi hoặc mảng tên loại khối Blockly). Tên đọc cho học sinh: SRA.TEN_KHOI hoặc `tenKhoi`.
+  dungKhoi: {
+    moTa: function(dk) {
+      return 'Dùng khối ' + SRA.tenKhoi(dk);
+    },
+    kiemTra: function(dk, ctx) {
+      if (!ctx.loaiKhoi) {
+        return { dat: false, lyDo: 'Điều kiện này chỉ tính khi lập trình bằng khối.' };
+      }
+      let ds = [].concat(dk.khoi);
+      let n = ds.reduce((tong, k) => tong + (ctx.loaiKhoi[k] || 0), 0);
+      let can = dk.toiThieu || 1;
+      let dat = n >= can;
+      return {
+        dat: dat,
+        lyDo: dat ? 'Chương trình có dùng khối ' + SRA.tenKhoi(dk) + '.'
+                  : 'Chương trình chưa dùng khối ' + SRA.tenKhoi(dk) + (can > 1 ? ' (cần ' + can + ' khối)' : '') + '.'
       };
     }
   },

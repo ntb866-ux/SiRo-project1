@@ -1,0 +1,117 @@
+{
+  "tieuDe": "Vẽ hình vuông",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -37.5,
+    "y": -37.5,
+    "goc": 0
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "ô xuất phát C3",
+      "x": -37.5,
+      "y": -37.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    },
+    "goc1": {
+      "ten": "góc C6",
+      "x": -37.5,
+      "y": 37.5,
+      "rong": 15,
+      "dai": 15,
+      "mau": "vang"
+    },
+    "goc2": {
+      "ten": "góc F6",
+      "x": 37.5,
+      "y": 37.5,
+      "rong": 15,
+      "dai": 15,
+      "mau": "vang"
+    },
+    "goc3": {
+      "ten": "góc F3",
+      "x": 37.5,
+      "y": -37.5,
+      "rong": 15,
+      "dai": 15,
+      "mau": "vang"
+    },
+    "giua": {
+      "ten": "giữa hình vuông",
+      "x": 0,
+      "y": 0,
+      "rong": 40,
+      "dai": 40,
+      "mau": "do"
+    }
+  },
+  "deBai": "Robot đứng ở góc **C3** của một hình vuông cạnh **75 cm** (3 ô). Ba góc còn lại có đánh dấu vàng: **C6, F6, F3**.\n\nHãy **hạ bút** rồi cho robot đi hết bốn cạnh, qua cả ba góc vàng, và **quay về ô xuất phát**. Không được đi cắt ngang ô đỏ ở giữa.",
+  "nguyenLi": "Hình vuông có 4 cạnh bằng nhau và 4 góc vuông. Ở mỗi góc robot phải đổi hướng 90°, tức **góc ngoài** của hình (180° − 90° góc trong). Đi đủ 4 góc, robot đã quay tổng cộng 4 × 90° = **360°**, đúng một vòng, nên về tới chỗ cũ thì nó cũng nhìn lại đúng hướng ban đầu. Vết bút là **quỹ đạo**, đường mà robot đã đi qua.\n\nNói với học sinh: đi bộ một vòng quanh sân trường hình vuông rồi về chỗ cũ, bạn đã xoay người đúng một vòng.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "goc1",
+        "goc2",
+        "goc3"
+      ],
+      "moTa": "Đi qua cả ba góc vàng"
+    },
+    {
+      "loai": "khongVaoVung",
+      "vung": "giua"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "xuatPhat",
+      "moTa": "Quay về ô xuất phát C3"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi đủ bốn cạnh và về ô xuất phát"
+    },
+    {
+      "moTa": "Về tới nơi vẫn nhìn đúng hướng ban đầu (lên trên), không chạm tường",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 0,
+          "saiSo": 10
+        },
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Hạ bút để vẽ được hình vuông lên sân",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "sra_ha_but",
+            "penDown"
+          ]
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đứng dậy và tự đi một hình vuông nhỏ trên sàn lớp: mỗi góc bạn quay bao nhiêu độ, quay về phía nào?",
+    {
+      "noiDung": "Mỗi cạnh dài 3 ô = 75 cm. Một cạnh gồm hai khối: **đi tới 75 cm** rồi **quay phải 90 độ**. Hình vuông có mấy cạnh?",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **hạ bút**, rồi 4 lần liền cặp khối **đi tới 75 cm**, **quay phải 90 độ** (tổng 9 khối). Chương trình dài và lặp đi lặp lại, ở chặng 2 bạn sẽ học cách viết ngắn hơn.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 60
+}

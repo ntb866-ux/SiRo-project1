@@ -16,6 +16,7 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 
 - Đơn vị **cm**. Gốc (0, 0) ở **tâm sân**.
 - **x** tăng sang phải, **y** tăng lên trên (nhìn từ trên xuống, đúng chiều ảnh nền).
+- **Vị trí robot** là **điểm giữa hai bánh** (tâm quay, cũng là chỗ đặt bút vẽ), không phải tâm thân robot. `viTriBatDau` đặt điểm này, và mọi điều kiện vùng đều xét điểm này. Robot quay tại chỗ thì điểm này đứng yên.
 - **Góc** tính bằng độ: `0` = robot quay mặt lên trên (+y), `90` = quay sang phải (+x), `180` = quay xuống, `270` = quay sang trái. Robot quay phải thì góc tăng.
 - Trên sân `luoi-toa-do`, tâm ô cột A…H có x = −87,5; −62,5; −37,5; −12,5; 12,5; 37,5; 62,5; 87,5. Hàng 1…8 có y cùng dãy số đó (hàng 1 ở dưới).
 
@@ -70,6 +71,7 @@ Các loại điều kiện (`loai`) có sẵn, dùng được cả trong `mucTie
 | `thoiGianDuoi` | `giay` | Thời gian chạy không quá số giây. |
 | `soKhoiToiDa` | `khoi` | Số khối lệnh không quá `khoi`. Không tính khối mũ "When Started" và khối số/phép toán gắn bên trong. Học sinh viết Python thì điều kiện này không đạt. |
 | `huongCuoi` | `goc`, `saiSo` (mặc định 10) | Lúc kết thúc, robot quay mặt về hướng `goc` ± `saiSo` độ. |
+| `dungKhoi` | `khoi` (tên loại khối Blockly, chuỗi hoặc mảng), `toiThieu` (mặc định 1), `tenKhoi` (tên đọc, không bắt buộc) | Chương trình có ít nhất `toiThieu` khối thuộc các loại đó, ví dụ `["controls_repeat_ext", "controls_repeat"]` để bắt buộc dùng vòng lặp, `["sra_ha_but", "penDown"]` cho khối hạ bút. Viết Python thì không đạt. |
 
 Mỗi điều kiện có thể thêm `"moTa": "…"` để thay câu mô tả tự động.
 

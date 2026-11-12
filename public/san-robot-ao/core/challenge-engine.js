@@ -104,13 +104,17 @@ SRA.world = new function() {
     return ds.filter(m => m && m.isEnabled() && m.getTotalVertices && m.getTotalVertices() > 0);
   }
 
+  // Vị trí robot = tâm quay (điểm giữa hai bánh, cũng là chỗ đặt bút vẽ), không phải tâm thân.
+  // Robot quay tại chỗ quanh điểm này nên nó đứng yên khi quay, vùng tính đúng theo vết bút.
   this.viTriRobot = function() {
     let p = robot.body.absolutePosition;
     let q = robot.body.rotationQuaternion;
     let goc = q ? q.toEulerAngles().y : robot.body.rotation.y;
     goc = goc * 180 / Math.PI;
     goc = ((goc % 360) + 360) % 360;
-    return { x: p.x, y: p.z, goc: goc };
+    let lech = SRA.lechTrucBanh();
+    let g = goc * Math.PI / 180;
+    return { x: p.x + lech * Math.sin(g), y: p.z + lech * Math.cos(g), goc: goc };
   };
 
   function robotDungYen() {
@@ -185,8 +189,10 @@ SRA.world = new function() {
       cuoi: self.viTriRobot(),
       soLanCham: luot.soLanCham,
       thoiGian: Math.max(0, luot.t - luot.tDung / 1000),
-      soKhoi: SRA.demKhoi()
+      soKhoi: SRA.demKhoi(),
+      loaiKhoi: SRA.demLoaiKhoi()
     };
+    SRA.ctxCuoi = ctx;   // để kiểm thử tự động đọc được
     SRA.chamDiem(ctx, hetGio);
   };
 };
@@ -208,6 +214,22 @@ SRA.demKhoi = function() {
     }
   }
   return n;
+};
+
+// Đếm từng loại khối lệnh đang dùng, ví dụ { controls_repeat_ext: 1, sra_di: 2 }.
+// Cùng quy tắc với demKhoi; trả về null nếu học sinh chạy chương trình Python tự viết.
+SRA.demLoaiKhoi = function() {
+  if (typeof filesManager != 'undefined' && filesManager.modified) return null;
+  let dem = {};
+  for (let top of blockly.workspace.getTopBlocks(false)) {
+    if (top.previousConnection || top.outputConnection) continue;
+    for (let b of top.getDescendants(false)) {
+      if (b === top) continue;
+      if (typeof b.isEnabled == 'function' && !b.isEnabled()) continue;
+      dem[b.type] = (dem[b.type] || 0) + 1;
+    }
+  }
+  return dem;
 };
 
 // ---------------------------------------------------------------------------
@@ -253,6 +275,13 @@ SRA.docJSON = function(url) {
   });
 };
 
+// Trục bánh nằm trước tâm thân robot bao nhiêu cm (theo hướng đầu robot)
+SRA.lechTrucBanh = function() {
+  let ro = (typeof robot != 'undefined' && robot.options) || {};
+  if (ro.wheels === false || !ro.bodyLength || ro.bodyEdgeToWheelCenterZ == null) return 0;
+  return ro.bodyLength / 2 - ro.bodyEdgeToWheelCenterZ;
+};
+
 SRA.dungOptionsSan = function(san, bai) {
   let o = JSON.parse(JSON.stringify(san.options));
   o.objects = o.objects || [];
@@ -280,9 +309,15 @@ SRA.dungOptionsSan = function(san, bai) {
     });
   }
 
+  // viTriBatDau là vị trí tâm quay (điểm giữa hai bánh). GEARS đặt tâm thân robot,
+  // nên lùi tâm thân lại một đoạn bằng khoảng lệch giữa trục bánh và tâm thân.
   let bd = bai.viTriBatDau || {};
+  let lech = SRA.lechTrucBanh();
+  let g = (bd.goc || 0) * Math.PI / 180;
+  let x0 = (bd.x || 0) - lech * Math.sin(g);
+  let y0 = (bd.y || 0) - lech * Math.cos(g);
   o.startPos = 'center';
-  o.startPosXYZStr = (bd.x || 0) + ',' + (bd.y || 0) + ',0';
+  o.startPosXYZStr = x0.toFixed(2) + ',' + y0.toFixed(2) + ',0';
   o.startRotStr = String(bd.goc || 0);
   return o;
 };

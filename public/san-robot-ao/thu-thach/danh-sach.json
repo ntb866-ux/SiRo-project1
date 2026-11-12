@@ -7,7 +7,20 @@
       "moTa": "Làm quen với robot: tiến, lùi, quay và đo quãng đường trên lưới tọa độ.",
       "moKhoaTuanTu": false,
       "bai": [
-        "01-di-chuyen/01-tien-toi-o-dich"
+        "01-di-chuyen/01-tien-toi-o-dich",
+        "01-di-chuyen/02-re-toi-o-dich",
+        "01-di-chuyen/03-do-xe-vao-bai",
+        "01-di-chuyen/04-qua-ba-diem",
+        "01-di-chuyen/05-ve-hinh-vuong"
+      ]
+    },
+    {
+      "id": "02-vong-lap",
+      "ten": "Chặng 2 · Vòng lặp và biến",
+      "moTa": "Viết chương trình gọn hơn bằng vòng lặp: chuyển động lặp lại có chu kì.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "02-vong-lap/01-hinh-vuong-vong-lap"
       ]
     }
   ]
