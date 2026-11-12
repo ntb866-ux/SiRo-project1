@@ -342,6 +342,10 @@ SRA.napBai = async function(id) {
   await simPanel.resetSim();
   SRA.datCamera(bai.camera || 'toanSan');
 
+  // Chế độ khối Cơ bản / Nâng cao (gói G1). Bỏ qua nếu bản này chưa có chế độ.
+  if (bai.cheDo && window.sanRobotAo && typeof sanRobotAo.datCheDo == 'function') {
+    sanRobotAo.datCheDo(bai.cheDo);
+  }
   if (bai.locKhoi) blockly.loadToolboxFilter(bai.locKhoi);
 
   // Chương trình: bài làm đã lưu, hoặc chương trình mở đầu của bài, hoặc trống

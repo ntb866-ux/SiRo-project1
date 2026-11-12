@@ -2,6 +2,7 @@
   "tieuDe": "Tiến tới ô đích",
   "san": "luoi-toa-do",
   "robot": "co-ban",
+  "cheDo": "co-ban",
   "viTriBatDau": {
     "x": -12.5,
     "y": -62.5,
@@ -54,11 +55,11 @@
   "goiY": [
     "Đếm xem từ ô D2 lên ô D6 robot phải đi qua mấy ô. Mỗi ô 25 cm, vậy quãng đường là bao nhiêu cm?",
     {
-      "noiDung": "Dùng **một** khối cho hai bánh cùng quay một số vòng (nhóm Chuyển động / Motion), hai bánh cùng tốc độ để robot đi thẳng.",
+      "noiDung": "Trong nhóm khối Chuyển động có khối **đi tới … cm**. Một khối này đủ để robot đi thẳng rồi tự dừng.",
       "moSauLanThu": 1
     },
     {
-      "noiDung": "Quãng đường là 4 × 25 = **100 cm**. Mỗi vòng bánh lăn được một chu vi = 3,14 × đường kính bánh (xem thông số robot trong menu Robot). Số vòng = 100 ÷ chu vi. Ví dụ bánh 5,6 cm: 100 ÷ 17,6 ≈ **5,7 vòng**.",
+      "noiDung": "Quãng đường là 4 × 25 = **100 cm**, nên dùng khối \"đi tới 100 cm\". Ở chế độ Nâng cao (đếm vòng bánh): mỗi vòng bánh lăn được một chu vi = 3,14 × đường kính bánh, số vòng = 100 ÷ chu vi.",
       "moSauLanThu": 2
     }
   ],

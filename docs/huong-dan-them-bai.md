@@ -36,6 +36,7 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | `thoiGianToiDa` | không | Giây tối đa cho một lượt chạy, hết giờ thì dừng và tính chưa đạt. Mặc định 90. |
 | `vatThe` | không | Vật thể thêm vào sân riêng cho bài này (tường ngăn, khối hộp…), theo định dạng `objects` của GEARS (xem tệp sân). Vật thể có `"physicsOptions": "fixed"` được tính là tường. |
 | `maBatDau` | không | Chương trình khối mở sẵn (XML của Blockly), dùng cho bài "sửa lỗi chương trình". |
+| `cheDo` | không | `co-ban` hoặc `nang-cao`: ép chế độ khối của gói G1 (khối "đi tới … cm", "quay phải … độ" ở Cơ bản). Bỏ trống thì giữ chế độ học sinh đang dùng. |
 | `locKhoi` | không | Ẩn bớt khối trong hộp công cụ, theo định dạng lọc của GEARS: `{ "deny": { "categories": [...], "blocks": [...] } }`. |
 | `camera` | không | `toanSan` (mặc định: nhìn từ trên xuống thấy cả sân), `follow` (bám robot) hoặc `arc`. |
 | `phieu` | không | Đường dẫn phiếu học tập, tính từ `san-robot-ao/`. |
