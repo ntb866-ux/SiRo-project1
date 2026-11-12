@@ -42,7 +42,9 @@ Danh sách này cập nhật dần theo từng gói việc:
 - [ ] Mê cung mã 001–100 có kỉ lục
 - [ ] Sân thi đấu: sumo, bóng đá, bắn bóng
 
-Phần thêm mới được đặt trong thư mục `public/san-robot-ao/` để tách khỏi mã GEARS gốc, giúp cập nhật bản mới từ GEARS dễ hơn.
+Phần thêm mới được đặt trong thư mục `public/san-robot-ao/` để tách khỏi mã GEARS gốc, giúp cập nhật bản mới từ GEARS dễ hơn. Đề xuất cấu trúc chi tiết: [docs/cau-truc-thu-muc.md](docs/cau-truc-thu-muc.md).
+
+README gốc (tiếng Anh) của GEARS được giữ ở [README.gears.md](README.gears.md).
 
 ## Chạy trên máy của bạn
 
