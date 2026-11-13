@@ -1,0 +1,145 @@
+{
+  "tieuDe": "Quay đúng 90° trên sân băng",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "matSan": {
+    "maSat": 0.08
+  },
+  "viTriBatDau": {
+    "x": -62.5,
+    "y": -12.5,
+    "goc": 0
+  },
+  "vatThe": [
+    {
+      "type": "box",
+      "position": [
+        0,
+        0,
+        0.02
+      ],
+      "size": [
+        200,
+        200,
+        0.04
+      ],
+      "color": "bfe6ff59",
+      "physicsOptions": false,
+      "castShadows": false,
+      "receiveShadows": false
+    }
+  ],
+  "vung": {
+    "xuatPhat": {
+      "ten": "ô xuất phát B4",
+      "x": -62.5,
+      "y": -12.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    },
+    "co": {
+      "ten": "lá cờ H4",
+      "x": 87.5,
+      "y": -12.5,
+      "rong": 12,
+      "dai": 12,
+      "mau": "do"
+    }
+  },
+  "hinhMau": {
+    "huongNhin": {
+      "net": [
+        [
+          [
+            -50,
+            -12.5
+          ],
+          [
+            80,
+            -12.5
+          ]
+        ]
+      ],
+      "mau": "#facc15",
+      "day": 1
+    }
+  },
+  "locKhoi": {
+    "deny": {
+      "blocks": [
+        "sra_quay"
+      ]
+    }
+  },
+  "maBatDau": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"when_started\" x=\"60\" y=\"40\" deletable=\"false\"><data>Main</data><next><block type=\"comment\"><field name=\"comment\">Đếm vòng bánh: quay 90° thì mỗi bánh lăn 1/4 vòng tròn đường kính 16 cm = 12,6 cm = 0,63 vòng bánh</field><next><block type=\"move_tank_for\"><field name=\"units\">PERCENT</field><field name=\"units2\">ROTATIONS</field><value name=\"left\"><shadow type=\"math_number\"><field name=\"NUM\">50</field></shadow></value><value name=\"right\"><shadow type=\"math_number\"><field name=\"NUM\">-50</field></shadow></value><value name=\"duration\"><shadow type=\"math_number\"><field name=\"NUM\">0.63</field></shadow></value></block></next></block></next></block></xml>",
+  "deBai": "Hôm nay sân bị **đóng băng**, bánh xe rất dễ trượt. Robot ở ô **B4** phải quay phải để **nhìn thẳng vào lá cờ đỏ ở H4** (đúng 90°, theo vạch vàng), rồi đứng yên.\n\nChương trình có sẵn tính góc quay bằng cách **đếm vòng bánh**. Chạy thử xem robot có quay đúng 90° không.\n\nSau đó viết lại chương trình dùng **con quay (gyro)**: cho robot **quay phải mãi**, **chờ đến khi góc quay** đủ lớn, rồi **dừng lại**. Khối \"quay phải … độ\" bị khóa trong bài này.",
+  "nguyenLi": "**Đếm vòng bánh** chỉ biết bánh xe đã quay bao nhiêu, không biết thân robot đã quay bao nhiêu. Trên sân trơn, bánh **trượt**: bánh quay đủ 0,63 vòng mà thân robot quay chưa tới 90°.\n\n**Con quay (gyro)** gắn trên thân robot, đo **tốc độ quay** của thân (bao nhiêu độ mỗi giây). Máy tính trong robot **cộng dồn** tốc độ đó theo thời gian để ra **góc đã quay**: quay 30°/giây trong 3 giây là 90°. Bánh trượt hay không, gyro vẫn đo đúng chuyển động của thân.\n\nNhưng gyro không làm robot dừng ngay được: khi lệnh \"dừng lại\" chạy, robot còn đang quay nên **trôi thêm** vì **quán tính**, trên sân trơn trôi càng xa. Quay chậm lại, hoặc ra lệnh dừng sớm hơn một chút, thì trôi ít.\n\nNói với học sinh: đếm bước chân giống đếm vòng bánh, đi trên băng thì bước nhiều mà không tới. Gyro giống tai trong của bạn: nhắm mắt xoay người, bạn vẫn biết mình đã xoay bao nhiêu.",
+  "mucTieu": [
+    {
+      "loai": "huongCuoi",
+      "goc": 90,
+      "saiSo": 5,
+      "moTa": "Robot nhìn về lá cờ (90°, lệch tối đa 5°)"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": [
+        "sra_goc_quay",
+        "gyro_sensor"
+      ],
+      "moTa": "Dùng cảm biến góc quay (gyro)"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "xuatPhat",
+      "moTa": "Robot vẫn ở ô B4 (không trượt đi chỗ khác)"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Quay về phía lá cờ bằng gyro, lệch tối đa 5°"
+    },
+    {
+      "moTa": "Quay thật chính xác: lệch tối đa 2°",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 90,
+          "saiSo": 2
+        }
+      ]
+    },
+    {
+      "moTa": "Vừa chính xác (lệch tối đa 2°) vừa nhanh: tối đa 2 giây",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 90,
+          "saiSo": 2
+        },
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 2
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Chạy chương trình có sẵn, đọc thông báo: robot quay được bao nhiêu độ? Vì sao thiếu?",
+    {
+      "noiDung": "Chương trình dùng gyro gồm 4 khối: **đặt lại góc quay về 0**, **quay phải mãi**, **chờ đến khi** < **góc quay (độ)** > 90 >, **dừng lại**.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Robot quay quá đà? Đó là quán tính. Đặt **tốc độ 10 %** trước khi quay, hoặc cho dừng sớm hơn (ví dụ khi góc quay > 80) rồi chạy thử, đọc góc cuối và chỉnh dần.",
+      "moSauLanThu": 2
+    },
+    {
+      "noiDung": "Muốn vừa nhanh vừa chính xác: quay nhanh đến gần đích rồi mới chậm lại. Đặt tốc độ 40 %, quay đến khi góc > 45; rồi đặt tốc độ 10 %, quay tiếp đến khi góc > 88; dừng lại. Chạy thử, đọc góc cuối rồi chỉnh số 88.",
+      "moSauLanThu": 3
+    }
+  ],
+  "thoiGianToiDa": 30
+}

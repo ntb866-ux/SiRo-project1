@@ -1,0 +1,100 @@
+{
+  "tieuDe": "Vẽ lục giác đều (tổ ong)",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -43.3,
+    "y": -25,
+    "goc": 0
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "đỉnh xuất phát",
+      "x": -43.3,
+      "y": -25,
+      "rong": 16,
+      "dai": 16,
+      "mau": "xanh"
+    }
+  },
+  "hinhMau": {
+    "lucGiac": {
+      "buoc": [
+        [
+          "lap",
+          6,
+          [
+            [
+              "di",
+              50
+            ],
+            [
+              "phai",
+              60
+            ]
+          ]
+        ]
+      ]
+    }
+  },
+  "deBai": "Ô của tổ ong là một **lục giác đều**: 6 cạnh bằng nhau, mỗi cạnh **50 cm**, 6 góc trong bằng nhau, mỗi góc **120°**.\n\nRobot đứng ở một đỉnh, nhìn lên trên. Hãy **hạ bút** và vẽ chồng khít lên hình mẫu, **rẽ phải** ở mỗi đỉnh.\n\nĐừng đoán số độ: dùng điều bạn phát hiện ở bài tam giác. Robot quay mấy lần? Tổng cộng bao nhiêu độ?",
+  "nguyenLi": "Đi hết một vòng quanh đa giác lồi, robot quay tổng cộng **360°**. Lục giác có 6 đỉnh nên mỗi lần quay 360° : 6 = **60°**. Kiểm tra bằng góc trong: góc ngoài = 180° − 120° = 60°. Hai cách cho cùng một đáp số.\n\nCông thức chung cho đa giác đều n cạnh: **góc quay = 360° : n**. Hình vuông 90°, tam giác 120°, lục giác 60°.\n\nNói với học sinh: một vòng tròn là 360°, chia đều cho số lần rẽ.",
+  "mucTieu": [
+    {
+      "loai": "veGiongMau",
+      "mau": "lucGiac",
+      "saiSo": 4,
+      "phu": 90,
+      "chinhXac": 90,
+      "moTa": "Vẽ chồng khít lên lục giác mẫu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Vẽ được lục giác đều trùng hình mẫu"
+    },
+    {
+      "moTa": "Về tới đỉnh xuất phát vẫn nhìn lên trên (đã quay đủ 360°)",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 0,
+          "saiSo": 10
+        },
+        {
+          "loai": "dungTrongVung",
+          "vung": "xuatPhat"
+        }
+      ]
+    },
+    {
+      "moTa": "Dùng khối lặp, tối đa 4 khối",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "controls_repeat_ext",
+            "controls_repeat"
+          ]
+        },
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 4
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Hình vuông: 4 lần quay, mỗi lần 90°, tổng 360°. Tam giác đều: 3 lần quay, mỗi lần 120°, tổng 360°. Lục giác có mấy lần quay?",
+    {
+      "noiDung": "Mỗi lần quay = 360° : 6. Mỗi cạnh dài 50 cm, đúng 2 ô.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **hạ bút**, rồi **lặp lại 6 lần** { **đi tới 50 cm**, **quay phải 60 độ** }.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 120
+}

@@ -7,6 +7,11 @@ const { chromium } = require('playwright');
 const URL = process.env.SIRO_URL || 'http://localhost:1337/index.html';
 
 // Lời giải viết gọn: ['di', cm] ['lui', cm] ['phai', độ] ['trai', độ] ['but'] ['lap', n, [...]]
+// Khối con quay và lái (G8): ['goc0'] đặt lại góc quay, ['xoay', 'PHAI'|'TRAI'] quay mãi,
+// ['choGoc', n] chờ đến khi góc quay > n, ['dung'], ['tocDo', %], ['banh', trái, phải],
+// ['lapDenKhiGan', cm, [...]] lặp cho đến khi khoảng cách phía trước < cm,
+// ['neuGocDuong', [...nếu], [...nếu không]], ['chay'] đi tới mãi,
+// ['demBanh', vòng] quay phải bằng cách đếm vòng bánh (move_tank_for 50 %, −50 %).
 const CA = {
   '01-di-chuyen/01-tien-toi-o-dich': [
     { ten: 'đúng', sao: 3, ma: [['di', 100]] },
@@ -32,6 +37,38 @@ const CA = {
     { ten: 'quên góc cuối, không bút', sao: 1, ma: [['di', 75], ['phai', 90], ['di', 75], ['phai', 90], ['di', 75], ['phai', 90], ['di', 75]] },
     { ten: 'cắt chéo', sao: 0, ma: [['di', 75], ['phai', 135], ['di', 106.07], ['trai', 135], ['di', 75], ['phai', 135], ['di', 106.07]] },
   ],
+  '07-but-ve/01-tam-giac-deu': [
+    { ten: 'lặp 3 lần, quay 120°', sao: 3, ma: [['but'], ['lap', 3, [['di', 100], ['phai', 120]]]] },
+    { ten: 'không lặp', sao: 2, ma: [['but'], ['di', 100], ['phai', 120], ['di', 100], ['phai', 120], ['di', 100], ['phai', 120]] },
+    { ten: 'quay 60° (nhầm góc trong)', sao: 0, ma: [['but'], ['lap', 3, [['di', 100], ['phai', 60]]]] },
+    { ten: 'quên hạ bút', sao: 0, ma: [['lap', 3, [['di', 100], ['phai', 120]]]] },
+  ],
+  '07-but-ve/02-luc-giac-deu': [
+    { ten: 'lặp 6 lần, quay 60°', sao: 3, ma: [['but'], ['lap', 6, [['di', 50], ['phai', 60]]]] },
+    { ten: 'thiếu một cạnh', sao: 0, ma: [['but'], ['lap', 5, [['di', 50], ['phai', 60]]]] },
+    { ten: 'quay 120°', sao: 0, ma: [['but'], ['lap', 6, [['di', 50], ['phai', 120]]]] },
+  ],
+  '07-but-ve/03-ngoi-sao-5-canh': [
+    { ten: 'lặp 5 lần, quay 144°', sao: 3, ma: [['but'], ['lap', 5, [['di', 100], ['phai', 144]]]] },
+    { ten: 'quay 36° (nhầm góc nhọn)', sao: 0, ma: [['but'], ['lap', 5, [['di', 100], ['phai', 36]]]] },
+    { ten: 'quay 72° (ngũ giác)', sao: 0, ma: [['but'], ['lap', 5, [['di', 100], ['phai', 72]]]] },
+  ],
+  '07-but-ve/04-ve-ngoi-nha-theo-mau': [
+    { ten: 'đúng góc 30-120-30-90-90', sao: 3, ma: [['but'], ['di', 75], ['phai', 30], ['di', 75], ['phai', 120], ['di', 75], ['phai', 30], ['di', 75], ['phai', 90], ['di', 75], ['phai', 90]] },
+    { ten: 'quên lần quay cuối', sao: 2, ma: [['but'], ['di', 75], ['phai', 30], ['di', 75], ['phai', 120], ['di', 75], ['phai', 30], ['di', 75], ['phai', 90], ['di', 75]] },
+    { ten: 'mái quay 60° (nhầm góc trong)', sao: 0, ma: [['but'], ['di', 75], ['phai', 30], ['di', 75], ['phai', 60], ['di', 75], ['phai', 30], ['di', 75], ['phai', 90], ['di', 75], ['phai', 90]] },
+  ],
+  '06-gyro/01-quay-90-do-tren-san-bang': [
+    { ten: 'đếm vòng bánh (chương trình có sẵn)', sao: 0, ma: [['demBanh', 0.63]] },
+    { ten: 'gyro, tốc độ 50 % (quá đà)', sao: 0, ma: [['goc0'], ['xoay', 'PHAI'], ['choGoc', 90], ['dung']] },
+    { ten: 'gyro, tốc độ 10 %', sao: 1, ma: [['tocDo', 10], ['goc0'], ['xoay', 'PHAI'], ['choGoc', 90], ['dung']] },
+    { ten: 'gyro, tốc độ 10 %, dừng sớm ở 87°', sao: 2, ma: [['tocDo', 10], ['goc0'], ['xoay', 'PHAI'], ['choGoc', 87], ['dung']] },
+    { ten: 'gyro, nhanh rồi chậm', sao: 3, ma: [['goc0'], ['tocDo', 40], ['xoay', 'PHAI'], ['choGoc', 45], ['tocDo', 10], ['xoay', 'PHAI'], ['choGoc', 88], ['dung']] },
+  ],
+  '06-gyro/02-giu-huong-khi-bi-day': [
+    { ten: 'gyro, lái bật tắt', sao: 3, ma: [['goc0'], ['lapDenKhiGan', 20, [['neuGocDuong', [['banh', 30, 50]], [['banh', 50, 30]]]]], ['dung']] },
+    { ten: 'không sửa hướng', sao: 0, ma: [['goc0'], ['banh', 50, 50], ['lapDenKhiGan', 20, []], ['dung']] },
+  ],
   '02-vong-lap/01-hinh-vuong-vong-lap': [
     { ten: 'lặp 4 lần', sao: 3, ma: [['lap', 4, [['di', 100], ['phai', 90]]]] },
     { ten: 'có bút, 4 khối', sao: 2, ma: [['but'], ['lap', 4, [['di', 100], ['phai', 90]]]] },
@@ -51,8 +88,25 @@ function khoi(l) {
     case 'trai': return '<block type="sra_quay"><field name="HUONG">TRAI</field>' + so('DO', l[1]);
     case 'but': return '<block type="sra_ha_but">';
     case 'lap': return '<block type="controls_repeat_ext">' + so('TIMES', l[1]) + '<statement name="DO">' + chuoi(l[2]) + '</statement>';
+    case 'goc0': return '<block type="sra_dat_lai_goc">';
+    case 'xoay': return '<block type="sra_xoay"><field name="HUONG">' + l[1] + '</field>';
+    case 'choGoc': return '<block type="wait_until"><value name="value">' + soSanh('GT', '<block type="sra_goc_quay"></block>', l[1]) + '</value>';
+    case 'dung': return '<block type="sra_dung">';
+    case 'chay': return '<block type="sra_chay"><field name="HUONG">TOI</field>';
+    case 'tocDo': return '<block type="sra_dat_toc_do">' + so('TOC_DO', l[1]);
+    case 'banh': return '<block type="sra_banh">' + so('TRAI', l[1]) + so('PHAI', l[2]);
+    case 'lapDenKhiGan': return '<block type="controls_whileUntil"><field name="MODE">UNTIL</field><value name="BOOL">' +
+      soSanh('LT', '<block type="sra_khoang_cach"></block>', l[1]) + '</value><statement name="DO">' + chuoi(l[2]) + '</statement>';
+    case 'neuGocDuong': return '<block type="controls_if"><mutation else="1"></mutation><value name="IF0">' +
+      soSanh('GT', '<block type="sra_goc_quay"></block>', 0) + '</value><statement name="DO0">' + chuoi(l[1]) +
+      '</statement><statement name="ELSE">' + chuoi(l[2]) + '</statement>';
+    case 'demBanh': return '<block type="move_tank_for"><field name="units">PERCENT</field><field name="units2">ROTATIONS</field>' +
+      so('left', 50) + so('right', -50) + so('duration', l[1]);
   }
   throw new Error('khối lạ ' + l[0]);
+}
+function soSanh(op, a, b) {
+  return '<block type="logic_compare"><field name="OP">' + op + '</field><value name="A">' + a + '</value>' + so('B', b) + '</block>';
 }
 function chuoi(ds) {
   if (!ds.length) return '';
@@ -75,6 +129,8 @@ function xml(ds) {
     await page.goto(URL + '?baiTap=' + ma);
     await page.waitForFunction(() => window.SRA && SRA.daSanSang, null, { timeout: 90000 });
     await page.evaluate(() => { $('.dialogScreen').remove(); $('#navSim').click(); });
+    // Đợi GEARS nạp xong chương trình mở đầu, kẻo nó chèn vào sau khi ta đã nạp lời giải
+    await page.waitForTimeout(1500);
     console.log(ma + ' · ' + await page.evaluate(() => SRA.bai.tieuDe));
     for (const ca of CA[ma]) {
       await page.evaluate((x) => {
@@ -85,7 +141,7 @@ function xml(ds) {
       }, xml(ca.ma));
       await page.waitForTimeout(800);
       await page.evaluate(() => SRA.chay());
-      await page.waitForFunction(() => SRA.ketQuaCuoi, null, { timeout: 120000, polling: 500 });
+      await page.waitForFunction(() => SRA.ketQuaCuoi, null, { timeout: 300000, polling: 500 });
       const kq = await page.evaluate(() => {
         const k = SRA.ketQuaCuoi;
         const vt = SRA.world.viTriRobot();

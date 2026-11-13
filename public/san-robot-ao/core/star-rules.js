@@ -44,7 +44,11 @@ SRA.TEN_KHOI = {
   penDown: '"hạ bút"',
   sra_di: '"đi … cm"',
   sra_quay: '"quay … độ"',
-  controls_if: '"nếu … thì"'
+  controls_if: '"nếu … thì"',
+  sra_goc_quay: '"góc quay (độ)"',
+  gyro_sensor: '"góc quay (độ)"',
+  sra_xoay: '"quay … mãi"',
+  sra_banh: '"bánh trái … bánh phải …"'
 };
 
 SRA.tenKhoi = function(dk) {

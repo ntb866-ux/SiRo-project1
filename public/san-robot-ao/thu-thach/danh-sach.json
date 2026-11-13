@@ -22,6 +22,28 @@
       "bai": [
         "02-vong-lap/01-hinh-vuong-vong-lap"
       ]
+    },
+    {
+      "id": "07-but-ve",
+      "ten": "Chặng 2 · Bút vẽ và đa giác",
+      "moTa": "Vẽ tam giác, lục giác, ngôi sao và ngôi nhà theo hình mẫu: góc quay của robot là góc ngoài, tổng góc ngoài là 360°.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "07-but-ve/01-tam-giac-deu",
+        "07-but-ve/02-luc-giac-deu",
+        "07-but-ve/03-ngoi-sao-5-canh",
+        "07-but-ve/04-ve-ngoi-nha-theo-mau"
+      ]
+    },
+    {
+      "id": "06-gyro",
+      "ten": "Chặng 3 · Con quay (gyro)",
+      "moTa": "Cảm biến con quay đo tốc độ quay, cộng dồn ra góc hướng: quay chính xác trên sân trơn và tự giữ hướng khi bị đẩy lệch.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "06-gyro/01-quay-90-do-tren-san-bang",
+        "06-gyro/02-giu-huong-khi-bi-day"
+      ]
     }
   ]
 }
