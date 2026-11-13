@@ -22,6 +22,19 @@
       "bai": [
         "02-vong-lap/01-hinh-vuong-vong-lap"
       ]
+    },
+    {
+      "id": "03-hieu-chinh",
+      "ten": "Chặng 2 · Hiệu chỉnh động cơ",
+      "moTa": "Đo chu vi bánh, chỉnh góc quay, so bánh to và bánh nhỏ, bù motor yếu, chạy đúng tốc độ: robot thật không bao giờ hoàn hảo.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "03-hieu-chinh/01-chu-vi-banh",
+        "03-hieu-chinh/02-quay-goc-vuong",
+        "03-hieu-chinh/03-banh-to-banh-nho",
+        "03-hieu-chinh/04-bu-motor-lech",
+        "03-hieu-chinh/05-mot-met-bon-giay"
+      ]
     }
   ]
 }

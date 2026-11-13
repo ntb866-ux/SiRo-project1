@@ -51,9 +51,11 @@
   }
 
   napScript('star-rules.js')
+    .then(() => napScript('so-do.js'))
     .then(() => napScript('records.js'))
     .then(() => napScript('giao-dien.js'))
     .then(() => napScript('challenge-engine.js'))
+    .then(() => napScript('so-do-chuyen-dong.js'))
     .then(choSanSang)
     .then(() => SRA.napBai(id))
     .catch(function(e) {

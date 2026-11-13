@@ -1,0 +1,103 @@
+{
+  "tieuDe": "Đi 1 mét trong đúng 4 giây",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -87.5,
+    "goc": 0
+  },
+  "vung": {
+    "vach": {
+      "ten": "vạch 1 mét",
+      "x": -12.5,
+      "y": 12.5,
+      "rong": 40,
+      "dai": 4,
+      "mau": "vang"
+    }
+  },
+  "soDo": [
+    "thoiGian",
+    "vongTrai",
+    "vongPhai",
+    "vongGiay",
+    "tocDo",
+    "tien"
+  ],
+  "deBai": "Robot phải đi tới **đúng 100 cm** (vạch vàng) trong **đúng 4 giây**, như một chiếc xe chạy đều theo lịch.\n\nChương trình mở sẵn cho hai bánh chạy 50 % trong 4 giây. Chạy thử: robot đi xa quá. Hãy tính và chỉnh **tốc độ %** sao cho đủ 4 giây thì robot vừa tới vạch.\n\nDùng bảng số đo: **\"Bánh quay nhanh\"** cho biết bánh quay bao nhiêu vòng mỗi giây, **\"Tốc độ\"** cho biết xe đi bao nhiêu cm mỗi giây.",
+  "nguyenLi": "Muốn đi 100 cm trong 4 giây thì tốc độ xe phải là v = 100 ÷ 4 = **25 cm/s**. Xe đi nhờ bánh lăn: **v = ω × r**, hay dễ tính hơn: v = (số vòng mỗi giây) × chu vi bánh. Bánh chu vi 20 cm nên bánh phải quay 25 ÷ 20 = **1,25 vòng/giây** (450°/s).\n\nĐộng cơ ở 100 % quay 1050°/s (giả lập giới hạn thực tế ở 800°/s), tỉ lệ thuận với số %. Vậy cần 450 ÷ 1050 ≈ **43 %**. Chạy thử sẽ thấy thiếu vài cm, vì lúc khởi động xe mất khoảng 0,2 giây để tăng tốc từ 0: phải nhích lên **44 %**. Đây là việc hiệu chỉnh: lí thuyết cho con số gần đúng, đo thật để chỉnh cho đúng.\n\nNói với học sinh: muốn đến trường đúng giờ, bạn chia quãng đường cho thời gian để biết phải đi nhanh cỡ nào, rồi đi nhanh hơn một chút vì lúc đầu còn phải khởi hành.",
+  "mucTieu": [
+    {
+      "loai": "diDuoc",
+      "cm": 100,
+      "saiSo": 5,
+      "moTa": "Robot dừng gần vạch 1 mét (sai số ±5 cm)"
+    },
+    {
+      "loai": "thoiGianChuyenDong",
+      "tu": 3.8,
+      "den": 4.2,
+      "moTa": "Bánh chạy khoảng 4 giây (3,8 đến 4,2 giây)"
+    },
+    {
+      "loai": "khongDungKhoi",
+      "khoi": [
+        "sra_di",
+        "sra_quay"
+      ],
+      "moTa": "Không dùng khối \"đi … cm\", \"quay … độ\""
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi khoảng 1 mét trong khoảng 4 giây"
+    },
+    {
+      "moTa": "Sát hơn: 100 cm ± 1 cm, 4 giây ± 0,1 giây",
+      "dieuKien": [
+        {
+          "loai": "diDuoc",
+          "cm": 100,
+          "saiSo": 1
+        },
+        {
+          "loai": "thoiGianChuyenDong",
+          "tu": 3.9,
+          "den": 4.1
+        }
+      ]
+    },
+    {
+      "moTa": "Đúng giờ tàu chạy: 100 cm ± 0,5 cm, 4 giây ± 0,05 giây",
+      "dieuKien": [
+        {
+          "loai": "diDuoc",
+          "cm": 100,
+          "saiSo": 0.5
+        },
+        {
+          "loai": "thoiGianChuyenDong",
+          "tu": 3.95,
+          "den": 4.05
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "100 cm trong 4 giây thì mỗi giây xe phải đi bao nhiêu cm?",
+    {
+      "noiDung": "Xe cần 25 cm/s. Chạy thử với 50 % và đọc dòng \"Tốc độ\" trên bảng số đo: 50 % cho bao nhiêu cm/s? Tốc độ tỉ lệ với số %, hãy tính số % cần dùng.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "50 % cho khoảng 29 cm/s. Cần 25 cm/s nên số % là 50 × 25 ÷ 29 ≈ 43 %. Chạy thử 43 % sẽ thấy thiếu khoảng 2 cm vì xe mất một chút thời gian tăng tốc, nên dùng **44 %** cho cả hai bánh.",
+      "moSauLanThu": 3
+    }
+  ],
+  "maBatDau": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"when_started\" x=\"60\" y=\"40\" deletable=\"false\"><data>Main</data><next><block type=\"sra_chay_banh\"><value name=\"TRAI\"><shadow type=\"math_number\"><field name=\"NUM\">50</field></shadow></value><value name=\"PHAI\"><shadow type=\"math_number\"><field name=\"NUM\">50</field></shadow></value><next><block type=\"sleep\"><field name=\"units\">SECONDS</field><value name=\"seconds\"><shadow type=\"math_number\"><field name=\"NUM\">4</field></shadow></value><next><block type=\"sra_dung\"></block></next></block></next></block></next></block></xml>",
+  "giaTocBanh": 2.5,
+  "camera": "toanSan",
+  "thoiGianToiDa": 30
+}

@@ -38,7 +38,7 @@ Danh sách này cập nhật dần theo từng gói việc:
 - [x] Khối lệnh bo tròn (Zelos), màu theo nhóm, chế độ Cơ bản / Nâng cao cho học sinh mới học
 - [x] Robot chuẩn cho lớp 6 (`public/san-robot-ao/robots/`)
 - [x] Khung thử thách có chấm sao: trang chọn bài `san-robot-ao/`, hướng dẫn thêm bài ở [docs/huong-dan-them-bai.md](docs/huong-dan-them-bai.md)
-- [ ] Các sân học tập: di chuyển (đã có 6 bài, xem [docs/bai-di-chuyen.md](docs/bai-di-chuyen.md)), hiệu chỉnh motor, cảm biến chạm, khoảng cách, màu, gyro, bút vẽ
+- [ ] Các sân học tập: di chuyển (đã có 6 bài, xem [docs/bai-di-chuyen.md](docs/bai-di-chuyen.md)), hiệu chỉnh motor (5 bài và bảng số đo, xem [docs/bai-hieu-chinh-dong-co.md](docs/bai-hieu-chinh-dong-co.md)), cảm biến chạm, khoảng cách, màu, gyro, bút vẽ
 - [ ] Mê cung mã 001–100 có kỉ lục
 - [ ] Sân thi đấu: sumo, bóng đá, bắn bóng
 
