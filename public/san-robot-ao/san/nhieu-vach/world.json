@@ -1,0 +1,23 @@
+{
+  "worldName": "custom",
+  "tenSan": "Sáu vạch đen",
+  "moTaSan": "Làn đường dọc giữa sân, rộng 44 cm, có 6 vạch đen dày 3 cm ở y = -45, -20, 0, 30, 50, 75 cm. Số thứ tự vạch ghi bên phải.",
+  "options": {
+    "imageURL": "san-robot-ao/san/nhieu-vach/nen.png",
+    "groundType": "box",
+    "imageScale": 1,
+    "uScale": 1,
+    "vScale": 1,
+    "wall": true,
+    "wallHeight": 7.7,
+    "wallThickness": 4.5,
+    "wallColor": "#3A4A5A",
+    "groundFriction": 1,
+    "wallFriction": 0.1,
+    "groundRestitution": 0,
+    "wallRestitution": 0.1,
+    "timer": "none",
+    "objects": [],
+    "startPos": "center"
+  }
+}

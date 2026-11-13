@@ -41,6 +41,9 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | `locKhoi` | không | Ẩn bớt khối trong hộp công cụ, theo định dạng lọc của GEARS: `{ "deny": { "categories": [...], "blocks": [...] } }`. |
 | `camera` | không | `toanSan` (mặc định: nhìn từ trên xuống thấy cả sân), `follow` (bám robot) hoặc `arc`. |
 | `phieu` | không | Đường dẫn phiếu học tập, tính từ `san-robot-ao/`. |
+| `bienThe` | không | Các phiên bản sân; mỗi lần bấm Chạy chọn ngẫu nhiên một bản. Mỗi bản có thể ghi đè `viTriBatDau`, nối thêm `vatThe` và ghi đè vị trí (`x`, `y`, `rong`, `dai`) của vùng cùng tên. Dùng để học sinh không đo sẵn quãng đường mà phải dùng cảm biến. Xem `03-cam-bien-mau/03-phan-loai-mau.json`. |
+| `soDo` | không | Bảng số đo nổi trên sân: `true` (mọi dòng) hoặc mảng mã dòng. Cảm biến màu: `doSangGiua`, `doSangTrai`, `doSangPhai`, `mauGiua`, `mauTrai`, `mauPhai`; có dòng `doSang…` thì hiện thêm biểu đồ độ sáng theo thời gian. |
+| `nguong` | không | Ngưỡng vẽ trên biểu đồ độ sáng (mặc định 50). |
 
 ## 4. Điều kiện và cách chấm sao
 
@@ -72,6 +75,7 @@ Các loại điều kiện (`loai`) có sẵn, dùng được cả trong `mucTie
 | `soKhoiToiDa` | `khoi` | Số khối lệnh không quá `khoi`. Không tính khối mũ "When Started" và khối số/phép toán gắn bên trong. Học sinh viết Python thì điều kiện này không đạt. |
 | `huongCuoi` | `goc`, `saiSo` (mặc định 10) | Lúc kết thúc, robot quay mặt về hướng `goc` ± `saiSo` độ. |
 | `dungKhoi` | `khoi` (tên loại khối Blockly, chuỗi hoặc mảng), `toiThieu` (mặc định 1), `tenKhoi` (tên đọc, không bắt buộc) | Chương trình có ít nhất `toiThieu` khối thuộc các loại đó, ví dụ `["controls_repeat_ext", "controls_repeat"]` để bắt buộc dùng vòng lặp, `["sra_ha_but", "penDown"]` cho khối hạ bút. Viết Python thì không đạt. |
+| `dungCamBien` | `toiThieu` | Chương trình khối dùng ít nhất `toiThieu` cảm biến màu khác nhau (giữa, trái, phải). Viết Python thì không đạt. |
 
 Mỗi điều kiện có thể thêm `"moTa": "…"` để thay câu mô tả tự động.
 

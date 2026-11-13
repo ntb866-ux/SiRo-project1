@@ -1,0 +1,122 @@
+{
+  "tieuDe": "Đếm vạch, dừng ở vạch số 4",
+  "san": "nhieu-vach",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": 0,
+    "y": -75,
+    "goc": 0
+  },
+  "bienThe": [
+    {
+      "viTriBatDau": {
+        "x": 0,
+        "y": -85,
+        "goc": 0
+      }
+    },
+    {
+      "viTriBatDau": {
+        "x": 0,
+        "y": -75,
+        "goc": 0
+      }
+    },
+    {
+      "viTriBatDau": {
+        "x": 0,
+        "y": -65,
+        "goc": 0
+      }
+    }
+  ],
+  "vung": {
+    "vach4": {
+      "ten": "vạch số 4",
+      "x": 0,
+      "y": 27,
+      "rong": 40,
+      "dai": 7,
+      "an": true
+    },
+    "quaVach5": {
+      "ten": "vạch số 5",
+      "x": 0,
+      "y": 48,
+      "rong": 40,
+      "dai": 4,
+      "an": true
+    }
+  },
+  "soDo": [
+    "doSangGiua",
+    "mauGiua"
+  ],
+  "nguong": 50,
+  "deBai": "Robot chạy trên một làn đường có **6 vạch đen** cắt ngang. Hãy cho robot **dừng đúng ở vạch số 4**.\n\nRobot xuất phát ở một trong ba chỗ khác nhau, khoảng cách giữa các vạch cũng không đều, nên phải **đếm** số vạch đã đi qua bằng cảm biến màu.\n\nGợi ý quan sát: trên biểu đồ độ sáng, mỗi lần robot đi qua một vạch thì đường đo **tụt xuống rồi lên lại**. Đếm số lần tụt xuống là biết đã qua mấy vạch.",
+  "nguyenLi": "Mỗi vạch đen làm số đo độ sáng **đổi trạng thái hai lần**: sáng → tối (bắt đầu vào vạch) rồi tối → sáng (ra khỏi vạch). Muốn đếm đúng, chương trình phải đếm **lúc chuyển** từ sáng sang tối, không đếm \"đang tối\": robot đi qua vạch dày 3 cm mất khoảng 0,1 giây, trong lúc đó vòng lặp đã kiểm tra cảm biến rất nhiều lần. Vì vậy sau khi thấy tối, robot phải **chờ sáng trở lại** rồi mới đếm vạch tiếp theo. Máy đếm trong đời sống (cổng đếm người, máy đếm sản phẩm trên băng chuyền) cũng đếm theo cách này.\n\nNói với học sinh: giống đếm bậc thang khi đi lên, mỗi bậc chỉ đếm một lần lúc đặt chân lên, đứng trên bậc lâu bao nhiêu cũng không đếm thêm.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "vach4",
+      "moTa": "Robot dừng với cảm biến nằm trên vạch số 4"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": [
+        "sra_do_sang",
+        "sra_mau_thay",
+        "sra_thay_mau"
+      ],
+      "tenKhoi": "cảm biến màu",
+      "moTa": "Dùng cảm biến màu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Dừng đúng ở vạch số 4"
+    },
+    {
+      "moTa": "Dùng vòng lặp để lặp lại việc đi qua một vạch",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "controls_repeat_ext",
+            "controls_repeat",
+            "controls_whileUntil",
+            "sra_lap_mai"
+          ],
+          "tenKhoi": "vòng lặp"
+        }
+      ]
+    },
+    {
+      "moTa": "Đếm bằng một biến (ví dụ biến \"số vạch\")",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "math_change",
+            "variables_set"
+          ],
+          "toiThieu": 2,
+          "tenKhoi": "\"đặt biến\" và \"thay đổi biến\""
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đi qua một vạch gồm hai việc: **chờ đến khi thấy đen**, rồi **chờ đến khi thấy trắng** (ra khỏi vạch). Vạch số 4 thì cần qua mấy vạch trước nó?",
+    {
+      "noiDung": "Cách 1: **đi tới mãi**, **lặp lại 3 lần** { chờ đến khi thấy đen; chờ đến khi thấy trắng }, rồi **chờ đến khi thấy đen** lần nữa và **dừng lại**.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Cách 2 (3 sao): tạo biến **số vạch**, đặt bằng 0. **Đi tới mãi**, **lặp cho đến khi** số vạch = 4 { chờ đến khi độ sáng > 50; chờ đến khi độ sáng < 50; thay đổi số vạch thêm 1 }, rồi **dừng lại**. Thử bỏ khối \"chờ đến khi độ sáng > 50\" xem robot đếm sai thế nào.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 40
+}

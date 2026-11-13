@@ -7,7 +7,8 @@
 // Bài bật khung bằng trường "soDo" trong tệp bài:
 //   "soDo": true                         hiện mọi dòng đã đăng kí
 //   "soDo": ["thoiGian", "quangDuong"]   chỉ hiện các dòng này, đúng thứ tự này
-// Khung nằm ở góc trên-trái vùng sân, tự cập nhật khoảng 10 lần/giây,
+// Khung nằm ở góc dưới-trái vùng sân (góc trên có nút camera của GEARS),
+// tự cập nhật khoảng 10 lần/giây,
 // tự ẩn khi bài không bật hoặc không có dòng nào.
 
 var SRA = window.SRA || {};
@@ -53,7 +54,7 @@ SRA.soDo = new function() {
       if (s.indexOf('-') == 0 && Number(s) == 0) s = s.slice(1);   // bỏ "-0,0"
       v = s.replace('.', ',');
     }
-    return v + (d.donVi ? ' ' + d.donVi : '');
+    return v + (d.donVi ? (d.donVi == '°' ? '' : ' ') + d.donVi : '');
   }
 
   function taoKhung() {
@@ -63,7 +64,7 @@ SRA.soDo = new function() {
     k.id = 'sra-so-do';
     k.setAttribute('aria-live', 'off');
     k.style.cssText =
-      'position:absolute;left:8px;top:8px;z-index:5;min-width:170px;max-width:260px;' +
+      'position:absolute;left:8px;bottom:8px;z-index:5;min-width:170px;max-width:260px;' +
       'background:rgba(255,255,255,0.92);color:#1f2937;border:1px solid #d1d5db;border-radius:8px;' +
       'padding:6px 10px;font:13px/1.5 system-ui,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,0.15);' +
       'pointer-events:auto;user-select:text;';

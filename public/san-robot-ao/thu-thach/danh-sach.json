@@ -22,6 +22,19 @@
       "bai": [
         "02-vong-lap/01-hinh-vuong-vong-lap"
       ]
+    },
+    {
+      "id": "03-cam-bien-mau",
+      "ten": "Chặng 3 · Cảm biến màu",
+      "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ và dò theo đường đen.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "03-cam-bien-mau/01-dung-o-vach",
+        "03-cam-bien-mau/02-dem-vach",
+        "03-cam-bien-mau/03-phan-loai-mau",
+        "03-cam-bien-mau/04-do-line-1-cam-bien",
+        "03-cam-bien-mau/05-do-line-3-cam-bien"
+      ]
     }
   ]
 }
