@@ -1,0 +1,103 @@
+{
+  "tieuDe": "Bánh to, bánh nhỏ",
+  "san": "luoi-toa-do",
+  "robot": "banh-to",
+  "cheDo": "co-ban",
+  "robotChon": [
+    {
+      "tep": "banh-to",
+      "ten": "Robot bánh to"
+    },
+    {
+      "tep": "banh-nho",
+      "ten": "Robot bánh nhỏ"
+    }
+  ],
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "vach": {
+      "ten": "vạch đích",
+      "x": -12.5,
+      "y": -2.5,
+      "rong": 40,
+      "dai": 6,
+      "mau": "vang"
+    }
+  },
+  "soDo": [
+    "vongTrai",
+    "vongPhai",
+    "tien",
+    "thoiGian",
+    "tocDo"
+  ],
+  "deBai": "Có hai robot giống hệt nhau, chỉ khác **cỡ bánh xe**. Vạch đích cách robot **60 cm**.\n\nVới **từng robot** (bấm nút \"Chọn robot\" để đổi):\n1. Chạy chương trình mở sẵn (quay bánh 1 vòng), đọc bảng số đo để biết chu vi bánh.\n2. Tính số vòng cần quay rồi cho robot dừng đúng vạch đích.\n\nGhi lại kết quả: cùng 1 vòng bánh, robot nào đi xa hơn? Ở cùng tốc độ quay, robot nào chạy nhanh hơn?",
+  "nguyenLi": "Mỗi vòng bánh xe đi được một chu vi C = π × d, nên **bánh to đi xa hơn sau mỗi vòng**. Bánh quay với tốc độ góc ω (vòng/giây) thì xe đi với tốc độ **v = ω × C = ω × 2πr**, thường viết gọn là **v = ω × r** (ω đo bằng radian/giây). Cùng một motor, cùng ω, bánh có bán kính r gấp đôi thì xe chạy nhanh gấp đôi.\n\nĐổi lại, bánh to khó dừng đúng chỗ hơn: sai 0,1 vòng là sai 3 cm, trong khi bánh nhỏ chỉ sai 1,5 cm. Đó là lí do xe đua dùng bánh to, còn robot cần chính xác thì hay dùng bánh nhỏ (hoặc bộ giảm tốc).\n\nNói với học sinh: bạn đạp xe đạp trẻ con và xe đạp người lớn cùng một nhịp chân, xe bánh to đi nhanh hơn hẳn.",
+  "mucTieu": [
+    {
+      "loai": "diDuoc",
+      "cm": 60,
+      "saiSo": 3,
+      "moTa": "Robot dừng ở vạch đích (cách chỗ xuất phát 60 cm, sai số ±3 cm)"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_quay_banh",
+      "tenKhoi": "\"quay bánh trái … bánh phải …\""
+    },
+    {
+      "loai": "khongDungKhoi",
+      "khoi": [
+        "sra_di",
+        "sra_quay"
+      ],
+      "moTa": "Không dùng khối \"đi … cm\", \"quay … độ\" (hai khối này có con quay tự sửa sai)"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot đang chọn dừng ở vạch đích"
+    },
+    {
+      "moTa": "Đã làm được với cả robot bánh to và robot bánh nhỏ (qua các lần chạy)",
+      "dieuKien": [
+        {
+          "loai": "hoanThanhVoiCacRobot",
+          "robot": [
+            "banh-to",
+            "banh-nho"
+          ]
+        }
+      ]
+    },
+    {
+      "moTa": "Dừng thật chính xác: 60 cm, sai số ±1 cm",
+      "dieuKien": [
+        {
+          "loai": "diDuoc",
+          "cm": 60,
+          "saiSo": 1
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Chạy 1 vòng với mỗi robot và ghi lại số \"Đi tới được\". Đó là chu vi bánh của robot đó.",
+    {
+      "noiDung": "Bánh to: 1 vòng đi 30 cm. Bánh nhỏ: 1 vòng đi 15 cm. 60 cm bằng mấy lần mỗi số đó?",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: robot bánh to quay **2 vòng** (60 ÷ 30), robot bánh nhỏ quay **4 vòng** (60 ÷ 15). Nhớ đổi robot rồi sửa số vòng, chạy cả hai lần.",
+      "moSauLanThu": 3
+    }
+  ],
+  "maBatDau": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"when_started\" x=\"60\" y=\"40\" deletable=\"false\"><data>Main</data><next><block type=\"sra_quay_banh\"><field name=\"DON_VI\">VONG</field><value name=\"TRAI\"><shadow type=\"math_number\"><field name=\"NUM\">1</field></shadow></value><value name=\"PHAI\"><shadow type=\"math_number\"><field name=\"NUM\">1</field></shadow></value></block></next></block></xml>",
+  "giaTocBanh": 2.5,
+  "camera": "toanSan",
+  "thoiGianToiDa": 30
+}

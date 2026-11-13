@@ -1,0 +1,97 @@
+{
+  "tieuDe": "Xe bị lệch: bù cho motor yếu",
+  "san": "luoi-toa-do",
+  "robot": "lech-motor",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -87.5,
+    "goc": 0
+  },
+  "vung": {
+    "dich": {
+      "ten": "ô đích",
+      "x": -12.5,
+      "y": 12.5,
+      "rong": 20,
+      "dai": 20,
+      "mau": "xanh"
+    },
+    "lan": {
+      "ten": "làn đường thẳng",
+      "x": -12.5,
+      "y": -40,
+      "rong": 4,
+      "dai": 85,
+      "mau": "#94a3b8"
+    }
+  },
+  "soDo": [
+    "vongTrai",
+    "vongPhai",
+    "tien",
+    "lechNgang",
+    "quayThan",
+    "thoiGian"
+  ],
+  "deBai": "Robot này có **motor bánh phải yếu hơn** motor bánh trái (như xe thật bị mòn bánh răng hay pin yếu). Chương trình mở sẵn cho hai bánh chạy **cùng 50 %** trong 3,5 giây, nhưng xe không đi thẳng.\n\nChạy thử và đọc bảng số đo: bánh nào quay ít vòng hơn? Xe lệch sang bên nào?\n\nHãy **chỉnh tốc độ từng bánh** trong khối \"chạy bánh trái … % bánh phải … %\" để xe đi thẳng theo làn xám vào ô đích.",
+  "nguyenLi": "Tốc độ mỗi bên xe bằng tốc độ bánh bên đó: v = ω × r. Bánh phải quay chậm hơn thì bên phải đi chậm hơn, xe **quay dần về phía bánh chậm** và đi theo một cung tròn. Chênh tốc độ Δv làm thân xe quay với tốc độ góc Δv ÷ b (b là khoảng cách hai bánh), nên chỉ cần chênh vài phần trăm, đi 1 m đã lệch cả chục cm: **sai số tích lũy theo quãng đường**.\n\nCách bù: nếu bánh phải chỉ chạy được 92 % tốc độ được lệnh thì lệnh cho nó chạy nhanh hơn để bù: 50 ÷ 0,92 ≈ 54,3 %. Khi hai bánh quay **cùng số vòng** trong cùng thời gian, xe đi thẳng. Robot thật làm việc này tự động bằng cách đọc bộ đếm vòng (encoder) của hai bánh.\n\nNói với học sinh: hai bạn chèo hai bên thuyền, một bạn chèo yếu hơn thì thuyền cứ quay vòng sang phía bạn đó. Muốn thuyền đi thẳng, bạn chèo yếu phải cố chèo mạnh hơn.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_chay_banh",
+      "tenKhoi": "\"chạy bánh trái … % bánh phải … %\""
+    },
+    {
+      "loai": "khongDungKhoi",
+      "khoi": [
+        "sra_di",
+        "sra_quay",
+        "sra_quay_banh"
+      ],
+      "moTa": "Chỉ dùng khối chạy bánh theo tốc độ, không dùng khối đi/quay/quay bánh"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot dừng trong ô đích"
+    },
+    {
+      "moTa": "Đi gần thẳng: lệch ngang không quá 8 cm",
+      "dieuKien": [
+        {
+          "loai": "lechNgangToiDa",
+          "cm": 8
+        }
+      ]
+    },
+    {
+      "moTa": "Bù thật khéo: hai bánh quay số vòng chênh nhau không quá 0,05 vòng",
+      "dieuKien": [
+        {
+          "loai": "chenhVongToiDa",
+          "vong": 0.05
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đọc bảng số đo sau khi chạy: bánh trái quay bao nhiêu vòng, bánh phải bao nhiêu vòng? Bánh quay ít hơn là bánh yếu.",
+    {
+      "noiDung": "Bánh phải yếu nên cho bánh phải chạy **nhanh hơn** 50 %. Thử 52 %, 54 %, 56 %... và xem hai số vòng tiến lại gần nhau thế nào.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Bánh phải quay khoảng 4,6 vòng khi bánh trái quay khoảng 5,0 vòng: nó chỉ chạy được 4,6 ÷ 5,0 ≈ 92 % tốc độ. Muốn nó thật sự chạy 50 % thì lệnh 50 ÷ 0,92 ≈ **54,3 %**. Khối: \"chạy bánh trái 50 % bánh phải 54,3 %\".",
+      "moSauLanThu": 3
+    }
+  ],
+  "maBatDau": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"when_started\" x=\"60\" y=\"40\" deletable=\"false\"><data>Main</data><next><block type=\"sra_chay_banh\"><value name=\"TRAI\"><shadow type=\"math_number\"><field name=\"NUM\">50</field></shadow></value><value name=\"PHAI\"><shadow type=\"math_number\"><field name=\"NUM\">50</field></shadow></value><next><block type=\"sleep\"><field name=\"units\">SECONDS</field><value name=\"seconds\"><shadow type=\"math_number\"><field name=\"NUM\">3.5</field></shadow></value><next><block type=\"sra_dung\"></block></next></block></next></block></next></block></xml>",
+  "giaTocBanh": 2.5,
+  "camera": "toanSan",
+  "thoiGianToiDa": 30
+}
