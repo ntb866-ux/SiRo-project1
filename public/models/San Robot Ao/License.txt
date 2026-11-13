@@ -1,0 +1,18 @@
+	Sân Robot Ảo – mô hình 3D tự làm
+
+	mbot.glb
+	  Nguồn: Shin (ntb866-ux) tự quét 3D (scan) một xe robot mBot thật bằng ứng dụng điện thoại.
+	  Xử lí: gộp 1.859 mảnh thành 1, giảm từ 1,35 triệu xuống ~81.000 tam giác,
+	         dựng thẳng lại (bản quét nằm nghiêng), đưa gốc về tâm, đổi đơn vị sang mét.
+	  Kích thước thật: khoảng 12,6 × 9,7 × 16,6 cm (rộng × cao × dài).
+	  Dùng trong GEARS/Sân Robot Ảo: modelScale = 100 (tệp tính bằng mét, sân tính bằng cm).
+
+			------------------------------
+
+	Giấy phép: Creative Commons Attribution 4.0 (CC BY 4.0)
+	https://creativecommons.org/licenses/by/4.0/
+	Ghi công: "mBot 3D scan – Sân Robot Ảo (ntb866-ux)".
+
+	Lưu ý: mBot là sản phẩm và thương hiệu của Makeblock. Bản quét này chỉ dùng
+	làm vật trang trí/vật cản trong sân học tập, không phải sản phẩm chính thức
+	và không có liên kết với Makeblock.
