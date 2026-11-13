@@ -1,0 +1,109 @@
+{
+  "name": "siro_mBot",
+  "shortDescription": "Robot mBot (vỏ 3D)",
+  "longDescription": "<p>Robot có hình dáng mBot, kích thước gần đúng xe thật: bánh chu vi 20 cm ở phía sau, bi tự do phía trước. Cùng cổng cảm biến với robot chuẩn nên chạy được mọi chương trình.</p>",
+  "longerDescription": "<h3>Kích thước</h3><ul><li>Đường kính bánh: 6,37 cm (chu vi 20 cm)</li><li>Khoảng cách hai bánh (tâm đến tâm): 10,6 cm</li></ul><p>Vỏ 3D quét từ xe mBot thật, chỉ để nhìn. Va chạm vẫn tính bằng thân hộp và hai bánh bên trong. Bánh trên vỏ đứng yên, không quay theo.</p><h3>Động cơ</h3><ul><li>Cổng A: Bánh trái</li><li>Cổng B: Bánh phải</li></ul><h3>Cảm biến</h3><ul><li>Cổng 1: Cảm biến màu dưới gầm (giữa)</li><li>Cổng 2: Cảm biến khoảng cách (phía trước)</li><li>Cổng 3: Gyro (con quay)</li><li>Cổng 4: Cảm biến chạm (mũi)</li><li>Cổng 5: Bút vẽ (ở tâm quay)</li></ul>",
+  "thumbnail": "",
+  "bodyHeight": 4,
+  "bodyWidth": 8.2,
+  "bodyLength": 16,
+  "wheels": true,
+  "wheelDiameter": 6.3662,
+  "wheelWidth": 2,
+  "wheelToBodyOffset": 0.2,
+  "bodyEdgeToWheelCenterY": 1,
+  "bodyEdgeToWheelCenterZ": 10.4,
+  "bodyMass": 1000,
+  "wheelMass": 200,
+  "casterMass": 0,
+  "caster": true,
+  "casterDiameter": 2,
+  "wheelFriction": 10,
+  "bodyFriction": 0,
+  "casterFriction": 0,
+  "color": "#1F9BD7",
+  "imageType": "all",
+  "imageURL": "",
+  "components": [
+    {
+      "type": "ColorSensor",
+      "position": [
+        0,
+        -1,
+        7
+      ],
+      "rotation": [
+        1.5707963267948966,
+        0,
+        0
+      ],
+      "options": {}
+    },
+    {
+      "type": "UltrasonicSensor",
+      "position": [
+        0,
+        2.5,
+        7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "options": {}
+    },
+    {
+      "type": "GyroSensor",
+      "position": [
+        0,
+        2.5,
+        0
+      ],
+      "options": {}
+    },
+    {
+      "type": "TouchSensor",
+      "position": [
+        0,
+        0,
+        9
+      ],
+      "rotation": [
+        -1.5707963267948966,
+        0,
+        0
+      ],
+      "options": {
+        "width": 8,
+        "depth": 2
+      }
+    },
+    {
+      "type": "Pen",
+      "position": [
+        0,
+        -1.5831,
+        -2.4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "options": {}
+    }
+  ],
+  "options": {},
+  "casterOffsetZ": 11,
+  "sraMoHinh": {
+    "url": "models/San Robot Ao/mbot.glb",
+    "tiLe": 100,
+    "dichChuyen": [
+      0,
+      0.6,
+      0
+    ],
+    "xoayY": 0
+  }
+}
