@@ -1,0 +1,79 @@
+{
+  "tieuDe": "Rẽ tới ô đích",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -62.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "dich": {
+      "ten": "ô đích F6",
+      "x": 37.5,
+      "y": 37.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    },
+    "ho": {
+      "ten": "hồ nước",
+      "x": -12.5,
+      "y": -12.5,
+      "rong": 75,
+      "dai": 75,
+      "mau": "lam"
+    }
+  },
+  "deBai": "Robot đứng ở ô **B2**, mặt hướng lên trên. Ô đích **F6** nằm chéo phía trên bên phải, nhưng giữa đường có **hồ nước** (màu xanh dương), robot không được đi vào.\n\nHãy cho robot đi theo các đường kẻ của lưới, **rẽ một lần**, và dừng trong ô F6. Mỗi ô rộng 25 cm.",
+  "nguyenLi": "Robot quay tại chỗ khi hai bánh quay **ngược chiều nhau** với cùng tốc độ: bánh trái lăn tới, bánh phải lăn lùi (quay phải) và ngược lại. Hai bánh vạch hai cung tròn quanh điểm giữa trục bánh, nên tâm robot gần như đứng yên còn hướng thì đổi. Vị trí của robot vì vậy cần hai thông tin: **ở đâu** (tọa độ) và **nhìn về hướng nào** (góc, 360° là một vòng).\n\nNói với học sinh: giống chèo thuyền, một mái chèo tới, một mái chèo lùi thì thuyền xoay tại chỗ. Quay phải 90° là xoay một góc vuông, như đang nhìn bảng mà quay sang nhìn cửa sổ.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich"
+    },
+    {
+      "loai": "khongVaoVung",
+      "vung": "ho"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot dừng trong ô đích và không lội xuống hồ"
+    },
+    {
+      "moTa": "Không chạm tường, tối đa 20 giây",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        },
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 20
+        }
+      ]
+    },
+    {
+      "moTa": "Chỉ dùng 3 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 3
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Lấy ngón tay vẽ đường đi trên màn hình trước: đi lên mấy ô, rẽ hướng nào, rồi đi tiếp mấy ô?",
+    {
+      "noiDung": "Có hai đường đều đúng: đi lên trước rồi rẽ phải, hoặc rẽ phải trước rồi đi lên. Mỗi đoạn dài 4 ô.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Một lời giải: **đi tới 100 cm**, **quay phải 90 độ**, **đi tới 100 cm**. Robot đang nhìn lên, quay phải thì nhìn sang phải.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 40
+}
