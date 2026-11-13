@@ -1,0 +1,165 @@
+{
+  "tieuDe": "Chạm tường thì dừng",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "hienTiaDo": true,
+  "soDo": [
+    "khoangCach",
+    "camBienCham"
+  ],
+  "viTriBatDau": {
+    "x": 0,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {},
+  "vatThe": [],
+  "bienThe": [
+    {
+      "ten": "tường gần",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            26.5,
+            5.0
+          ],
+          "size": [
+            100,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "satTuong": {
+          "ten": "chỗ sát tường",
+          "x": 0,
+          "y": 17.0,
+          "rong": 60,
+          "dai": 8,
+          "an": true
+        }
+      }
+    },
+    {
+      "ten": "tường vừa",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            51.5,
+            5.0
+          ],
+          "size": [
+            100,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "satTuong": {
+          "ten": "chỗ sát tường",
+          "x": 0,
+          "y": 42.0,
+          "rong": 60,
+          "dai": 8,
+          "an": true
+        }
+      }
+    },
+    {
+      "ten": "tường xa",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            76.5,
+            5.0
+          ],
+          "size": [
+            100,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "satTuong": {
+          "ten": "chỗ sát tường",
+          "x": 0,
+          "y": 67.0,
+          "rong": 60,
+          "dai": 8,
+          "an": true
+        }
+      }
+    }
+  ],
+  "deBai": "Phía trước robot có một bức tường. Mỗi lần bấm ▶ Chạy, tường lại đứng ở một chỗ khác (gần, vừa hoặc xa), nên bạn **không thể đếm trước số cm**.\n\nHãy cho robot **chạy tới cho đến khi cảm biến chạm ở mũi xe bị nhấn**, rồi **dừng lại** và **kêu bíp** để báo đã tới tường.\n\nThanh cản ở mũi xe sáng vàng lúc bị nhấn. Ô \"Cảm biến chạm\" phía dưới cho biết cảm biến đang đọc gì.",
+  "nguyenLi": "**Cảm biến chạm** là một công tắc. Thanh cản ở mũi xe bị ép vào tường thì hai lá kim loại bên trong chạm nhau, mạch điện đóng lại, bộ điều khiển đọc được \"đang bị nhấn\" (đúng/sai, 1 hoặc 0). Cảm biến không cho biết tường còn xa bao nhiêu, nó chỉ báo khi **đã chạm**. Vì thế chương trình phải hỏi cảm biến liên tục (khối **chờ đến khi**) và dừng motor ngay lúc nhận được tín hiệu.\n\nNói với học sinh: bạn đi trong phòng tối, giơ tay ra phía trước. Tay chạm tường thì bạn dừng bước. Bạn không cần biết tường xa bao nhiêu.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "satTuong",
+      "moTa": "Robot dừng sát tường (mũi xe chạm tường)"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_dang_cham"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot chạy tới tường và dừng nhờ cảm biến chạm"
+    },
+    {
+      "moTa": "Kêu bíp khi chạm tường",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": "beep",
+          "tenKhoi": "\"bíp\""
+        }
+      ]
+    },
+    {
+      "moTa": "Dùng tối đa 4 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 4
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Robot không biết tường ở đâu. Nó chỉ biết một điều: thanh cản ở mũi đã bị nhấn hay chưa. Vậy robot nên làm gì **trong lúc** thanh cản chưa bị nhấn?",
+    {
+      "noiDung": "Ba việc theo thứ tự: bật motor cho robot **chạy tới** (không ghi số cm), **chờ đến khi** cảm biến chạm bị nhấn, rồi **dừng**. Khối \"chờ đến khi\" ở nhóm Điều khiển, khối \"cảm biến chạm đang bị nhấn?\" ở nhóm Cảm biến.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **chạy tới** → **chờ đến khi** ⟨cảm biến chạm đang bị nhấn?⟩ → **dừng** → **bíp**.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 30
+}

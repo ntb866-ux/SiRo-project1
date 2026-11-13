@@ -1,0 +1,164 @@
+{
+  "tieuDe": "Dừng cách tường 20 cm",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "hienTiaDo": true,
+  "soDo": [
+    "khoangCach",
+    "camBienCham"
+  ],
+  "viTriBatDau": {
+    "x": 0,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {},
+  "vatThe": [],
+  "bienThe": [
+    {
+      "ten": "tường gần",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            21.5,
+            5.0
+          ],
+          "size": [
+            100,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "vach20": {
+          "ten": "vạch 20 cm",
+          "x": 0,
+          "y": 0,
+          "rong": 40,
+          "dai": 1,
+          "mau": "lam"
+        }
+      }
+    },
+    {
+      "ten": "tường vừa",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            46.5,
+            5.0
+          ],
+          "size": [
+            100,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "vach20": {
+          "ten": "vạch 20 cm",
+          "x": 0,
+          "y": 25,
+          "rong": 40,
+          "dai": 1,
+          "mau": "lam"
+        }
+      }
+    },
+    {
+      "ten": "tường xa",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            71.5,
+            5.0
+          ],
+          "size": [
+            100,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "vach20": {
+          "ten": "vạch 20 cm",
+          "x": 0,
+          "y": 50,
+          "rong": 40,
+          "dai": 1,
+          "mau": "lam"
+        }
+      }
+    }
+  ],
+  "deBai": "Lần này robot **không được chạm tường**. Hãy cho robot chạy tới và dừng lại khi **cảm biến khoảng cách đo được 20 cm**. Vạch xanh lam trên sân cách tường đúng 20 cm để bạn so bằng mắt.\n\nTường vẫn đổi chỗ mỗi lần chạy. Bật \"Hiện tia đo\" để thấy các tia của cảm biến: tia đỏ là tia ngắn nhất, chính là số cảm biến báo về.",
+  "nguyenLi": "**Cảm biến siêu âm** phát một chuỗi sóng âm rất cao (khoảng 40 000 Hz, tai người không nghe được), rồi đo thời gian t từ lúc phát đến lúc nghe tiếng vọng. Âm đi tới vật rồi quay về, tức là đi **hai lần** khoảng cách, nên: **khoảng cách = vận tốc âm × thời gian ÷ 2**. Âm trong không khí đi khoảng 343 m/s = 34 300 cm/s. Tiếng vọng về sau 1,17 phần nghìn giây thì vật cách 34 300 × 0,00117 ÷ 2 ≈ 20 cm. Trong giả lập, cảm biến bắn ra 21 tia thẳng hình quạt và lấy điểm chạm gần nhất, thay cho sóng âm.\n\nRobot đang chạy có **quán tính**: tắt motor rồi nó vẫn trôi thêm một đoạn mới đứng hẳn. Chạy càng nhanh, đoạn trôi càng dài. Muốn dừng đúng 20 cm thì chạy chậm lại khi gần tới, hoặc ra lệnh dừng sớm hơn một chút.\n\nNói với học sinh: con dơi kêu \"chíp\" rồi nghe tiếng vọng. Tiếng vọng về càng nhanh thì vật càng gần. Giống như ném quả bóng vào tường: bóng bay đi rồi bay về, nên đường bóng đi dài gấp đôi khoảng cách tới tường.",
+  "mucTieu": [
+    {
+      "loai": "khoangCachCuoi",
+      "tu": 15,
+      "den": 25
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_khoang_cach"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Dừng cách tường khoảng 20 cm (từ 15 đến 25 cm)"
+    },
+    {
+      "moTa": "Không chạm tường",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Dừng thật chính xác: từ 19 đến 21 cm",
+      "dieuKien": [
+        {
+          "loai": "khoangCachCuoi",
+          "tu": 19,
+          "den": 21
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Bài trước robot chờ cảm biến chạm. Bài này robot chờ điều gì? Hãy so sánh số đo khoảng cách với 20.",
+    {
+      "noiDung": "**Chạy tới** → **chờ đến khi** ⟨khoảng cách phía trước (cm) < 20⟩ → **dừng**. Khối so sánh \"<\" ở nhóm Phép toán.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Dừng lố vài cm? Đó là quán tính. Đặt tốc độ nhỏ hơn (ví dụ 30), hoặc cho robot dừng ở số lớn hơn 20 một chút (ví dụ < 21). Nhìn ô \"Khoảng cách\" để biết robot trôi thêm bao nhiêu.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 30
+}

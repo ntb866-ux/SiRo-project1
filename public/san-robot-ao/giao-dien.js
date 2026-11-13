@@ -310,6 +310,20 @@ var sanRobotAo = new function() {
       '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
       '            sra_dong_bo_huong()\n' +
       '        sra_dt.turn_for(do, sra[\'toc_do\'])\n' +
+      '\n' +
+      '    # Chay khong gioi han: tang toc dan 0,3 s co giu huong theo gyro de banh\n' +
+      '    # khong truot (bat motor dot ngot o 100% lam robot lech 20-25 do), roi chay deu.\n' +
+      '    def sra_chay(huong):\n' +
+      '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
+      '            sra_dong_bo_huong()\n' +
+      '        v_dich = sra[\'toc_do\'] * huong\n' +
+      '        t0 = time.time()\n' +
+      '        while time.time() - t0 < 0.3:\n' +
+      '            v = v_dich * (0.15 + 0.85 * (time.time() - t0) / 0.3)\n' +
+      '            lech = max(-15, min(15, (sra_dt.gyro.angle - sra_dt.heading) * 2.0))\n' +
+      '            sra_dt.tank.on(max(-100, min(100, v - lech)), max(-100, min(100, v + lech)))\n' +
+      '            time.sleep(0.005)\n' +
+      '        sra_dt.tank.on(v_dich, v_dich)\n' +
       '\n'
     );
   };
