@@ -51,6 +51,7 @@
   }
 
   napScript('star-rules.js')
+    .then(() => napScript('so-do.js'))
     .then(() => napScript('records.js'))
     .then(() => napScript('giao-dien.js'))
     .then(() => napScript('challenge-engine.js'))
