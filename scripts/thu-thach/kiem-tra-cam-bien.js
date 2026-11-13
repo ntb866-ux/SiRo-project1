@@ -31,6 +31,24 @@ const CA = {
     { ten: 'tốc độ 100%, phanh sớm khi < 27', sao: 3, ma: [['toc', 100], ['chay'], ['cho', ['<', ['kc'], 27]], ['dung']] },
     { ten: 'chờ chạm rồi dừng', sao: 0, bienThe: [1], ma: [['chay'], ['cho', ['cham']], ['dung']] },
   ],
+  [C + '03-do-xe-giua-hai-xe']: [
+    { ten: 'đi tới (kc − 3) ÷ 2', sao: 3, ma: [['di', ['/', ['-', ['kc'], 3], 2]]] },
+    { ten: 'đi tới kc ÷ 2 (quên khe sau)', sao: 2, ma: [['di', ['/', ['kc'], 2]]] },
+    { ten: 'đi tới hết kc (đâm xe trước)', sao: 0, bienThe: [0], ma: [['di', ['kc']]] },
+    { ten: 'đếm cm cho khe vừa, chạy ở khe rộng', sao: 0, bienThe: [2], ma: [['di', 28.5], ['cho', ['<', ['kc'], 1000]]] },
+  ],
+  [C + '04-men-theo-tuong']: [
+    { ten: 'lặp 4 lần: chạy, chờ < 20, dừng, quay phải', sao: 3, ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['phai', 90]]]] },
+    { ten: 'viết 4 lần không lặp', sao: 2, bienThe: [1], ma: [].concat(...[1, 2, 3, 4].map(() => [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['phai', 90]])) },
+    { ten: 'quay trái (ngược chiều)', sao: 0, bienThe: [0], ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['trai', 90]]]] },
+    { ten: 'ngưỡng 8 cm: quẹt tường khi quay', sao: 0, bienThe: [0], ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 8]], ['dung'], ['phai', 90]]]] },
+    { ten: 'chỉ lặp 3 lần', sao: 0, bienThe: [2], ma: [['lap', 3, [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['phai', 90]]]] },
+  ],
+  [C + '05-thoat-me-cung-nho']: [
+    { ten: 'bàn tay phải, 5 khối', sao: 3, ma: [['lapMai', [['phai', 90], ['lapDen', ['>', ['kc'], 30], [['trai', 90]]], ['di', 50]]]] },
+    { ten: 'bàn tay phải dạng nếu/không thì', sao: 2, bienThe: [0], ma: [['lapMai', [['phai', 90], ['neu', ['<', ['kc'], 30], [['trai', 90], ['neu', ['<', ['kc'], 30], [['trai', 90], ['neu', ['<', ['kc'], 30], [['trai', 90]], []]], []]], []], ['di', 50]]]] },
+    { ten: 'chỉ đi thẳng khi trống, không rẽ phải trước', sao: 0, bienThe: [1], ma: [['lapMai', [['lapDen', ['>', ['kc'], 30], [['trai', 90]]], ['di', 50]]]] },
+  ],
 };
 
 function so(v) {
