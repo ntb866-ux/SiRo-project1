@@ -382,6 +382,7 @@ SRA.napBai = async function(id) {
     sanRobotAo.datCheDo(bai.cheDo);
   }
   if (bai.locKhoi) blockly.loadToolboxFilter(bai.locKhoi);
+  if (SRA.soDo) SRA.soDo.bat(bai.soDo);
 
   // Chương trình: bài làm đã lưu, hoặc chương trình mở đầu của bài, hoặc trống
   let ma = SRA.tienDo.docMa(id) || bai.maBatDau;
