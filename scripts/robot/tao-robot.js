@@ -9,10 +9,10 @@ const r4 = (x) => Math.round(x * 10000) / 10000;
 
 // Kích thước thân và bánh, đơn vị cm.
 function taoRobot(o) {
-  const bodyWidth = 14.4, bodyLength = 16, bodyHeight = 4;
-  const wheelWidth = 1.2, wheelToBodyOffset = 0.2;
+  const bodyWidth = o.bodyWidth || 14.4, bodyLength = 16, bodyHeight = 4;
+  const wheelWidth = o.wheelWidth || 1.2, wheelToBodyOffset = 0.2;
   const wheelDiameter = r4(o.chuViBanh / PI);       // chọn chu vi tròn số cho dễ tính
-  const truc = 4;                                   // trục bánh ở z = +4 cm (trước tâm thân 4 cm)
+  const truc = o.truc != null ? o.truc : 4;        // trục bánh ở z = +4 cm (trước tâm thân 4 cm)
   const wheelR = wheelDiameter / 2;
   const edgeY = 1;                                  // tâm bánh cao hơn đáy thân 1 cm
   const tamThanCaoY = bodyHeight / 2 + wheelR - edgeY; // độ cao tâm thân so với mặt sân
@@ -26,7 +26,7 @@ function taoRobot(o) {
   components.push({ type: 'UltrasonicSensor', position: [0, 2.5, 7], rotation: [0, 0, 0], options: {} });
   components.push({ type: 'GyroSensor', position: [0, 2.5, 0], options: {} });
   // Cảm biến chạm ở mũi: thanh cản rộng 10 cm, tấm đỏ quay ra phía trước
-  components.push({ type: 'TouchSensor', position: [0, 0, 9], rotation: [-PI / 2, 0, 0], options: { width: 10, depth: 2 } });
+  components.push({ type: 'TouchSensor', position: [0, 0, 9], rotation: [-PI / 2, 0, 0], options: { width: o.rongThanhCan || 10, depth: 2 } });
   // Bút đặt đúng tâm quay (giữa hai bánh), đầu bút sát mặt sân
   components.push({ type: 'Pen', position: [0, r4(-tamThanCaoY + 2.6), truc], rotation: [0, 0, 0], options: {} });
   (o.mauThem || []).forEach(function (x) {
@@ -46,7 +46,7 @@ function taoRobot(o) {
 
   const spacing = bodyWidth + wheelWidth + 2 * wheelToBodyOffset;
 
-  return {
+  const json = {
     name: o.name,
     shortDescription: o.tenNgan,
     longDescription: '<p>' + o.moTa + '</p>',
@@ -54,6 +54,7 @@ function taoRobot(o) {
       '<h3>Kích thước</h3><ul>' +
       '<li>Đường kính bánh: ' + wheelDiameter.toFixed(2).replace('.', ',') + ' cm (chu vi ' + o.chuViBanh + ' cm)</li>' +
       '<li>Khoảng cách hai bánh (tâm đến tâm): ' + spacing.toFixed(1).replace('.', ',') + ' cm</li></ul>' +
+      (o.moTaThem || '') +
       '<h3>Động cơ</h3><ul><li>Cổng A: Bánh trái</li><li>Cổng B: Bánh phải</li></ul>' +
       '<h3>Cảm biến</h3><ul>' + moTaCamBien.join('') + '</ul>',
     thumbnail: '',
@@ -80,6 +81,9 @@ function taoRobot(o) {
     components: components,
     options: {}
   };
+  if (o.casterOffsetZ != null) json.casterOffsetZ = o.casterOffsetZ;
+  if (o.moHinh) json.sraMoHinh = o.moHinh;   // vỏ 3D chỉ để nhìn, không ảnh hưởng vật lí
+  return json;
 }
 
 const robots = [
@@ -92,6 +96,14 @@ const robots = [
   { file: 'do-line', name: 'siro_doLine', tenNgan: 'Robot dò đường (3 cảm biến màu)', color: '#8E44AD', chuViBanh: 20, casterDiameter: 4,
     mauThem: [-3, 3],
     moTa: 'Robot chuẩn có 3 cảm biến màu dưới gầm (trái, giữa, phải) cách nhau 3 cm, dùng cho bài dò vạch.' },
+  // Robot mang vỏ mBot (bản quét 3D ở public/models/San Robot Ao/mbot.glb).
+  // Kích thước lấy theo bản quét: rộng 12,6 cm, dài 16,6 cm, bánh chu vi ~20 cm,
+  // trục bánh ở sau tâm 2,4 cm, bi tự do ở trước (dưới cảm biến siêu âm).
+  { file: 'mbot', name: 'siro_mBot', tenNgan: 'Robot mBot (vỏ 3D)', color: '#1F9BD7', chuViBanh: 20, casterDiameter: 2,
+    bodyWidth: 8.2, wheelWidth: 2, truc: -2.4, casterOffsetZ: 11, rongThanhCan: 8,
+    moHinh: { url: 'models/San Robot Ao/mbot.glb', tiLe: 100, dichChuyen: [0, 0.6, 0], xoayY: 0 },
+    moTaThem: '<p>Vỏ 3D quét từ xe mBot thật, chỉ để nhìn. Va chạm vẫn tính bằng thân hộp và hai bánh bên trong. Bánh trên vỏ đứng yên, không quay theo.</p>',
+    moTa: 'Robot có hình dáng mBot, kích thước gần đúng xe thật: bánh chu vi 20 cm ở phía sau, bi tự do phía trước. Cùng cổng cảm biến với robot chuẩn nên chạy được mọi chương trình.' },
 ];
 
 const outDir = path.join(__dirname, '..', '..', 'public', 'san-robot-ao', 'robots');

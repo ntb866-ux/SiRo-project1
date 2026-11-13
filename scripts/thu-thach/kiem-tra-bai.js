@@ -17,6 +17,10 @@ const CA = {
     { ten: 'rẽ phải rồi lên', sao: 2, ma: [['phai', 90], ['di', 100], ['trai', 90], ['di', 100]], },
     { ten: 'đi chéo qua hồ', sao: 0, ma: [['phai', 45], ['di', 141.4]] },
   ],
+  '01-di-chuyen/06-lai-mbot': [
+    { ten: 'mBot lên rồi rẽ phải', sao: 3, ma: [['di', 100], ['phai', 90], ['di', 100]] },
+    { ten: 'mBot đi chéo qua hồ', sao: 0, ma: [['phai', 45], ['di', 141.4]] },
+  ],
   '01-di-chuyen/03-do-xe-vao-bai': [
     { ten: 'lùi vào bãi', sao: 3, ma: [['di', 75], ['trai', 90], ['lui', 85]] },
     { ten: 'tiến đầu vào bãi', sao: 0, ma: [['di', 75], ['phai', 90], ['di', 85]] },

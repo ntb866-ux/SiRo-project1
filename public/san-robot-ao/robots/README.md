@@ -12,6 +12,7 @@ Các tệp được sinh từ một nguồn duy nhất là `scripts/robot/tao-ro
 | `banh-to.json` | Robot bánh to | Bài so sánh: bánh to đi nhanh hơn, xa hơn mỗi vòng |
 | `banh-nho.json` | Robot bánh nhỏ | Bài so sánh: bánh nhỏ chậm hơn, dễ dừng đúng chỗ |
 | `do-line.json` | Robot dò đường (3 cảm biến màu) | Bài dò vạch |
+| `mbot.json` | Robot mBot (vỏ 3D) | Robot có hình xe mBot (bản quét 3D). Thân 8,2 cm, bánh rộng 2 cm, khoảng cách hai bánh 10,6 cm, trục bánh sau tâm 2,4 cm, bi tự do phía trước. Cùng cổng với robot chuẩn. Vỏ 3D chỉ để nhìn, gắn bằng `san-robot-ao/mo-hinh-robot.js` qua trường `sraMoHinh`. |
 
 ## Bảng thông số
 
