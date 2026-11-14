@@ -1,0 +1,101 @@
+{
+  "tieuDe": "Vẽ ngôi sao năm cánh",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -30.9,
+    "y": -47.55,
+    "goc": 18
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "chân sao bên trái",
+      "x": -30.9,
+      "y": -47.55,
+      "rong": 16,
+      "dai": 16,
+      "mau": "xanh"
+    }
+  },
+  "hinhMau": {
+    "ngoiSao": {
+      "buoc": [
+        [
+          "lap",
+          5,
+          [
+            [
+              "di",
+              100
+            ],
+            [
+              "phai",
+              144
+            ]
+          ]
+        ]
+      ],
+      "mau": "#e0a800"
+    }
+  },
+  "deBai": "Vẽ **ngôi sao năm cánh** bằng một nét liền, không nhấc bút: 5 đoạn thẳng, mỗi đoạn dài **100 cm**.\n\nRobot đứng ở chân trái của ngôi sao, đã nhìn sẵn về phía **đỉnh trên cùng**. Ở mỗi đầu nhọn robot **rẽ phải**. Đầu nhọn của ngôi sao có góc **36°**.\n\nThử tính trước: robot quay mấy lần, mỗi lần bao nhiêu độ, tổng cộng bao nhiêu độ?",
+  "nguyenLi": "Ở mỗi đầu nhọn góc 36°, robot phải quay góc ngoài 180° − 36° = **144°**. Năm lần quay: 5 × 144° = **720°**, tức **hai vòng**, chứ không phải một vòng như hình vuông hay lục giác. Lí do: ngôi sao không phải đa giác lồi, nét vẽ quấn quanh tâm ngôi sao **hai lần** (thử dùng ngón tay lần theo nét vẽ, đếm số lần ngón tay đi vòng quanh tâm).\n\nQuy tắc đầy đủ: tổng góc quay = 360° × số vòng quấn quanh tâm. Đa giác lồi quấn 1 vòng, ngôi sao 5 cánh quấn 2 vòng.\n\nNói với học sinh: vẽ ngôi sao, robot phải xoay người hai vòng mới về đúng hướng ban đầu.",
+  "mucTieu": [
+    {
+      "loai": "veGiongMau",
+      "mau": "ngoiSao",
+      "saiSo": 4,
+      "phu": 90,
+      "chinhXac": 90,
+      "moTa": "Vẽ chồng khít lên ngôi sao mẫu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Vẽ được ngôi sao trùng hình mẫu"
+    },
+    {
+      "moTa": "Về tới chân trái vẫn nhìn về đỉnh trên (đã quay tổng cộng 720°)",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 18,
+          "saiSo": 10
+        },
+        {
+          "loai": "dungTrongVung",
+          "vung": "xuatPhat"
+        }
+      ]
+    },
+    {
+      "moTa": "Dùng khối lặp, tối đa 4 khối",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "controls_repeat_ext",
+            "controls_repeat"
+          ]
+        },
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 4
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đầu nhọn của ngôi sao rất nhọn (36°), nên robot phải quay gần như quay đầu lại. Nhiều hơn hay ít hơn 90°?",
+    {
+      "noiDung": "Góc quay = 180° − 36°. Ngôi sao có 5 đoạn thẳng nên robot làm 5 lần { đi, quay }.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **hạ bút**, rồi **lặp lại 5 lần** { **đi tới 100 cm**, **quay phải 144 độ** }. 5 × 144° = 720°: hai vòng!",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 120
+}

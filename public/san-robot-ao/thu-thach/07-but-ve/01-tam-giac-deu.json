@@ -1,0 +1,100 @@
+{
+  "tieuDe": "Vẽ tam giác đều",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -62.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "ô xuất phát B2",
+      "x": -62.5,
+      "y": -62.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    }
+  },
+  "hinhMau": {
+    "tamGiac": {
+      "buoc": [
+        [
+          "lap",
+          3,
+          [
+            [
+              "di",
+              100
+            ],
+            [
+              "phai",
+              120
+            ]
+          ]
+        ]
+      ]
+    }
+  },
+  "deBai": "Trên sân có vẽ sẵn một **tam giác đều** màu xám: ba cạnh đều dài **100 cm** (4 ô), ba góc trong bằng nhau, mỗi góc **60°**.\n\nRobot đứng ở đỉnh **B2**, nhìn lên trên. Hãy **hạ bút** rồi cho robot đi theo các cạnh, **rẽ phải** ở mỗi đỉnh, để vẽ chồng khít lên hình mẫu.\n\nCẩn thận: robot rẽ bao nhiêu độ ở mỗi đỉnh? Có phải 60° không?",
+  "nguyenLi": "Khi đi vòng quanh một hình, ở mỗi đỉnh robot đổi hướng một **góc ngoài** = 180° − góc trong. Tam giác đều có góc trong 60° nên robot phải quay 180° − 60° = **120°**. Đi hết ba đỉnh, robot quay tổng cộng 3 × 120° = **360°**, đúng một vòng. Đây là quy tắc của mọi đa giác lồi: **tổng các góc ngoài luôn bằng 360°**.\n\nNói với học sinh: robot là người đi bộ. Góc 60° là góc của hình, còn robot phải xoay người nhiều hơn thế, xoay cho đến khi mặt nhìn dọc theo cạnh tiếp theo.",
+  "mucTieu": [
+    {
+      "loai": "veGiongMau",
+      "mau": "tamGiac",
+      "saiSo": 4,
+      "phu": 90,
+      "chinhXac": 90,
+      "moTa": "Vẽ chồng khít lên tam giác mẫu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Vẽ được tam giác đều trùng hình mẫu"
+    },
+    {
+      "moTa": "Về tới đỉnh B2 vẫn nhìn lên trên (đã quay tổng cộng 360°)",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 0,
+          "saiSo": 10
+        },
+        {
+          "loai": "dungTrongVung",
+          "vung": "xuatPhat"
+        }
+      ]
+    },
+    {
+      "moTa": "Dùng khối lặp, tối đa 4 khối",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "controls_repeat_ext",
+            "controls_repeat"
+          ]
+        },
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 4
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Thử đứng dậy đi một tam giác trên sàn lớp. Ở mỗi góc bạn xoay người nhiều hay ít? Nhiều hơn hay ít hơn một góc vuông (90°)?",
+    {
+      "noiDung": "Nếu robot quay 60° thì nó vẽ ra hình gì? Chạy thử để xem. Góc robot phải quay là **góc ngoài** = 180° − 60°.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **hạ bút**, rồi **lặp lại 3 lần** { **đi tới 100 cm**, **quay phải 120 độ** }.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 90
+}

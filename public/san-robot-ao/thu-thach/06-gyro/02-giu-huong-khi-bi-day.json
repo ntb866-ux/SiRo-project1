@@ -1,0 +1,134 @@
+{
+  "tieuDe": "Giữ hướng khi bị đẩy lệch",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -82.5,
+    "goc": 0
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "ô xuất phát D1",
+      "x": -12.5,
+      "y": -82.5,
+      "rong": 25,
+      "dai": 25,
+      "mau": "xanh"
+    },
+    "gio": {
+      "ten": "vùng bị đẩy",
+      "x": -12.5,
+      "y": -35,
+      "rong": 50,
+      "dai": 20,
+      "mau": "lam"
+    },
+    "leTrai": {
+      "ten": "lề trái",
+      "x": -68.75,
+      "y": 6.25,
+      "rong": 62.5,
+      "dai": 112.5,
+      "mau": "do"
+    },
+    "lePhai": {
+      "ten": "lề phải",
+      "x": 56.25,
+      "y": 6.25,
+      "rong": 87.5,
+      "dai": 112.5,
+      "mau": "do"
+    },
+    "dich": {
+      "ten": "đích D8",
+      "x": -12.5,
+      "y": 81.25,
+      "rong": 50,
+      "dai": 37.5,
+      "mau": "vang"
+    }
+  },
+  "cuDay": [
+    {
+      "vung": "gio",
+      "phia": "phai",
+      "manh": 1,
+      "thongBao": "Ối! Robot bị đẩy mạnh vào mũi, lệch sang phải."
+    }
+  ],
+  "locKhoi": {
+    "deny": {
+      "blocks": [
+        "sra_di",
+        "sra_quay",
+        "sra_chay"
+      ]
+    }
+  },
+  "deBai": "Robot phải chạy thẳng lên **đích D8** trong làn đường giữa hai **lề đỏ**. Khi đi qua **vùng xanh dương**, robot sẽ bị **đẩy mạnh vào mũi**, lệch sang phải.\n\nHãy dùng **góc quay (gyro)** để robot tự phát hiện mình bị lệch và **lái trở lại hướng thẳng**. Cho robot dừng lại khi tới gần tường phía trên (khoảng cách phía trước nhỏ hơn 20 cm).\n\nKhối \"đi tới … cm\", \"quay … độ\" và \"đi tới mãi\" bị khóa trong bài này. Dùng khối **chạy bánh trái … bánh phải …** (nhóm Động cơ) để lái: bánh trái nhanh hơn thì robot cong sang phải, bánh phải nhanh hơn thì cong sang trái.",
+  "nguyenLi": "Đây là **điều khiển phản hồi** (vòng kín): robot liên tục **đo** (gyro cho biết lệch bao nhiêu độ), **so** với hướng mong muốn (0°), rồi **sửa** (lái ngược lại), lặp đi lặp lại nhiều lần mỗi giây. Lệch phải (góc quay dương) thì cho bánh phải chạy nhanh hơn để cong về trái, lệch trái thì ngược lại.\n\nCú đẩy là một **xung lực** vào mũi robot: nó làm robot vừa xoay vừa trượt ngang. Gyro đo được phần xoay nên sửa được hướng, nhưng phần trượt ngang thì gyro không đo được, vì thế robot về đúng hướng mà vẫn lệch khỏi giữa làn vài cm.\n\nThật ra khối \"đi tới … cm\" của Sân Robot Ảo cũng làm đúng việc này bên trong: nó đọc gyro liên tục và chỉnh hai bánh để đi thẳng.\n\nNói với học sinh: giống đạp xe, bị gió thổi lệch tay lái thì bạn bẻ lái ngược lại, không phải bẻ một lần là xong mà sửa liên tục.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich",
+      "moTa": "Dừng ở đích D8"
+    },
+    {
+      "loai": "khongVaoVung",
+      "vung": "leTrai"
+    },
+    {
+      "loai": "khongVaoVung",
+      "vung": "lePhai"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": [
+        "sra_goc_quay",
+        "gyro_sensor"
+      ],
+      "moTa": "Dùng cảm biến góc quay (gyro)"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Tới đích, không lấn lề"
+    },
+    {
+      "moTa": "Tới đích vẫn nhìn thẳng lên trên (lệch tối đa 5°), không chạm tường",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 0,
+          "saiSo": 5
+        },
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Chương trình gọn: tối đa 6 khối",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 6
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Chạy thử với khối **chạy bánh trái 50 % bánh phải 50 %** và không sửa gì. Sau cú đẩy robot đi đâu? Đọc **góc quay** lúc đó là số dương hay âm?",
+    {
+      "noiDung": "Robot cần làm đi làm lại: nếu **góc quay > 0** (lệch phải) thì cho bánh phải nhanh hơn, nếu không thì cho bánh trái nhanh hơn. Dùng khối **lặp cho đến khi** với điều kiện **khoảng cách phía trước < 20**.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **đặt lại góc quay về 0**; **lặp cho đến khi** khoảng cách phía trước < 20 { **nếu** góc quay > 0 **thì** chạy bánh trái 30 % bánh phải 50 % **nếu không thì** chạy bánh trái 50 % bánh phải 30 % }; **dừng lại**.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 40
+}

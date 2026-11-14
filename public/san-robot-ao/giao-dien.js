@@ -130,6 +130,8 @@ var sanRobotAo = new function() {
     '#sra-chay#': { en: 'keep moving %1', vi: 'đi %1 mãi' },
     '#sra-chay_tooltip#': { en: 'The robot keeps moving until another movement block or stop', vi: 'Robot đi liên tục cho đến khi gặp lệnh di chuyển khác hoặc lệnh dừng' },
     '#sra-dung#': { en: 'stop moving', vi: 'dừng lại' },
+    '#sra-xoay#': { en: 'keep turning %1', vi: 'quay %1 mãi' },
+    '#sra-xoay_tooltip#': { en: 'The robot keeps turning on the spot until another movement block or stop', vi: 'Robot quay tại chỗ liên tục cho đến khi gặp lệnh di chuyển khác hoặc lệnh dừng' },
     '#sra-quay_banh#': { en: 'spin left wheel %1 right wheel %2 %3', vi: 'quay bánh trái %1 bánh phải %2 %3' },
     '#sra-vong#': { en: 'rotations', vi: 'vòng' },
     '#sra-do#': { en: 'degrees', vi: 'độ' },
@@ -208,6 +210,14 @@ var sanRobotAo = new function() {
         ],
         previousStatement: null, nextStatement: null,
         style: 'sra_chuyen_dong', tooltip: '#sra-chay_tooltip#',
+      },
+      {
+        type: 'sra_xoay', message0: '#sra-xoay#',
+        args0: [
+          { type: 'field_dropdown', name: 'HUONG', options: [['#sra-phai#', 'PHAI'], ['#sra-trai#', 'TRAI']] },
+        ],
+        previousStatement: null, nextStatement: null,
+        style: 'sra_chuyen_dong', tooltip: '#sra-xoay_tooltip#',
       },
       {
         type: 'sra_dung', message0: '#sra-dung#',
@@ -385,6 +395,9 @@ var sanRobotAo = new function() {
       sra_chay: function(block) {
         return 'sra_chay(' + (block.getFieldValue('HUONG') == 'LUI' ? '-1' : '1') + ')\n';
       },
+      sra_xoay: function(block) {
+        return 'sra_xoay(' + (block.getFieldValue('HUONG') == 'TRAI' ? '-1' : '1') + ')\n';
+      },
       sra_dung: function() {
         return 'sra_dung()\n';
       },
@@ -450,6 +463,10 @@ var sanRobotAo = new function() {
       '    v = sra[\'toc_do\'] * huong\n' +
       '    tank_drive.on(v, v)\n' +
       '\n' +
+      'def sra_xoay(huong):\n' +
+      '    v = sra[\'toc_do\'] * huong\n' +
+      '    tank_drive.on(v, -v)\n' +
+      '\n' +
       'def sra_dung():\n' +
       '    tank_drive.off(brake=True)\n' +
       '\n' +
@@ -512,6 +529,10 @@ var sanRobotAo = new function() {
       '    v = sra_dps() * huong\n' +
       '    move_tank(v, v)\n' +
       '\n' +
+      'def sra_xoay(huong):\n' +
+      '    v = sra_dps() * huong\n' +
+      '    move_tank(v, -v)\n' +
+      '\n' +
       'def sra_dung():\n' +
       '    left_motor.brake()\n' +
       '    right_motor.brake()\n' +
@@ -562,7 +583,7 @@ var sanRobotAo = new function() {
         return code;
       };
     });
-    Blockly.Python.addReservedWords('sra_quay_banh,sra_chay_banh,sra_toc_do_doc,sra,sra_di,sra_quay,sra_chay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
+    Blockly.Python.addReservedWords('sra_quay_banh,sra_chay_banh,sra_toc_do_doc,sra,sra_di,sra_quay,sra_chay,sra_xoay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
   };
 
   // ==========================================================================
@@ -584,6 +605,7 @@ var sanRobotAo = new function() {
         '<block type="sra_quay"><field name="HUONG">PHAI</field>' + soBong('DO', 90) + '</block>' +
         '<block type="sra_quay"><field name="HUONG">TRAI</field>' + soBong('DO', 90) + '</block>' +
         '<block type="sra_chay"></block>' +
+        '<block type="sra_xoay"></block>' +
         '<block type="sra_dung"></block>' +
         '<block type="sra_dat_toc_do">' + soBong('TOC_DO', 50) + '</block>'
       , 'id="sraChuyenDong"') +
@@ -637,7 +659,15 @@ var sanRobotAo = new function() {
       '<category name="Biến" colour="' + self.MAU.bien[0] + '" custom="VARIABLE2" id="sraBien"></category>' +
       '<category name="Khối của tôi" colour="' + self.MAU.khoi_cua_toi[0] + '" custom="PROCEDURE2" id="sraKhoiCuaToi"></category>' +
       '</xml>';
-    return (new DOMParser()).parseFromString(xml, 'text/xml').getElementById('toolbox');
+    let toolbox = (new DOMParser()).parseFromString(xml, 'text/xml').getElementById('toolbox');
+    let loc = self.locCoBan || {};
+    for (let b of Array.from(toolbox.querySelectorAll('block'))) {
+      if ((loc.blocks || []).includes(b.getAttribute('type')) && b.parentNode.tagName == 'category') b.remove();
+    }
+    for (let c of Array.from(toolbox.querySelectorAll('category'))) {
+      if ((loc.categories || []).includes(c.getAttribute('name')) || (loc.categories || []).includes(c.getAttribute('id'))) c.remove();
+    }
+    return toolbox;
   };
 
   // Thêm nhóm "Chuyển động dễ" vào bảng khối Nâng cao để chương trình làm ở
@@ -764,9 +794,15 @@ var sanRobotAo = new function() {
     };
 
     // Lọc khối theo URL (filterBlocksJSON) chỉ áp dụng cho bảng Nâng cao.
+    // Riêng bộ lọc chỉ "deny" (ẩn bớt khối, như trường locKhoi của bài thử thách) thì
+    // áp dụng cho bảng Cơ bản và giữ nguyên chế độ (bảng Nâng cao không bị lọc).
     let locGoc = blockly.loadToolboxFilter;
     blockly.loadToolboxFilter = function(filter) {
-      if (self.laCoBan()) {
+      if (self.laCoBan() && filter && filter.deny && !filter.allow) {
+        self.locCoBan = filter.deny;
+        self.apDungCheDo();
+        return;
+      } else if (self.laCoBan()) {
         self.datCheDo(self.NANG_CAO);
       }
       return locGoc.apply(blockly, arguments);

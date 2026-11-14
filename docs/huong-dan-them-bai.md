@@ -38,7 +38,7 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | `vatThe` | không | Vật thể thêm vào sân riêng cho bài này (tường ngăn, khối hộp…), theo định dạng `objects` của GEARS (xem tệp sân). Vật thể có `"physicsOptions": "fixed"` được tính là tường. |
 | `maBatDau` | không | Chương trình khối mở sẵn (XML của Blockly), dùng cho bài "sửa lỗi chương trình". |
 | `cheDo` | không | `co-ban` hoặc `nang-cao`: ép chế độ khối của gói G1 (khối "đi tới … cm", "quay phải … độ" ở Cơ bản). Bỏ trống thì giữ chế độ học sinh đang dùng. |
-| `locKhoi` | không | Ẩn bớt khối trong hộp công cụ, theo định dạng lọc của GEARS: `{ "deny": { "categories": [...], "blocks": [...] } }`. |
+| `locKhoi` | không | Ẩn bớt khối trong hộp công cụ, theo định dạng lọc của GEARS: `{ "deny": { "categories": [...], "blocks": [...] } }`. Bộ lọc chỉ có `deny` dùng được cả ở chế độ Cơ bản (ví dụ `{ "deny": { "blocks": ["sra_quay"] } }` khóa khối "quay … độ"); bộ lọc có `allow` sẽ chuyển sang Nâng cao. Khi đã lọc ở Cơ bản, bảng Nâng cao không bị lọc. |
 | `camera` | không | `toanSan` (mặc định: nhìn từ trên xuống thấy cả sân), `follow` (bám robot) hoặc `arc`. |
 | `phieu` | không | Đường dẫn phiếu học tập, tính từ `san-robot-ao/`. |
 | `soDo` | không | Bật bảng số đo nổi trên sân: `true` (mọi dòng) hoặc mảng tên dòng, ví dụ `["vongTrai", "vongPhai", "tien", "thoiGian"]`. Dòng có sẵn (G5): `thoiGian`, `vongTrai`, `vongPhai`, `vongGiay`, `quangDuong`, `tien`, `tocDo`, `quayThan`, `lechNgang`. Gói khác thêm dòng bằng `SRA.soDo.them(...)` (xem `core/so-do.js`). Cảm biến màu (G7): `doSangGiua`, `doSangTrai`, `doSangPhai`, `mauGiua`, `mauTrai`, `mauPhai`; có dòng `doSang…` thì hiện thêm biểu đồ độ sáng theo thời gian. |
@@ -49,6 +49,9 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | `ketThucKhiVao` | không | Tên một vùng: robot vào vùng này thì lượt chạy kết thúc ngay và được chấm, dù chương trình còn chạy. Dùng cho bài có khối "lặp mãi" (mê cung, đi tìm đích). |
 | `bienThe` | không | Các phiên bản sân; mỗi lần bấm Chạy chọn ngẫu nhiên một bản. Mỗi bản có thể ghi đè `viTriBatDau`, nối thêm `vatThe` và ghi đè vị trí (`x`, `y`, `rong`, `dai`) của vùng cùng tên. Dùng để học sinh không đo sẵn quãng đường mà phải dùng cảm biến. Xem `03-cam-bien-mau/03-phan-loai-mau.json`. |
 | `nguong` | không | Ngưỡng vẽ trên biểu đồ độ sáng (mặc định 50). |
+| `hinhMau` | không | Hình mẫu vẽ sẵn trên sân cho bài bút vẽ (G8). Mỗi hình đặt một tên: `{ "tamGiac": { "buoc": [["lap", 3, [["di", 100], ["phai", 120]]]] } }`. `buoc` là đường đi của "robot mẫu" từ `batDau` (mặc định `viTriBatDau`): `["di", cm]`, `["lui", cm]`, `["phai", độ]`, `["trai", độ]`, `["nhac"]`, `["ha"]`, `["lap", n, [...]]`. Hoặc cho thẳng tọa độ: `"net": [[[x, y], [x, y], …]]`. Tùy chọn: `mau` (`#rrggbb`), `day` (bề rộng nét, cm), `an: true`. Xem [`core/net-ve.js`](../public/san-robot-ao/core/net-ve.js). |
+| `matSan` | không | `{ "maSat": 0.08 }`: hệ số ma sát mặt sân (sân thường 1). Số nhỏ thì sân trơn, bánh trượt. |
+| `cuDay` | không | `[{ "vung": "gio", "phia": "phai", "manh": 1, "thongBao": "…" }]`: lần đầu robot đi vào vùng thì bị đẩy ngang vào mũi, lệch sang `phia`. `manh: 1` làm robot chuẩn đang chạy 40–50 % lệch khoảng 30°. Xem [`core/vat-li-san.js`](../public/san-robot-ao/core/vat-li-san.js). |
 
 ## 4. Điều kiện và cách chấm sao
 
@@ -80,6 +83,7 @@ Các loại điều kiện (`loai`) có sẵn, dùng được cả trong `mucTie
 | `soKhoiToiDa` | `khoi` | Số khối lệnh không quá `khoi`. Không tính khối mũ "When Started" và khối số/phép toán gắn bên trong. Học sinh viết Python thì điều kiện này không đạt. |
 | `huongCuoi` | `goc`, `saiSo` (mặc định 10) | Lúc kết thúc, robot quay mặt về hướng `goc` ± `saiSo` độ. |
 | `dungKhoi` | `khoi` (tên loại khối Blockly, chuỗi hoặc mảng), `toiThieu` (mặc định 1), `tenKhoi` (tên đọc, không bắt buộc) | Chương trình có ít nhất `toiThieu` khối thuộc các loại đó, ví dụ `["controls_repeat_ext", "controls_repeat"]` để bắt buộc dùng vòng lặp, `["sra_ha_but", "penDown"]` cho khối hạ bút. Viết Python thì không đạt. |
+| `veGiongMau` | `mau` (tên trong `hinhMau`), `saiSo` (cm, mặc định 4), `phu`, `chinhXac` (%, mặc định 90) | Nét bút vẽ trùng hình mẫu: ít nhất `phu` % chiều dài hình mẫu có nét vẽ đi qua (cách không quá `saiSo`), và ít nhất `chinhXac` % chiều dài nét vẽ nằm sát hình mẫu. Cách chấm: [bai-gyro-but-ve.md](bai-gyro-but-ve.md#cách-chấm-nét-vẽ-so-với-hình-mẫu). |
 | `dungCamBien` | `toiThieu` | Chương trình khối dùng ít nhất `toiThieu` cảm biến màu khác nhau (giữa, trái, phải). Viết Python thì không đạt. |
 | `khoangCachCuoi` | `tu`, `den` (cm) | Lúc kết thúc, cảm biến khoảng cách (siêu âm) đo được trong khoảng `tu`…`den`. Số đo tính đúng như khối "khoảng cách phía trước (cm)". |
 

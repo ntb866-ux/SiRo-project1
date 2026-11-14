@@ -62,6 +62,8 @@
     .then(() => napScript('challenge-engine.js'))
     .then(() => napScript('so-do-chuyen-dong.js'))
     .then(() => napScript('cam-bien.js'))
+    .then(() => napScript('net-ve.js'))
+    .then(() => napScript('vat-li-san.js'))
     .then(choSanSang)
     .then(() => SRA.napBai(id))
     .catch(function(e) {

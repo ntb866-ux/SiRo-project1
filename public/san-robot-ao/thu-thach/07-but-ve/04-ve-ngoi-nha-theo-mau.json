@@ -1,0 +1,123 @@
+{
+  "tieuDe": "Vẽ ngôi nhà theo hình mẫu",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -37.5,
+    "y": -62.5,
+    "goc": 0
+  },
+  "vung": {
+    "xuatPhat": {
+      "ten": "góc nhà C2",
+      "x": -37.5,
+      "y": -62.5,
+      "rong": 16,
+      "dai": 16,
+      "mau": "xanh"
+    }
+  },
+  "hinhMau": {
+    "ngoiNha": {
+      "buoc": [
+        [
+          "di",
+          75
+        ],
+        [
+          "phai",
+          30
+        ],
+        [
+          "di",
+          75
+        ],
+        [
+          "phai",
+          120
+        ],
+        [
+          "di",
+          75
+        ],
+        [
+          "phai",
+          30
+        ],
+        [
+          "di",
+          75
+        ],
+        [
+          "phai",
+          90
+        ],
+        [
+          "di",
+          75
+        ],
+        [
+          "phai",
+          90
+        ]
+      ],
+      "mau": "#c2410c"
+    }
+  },
+  "deBai": "Trên sân có hình mẫu một **ngôi nhà**: thân nhà là hình vuông, mái là **tam giác đều**. Mọi cạnh đều dài **75 cm** (3 ô).\n\nRobot đứng ở góc nhà dưới bên trái (**C2**), nhìn lên trên. Hãy vẽ cả 5 cạnh ngoài của ngôi nhà bằng một nét liền, rẽ phải ở mỗi góc, rồi về chỗ xuất phát.\n\nĐề không cho sẵn góc quay. Bạn phải tự đọc hình: mỗi góc của ngôi nhà là bao nhiêu độ, robot phải quay bao nhiêu độ?",
+  "nguyenLi": "Ở mỗi góc robot quay **góc ngoài** = 180° − góc trong của hình:\n- chân mái (góc trong 90° + 60° = 150°): quay **30°**,\n- đỉnh mái (góc trong 60°): quay **120°**,\n- hai góc dưới (góc trong 90°): quay **90°**.\n\nCác lần quay không bằng nhau, nhưng cộng lại: 30° + 120° + 30° + 90° + 90° = **360°**. Quy tắc tổng góc ngoài bằng 360° đúng với mọi đa giác lồi, kể cả đa giác không đều. Đây là cách tự kiểm tra chương trình trước khi chạy.\n\nNói với học sinh: hình gì cũng vậy, đi hết một vòng quanh nó và về chỗ cũ thì bạn đã xoay người đúng một vòng.",
+  "mucTieu": [
+    {
+      "loai": "veGiongMau",
+      "mau": "ngoiNha",
+      "saiSo": 4,
+      "phu": 90,
+      "chinhXac": 90,
+      "moTa": "Vẽ chồng khít lên ngôi nhà mẫu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Vẽ được ngôi nhà trùng hình mẫu"
+    },
+    {
+      "moTa": "Về tới C2 vẫn nhìn lên trên (tổng các lần quay là 360°)",
+      "dieuKien": [
+        {
+          "loai": "huongCuoi",
+          "goc": 0,
+          "saiSo": 10
+        },
+        {
+          "loai": "dungTrongVung",
+          "vung": "xuatPhat"
+        }
+      ]
+    },
+    {
+      "moTa": "Vẽ thật khít: phủ 95% hình mẫu, lệch không quá 3 cm",
+      "dieuKien": [
+        {
+          "loai": "veGiongMau",
+          "mau": "ngoiNha",
+          "saiSo": 3,
+          "phu": 95,
+          "chinhXac": 95
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đặt thước đo góc lên hình trên màn hình (hoặc vẽ lại ra giấy). Góc ở chân mái gồm góc vuông của thân nhà cộng góc của tam giác đều.",
+    {
+      "noiDung": "Góc trong ở chân mái là 90° + 60° = 150°, nên robot quay 180° − 150° = 30°. Ở đỉnh mái góc trong là 60°: robot quay bao nhiêu?",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **hạ bút**, đi 75, quay phải 30, đi 75, quay phải 120, đi 75, quay phải 30, đi 75, quay phải 90, đi 75, quay phải 90. Cộng các góc: 30 + 120 + 30 + 90 + 90 = 360.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 120
+}
