@@ -56,6 +56,7 @@
 
   napScript('star-rules.js')
     .then(() => napScript('so-do.js'))
+    .then(() => napScript('cam-bien-mau.js'))
     .then(() => napScript('records.js'))
     .then(() => napScript('giao-dien.js'))
     .then(() => napScript('challenge-engine.js'))

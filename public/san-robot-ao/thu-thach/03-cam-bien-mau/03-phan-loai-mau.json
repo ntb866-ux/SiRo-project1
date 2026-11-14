@@ -1,0 +1,374 @@
+{
+  "tieuDe": "Phân loại màu: đỏ rẽ trái, xanh rẽ phải",
+  "san": "o-mau",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": 0,
+    "y": -80,
+    "goc": 0
+  },
+  "bienThe": [
+    {
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#E53935",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -60,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#E53935",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -60,
+            -80,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#FACC15",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "dich": {
+          "x": -60,
+          "y": -73,
+          "rong": 24,
+          "dai": 34
+        },
+        "giuaDich": {
+          "x": -60,
+          "y": -73,
+          "rong": 12,
+          "dai": 34
+        }
+      }
+    },
+    {
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#E53935",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -60,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#2E9E44",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -60,
+            30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#FACC15",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "dich": {
+          "x": -60,
+          "y": 23,
+          "rong": 24,
+          "dai": 34
+        },
+        "giuaDich": {
+          "x": -60,
+          "y": 23,
+          "rong": 12,
+          "dai": 34
+        }
+      }
+    },
+    {
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#2E9E44",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            60,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#E53935",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            60,
+            30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#FACC15",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "dich": {
+          "x": 60,
+          "y": 23,
+          "rong": 24,
+          "dai": 34
+        },
+        "giuaDich": {
+          "x": 60,
+          "y": 23,
+          "rong": 12,
+          "dai": 34
+        }
+      }
+    },
+    {
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#2E9E44",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            60,
+            -30,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#2E9E44",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            60,
+            -80,
+            0.05
+          ],
+          "size": [
+            20,
+            20,
+            0.1
+          ],
+          "color": "#FACC15",
+          "physicsOptions": false,
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "dich": {
+          "x": 60,
+          "y": -73,
+          "rong": 24,
+          "dai": 34
+        },
+        "giuaDich": {
+          "x": 60,
+          "y": -73,
+          "rong": 12,
+          "dai": 34
+        }
+      }
+    }
+  ],
+  "vung": {
+    "dich": {
+      "ten": "ô vàng (đích)",
+      "x": -60,
+      "y": -73,
+      "rong": 24,
+      "dai": 34,
+      "an": true
+    },
+    "giuaDich": {
+      "ten": "giữa ô vàng",
+      "x": -60,
+      "y": -73,
+      "rong": 12,
+      "dai": 34,
+      "an": true
+    }
+  },
+  "soDo": [
+    "mauGiua",
+    "doSangGiua"
+  ],
+  "deBai": "Robot là xe chở hàng trong kho. Trên đường có **biển báo màu**: gặp ô **đỏ** thì **rẽ trái**, gặp ô **xanh lá** thì **rẽ phải**. Rẽ ở **giữa ô**. Đi theo biển báo tới **ô vàng** thì dừng.\n\nMỗi lần chạy, màu các ô thay đổi ngẫu nhiên nên đường đi cũng khác. Robot phải **nhìn màu rồi quyết định**.\n\nÔ màu thứ nhất cách chỗ xuất phát 40 cm; ô thứ hai cách ô thứ nhất 60 cm (tính từ tâm ô). Mỗi ô rộng 20 cm.",
+  "nguyenLi": "Cảm biến màu đo riêng lượng ánh sáng **đỏ, lục, lam** hắt lại từ mặt sân. Một bề mặt có màu vì nó **hấp thụ** một số màu của ánh sáng trắng và **phản xạ** màu còn lại: ô đỏ hắt lại chủ yếu ánh sáng đỏ, ô xanh lá hắt lại chủ yếu ánh sáng lục, ô vàng hắt lại cả đỏ lẫn lục. So tỉ lệ ba phần này, cảm biến đoán ra màu. Chương trình dùng khối **nếu … thì … không thì** để chọn hành động theo màu: đó là một **quyết định**.\n\nCảm biến nằm **trước** điểm giữa hai bánh 3 cm. Lúc cảm biến vừa chạm mép ô thì bánh xe còn cách tâm ô khoảng 10 + 3 = 13 cm, nên phải đi thêm chừng đó rồi mới rẽ.\n\nNói với học sinh: robot giống người đi đường nhìn biển báo. Mắt (cảm biến) thấy màu, não (chương trình) chọn rẽ trái hay phải.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich",
+      "moTa": "Robot đi theo biển báo và dừng ở ô vàng"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": [
+        "sra_do_sang",
+        "sra_mau_thay",
+        "sra_thay_mau"
+      ],
+      "tenKhoi": "cảm biến màu",
+      "moTa": "Dùng cảm biến màu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Tới ô vàng theo đúng biển báo"
+    },
+    {
+      "moTa": "Rẽ đúng giữa ô nên dừng ngay chính giữa ô vàng (lệch tối đa 6 cm)",
+      "dieuKien": [
+        {
+          "loai": "dungTrongVung",
+          "vung": "giuaDich"
+        }
+      ]
+    },
+    {
+      "moTa": "Dùng vòng lặp cho hai lần gặp biển báo, tối đa 12 khối",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "controls_repeat_ext",
+            "controls_repeat",
+            "controls_whileUntil"
+          ],
+          "tenKhoi": "vòng lặp"
+        },
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 12
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Mỗi lần gặp biển báo, robot làm cùng một việc: đi tới khi thấy ô màu, đi vào giữa ô, nhìn màu rồi rẽ. Việc đó lặp lại mấy lần trước khi tới ô vàng?",
+    {
+      "noiDung": "Khi robot đứng trên ô màu và **chờ đến khi thấy đỏ hoặc xanh**, điều kiện đúng ngay lập tức! Sau khi rẽ, hãy cho robot **đi tới khoảng 15 cm** để ra khỏi ô rồi mới chờ ô tiếp theo.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **lặp lại 2 lần** { đi tới mãi; chờ đến khi < thấy đỏ > hoặc < thấy xanh lá >; đi tới 13 cm; **nếu** thấy đỏ **thì** quay trái 90 **không thì** quay phải 90; đi tới 15 cm }, rồi đi tới mãi, chờ đến khi thấy vàng, dừng lại.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 60
+}

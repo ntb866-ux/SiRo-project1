@@ -1,0 +1,104 @@
+{
+  "tieuDe": "Dừng ở vạch đen",
+  "san": "mot-vach",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": 0,
+    "y": -60,
+    "goc": 0
+  },
+  "bienThe": [
+    {
+      "viTriBatDau": {
+        "x": 0,
+        "y": -80,
+        "goc": 0
+      }
+    },
+    {
+      "viTriBatDau": {
+        "x": 0,
+        "y": -60,
+        "goc": 0
+      }
+    },
+    {
+      "viTriBatDau": {
+        "x": 0,
+        "y": -40,
+        "goc": 0
+      }
+    }
+  ],
+  "vung": {
+    "vach": {
+      "ten": "vạch đen",
+      "x": 0,
+      "y": 27,
+      "rong": 60,
+      "dai": 8,
+      "an": true
+    }
+  },
+  "soDo": [
+    "doSangGiua",
+    "mauGiua"
+  ],
+  "nguong": 50,
+  "deBai": "Phía trước robot có một **vạch đen** chạy ngang sân. Hãy cho robot **đi thẳng và dừng lại ngay trên vạch**.\n\nMỗi lần bấm Chạy, robot xuất phát ở **một chỗ khác** (một trong ba dấu chữ V màu cam), nên không đo trước quãng đường được. Hãy dùng **cảm biến màu** dưới gầm robot: nó nhìn xuống sân và cho biết mặt sân sáng hay tối.\n\nQuan sát bảng số đo góc trên bên trái: độ sáng đổi thế nào khi robot đi từ nền trắng vào vạch đen?",
+  "nguyenLi": "Cảm biến màu có một đèn chiếu xuống sân và một tế bào quang điện đo **ánh sáng hắt ngược lại**. Mặt trắng **phản xạ** gần hết ánh sáng nên số đo cao (gần 100); mặt đen **hấp thụ** gần hết ánh sáng nên số đo thấp (gần 0). Chương trình chọn một **ngưỡng** ở giữa, ví dụ 50: số đo nhỏ hơn ngưỡng thì coi là \"đang ở trên vạch đen\".\n\nNói với học sinh: giống như bạn soi đèn pin xuống sàn. Chỗ sàn trắng sáng lóa, chỗ thảm đen gần như không thấy ánh đèn hắt lại. Robot chỉ cần hỏi: \"chỗ này sáng hay tối?\"",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "vach",
+      "moTa": "Robot dừng với cảm biến nằm trên vạch đen"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": [
+        "sra_do_sang",
+        "sra_mau_thay",
+        "sra_thay_mau"
+      ],
+      "tenKhoi": "cảm biến màu",
+      "moTa": "Dùng cảm biến màu"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Dừng trên vạch đen nhờ cảm biến màu"
+    },
+    {
+      "moTa": "So độ sáng phản xạ với ngưỡng (dùng khối \"độ sáng phản xạ\")",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": "sra_do_sang",
+          "tenKhoi": "\"độ sáng phản xạ\""
+        }
+      ]
+    },
+    {
+      "moTa": "Gọn: tối đa 3 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 3
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Robot không biết trước vạch ở xa bao nhiêu. Nó phải **vừa đi vừa nhìn** xuống sân. Khối nào cho robot đi mãi, không dừng sau một số cm?",
+    {
+      "noiDung": "Ba bước: **đi tới mãi** → **chờ đến khi** cảm biến thấy tối → **dừng lại**. Khối \"chờ đến khi\" nằm ở nhóm Điều khiển.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **đi tới mãi**, **chờ đến khi** < **độ sáng phản xạ cảm biến giữa** nhỏ hơn **50** >, **dừng lại**. Phép so sánh \"nhỏ hơn\" ở nhóm Phép toán.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 30
+}

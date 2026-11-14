@@ -1,0 +1,114 @@
+{
+  "tieuDe": "Dò đường cua gắt bằng 3 cảm biến",
+  "san": "cua-gat",
+  "robot": "do-line",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -70,
+    "y": -80,
+    "goc": 0
+  },
+  "vung": {
+    "kt1": {
+      "ten": "điểm kiểm tra 1",
+      "x": -53.5,
+      "y": -30.0,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt2": {
+      "ten": "điểm kiểm tra 2",
+      "x": -23.1,
+      "y": 7.3,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt3": {
+      "ten": "điểm kiểm tra 3",
+      "x": 11.4,
+      "y": -20.0,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt4": {
+      "ten": "điểm kiểm tra 4",
+      "x": 46.9,
+      "y": 12.4,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "dich": {
+      "ten": "ô đích xanh lá",
+      "x": 80,
+      "y": -18,
+      "rong": 24,
+      "dai": 34,
+      "an": true
+    }
+  },
+  "soDo": [
+    "doSangTrai",
+    "doSangGiua",
+    "doSangPhai"
+  ],
+  "nguong": 50,
+  "deBai": "Đường này có **góc vuông** và **khúc cua hẹp**. Robot dò đường có **ba cảm biến màu** cạnh nhau: trái, giữa, phải (cách nhau 3 cm). Hãy cho robot đi hết đường tới **ô đích xanh lá** rồi dừng.\n\nThử trước: chương trình một cảm biến của bài 4 có qua được góc vuông không? Sau đó dùng thêm cảm biến trái và phải.",
+  "nguyenLi": "Một cảm biến chỉ biết \"đang trên đen hay trắng\", không biết vạch nằm **bên nào**. Ở góc vuông, vạch rẽ ngoặt mà cảm biến đã đi quá: robot mất vạch. Ba cảm biến đặt cạnh nhau cho biết **vị trí** của vạch: giữa thấy đen thì đi thẳng, trái thấy đen thì vạch lệch sang trái nên quay trái, phải thấy đen thì quay phải. Khoảng cách 3 cm được chọn để không có \"vùng mù\": vạch rộng 2 cm, mỗi cảm biến nhìn một vòng tròn rộng khoảng 2,6 cm, nên lúc nào ít nhất một cảm biến cũng thấy vạch (thử nghiệm của dự án: cách 6 cm trở lên thì robot hay mất vạch ở khúc cua gắt).\n\nNói với học sinh: một mắt nhắm lại thì khó biết đồ vật ở bên nào, hai ba \"mắt\" thì robot biết vạch đang chạy sang trái hay sang phải.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "kt1",
+        "kt2",
+        "kt3",
+        "kt4"
+      ],
+      "theoThuTu": true,
+      "moTa": "Robot đi theo đường qua 4 điểm kiểm tra"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich",
+      "moTa": "Robot dừng ở ô đích xanh lá"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi hết đường cua gắt và dừng ở ô đích"
+    },
+    {
+      "moTa": "Dùng cả 3 cảm biến màu",
+      "dieuKien": [
+        {
+          "loai": "dungCamBien",
+          "toiThieu": 3
+        }
+      ]
+    },
+    {
+      "moTa": "Tới đích trong tối đa 30 giây",
+      "dieuKien": [
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 30
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Có ba trường hợp: vạch ở giữa, vạch lệch trái, vạch lệch phải. Mỗi trường hợp robot nên làm gì?",
+    {
+      "noiDung": "Dùng khối **nếu … thì … không thì** lồng nhau: nếu cảm biến **trái** thấy đen thì quay trái tại chỗ (chạy bánh trái -20 % bánh phải 40 %), không thì nếu cảm biến **phải** thấy đen thì quay phải, không thì đi thẳng.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **lặp cho đến khi** < cảm biến giữa thấy xanh lá > { **nếu** độ sáng cảm biến trái < 50 **thì** chạy bánh trái -20 % phải 40 % **không thì** { **nếu** độ sáng cảm biến phải < 50 **thì** chạy bánh trái 40 % phải -20 % **không thì** chạy bánh trái 35 % phải 35 % } }, rồi **dừng lại**.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 90
+}
