@@ -1,0 +1,101 @@
+{
+  "tieuDe": "Quay đúng một góc vuông",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -62.5,
+    "y": -12.5,
+    "goc": 0
+  },
+  "vung": {
+    "dich": {
+      "ten": "ô đích",
+      "x": -2.5,
+      "y": -12.5,
+      "rong": 20,
+      "dai": 20,
+      "mau": "xanh"
+    },
+    "giua": {
+      "ten": "giữa ô đích",
+      "x": -2.5,
+      "y": -12.5,
+      "rong": 10,
+      "dai": 10,
+      "mau": "vang"
+    }
+  },
+  "soDo": [
+    "vongTrai",
+    "vongPhai",
+    "quayThan",
+    "tien",
+    "lechNgang"
+  ],
+  "deBai": "Robot ở ô **B4**, đầu hướng lên trên. Ô đích màu xanh nằm **bên phải**, cách robot 60 cm (đúng 3 vòng bánh).\n\nChỉ được dùng khối **\"quay bánh trái … bánh phải …\"**: muốn xe quay tại chỗ sang phải, cho bánh trái quay tới, bánh phải quay lùi cùng một số độ.\n\nChương trình mở sẵn cho mỗi bánh quay 90 độ rồi đi 3 vòng. Chạy thử, đọc dòng **\"Thân xe đã quay\"**: xe có quay được 90° không? Hãy tìm số độ bánh để **thân xe** quay đúng 90° rồi đi vào ô đích.",
+  "nguyenLi": "Khi xe quay tại chỗ, hai bánh chạy trên **một vòng tròn** có tâm ở giữa hai bánh, đường kính bằng **khoảng cách hai bánh** (b = 16 cm). Muốn thân xe quay góc θ, mỗi bánh phải lăn một cung dài s = π × b × θ ÷ 360°.\n\nĐổi ra góc bánh: góc bánh = s ÷ C × 360° = **θ × b ÷ d**. Với b = 16 cm, d = 6,37 cm: quay 90° cần 90 × 16 ÷ 6,37 ≈ **226°** góc bánh. Hai bánh càng xa nhau, vòng tròn càng to, bánh phải quay càng nhiều.\n\nThực tế còn cần **hiệu chỉnh**: lúc quay tại chỗ bánh bị trượt ngang một chút (bi tự do và thân xe cản lại), nên quay 226° chỉ được khoảng 87–88°. Người làm robot đo thử rồi chỉnh số, giống hệt bạn đang làm. Sai vài độ nghe thì nhỏ, nhưng **sai số tích lũy theo quãng đường**: lệch 3° thì đi 60 cm đã trượt ngang 3 cm, đi 2 m là trượt 10 cm.\n\nNói với học sinh: hai bạn khoác vai nhau xoay một vòng tại chỗ. Hai bạn đứng càng xa nhau thì mỗi bạn phải bước càng nhiều bước mới quay được một góc vuông.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_quay_banh",
+      "tenKhoi": "\"quay bánh trái … bánh phải …\""
+    },
+    {
+      "loai": "khongDungKhoi",
+      "khoi": [
+        "sra_di",
+        "sra_quay"
+      ],
+      "moTa": "Không dùng khối \"đi … cm\", \"quay … độ\" (hai khối này có con quay tự sửa sai)"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot dừng trong ô đích"
+    },
+    {
+      "moTa": "Thân xe quay gần đúng góc vuông (90° ± 5°)",
+      "dieuKien": [
+        {
+          "loai": "quayThan",
+          "do": 90,
+          "saiSo": 5
+        }
+      ]
+    },
+    {
+      "moTa": "Thật chuẩn: thân xe quay 90° ± 3° và dừng giữa ô đích",
+      "dieuKien": [
+        {
+          "loai": "quayThan",
+          "do": 90,
+          "saiSo": 3
+        },
+        {
+          "loai": "dungTrongVung",
+          "vung": "giua"
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Bánh quay 90° **không** làm thân xe quay 90°. Chạy chương trình mở sẵn và đọc dòng \"Thân xe đã quay\": được bao nhiêu độ?",
+    {
+      "noiDung": "Bánh quay 90° thì thân xe quay được khoảng 33°. Muốn thân xe quay gấp gần 3 lần thế thì bánh phải quay khoảng bao nhiêu độ? Thử, đọc bảng số đo, rồi chỉnh dần.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Theo lí thuyết: 90 × 16 ÷ 6,37 ≈ **226°**. Chạy thử, đọc \"Thân xe đã quay\": thường được khoảng 87–88° vì bánh trượt một chút. Nhích lên khoảng **230°** là gần đúng 90°. Khối đầu: \"quay bánh trái 230 bánh phải -230 độ\".",
+      "moSauLanThu": 3
+    }
+  ],
+  "maBatDau": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"when_started\" x=\"60\" y=\"40\" deletable=\"false\"><data>Main</data><next><block type=\"sra_quay_banh\"><field name=\"DON_VI\">DO</field><value name=\"TRAI\"><shadow type=\"math_number\"><field name=\"NUM\">90</field></shadow></value><value name=\"PHAI\"><shadow type=\"math_number\"><field name=\"NUM\">-90</field></shadow></value><next><block type=\"sra_quay_banh\"><field name=\"DON_VI\">VONG</field><value name=\"TRAI\"><shadow type=\"math_number\"><field name=\"NUM\">3</field></shadow></value><value name=\"PHAI\"><shadow type=\"math_number\"><field name=\"NUM\">3</field></shadow></value></block></next></block></next></block></xml>",
+  "giaTocBanh": 2.5,
+  "camera": "toanSan",
+  "thoiGianToiDa": 30
+}
