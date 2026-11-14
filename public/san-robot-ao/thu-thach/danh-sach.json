@@ -35,6 +35,19 @@
         "03-hieu-chinh/04-bu-motor-lech",
         "03-hieu-chinh/05-mot-met-bon-giay"
       ]
+    },
+    {
+      "id": "03-cam-bien-cham-khoang-cach",
+      "ten": "Chặng 3 · Cảm biến chạm và khoảng cách",
+      "moTa": "Robot tự cảm nhận đường đi: dừng khi chạm tường, đo khoảng cách bằng siêu âm, đỗ xe, men theo tường và thoát mê cung.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "03-cam-bien-cham-khoang-cach/01-cham-tuong-thi-dung",
+        "03-cam-bien-cham-khoang-cach/02-dung-cach-tuong-20cm",
+        "03-cam-bien-cham-khoang-cach/03-do-xe-giua-hai-xe",
+        "03-cam-bien-cham-khoang-cach/04-men-theo-tuong",
+        "03-cam-bien-cham-khoang-cach/05-thoat-me-cung-nho"
+      ]
     }
   ]
 }

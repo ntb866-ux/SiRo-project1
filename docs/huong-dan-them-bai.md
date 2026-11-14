@@ -45,6 +45,8 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | `robotChon` | không | Cho học sinh đổi robot ngay trong bài: `[{ "tep": "banh-to", "ten": "Robot bánh to" }, …]`. Robot lúc mở bài là trường `robot`. |
 | `motorYeu` | không | Làm một motor yếu đi: `{ "banh": "phai", "phanTram": 8 }` (bánh phải chỉ đạt 92 % tốc độ được lệnh). Ghi đè trường `sraMotorYeu` của tệp robot; `null` thì tắt. |
 | `giaTocBanh` | không | Gia tốc tối đa của bánh (độ/giây sau mỗi mili giây). GEARS mặc định 20 (gần như tức thì, bánh trượt và xe lệch hướng lúc khởi động); `2.5` cho khởi động êm trong 0,2 giây. |
+| `hienTiaDo` | không | `true`/`false`: hiện ô "Hiện tia đo của cảm biến" dưới khung đề, giá trị là trạng thái mặc định. Bật thì sân vẽ 21 tia của cảm biến khoảng cách, tia ngắn nhất màu đỏ kèm số cm, thanh cản sáng vàng khi cảm biến chạm bị nhấn (gói G6, `core/cam-bien.js`). |
+| `ketThucKhiVao` | không | Tên một vùng: robot vào vùng này thì lượt chạy kết thúc ngay và được chấm, dù chương trình còn chạy. Dùng cho bài có khối "lặp mãi" (mê cung, đi tìm đích). |
 
 ## 4. Điều kiện và cách chấm sao
 
@@ -76,6 +78,7 @@ Các loại điều kiện (`loai`) có sẵn, dùng được cả trong `mucTie
 | `soKhoiToiDa` | `khoi` | Số khối lệnh không quá `khoi`. Không tính khối mũ "When Started" và khối số/phép toán gắn bên trong. Học sinh viết Python thì điều kiện này không đạt. |
 | `huongCuoi` | `goc`, `saiSo` (mặc định 10) | Lúc kết thúc, robot quay mặt về hướng `goc` ± `saiSo` độ. |
 | `dungKhoi` | `khoi` (tên loại khối Blockly, chuỗi hoặc mảng), `toiThieu` (mặc định 1), `tenKhoi` (tên đọc, không bắt buộc) | Chương trình có ít nhất `toiThieu` khối thuộc các loại đó, ví dụ `["controls_repeat_ext", "controls_repeat"]` để bắt buộc dùng vòng lặp, `["sra_ha_but", "penDown"]` cho khối hạ bút. Viết Python thì không đạt. |
+| `khoangCachCuoi` | `tu`, `den` (cm) | Lúc kết thúc, cảm biến khoảng cách (siêu âm) đo được trong khoảng `tu`…`den`. Số đo tính đúng như khối "khoảng cách phía trước (cm)". |
 
 Các điều kiện dựa trên bảng số đo (G5, tệp `core/so-do-chuyen-dong.js`). Số đo tính từ chỗ và hướng của robot lúc bắt đầu lăn bánh:
 

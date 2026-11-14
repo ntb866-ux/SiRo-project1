@@ -18,6 +18,10 @@
   css.rel = 'stylesheet';
   css.href = GOC + 'thu-thach.css' + PB;
   document.head.appendChild(css);
+  let css2 = document.createElement('link');
+  css2.rel = 'stylesheet';
+  css2.href = GOC + 'cam-bien.css' + PB;
+  document.head.appendChild(css2);
   document.body.classList.add('sra-che-do');
 
   // Đóng hộp "What's New" của GEARS (loader chạy ngay sau main.init nên lúc này
@@ -56,6 +60,7 @@
     .then(() => napScript('giao-dien.js'))
     .then(() => napScript('challenge-engine.js'))
     .then(() => napScript('so-do-chuyen-dong.js'))
+    .then(() => napScript('cam-bien.js'))
     .then(choSanSang)
     .then(() => SRA.napBai(id))
     .catch(function(e) {
