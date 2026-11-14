@@ -67,7 +67,7 @@
       ]
     }
   },
-  "deBai": "Robot phải chạy thẳng lên **đích D8** trong làn đường giữa hai **lề đỏ**. Khi đi qua **vùng xanh dương**, robot sẽ bị **đẩy mạnh vào mũi**, lệch sang phải.\n\nHãy dùng **góc quay (gyro)** để robot tự phát hiện mình bị lệch và **lái trở lại hướng thẳng**. Cho robot dừng lại khi tới gần tường phía trên (khoảng cách phía trước nhỏ hơn 20 cm).\n\nKhối \"đi tới … cm\", \"quay … độ\" và \"đi tới mãi\" bị khóa trong bài này. Dùng khối **bánh trái … bánh phải …** để lái: bánh trái nhanh hơn thì robot cong sang phải, bánh phải nhanh hơn thì cong sang trái.",
+  "deBai": "Robot phải chạy thẳng lên **đích D8** trong làn đường giữa hai **lề đỏ**. Khi đi qua **vùng xanh dương**, robot sẽ bị **đẩy mạnh vào mũi**, lệch sang phải.\n\nHãy dùng **góc quay (gyro)** để robot tự phát hiện mình bị lệch và **lái trở lại hướng thẳng**. Cho robot dừng lại khi tới gần tường phía trên (khoảng cách phía trước nhỏ hơn 20 cm).\n\nKhối \"đi tới … cm\", \"quay … độ\" và \"đi tới mãi\" bị khóa trong bài này. Dùng khối **chạy bánh trái … bánh phải …** (nhóm Động cơ) để lái: bánh trái nhanh hơn thì robot cong sang phải, bánh phải nhanh hơn thì cong sang trái.",
   "nguyenLi": "Đây là **điều khiển phản hồi** (vòng kín): robot liên tục **đo** (gyro cho biết lệch bao nhiêu độ), **so** với hướng mong muốn (0°), rồi **sửa** (lái ngược lại), lặp đi lặp lại nhiều lần mỗi giây. Lệch phải (góc quay dương) thì cho bánh phải chạy nhanh hơn để cong về trái, lệch trái thì ngược lại.\n\nCú đẩy là một **xung lực** vào mũi robot: nó làm robot vừa xoay vừa trượt ngang. Gyro đo được phần xoay nên sửa được hướng, nhưng phần trượt ngang thì gyro không đo được, vì thế robot về đúng hướng mà vẫn lệch khỏi giữa làn vài cm.\n\nThật ra khối \"đi tới … cm\" của Sân Robot Ảo cũng làm đúng việc này bên trong: nó đọc gyro liên tục và chỉnh hai bánh để đi thẳng.\n\nNói với học sinh: giống đạp xe, bị gió thổi lệch tay lái thì bạn bẻ lái ngược lại, không phải bẻ một lần là xong mà sửa liên tục.",
   "mucTieu": [
     {
@@ -120,13 +120,13 @@
     }
   ],
   "goiY": [
-    "Chạy thử với **bánh trái 50 % bánh phải 50 %** và không sửa gì. Sau cú đẩy robot đi đâu? Đọc **góc quay** lúc đó là số dương hay âm?",
+    "Chạy thử với khối **chạy bánh trái 50 % bánh phải 50 %** và không sửa gì. Sau cú đẩy robot đi đâu? Đọc **góc quay** lúc đó là số dương hay âm?",
     {
       "noiDung": "Robot cần làm đi làm lại: nếu **góc quay > 0** (lệch phải) thì cho bánh phải nhanh hơn, nếu không thì cho bánh trái nhanh hơn. Dùng khối **lặp cho đến khi** với điều kiện **khoảng cách phía trước < 20**.",
       "moSauLanThu": 1
     },
     {
-      "noiDung": "Lời giải: **đặt lại góc quay về 0**; **lặp cho đến khi** khoảng cách phía trước < 20 { **nếu** góc quay > 0 **thì** bánh trái 30 % bánh phải 50 % **nếu không thì** bánh trái 50 % bánh phải 30 % }; **dừng lại**.",
+      "noiDung": "Lời giải: **đặt lại góc quay về 0**; **lặp cho đến khi** khoảng cách phía trước < 20 { **nếu** góc quay > 0 **thì** chạy bánh trái 30 % bánh phải 50 % **nếu không thì** chạy bánh trái 50 % bánh phải 30 % }; **dừng lại**.",
       "moSauLanThu": 2
     }
   ],

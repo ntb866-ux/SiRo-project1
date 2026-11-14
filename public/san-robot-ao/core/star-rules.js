@@ -48,7 +48,7 @@ SRA.TEN_KHOI = {
   sra_goc_quay: '"góc quay (độ)"',
   gyro_sensor: '"góc quay (độ)"',
   sra_xoay: '"quay … mãi"',
-  sra_banh: '"bánh trái … bánh phải …"'
+  sra_chay_banh: '"chạy bánh trái … bánh phải …"'
 };
 
 SRA.tenKhoi = function(dk) {

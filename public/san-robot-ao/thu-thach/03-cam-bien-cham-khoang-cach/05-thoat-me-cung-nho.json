@@ -1,0 +1,392 @@
+{
+  "tieuDe": "Thoát mê cung nhỏ",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "hienTiaDo": true,
+  "soDo": [
+    "khoangCach"
+  ],
+  "viTriBatDau": {
+    "x": -75,
+    "y": -75,
+    "goc": 0
+  },
+  "vung": {
+    "loiRa": {
+      "ten": "lối ra",
+      "x": 75,
+      "y": 75,
+      "rong": 40,
+      "dai": 40,
+      "mau": "xanh"
+    }
+  },
+  "ketThucKhiVao": "loiRa",
+  "vatThe": [],
+  "bienThe": [
+    {
+      "ten": "mê cung số 1",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            -75.0,
+            -50.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -50.0,
+            -25.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -25.0,
+            -50.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            25.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -25.0,
+            50.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            50.0,
+            -75.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            50.0,
+            -25.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            25.0,
+            0.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            25.0,
+            50.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ]
+    },
+    {
+      "ten": "mê cung số 2",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            -50.0,
+            -75.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -75.0,
+            0.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -50.0,
+            75.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            -25.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -25.0,
+            0.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            25.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            25.0,
+            -50.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            50.0,
+            25.0,
+            5.0
+          ],
+          "size": [
+            3,
+            53.0,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            75.0,
+            0.0,
+            5.0
+          ],
+          "size": [
+            53.0,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ]
+    }
+  ],
+  "deBai": "Sân là một mê cung 4 × 4 ô, mỗi ô rộng 50 cm. Robot ở ô dưới cùng bên trái, **lối ra** (ô xanh) ở góc trên bên phải. Có hai mê cung khác nhau, mỗi lượt gặp ngẫu nhiên một cái, nên bạn không thể học thuộc đường đi.\n\nHãy viết **một** chương trình giúp robot tự tìm đường ra ở cả hai mê cung. Robot chạm vào ô lối ra là xong.",
+  "nguyenLi": "Mẹo cổ điển để thoát mê cung là **quy tắc bàn tay phải**: luôn giữ tay phải chạm tường mà đi. Với mê cung không có \"đảo\" tường đứng riêng, đi theo quy tắc này chắc chắn tới được lối ra.\n\nRobot chỉ có một cảm biến nhìn thẳng phía trước, nên mỗi khi tới giữa một ô, nó **thử rẽ phải trước**. Nếu phía trước trống (khoảng cách lớn hơn nửa ô) thì đi tới một ô; nếu bị chắn thì quay trái để thử hướng tiếp theo, cứ thế cho đến khi thấy đường trống. Chương trình chỉ gồm vài khối, nhưng lặp lại thì giải được mê cung bất kì cỡ này.\n\nNói với học sinh: vào nhà gương ở hội chợ, bạn đặt tay phải lên tường và không bao giờ nhấc tay ra. Có thể đi vòng hơi xa, nhưng chắc chắn ra được.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "loiRa",
+      "moTa": "Robot tới lối ra"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_khoang_cach"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot tự tìm được lối ra"
+    },
+    {
+      "moTa": "Không chạm tường",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Chương trình gọn: tối đa 6 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 6
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đứng ở giữa một ô, robot có thể đi theo 4 hướng. Nó nên thử hướng nào trước? Thử chơi trên giấy: giữ \"tay phải\" chạm tường.",
+    {
+      "noiDung": "Mỗi bước: **quay phải 90 độ**. Rồi, chừng nào phía trước còn bị chắn (khoảng cách < 30), **quay trái 90 độ**. Khi thấy đường trống, **đi tới 50 cm** (một ô). Lặp mãi; robot tới lối ra thì bài tự kết thúc.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **lặp mãi** { **quay phải 90 độ**; **lặp cho đến khi** ⟨khoảng cách phía trước (cm) > 30⟩ { **quay trái 90 độ** }; **đi tới 50 cm** }.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 240
+}

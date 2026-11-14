@@ -65,6 +65,11 @@ SRA.tienDo = new function() {
     });
   };
 
+  // Ghi thêm dữ liệu riêng của một loại bài vào bản ghi tiến độ (vd. robotDaXong của G5)
+  this.ghiThem = function(id, ham) {
+    return capNhat(id, ham);
+  };
+
   this.ghiGoiY = function(id, soGoiY) {
     return capNhat(id, function(ban) {
       ban.goiYDaXem = Math.max(ban.goiYDaXem || 0, soGoiY);

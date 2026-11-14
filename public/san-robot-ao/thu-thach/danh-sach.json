@@ -24,6 +24,19 @@
       ]
     },
     {
+      "id": "03-hieu-chinh",
+      "ten": "Chặng 2 · Hiệu chỉnh động cơ",
+      "moTa": "Đo chu vi bánh, chỉnh góc quay, so bánh to và bánh nhỏ, bù motor yếu, chạy đúng tốc độ: robot thật không bao giờ hoàn hảo.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "03-hieu-chinh/01-chu-vi-banh",
+        "03-hieu-chinh/02-quay-goc-vuong",
+        "03-hieu-chinh/03-banh-to-banh-nho",
+        "03-hieu-chinh/04-bu-motor-lech",
+        "03-hieu-chinh/05-mot-met-bon-giay"
+      ]
+    },
+    {
       "id": "07-but-ve",
       "ten": "Chặng 2 · Bút vẽ và đa giác",
       "moTa": "Vẽ tam giác, lục giác, ngôi sao và ngôi nhà theo hình mẫu: góc quay của robot là góc ngoài, tổng góc ngoài là 360°.",
@@ -33,6 +46,32 @@
         "07-but-ve/02-luc-giac-deu",
         "07-but-ve/03-ngoi-sao-5-canh",
         "07-but-ve/04-ve-ngoi-nha-theo-mau"
+      ]
+    },
+    {
+      "id": "03-cam-bien-cham-khoang-cach",
+      "ten": "Chặng 3 · Cảm biến chạm và khoảng cách",
+      "moTa": "Robot tự cảm nhận đường đi: dừng khi chạm tường, đo khoảng cách bằng siêu âm, đỗ xe, men theo tường và thoát mê cung.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "03-cam-bien-cham-khoang-cach/01-cham-tuong-thi-dung",
+        "03-cam-bien-cham-khoang-cach/02-dung-cach-tuong-20cm",
+        "03-cam-bien-cham-khoang-cach/03-do-xe-giua-hai-xe",
+        "03-cam-bien-cham-khoang-cach/04-men-theo-tuong",
+        "03-cam-bien-cham-khoang-cach/05-thoat-me-cung-nho"
+      ]
+    },
+    {
+      "id": "03-cam-bien-mau",
+      "ten": "Chặng 3 · Cảm biến màu",
+      "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ và dò theo đường đen.",
+      "moKhoaTuanTu": false,
+      "bai": [
+        "03-cam-bien-mau/01-dung-o-vach",
+        "03-cam-bien-mau/02-dem-vach",
+        "03-cam-bien-mau/03-phan-loai-mau",
+        "03-cam-bien-mau/04-do-line-1-cam-bien",
+        "03-cam-bien-mau/05-do-line-3-cam-bien"
       ]
     },
     {

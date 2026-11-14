@@ -132,7 +132,7 @@ SRA.world = new function() {
     let vt = self.viTriRobot();
 
     // Vùng robot đi qua
-    let vung = SRA.bai.vung || {};
+    let vung = SRA.baiHienTai().vung || {};
     for (let ten in vung) {
       if (!luot.daVao.has(ten) && SRA.trongVung(vung[ten], vt.x, vt.y)) {
         luot.daVao.add(ten);
@@ -183,7 +183,7 @@ SRA.world = new function() {
     self.trangThai = 'xong';
     let luot = self.luot;
     let ctx = {
-      vung: SRA.bai.vung || {},
+      vung: SRA.baiHienTai().vung || {},
       daVao: luot.daVao,
       thuTuVao: luot.thuTuVao,
       cuoi: self.viTriRobot(),
@@ -282,6 +282,31 @@ SRA.lechTrucBanh = function() {
   return ro.bodyLength / 2 - ro.bodyEdgeToWheelCenterZ;
 };
 
+// Bài có "bienThe" (các phiên bản sân): mỗi lượt chạy chọn ngẫu nhiên một phiên bản.
+// Mỗi phiên bản ghi đè viTriBatDau, vatThe và vị trí các vùng (giữ tên vùng của bài).
+// Kiểm thử tự động đặt SRA.bienTheCoDinh = số thứ tự để chọn cố định.
+SRA.chonBienThe = function() {
+  let ds = SRA.bai && SRA.bai.bienThe;
+  if (!Array.isArray(ds) || !ds.length) { SRA.soBienThe = null; return; }
+  let i = (SRA.bienTheCoDinh != null) ? SRA.bienTheCoDinh % ds.length : Math.floor(Math.random() * ds.length);
+  SRA.soBienThe = i;
+};
+
+// Bài với phiên bản sân đang dùng
+SRA.baiHienTai = function() {
+  let bai = SRA.bai;
+  if (!bai || SRA.soBienThe == null) return bai;
+  let bt = bai.bienThe[SRA.soBienThe] || {};
+  let kq = Object.assign({}, bai);
+  if (bt.viTriBatDau) kq.viTriBatDau = bt.viTriBatDau;
+  if (bt.vatThe) kq.vatThe = (bai.vatThe || []).concat(bt.vatThe);
+  if (bt.vung) {
+    kq.vung = Object.assign({}, bai.vung);
+    for (let ten in bt.vung) kq.vung[ten] = Object.assign({}, (bai.vung || {})[ten], bt.vung[ten]);
+  }
+  return kq;
+};
+
 SRA.dungOptionsSan = function(san, bai) {
   let o = JSON.parse(JSON.stringify(san.options));
   o.objects = o.objects || [];
@@ -373,7 +398,8 @@ SRA.napBai = async function(id) {
   await SRA.napRobot(bai.robot);
 
   babylon.world = SRA.world;
-  simPanel.worldOptionsSetting = SRA.dungOptionsSan(san, bai);
+  SRA.chonBienThe();
+  simPanel.worldOptionsSetting = SRA.dungOptionsSan(san, SRA.baiHienTai());
   await simPanel.resetSim();
   SRA.datCamera(bai.camera || 'toanSan');
 
@@ -382,6 +408,7 @@ SRA.napBai = async function(id) {
     sanRobotAo.datCheDo(bai.cheDo);
   }
   if (bai.locKhoi) blockly.loadToolboxFilter(bai.locKhoi);
+  if (SRA.soDo) SRA.soDo.bat(bai.soDo);
 
   // Chương trình: bài làm đã lưu, hoặc chương trình mở đầu của bài, hoặc trống
   let ma = SRA.tienDo.docMa(id) || bai.maBatDau;
@@ -410,6 +437,10 @@ SRA.chay = function() {
     return;
   }
   SRA.tienDo.luuMa(SRA.bai.id, blockly.getXmlText());
+  if (SRA.bai.bienThe) {
+    SRA.chonBienThe();
+    simPanel.worldOptionsSetting = SRA.dungOptionsSan(SRA.san, SRA.baiHienTai());
+  }
   simPanel.resetSim().then(function() {
     simPanel.runSim();
   });

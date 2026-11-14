@@ -1,0 +1,104 @@
+{
+  "tieuDe": "Dò đường bằng 1 cảm biến",
+  "san": "duong-cong",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -71,
+    "y": -80,
+    "goc": 0
+  },
+  "vung": {
+    "kt1": {
+      "ten": "điểm kiểm tra 1",
+      "x": -55.8,
+      "y": -14.4,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt2": {
+      "ten": "điểm kiểm tra 2",
+      "x": 11.1,
+      "y": -3.4,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt3": {
+      "ten": "điểm kiểm tra 3",
+      "x": 39.9,
+      "y": 52.8,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "dich": {
+      "ten": "ô đích xanh lá",
+      "x": -22,
+      "y": 80,
+      "rong": 36,
+      "dai": 24,
+      "an": true
+    }
+  },
+  "soDo": [
+    "doSangGiua",
+    "mauGiua"
+  ],
+  "nguong": 50,
+  "deBai": "Cho robot **đi theo đường đen** từ chỗ xuất phát tới **ô đích xanh lá** rồi dừng. Robot chỉ có **một cảm biến màu**.\n\nMẹo của thợ làm robot: đừng cố cho cảm biến nằm giữa vạch, hãy cho nó **bám mép** vạch. Cảm biến thấy đen thì lái ra phía trắng, thấy trắng thì lái vào phía đen. Robot sẽ đi ngoằn ngoèo dọc theo mép vạch.\n\nRobot xuất phát với cảm biến nằm ở **mép trái** của vạch.",
+  "nguyenLi": "Đây là **điều khiển có phản hồi** (vòng kín): robot liên tục đo, so với ngưỡng, rồi sửa hướng. Ở mép vạch, vùng nhìn của cảm biến (đường kính khoảng 2,6 cm) nằm một nửa trên đen, một nửa trên trắng, nên số đo khoảng 50. Lệch vào trong vạch thì số đo giảm, lệch ra ngoài thì tăng: số đo cho biết robot **lệch về phía nào**. Cách \"nếu tối thì lái phải, không thì lái trái\" gọi là điều khiển **bật – tắt**; muốn đi êm và nhanh hơn thì lái mạnh hay nhẹ **tùy theo độ lệch** (điều khiển tỉ lệ).\n\nNói với học sinh: giống đi trên bờ ruộng nhắm mắt, chân trái chạm nước thì bước sang phải, chạm cỏ khô thì bước sang trái. Mỗi bước sửa một chút nên vẫn đi hết bờ.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "kt1",
+        "kt2",
+        "kt3"
+      ],
+      "theoThuTu": true,
+      "moTa": "Robot đi theo đường qua 3 điểm kiểm tra"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich",
+      "moTa": "Robot dừng ở ô đích xanh lá"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi hết đường và dừng ở ô đích"
+    },
+    {
+      "moTa": "Tới đích trong tối đa 40 giây",
+      "dieuKien": [
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 40
+        }
+      ]
+    },
+    {
+      "moTa": "Chạy nhanh mà không văng khỏi đường: tới đích trong tối đa 16 giây",
+      "dieuKien": [
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 16
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Chương trình phải lặp lại việc \"nhìn rồi lái\" cho tới khi gặp ô xanh lá. Khối nào lặp cho đến khi một điều kiện đúng?",
+    {
+      "noiDung": "Dùng khối **chạy bánh trái … % bánh phải … %**: bánh trái nhanh hơn thì robot cong sang phải. Cảm biến bám mép trái của vạch, vậy thấy đen (đi lấn vào vạch) thì phải lái sang trái hay phải?",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **lặp cho đến khi** < cảm biến giữa thấy màu xanh lá > { **nếu** độ sáng phản xạ < 50 **thì** chạy bánh trái 10 % bánh phải 40 % **không thì** chạy bánh trái 40 % bánh phải 10 % }, rồi **dừng lại**. Muốn nhanh hơn: tăng cả hai số, nhưng tăng quá thì robot văng khỏi đường ở khúc cua.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 90
+}

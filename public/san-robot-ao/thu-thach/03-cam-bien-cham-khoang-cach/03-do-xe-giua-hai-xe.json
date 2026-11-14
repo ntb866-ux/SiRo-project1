@@ -1,0 +1,212 @@
+{
+  "tieuDe": "Đỗ xe giữa hai xe",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "hienTiaDo": true,
+  "soDo": [
+    "khoangCach"
+  ],
+  "viTriBatDau": {
+    "x": 0,
+    "y": -45.0,
+    "goc": 0
+  },
+  "vung": {
+    "choDo": {
+      "ten": "chỗ đỗ",
+      "x": 0,
+      "y": 0,
+      "rong": 30,
+      "dai": 10,
+      "mau": "vang"
+    },
+    "giua": {
+      "ten": "giữa chỗ đỗ (lệch tối đa 4 cm)",
+      "x": 0,
+      "y": 0,
+      "rong": 12,
+      "dai": 8,
+      "an": true
+    },
+    "chinhGiua": {
+      "ten": "chính giữa chỗ đỗ (lệch tối đa 1,5 cm)",
+      "x": 0,
+      "y": 0,
+      "rong": 12,
+      "dai": 3,
+      "an": true
+    }
+  },
+  "vatThe": [
+    {
+      "type": "box",
+      "position": [
+        0,
+        -80.0,
+        6.0
+      ],
+      "size": [
+        22,
+        40,
+        12
+      ],
+      "color": "#DC2626",
+      "physicsOptions": "fixed",
+      "castShadows": false,
+      "receiveShadows": false
+    }
+  ],
+  "bienThe": [
+    {
+      "ten": "khe hẹp",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            21.0,
+            6.0
+          ],
+          "size": [
+            22,
+            40,
+            12
+          ],
+          "color": "#2563EB",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "choDo": {
+          "y": -29.5,
+          "dai": 61.0
+        },
+        "giua": {
+          "y": -26.5
+        },
+        "chinhGiua": {
+          "y": -26.5
+        }
+      }
+    },
+    {
+      "ten": "khe vừa",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            41.0,
+            6.0
+          ],
+          "size": [
+            22,
+            40,
+            12
+          ],
+          "color": "#2563EB",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "choDo": {
+          "y": -19.5,
+          "dai": 81.0
+        },
+        "giua": {
+          "y": -16.5
+        },
+        "chinhGiua": {
+          "y": -16.5
+        }
+      }
+    },
+    {
+      "ten": "khe rộng",
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0,
+            61.0,
+            6.0
+          ],
+          "size": [
+            22,
+            40,
+            12
+          ],
+          "color": "#2563EB",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "choDo": {
+          "y": -9.5,
+          "dai": 101.0
+        },
+        "giua": {
+          "y": -6.5
+        },
+        "chinhGiua": {
+          "y": -6.5
+        }
+      }
+    }
+  ],
+  "deBai": "Robot đang ở trong một chỗ đỗ, kẹp giữa xe đỏ phía sau và xe xanh phía trước. **Đuôi robot cách xe đỏ đúng 3 cm.** Xe xanh mỗi lượt đỗ một chỗ khác.\n\nHãy cho robot tiến lên để **đỗ chính giữa**: khoảng hở phía trước (mũi robot tới xe xanh) bằng khoảng hở phía sau (đuôi robot tới xe đỏ). Không được chạm xe nào.\n\nCảm biến khoảng cách cho bạn biết khoảng hở phía trước. Phần còn lại là một phép tính.",
+  "nguyenLi": "Cảm biến đo khoảng hở phía trước, gọi là **d**. Khoảng hở phía sau là 3 cm. Robot tiến thêm **x** cm thì hở trước còn d − x, hở sau thành 3 + x. Hai khoảng bằng nhau khi d − x = 3 + x, tức là **x = (d − 3) ÷ 2**. Robot đứng yên lúc đo nên số đo chính xác; không cần chờ hay so sánh trong lúc chạy.\n\nCảm biến nằm lùi sau mũi xe chừng 2 cm, nên số đo lớn hơn khoảng hở thật một chút. Muốn đỗ thật chính giữa thì phải tính cả độ lệch này. Kĩ sư gọi việc này là **hiệu chỉnh vị trí lắp cảm biến**.\n\nNói với học sinh: hai bạn đứng cách nhau, bạn đứng giữa muốn cách đều hai người. Đo khoảng trống phía trước, trừ đi khoảng trống phía sau, chia đôi phần chênh rồi bước lên đúng chừng ấy.",
+  "mucTieu": [
+    {
+      "loai": "dungTrongVung",
+      "vung": "giua",
+      "moTa": "Robot đỗ giữa hai xe (hở trước và hở sau lệch nhau tối đa 8 cm)"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_khoang_cach"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đỗ giữa hai xe"
+    },
+    {
+      "moTa": "Không chạm xe nào",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong",
+          "moTa": "Không chạm xe nào"
+        }
+      ]
+    },
+    {
+      "moTa": "Đỗ chính giữa: hở trước và hở sau lệch nhau tối đa 3 cm",
+      "dieuKien": [
+        {
+          "loai": "dungTrongVung",
+          "vung": "chinhGiua"
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Nếu khoảng hở phía trước là 40 cm, phía sau là 3 cm, robot phải tiến lên bao nhiêu để hai bên bằng nhau? Thử tính trên giấy trước.",
+    {
+      "noiDung": "Chênh lệch giữa hai khoảng hở là d − 3. Robot tiến lên một nửa phần chênh đó. Khối **đi tới … cm** nhận được cả một phép tính: kéo khối chia ÷ và khối trừ − từ nhóm Phép toán thả vào ô số.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **đi tới** ( ( ⟨khoảng cách phía trước (cm)⟩ − 3 ) ÷ 2 ) cm.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 30
+}

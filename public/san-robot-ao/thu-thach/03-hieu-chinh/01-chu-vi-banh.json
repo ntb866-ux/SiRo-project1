@@ -1,0 +1,89 @@
+{
+  "tieuDe": "Một vòng bánh đi bao xa?",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": -12.5,
+    "y": -87.5,
+    "goc": 0
+  },
+  "vung": {
+    "vach": {
+      "ten": "vạch đích",
+      "x": -12.5,
+      "y": 2.5,
+      "rong": 40,
+      "dai": 6,
+      "mau": "vang"
+    }
+  },
+  "soDo": [
+    "vongTrai",
+    "vongPhai",
+    "tien",
+    "thoiGian"
+  ],
+  "deBai": "Robot đứng ở ô **D1**, đầu hướng lên trên. Vạch đích màu vàng cách robot **90 cm**.\n\n**Bước 1 · Đo.** Chương trình mở sẵn cho hai bánh quay đúng **1 vòng**. Bấm ▶ Chạy rồi đọc **bảng số đo** ở góc sân: robot đi tới được bao nhiêu cm? Số đó chính là **chu vi bánh xe**.\n\n**Bước 2 · Tính.** Muốn đi 90 cm thì bánh phải quay mấy vòng? Sửa số vòng trong khối rồi chạy lại để robot dừng đúng vạch đích.",
+  "nguyenLi": "Bánh xe lăn không trượt thì **mỗi vòng quay, xe đi được đúng một chu vi bánh**: C = π × d (d là đường kính). Quãng đường = số vòng × chu vi, nên số vòng = quãng đường ÷ chu vi.\n\nĐây cũng là cách đồng hồ đo quãng đường của xe đạp, xe máy hoạt động: máy đếm số vòng bánh rồi nhân với chu vi.\n\nNói với học sinh: lăn một cái bánh có chấm sơn trên mặt bàn, mỗi lần chấm sơn chạm bàn là bánh đã \"in\" xuống bàn một đoạn dài đúng bằng vòng tròn của nó.",
+  "mucTieu": [
+    {
+      "loai": "diDuoc",
+      "cm": 90,
+      "saiSo": 3,
+      "moTa": "Robot dừng ở vạch đích (cách chỗ xuất phát 90 cm, sai số ±3 cm)"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_quay_banh",
+      "tenKhoi": "\"quay bánh trái … bánh phải …\""
+    },
+    {
+      "loai": "khongDungKhoi",
+      "khoi": [
+        "sra_di",
+        "sra_quay"
+      ],
+      "moTa": "Không dùng khối \"đi … cm\", \"quay … độ\" (hai khối này có con quay tự sửa sai)"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Robot dừng ở vạch đích nhờ khối quay bánh"
+    },
+    {
+      "moTa": "Dừng thật chính xác: 90 cm, sai số ±1 cm",
+      "dieuKien": [
+        {
+          "loai": "diDuoc",
+          "cm": 90,
+          "saiSo": 1
+        }
+      ]
+    },
+    {
+      "moTa": "Tính trước rồi chạy một lần: chương trình chỉ có 1 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 1
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Chạy chương trình mở sẵn và đọc dòng **\"Đi tới được\"** trên bảng số đo. 1 vòng bánh = bao nhiêu cm?",
+    {
+      "noiDung": "1 vòng bánh đưa robot đi 20 cm. 90 cm gấp mấy lần 20 cm? Số vòng không nhất thiết là số nguyên: bạn gõ được 2,5 hay 3,7 vòng.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: 90 ÷ 20 = **4,5 vòng**. Sửa khối thành \"quay bánh trái 4,5 bánh phải 4,5 vòng\".",
+      "moSauLanThu": 3
+    }
+  ],
+  "maBatDau": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"when_started\" x=\"60\" y=\"40\" deletable=\"false\"><data>Main</data><next><block type=\"sra_quay_banh\"><field name=\"DON_VI\">VONG</field><value name=\"TRAI\"><shadow type=\"math_number\"><field name=\"NUM\">1</field></shadow></value><value name=\"PHAI\"><shadow type=\"math_number\"><field name=\"NUM\">1</field></shadow></value></block></next></block></xml>",
+  "giaTocBanh": 2.5,
+  "camera": "toanSan",
+  "thoiGianToiDa": 30
+}

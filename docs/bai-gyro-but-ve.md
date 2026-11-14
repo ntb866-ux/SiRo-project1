@@ -100,18 +100,18 @@ Câu hỏi thảo luận: vì sao sân càng trơn robot càng trôi xa sau khi 
 
 ![Vết bút của lời giải lái bật/tắt: bị đẩy ở vùng xanh dương, robot cong lại về hướng thẳng nhưng lệch khỏi giữa làn khoảng 10 cm (ảnh có thêm khối hạ bút nên được 2 sao)](anh/g8-giu-huong-vet-but.png)
 
-Robot chạy từ D1 lên đích D8 trong làn đường giữa hai lề đỏ. Khi đi qua vùng xanh dương, robot bị một **xung lực** đẩy ngang vào mũi (trường `cuDay` của bài), lệch khoảng 23° sang phải. Khối "đi tới", "quay" và "đi tới mãi" bị khóa (chúng đã tự giữ hướng bằng gyro bên trong); học sinh lái bằng khối mới **bánh trái … % bánh phải … %**.
+Robot chạy từ D1 lên đích D8 trong làn đường giữa hai lề đỏ. Khi đi qua vùng xanh dương, robot bị một **xung lực** đẩy ngang vào mũi (trường `cuDay` của bài), lệch khoảng 23° sang phải. Khối "đi tới", "quay" và "đi tới mãi" bị khóa (chúng đã tự giữ hướng bằng gyro bên trong); học sinh lái bằng khối mới **chạy bánh trái … % bánh phải … %**.
 
-- Không sửa hướng (bánh trái 50, bánh phải 50): robot đi chéo, lấn lề phải, bài báo "Robot đã đi vào lề phải".
+- Không sửa hướng (chạy bánh trái 50, bánh phải 50): robot đi chéo, lấn lề phải, bài báo "Robot đã đi vào lề phải".
 - Lời giải **điều khiển bật/tắt** (bang-bang):
 
 ```
 đặt lại góc quay về 0
 lặp cho đến khi  khoảng cách phía trước (cm) < 20
     nếu  góc quay (độ) > 0  thì
-        bánh trái 30 %  bánh phải 50 %      (lệch phải → cong về trái)
+        chạy bánh trái 30 %  bánh phải 50 %      (lệch phải → cong về trái)
     nếu không
-        bánh trái 50 %  bánh phải 30 %
+        chạy bánh trái 50 %  bánh phải 30 %
 dừng lại
 ```
 
@@ -147,7 +147,7 @@ Bảng kết quả kiểm thử thật (độ phủ, độ chính xác của l�
 
 ## Phần mới trong mã nguồn
 
-- **Hai khối mới** (chế độ Cơ bản, nhóm Chuyển động): **quay phải/trái mãi** (`sra_xoay`) và **bánh trái … % bánh phải … %** (`sra_banh`).
+- **Khối mới** (chế độ Cơ bản, nhóm Chuyển động): **quay phải/trái mãi** (`sra_xoay`). Bài giữ hướng dùng khối **chạy bánh trái … % bánh phải … %** (`sra_chay_banh`, nhóm Động cơ) của gói G5.
 - **Lọc khối ở chế độ Cơ bản:** trường `locKhoi` chỉ có `deny` nay ẩn khối ngay trong bảng Cơ bản, không còn chuyển sang Nâng cao.
 - **`core/net-ve.js`:** hình mẫu (`hinhMau`), ghi nét vẽ, điều kiện `veGiongMau`.
 - **`core/vat-li-san.js`:** mặt sân trơn (`matSan.maSat`) và cú đẩy (`cuDay`). Tệp này cũng sửa một lỗi làm tròn của Babylon: góc quay bánh xe đôi khi thành NaN sau nhiều lần quay (gặp khi vẽ ngôi sao), làm lượt chạy không bao giờ kết thúc.

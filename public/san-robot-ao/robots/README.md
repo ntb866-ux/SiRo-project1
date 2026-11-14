@@ -8,6 +8,7 @@ Các tệp được sinh từ một nguồn duy nhất là `scripts/robot/tao-ro
 
 | Tệp | Tên hiện trong menu | Dùng cho |
 |---|---|---|
+| `lech-motor.json` | Robot motor lệch | Bài bù tốc độ (G5): giống robot chuẩn nhưng motor bánh phải yếu hơn 8 % (`sraMotorYeu`), bánh tăng tốc êm (`wheelMaxAcceleration` 2,5) |
 | `co-ban.json` | Robot chuẩn lớp 6 | Mọi bài, mặc định |
 | `banh-to.json` | Robot bánh to | Bài so sánh: bánh to đi nhanh hơn, xa hơn mỗi vòng |
 | `banh-nho.json` | Robot bánh nhỏ | Bài so sánh: bánh nhỏ chậm hơn, dễ dừng đúng chỗ |
