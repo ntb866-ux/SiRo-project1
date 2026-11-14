@@ -41,7 +41,7 @@ const CA = {
     { ten: 'lặp 4 lần: chạy, chờ < 20, dừng, quay phải', sao: 3, ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['phai', 90]]]] },
     { ten: 'viết 4 lần không lặp', sao: 2, bienThe: [1], ma: [].concat(...[1, 2, 3, 4].map(() => [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['phai', 90]])) },
     { ten: 'quay trái (ngược chiều)', sao: 0, bienThe: [0], ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['trai', 90]]]] },
-    { ten: 'ngưỡng 8 cm: quẹt tường khi quay', sao: 0, bienThe: [0], ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 8]], ['dung'], ['phai', 90]]]] },
+    { ten: 'ngưỡng 8 cm: quẹt tường khi quay', sao: [0, 2], bienThe: [0], ma: [['lap', 4, [['chay'], ['cho', ['<', ['kc'], 8]], ['dung'], ['phai', 90]]]] },
     { ten: 'chỉ lặp 3 lần', sao: 0, bienThe: [2], ma: [['lap', 3, [['chay'], ['cho', ['<', ['kc'], 20]], ['dung'], ['phai', 90]]]] },
   ],
   [C + '05-thoat-me-cung-nho']: [
