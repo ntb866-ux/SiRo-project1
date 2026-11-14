@@ -130,6 +130,12 @@ var sanRobotAo = new function() {
     '#sra-chay#': { en: 'keep moving %1', vi: 'đi %1 mãi' },
     '#sra-chay_tooltip#': { en: 'The robot keeps moving until another movement block or stop', vi: 'Robot đi liên tục cho đến khi gặp lệnh di chuyển khác hoặc lệnh dừng' },
     '#sra-dung#': { en: 'stop moving', vi: 'dừng lại' },
+    '#sra-quay_banh#': { en: 'spin left wheel %1 right wheel %2 %3', vi: 'quay bánh trái %1 bánh phải %2 %3' },
+    '#sra-vong#': { en: 'rotations', vi: 'vòng' },
+    '#sra-do#': { en: 'degrees', vi: 'độ' },
+    '#sra-quay_banh_tooltip#': { en: 'Spin each wheel by the given amount (negative = backward). No gyro correction: the robot does exactly what the wheels do', vi: 'Quay mỗi bánh đúng số vòng (hoặc số độ) này, số âm là quay lùi. Không có con quay sửa hướng: robot đi đúng như bánh quay' },
+    '#sra-chay_banh#': { en: 'run left wheel %1 %% right wheel %2 %%', vi: 'chạy bánh trái %1 %% bánh phải %2 %%' },
+    '#sra-chay_banh_tooltip#': { en: 'Run each wheel at its own speed (0 to 100 %, negative = backward) until stop', vi: 'Cho mỗi bánh chạy với tốc độ riêng (0 đến 100 %, số âm là lùi) cho đến lệnh dừng' },
     '#sra-dat_toc_do#': { en: 'set speed to %1 %%', vi: 'đặt tốc độ %1 %%' },
     '#sra-dat_toc_do_tooltip#': { en: 'Speed from 0 to 100 % for the move and turn blocks', vi: 'Tốc độ từ 0 đến 100 % cho các khối đi và quay' },
     '#sra-lap_mai#': { en: 'forever %1 %2', vi: 'lặp mãi %1 %2' },
@@ -206,6 +212,21 @@ var sanRobotAo = new function() {
       {
         type: 'sra_dung', message0: '#sra-dung#',
         previousStatement: null, nextStatement: null, style: 'sra_chuyen_dong',
+      },
+      {
+        type: 'sra_quay_banh', message0: '#sra-quay_banh#',
+        args0: [
+          soVao('TRAI'), soVao('PHAI'),
+          { type: 'field_dropdown', name: 'DON_VI', options: [['#sra-vong#', 'VONG'], ['#sra-do#', 'DO']] },
+        ],
+        inputsInline: true, previousStatement: null, nextStatement: null,
+        style: 'sra_dong_co', tooltip: '#sra-quay_banh_tooltip#',
+      },
+      {
+        type: 'sra_chay_banh', message0: '#sra-chay_banh#',
+        args0: [soVao('TRAI'), soVao('PHAI')],
+        inputsInline: true, previousStatement: null, nextStatement: null,
+        style: 'sra_dong_co', tooltip: '#sra-chay_banh_tooltip#',
       },
       {
         type: 'sra_dat_toc_do', message0: '#sra-dat_toc_do#',
@@ -310,6 +331,20 @@ var sanRobotAo = new function() {
       '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
       '            sra_dong_bo_huong()\n' +
       '        sra_dt.turn_for(do, sra[\'toc_do\'])\n' +
+      '\n' +
+      '    # Chay khong gioi han: tang toc dan 0,3 s co giu huong theo gyro de banh\n' +
+      '    # khong truot (bat motor dot ngot o 100% lam robot lech 20-25 do), roi chay deu.\n' +
+      '    def sra_chay(huong):\n' +
+      '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
+      '            sra_dong_bo_huong()\n' +
+      '        v_dich = sra[\'toc_do\'] * huong\n' +
+      '        t0 = time.time()\n' +
+      '        while time.time() - t0 < 0.3:\n' +
+      '            v = v_dich * (0.15 + 0.85 * (time.time() - t0) / 0.3)\n' +
+      '            lech = max(-15, min(15, (sra_dt.gyro.angle - sra_dt.heading) * 2.0))\n' +
+      '            sra_dt.tank.on(max(-100, min(100, v - lech)), max(-100, min(100, v + lech)))\n' +
+      '            time.sleep(0.005)\n' +
+      '        sra_dt.tank.on(v_dich, v_dich)\n' +
       '\n'
     );
   };
@@ -352,6 +387,13 @@ var sanRobotAo = new function() {
       },
       sra_dung: function() {
         return 'sra_dung()\n';
+      },
+      sra_quay_banh: function(block) {
+        let heSo = block.getFieldValue('DON_VI') == 'DO' ? '' : ' * 360';
+        return 'sra_quay_banh((' + so(block, 'TRAI', '0') + ')' + heSo + ', (' + so(block, 'PHAI', '0') + ')' + heSo + ')\n';
+      },
+      sra_chay_banh: function(block) {
+        return 'sra_chay_banh(' + so(block, 'TRAI', '0') + ', ' + so(block, 'PHAI', '0') + ')\n';
       },
       sra_dat_toc_do: function(block) {
         return 'sra[\'toc_do\'] = max(0, min(100, ' + so(block, 'TOC_DO', '50') + '))\n';
@@ -410,6 +452,34 @@ var sanRobotAo = new function() {
       '\n' +
       'def sra_dung():\n' +
       '    tank_drive.off(brake=True)\n' +
+      '\n' +
+      '# Quay tung banh dung so do, khong dung con quay (G5: hieu chinh dong co).\n' +
+      '# Toc do moi banh ti le voi so do can quay, tang/giam toc dan theo tien do cua chinh banh do;\n' +
+      '# banh nao xong truoc thi dung truoc.\n' +
+      'def sra_toc_do_doc(xong, con, vmax):\n' +
+      '    return min(vmax, 8 + xong * 0.15, 3 + con * 0.08)\n' +
+      '\n' +
+      'def sra_quay_banh(trai, phai):\n' +
+      '    lon = max(abs(trai), abs(phai))\n' +
+      '    if lon < 0.5:\n' +
+      '        return\n' +
+      '    vmax = max(5, sra[\'toc_do\'])\n' +
+      '    l0 = left_motor.position\n' +
+      '    r0 = right_motor.position\n' +
+      '    while True:\n' +
+      '        pl = abs(left_motor.position - l0) / abs(trai) if abs(trai) >= 0.5 else 1\n' +
+      '        pr = abs(right_motor.position - r0) / abs(phai) if abs(phai) >= 0.5 else 1\n' +
+      '        if pl >= 1 - 0.5 / lon and pr >= 1 - 0.5 / lon:\n' +
+      '            break\n' +
+      '        vl = 0 if pl >= 1 else sra_toc_do_doc(pl * lon, (1 - pl) * lon, vmax) * trai / lon\n' +
+      '        vr = 0 if pr >= 1 else sra_toc_do_doc(pr * lon, (1 - pr) * lon, vmax) * phai / lon\n' +
+      '        tank_drive.on(vl, vr)\n' +
+      '        time.sleep(0.005)\n' +
+      '    tank_drive.off(brake=True)\n' +
+      '    time.sleep(0.3)\n' +
+      '\n' +
+      'def sra_chay_banh(trai, phai):\n' +
+      '    tank_drive.on(max(-100, min(100, trai)), max(-100, min(100, phai)))\n' +
       '\n'
     );
   };
@@ -445,6 +515,34 @@ var sanRobotAo = new function() {
       'def sra_dung():\n' +
       '    left_motor.brake()\n' +
       '    right_motor.brake()\n' +
+      '\n' +
+      'def sra_toc_do_doc(xong, con, vmax):\n' +
+      '    return min(vmax, 8 + xong * 0.15, 3 + con * 0.08)\n' +
+      '\n' +
+      'def sra_quay_banh(trai, phai):\n' +
+      '    lon = max(abs(trai), abs(phai))\n' +
+      '    if lon < 0.5:\n' +
+      '        return\n' +
+      '    vmax = max(5, sra[\'toc_do\'])\n' +
+      '    l0 = left_motor.angle()\n' +
+      '    r0 = right_motor.angle()\n' +
+      '    while True:\n' +
+      '        pl = abs(left_motor.angle() - l0) / abs(trai) if abs(trai) >= 0.5 else 1\n' +
+      '        pr = abs(right_motor.angle() - r0) / abs(phai) if abs(phai) >= 0.5 else 1\n' +
+      '        if pl >= 1 - 0.5 / lon and pr >= 1 - 0.5 / lon:\n' +
+      '            break\n' +
+      '        vl = 0 if pl >= 1 else sra_toc_do_doc(pl * lon, (1 - pl) * lon, vmax) * trai / lon\n' +
+      '        vr = 0 if pr >= 1 else sra_toc_do_doc(pr * lon, (1 - pr) * lon, vmax) * phai / lon\n' +
+      '        left_motor.run(vl / 100 * 1050)\n' +
+      '        right_motor.run(vr / 100 * 1050)\n' +
+      '        wait(5)\n' +
+      '    left_motor.brake()\n' +
+      '    right_motor.brake()\n' +
+      '    wait(300)\n' +
+      '\n' +
+      'def sra_chay_banh(trai, phai):\n' +
+      '    left_motor.run(max(-100, min(100, trai)) / 100 * 1050)\n' +
+      '    right_motor.run(max(-100, min(100, phai)) / 100 * 1050)\n' +
       '\n'
     );
   };
@@ -456,7 +554,7 @@ var sanRobotAo = new function() {
       let genCodeGoc = gen.genCode;
       gen.genCode = function() {
         let code = genCodeGoc.apply(gen, arguments);
-        if (/\bsra(_[a-z]+\(|\[)/.test(code)) {
+        if (/\bsra(_[a-z_]+\(|\[)/.test(code)) {
           let moc = '# Here is where your code starts';
           let k = self.kichThuocRobot();
           code = code.replace(moc, cap[1](k) + self.maDrivetrain(k) + moc);
@@ -464,7 +562,7 @@ var sanRobotAo = new function() {
         return code;
       };
     });
-    Blockly.Python.addReservedWords('sra,sra_di,sra_quay,sra_chay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
+    Blockly.Python.addReservedWords('sra_quay_banh,sra_chay_banh,sra_toc_do_doc,sra,sra_di,sra_quay,sra_chay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
   };
 
   // ==========================================================================
@@ -489,6 +587,13 @@ var sanRobotAo = new function() {
         '<block type="sra_dung"></block>' +
         '<block type="sra_dat_toc_do">' + soBong('TOC_DO', 50) + '</block>'
       , 'id="sraChuyenDong"') +
+      danhMuc('Động cơ', 'dong_co',
+        '<block type="sra_quay_banh">' + soBong('TRAI', 1) + soBong('PHAI', 1) + '<field name="DON_VI">VONG</field></block>' +
+        '<block type="sra_chay_banh">' + soBong('TRAI', 50) + soBong('PHAI', 50) + '</block>' +
+        '<block type="sra_dung"></block>' +
+        '<block type="sleep"><field name="units">SECONDS</field>' + soBong('seconds', 1) + '</block>' +
+        '<block type="sra_dat_toc_do">' + soBong('TOC_DO', 50) + '</block>'
+      , 'id="sraDongCo"') +
       danhMuc('Bút vẽ', 'but_ve',
         '<block type="sra_ha_but"></block>' +
         '<block type="sra_nhac_but"></block>' +
@@ -554,8 +659,10 @@ var sanRobotAo = new function() {
     de.setAttribute('name', i18n.get('#sra-co_ban#') + ' – ' + i18n.get('#blk-motion#'));
     de.setAttribute('id', 'sraDe');
     de.setAttribute('colour', self.MAU.chuyen_dong[0]);
-    ['sraChuyenDong', 'sraButVe', 'sraCamBien'].forEach(function(id) {
+    ['sraChuyenDong', 'sraDongCo', 'sraButVe', 'sraCamBien'].forEach(function(id) {
       coBan.querySelector('[id="' + id + '"]').querySelectorAll(':scope > block').forEach(function(b) {
+        // Nhóm Động cơ lặp lại vài khối của nhóm khác cho tiện, chỉ lấy hai khối riêng
+        if (id == 'sraDongCo' && !/^sra_(quay|chay)_banh$/.test(b.getAttribute('type'))) return;
         de.appendChild(toolboxXml.importNode(b, true));
       });
     });
@@ -1152,6 +1259,10 @@ var sanRobotAo = new function() {
   // Khởi động
   // ==========================================================================
   this.khoiDong = function() {
+    // Motor yếu và gia tốc bánh (gói G5), chạy cả ở chế độ tự do lẫn thử thách
+    let dongCo = document.createElement('script');
+    dongCo.src = 'san-robot-ao/dong-co.js';
+    document.body.appendChild(dongCo);
     self.ganBoSinhMa();
     self.bocBlockly();
     if (LANG == 'vi') {

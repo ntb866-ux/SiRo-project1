@@ -112,7 +112,7 @@ Sao 2 và 3 tính theo thời gian, để học sinh thử nghiệm tốc độ:
 | 40 / 10 (lời giải gợi ý) | 20,0 giây | 2 |
 | 60 / 0 (bánh chậm đứng yên) | 18,3 giây | 2 |
 | 60 / 15 | 14,4 giây | 3 |
-| 80 / 20 | 11,9 giây | 3 |
+| 80 / 20 | 12–14 giây khi qua được, nhưng có lượt văng khỏi đường ở khúc cua | 3 hoặc 0 |
 
 Sao 2: tới đích trong 40 giây; sao 3: trong 16 giây. Câu hỏi thảo luận: vì sao 60/0 chậm hơn 60/15 dù bánh nhanh như nhau? (Bánh chậm đứng yên thì mỗi lần sửa robot ngoặt mạnh, đi zíc zắc nhiều hơn nên quãng đường thực dài hơn.)
 
@@ -149,8 +149,8 @@ Vì sao các cảm biến cách nhau 3 cm: vạch rộng 2 cm, mỗi cảm biế
 
 ## Ghi chú kĩ thuật
 
-- **Khối mới** (tệp `san-robot-ao/khoi-cam-bien-mau.js`): "độ sáng phản xạ cảm biến [giữa/trái/phải]", "cảm biến [giữa/trái/phải] thấy màu [..]?" (thay khối "cảm biến màu thấy …?" cũ trong bảng Cơ bản; khối cũ vẫn mở được) và "chạy bánh trái … % bánh phải … %". Cảm biến giữa/trái/phải được đổi ra cổng theo vị trí gắn trên robot, nên cùng chương trình chạy được trên robot 1 hay 3 cảm biến; chọn cảm biến không có thì báo lỗi dễ hiểu khi chạy.
-- **Đi mãi giữ hướng:** trong giả lập, lệnh motor trần làm bánh trượt lúc tăng tốc nên "đi tới mãi" lệch 5–15°. Khi chương trình có khối cảm biến màu mới, mỗi lần đọc cảm biến cũng sửa hướng theo con quay, nên vòng "chờ đến khi …" đi thẳng như xe thật.
+- **Khối mới** (tệp `san-robot-ao/khoi-cam-bien-mau.js`): "độ sáng phản xạ cảm biến [giữa/trái/phải]", "cảm biến [giữa/trái/phải] thấy màu [..]?" (thay khối "cảm biến màu thấy …?" cũ trong bảng Cơ bản; khối cũ vẫn mở được). Bài 4–5 dùng thêm khối "chạy bánh trái … % bánh phải … %" của gói G5. Cảm biến giữa/trái/phải được đổi ra cổng theo vị trí gắn trên robot, nên cùng chương trình chạy được trên robot 1 hay 3 cảm biến; chọn cảm biến không có thì báo lỗi dễ hiểu khi chạy.
+- **Đi mãi giữ hướng:** trong giả lập, bánh dễ trượt nên "đi tới mãi" có thể lệch hướng. Khối "đi tới mãi" (G6) tăng tốc dần có giữ hướng trong 0,3 giây đầu; khi chương trình có khối cảm biến màu mới, mỗi lần đọc cảm biến còn sửa hướng tiếp theo con quay, nên vòng "chờ đến khi …" đi thẳng suốt quãng đường như xe thật.
 - **Số đo và biểu đồ** (tệp `core/cam-bien-mau.js`): đăng kí dòng vào bảng số đo chung `core/so-do.js`. Bật trong tệp bài bằng `"soDo": ["doSangGiua", "mauGiua"]` (các mã: `doSangGiua/Trai/Phai`, `mauGiua/Trai/Phai`); biểu đồ hiện khi có dòng `doSang…`; ngưỡng vẽ trên biểu đồ lấy từ trường `"nguong"` (mặc định 50).
 - **Luật chấm mới** `dungCamBien` (`toiThieu`: số cảm biến màu khác nhau chương trình phải dùng).
 - **Sân** sinh bằng `python3 scripts/san/tao-san-cam-bien.py`, **tệp bài** sinh bằng `python3 scripts/san/tao-bai-cam-bien.py`. Muốn đổi vị trí vạch hay đường thì sửa hai tệp này rồi chạy lại, đừng sửa tay ảnh hay JSON. Màu trang trí trên đường robot đi phải có kênh đỏ cao (≥ 190), nếu không cảm biến "độ sáng phản xạ" sẽ tưởng là vạch đen.

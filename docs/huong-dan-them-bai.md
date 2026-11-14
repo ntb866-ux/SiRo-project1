@@ -41,8 +41,13 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | `locKhoi` | không | Ẩn bớt khối trong hộp công cụ, theo định dạng lọc của GEARS: `{ "deny": { "categories": [...], "blocks": [...] } }`. |
 | `camera` | không | `toanSan` (mặc định: nhìn từ trên xuống thấy cả sân), `follow` (bám robot) hoặc `arc`. |
 | `phieu` | không | Đường dẫn phiếu học tập, tính từ `san-robot-ao/`. |
+| `soDo` | không | Bật bảng số đo nổi trên sân: `true` (mọi dòng) hoặc mảng tên dòng, ví dụ `["vongTrai", "vongPhai", "tien", "thoiGian"]`. Dòng có sẵn (G5): `thoiGian`, `vongTrai`, `vongPhai`, `vongGiay`, `quangDuong`, `tien`, `tocDo`, `quayThan`, `lechNgang`. Gói khác thêm dòng bằng `SRA.soDo.them(...)` (xem `core/so-do.js`). Cảm biến màu (G7): `doSangGiua`, `doSangTrai`, `doSangPhai`, `mauGiua`, `mauTrai`, `mauPhai`; có dòng `doSang…` thì hiện thêm biểu đồ độ sáng theo thời gian. |
+| `robotChon` | không | Cho học sinh đổi robot ngay trong bài: `[{ "tep": "banh-to", "ten": "Robot bánh to" }, …]`. Robot lúc mở bài là trường `robot`. |
+| `motorYeu` | không | Làm một motor yếu đi: `{ "banh": "phai", "phanTram": 8 }` (bánh phải chỉ đạt 92 % tốc độ được lệnh). Ghi đè trường `sraMotorYeu` của tệp robot; `null` thì tắt. |
+| `giaTocBanh` | không | Gia tốc tối đa của bánh (độ/giây sau mỗi mili giây). GEARS mặc định 20 (gần như tức thì, bánh trượt và xe lệch hướng lúc khởi động); `2.5` cho khởi động êm trong 0,2 giây. |
+| `hienTiaDo` | không | `true`/`false`: hiện ô "Hiện tia đo của cảm biến" dưới khung đề, giá trị là trạng thái mặc định. Bật thì sân vẽ 21 tia của cảm biến khoảng cách, tia ngắn nhất màu đỏ kèm số cm, thanh cản sáng vàng khi cảm biến chạm bị nhấn (gói G6, `core/cam-bien.js`). |
+| `ketThucKhiVao` | không | Tên một vùng: robot vào vùng này thì lượt chạy kết thúc ngay và được chấm, dù chương trình còn chạy. Dùng cho bài có khối "lặp mãi" (mê cung, đi tìm đích). |
 | `bienThe` | không | Các phiên bản sân; mỗi lần bấm Chạy chọn ngẫu nhiên một bản. Mỗi bản có thể ghi đè `viTriBatDau`, nối thêm `vatThe` và ghi đè vị trí (`x`, `y`, `rong`, `dai`) của vùng cùng tên. Dùng để học sinh không đo sẵn quãng đường mà phải dùng cảm biến. Xem `03-cam-bien-mau/03-phan-loai-mau.json`. |
-| `soDo` | không | Bảng số đo nổi trên sân: `true` (mọi dòng) hoặc mảng mã dòng. Cảm biến màu: `doSangGiua`, `doSangTrai`, `doSangPhai`, `mauGiua`, `mauTrai`, `mauPhai`; có dòng `doSang…` thì hiện thêm biểu đồ độ sáng theo thời gian. |
 | `nguong` | không | Ngưỡng vẽ trên biểu đồ độ sáng (mặc định 50). |
 
 ## 4. Điều kiện và cách chấm sao
@@ -76,6 +81,19 @@ Các loại điều kiện (`loai`) có sẵn, dùng được cả trong `mucTie
 | `huongCuoi` | `goc`, `saiSo` (mặc định 10) | Lúc kết thúc, robot quay mặt về hướng `goc` ± `saiSo` độ. |
 | `dungKhoi` | `khoi` (tên loại khối Blockly, chuỗi hoặc mảng), `toiThieu` (mặc định 1), `tenKhoi` (tên đọc, không bắt buộc) | Chương trình có ít nhất `toiThieu` khối thuộc các loại đó, ví dụ `["controls_repeat_ext", "controls_repeat"]` để bắt buộc dùng vòng lặp, `["sra_ha_but", "penDown"]` cho khối hạ bút. Viết Python thì không đạt. |
 | `dungCamBien` | `toiThieu` | Chương trình khối dùng ít nhất `toiThieu` cảm biến màu khác nhau (giữa, trái, phải). Viết Python thì không đạt. |
+| `khoangCachCuoi` | `tu`, `den` (cm) | Lúc kết thúc, cảm biến khoảng cách (siêu âm) đo được trong khoảng `tu`…`den`. Số đo tính đúng như khối "khoảng cách phía trước (cm)". |
+
+Các điều kiện dựa trên bảng số đo (G5, tệp `core/so-do-chuyen-dong.js`). Số đo tính từ chỗ và hướng của robot lúc bắt đầu lăn bánh:
+
+| `loai` | Tham số | Đạt khi |
+|---|---|---|
+| `diDuoc` | `cm`, `saiSo` (mặc định 2) | Robot đi tới được `cm` ± `saiSo` theo hướng đầu xe lúc xuất phát. |
+| `lechNgangToiDa` | `cm` | Lúc dừng, robot lệch khỏi đường thẳng xuất phát không quá `cm`. |
+| `quayThan` | `do` (dương = quay phải), `saiSo` (mặc định 2) | Thân xe đã quay `do` ± `saiSo` độ so với lúc xuất phát. |
+| `chenhVongToiDa` | `vong` | Số vòng hai bánh đã quay chênh nhau không quá `vong`. |
+| `thoiGianChuyenDong` | `tu`, `den` | Thời gian bánh được lệnh chạy (từ lệnh chạy đầu tiên tới lệnh dừng) nằm trong khoảng, tính bằng giây. |
+| `hoanThanhVoiCacRobot` | `robot` (mảng tên tệp robot) | Đã đạt `mucTieu` với từng robot trong danh sách, cộng dồn qua các lượt chạy (dùng cùng `robotChon`). |
+| `khongDungKhoi` | `khoi` (tên loại khối, chuỗi hoặc mảng) | Chương trình không có khối nào thuộc các loại đó. Viết Python thì không đạt. |
 
 Mỗi điều kiện có thể thêm `"moTa": "…"` để thay câu mô tả tự động.
 

@@ -83,6 +83,10 @@ function taoRobot(o) {
 }
 
 const robots = [
+  // G5 (hiệu chỉnh động cơ): robot chuẩn nhưng motor bánh phải yếu hơn 8 %, xe tự lệch sang phải.
+  { file: 'lech-motor', name: 'siro_lechMotor', tenNgan: 'Robot motor lệch', color: '#C0392B', chuViBanh: 20, casterDiameter: 4,
+    motorYeu: { banh: 'phai', phanTram: 8 }, giaToc: 2.5,
+    moTa: 'Giống robot chuẩn (bánh chu vi 20 cm) nhưng motor bánh phải yếu hơn motor bánh trái 8 %: cùng lệnh tốc độ, bánh phải quay chậm hơn nên xe đi lệch. Dùng cho bài bù tốc độ.' },
   { file: 'co-ban', name: 'siro_coBan', tenNgan: 'Robot chuẩn lớp 6', color: '#F09C0D', chuViBanh: 20, casterDiameter: 4,
     moTa: 'Robot dùng chung cho mọi bài: 2 bánh chủ động, 1 bi tự do phía sau, cảm biến khoảng cách, màu, chạm, gyro và bút vẽ. Bánh có chu vi 20 cm: quay 1 vòng thì robot đi 20 cm.' },
   { file: 'banh-to', name: 'siro_banhTo', tenNgan: 'Robot bánh to', color: '#2E86DE', chuViBanh: 30, casterDiameter: 4,
@@ -97,6 +101,8 @@ const robots = [
 const outDir = path.join(__dirname, '..', '..', 'public', 'san-robot-ao', 'robots');
 robots.forEach(function (o) {
   const json = taoRobot(o);
+  if (o.motorYeu) json.sraMotorYeu = o.motorYeu;      // đọc bởi san-robot-ao/dong-co.js
+  if (o.giaToc) json.wheelMaxAcceleration = o.giaToc;  // trường có sẵn của GEARS: bánh tăng tốc êm, ít trượt
   fs.writeFileSync(path.join(outDir, o.file + '.json'), JSON.stringify(json, null, 2) + '\n');
   console.log(o.file, 'd =', json.wheelDiameter, 'cm');
 });

@@ -1,0 +1,433 @@
+{
+  "tieuDe": "Đi men theo tường",
+  "san": "luoi-toa-do",
+  "robot": "co-ban",
+  "cheDo": "co-ban",
+  "hienTiaDo": true,
+  "soDo": [
+    "khoangCach"
+  ],
+  "viTriBatDau": {
+    "x": 0,
+    "y": 0,
+    "goc": 0
+  },
+  "vung": {
+    "gocA": {
+      "ten": "góc trên trái",
+      "x": 0,
+      "y": 0,
+      "rong": 34,
+      "dai": 34,
+      "mau": "vang"
+    },
+    "gocB": {
+      "ten": "góc trên phải",
+      "x": 0,
+      "y": 0,
+      "rong": 34,
+      "dai": 34,
+      "mau": "vang"
+    },
+    "gocC": {
+      "ten": "góc dưới phải",
+      "x": 0,
+      "y": 0,
+      "rong": 34,
+      "dai": 34,
+      "mau": "vang"
+    },
+    "gocD": {
+      "ten": "góc xuất phát",
+      "x": 0,
+      "y": 0,
+      "rong": 34,
+      "dai": 34,
+      "mau": "xanh"
+    },
+    "giuaPhong": {
+      "ten": "giữa phòng",
+      "x": 0,
+      "y": 0,
+      "rong": 80,
+      "dai": 80,
+      "mau": "do"
+    }
+  },
+  "vatThe": [],
+  "bienThe": [
+    {
+      "ten": "phòng vuông",
+      "viTriBatDau": {
+        "x": -60,
+        "y": -48,
+        "goc": 0
+      },
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            81.5,
+            5.0
+          ],
+          "size": [
+            166,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            -81.5,
+            5.0
+          ],
+          "size": [
+            166,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -81.5,
+            0.0,
+            5.0
+          ],
+          "size": [
+            3,
+            160,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            81.5,
+            0.0,
+            5.0
+          ],
+          "size": [
+            3,
+            160,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "gocA": {
+          "x": -60,
+          "y": 60
+        },
+        "gocB": {
+          "x": 60,
+          "y": 60
+        },
+        "gocC": {
+          "x": 60,
+          "y": -60
+        },
+        "gocD": {
+          "x": -60,
+          "y": -60
+        },
+        "giuaPhong": {
+          "x": 0.0,
+          "y": 0.0,
+          "rong": 80,
+          "dai": 80
+        }
+      }
+    },
+    {
+      "ten": "phòng dài",
+      "viTriBatDau": {
+        "x": -65,
+        "y": -53,
+        "goc": 0
+      },
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            -15.0,
+            86.5,
+            5.0
+          ],
+          "size": [
+            146,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -15.0,
+            -86.5,
+            5.0
+          ],
+          "size": [
+            146,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -86.5,
+            0.0,
+            5.0
+          ],
+          "size": [
+            3,
+            170,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            56.5,
+            0.0,
+            5.0
+          ],
+          "size": [
+            3,
+            170,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "gocA": {
+          "x": -65,
+          "y": 65
+        },
+        "gocB": {
+          "x": 35,
+          "y": 65
+        },
+        "gocC": {
+          "x": 35,
+          "y": -65
+        },
+        "gocD": {
+          "x": -65,
+          "y": -65
+        },
+        "giuaPhong": {
+          "x": -15.0,
+          "y": 0.0,
+          "rong": 60,
+          "dai": 90
+        }
+      }
+    },
+    {
+      "ten": "phòng bẹt",
+      "viTriBatDau": {
+        "x": -65,
+        "y": -28,
+        "goc": 0
+      },
+      "vatThe": [
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            61.5,
+            5.0
+          ],
+          "size": [
+            176,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            0.0,
+            -61.5,
+            5.0
+          ],
+          "size": [
+            176,
+            3,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            -86.5,
+            0.0,
+            5.0
+          ],
+          "size": [
+            3,
+            120,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        },
+        {
+          "type": "box",
+          "position": [
+            86.5,
+            0.0,
+            5.0
+          ],
+          "size": [
+            3,
+            120,
+            10
+          ],
+          "color": "#7A8A9A",
+          "physicsOptions": "fixed",
+          "castShadows": false,
+          "receiveShadows": false
+        }
+      ],
+      "vung": {
+        "gocA": {
+          "x": -65,
+          "y": 40
+        },
+        "gocB": {
+          "x": 65,
+          "y": 40
+        },
+        "gocC": {
+          "x": 65,
+          "y": -40
+        },
+        "gocD": {
+          "x": -65,
+          "y": -40
+        },
+        "giuaPhong": {
+          "x": 0.0,
+          "y": 0.0,
+          "rong": 90,
+          "dai": 40
+        }
+      }
+    }
+  ],
+  "deBai": "Robot hút bụi lau nhà thường chạy một vòng **sát chân tường** trước. Robot của bạn đang ở góc dưới bên trái một căn phòng, hướng lên trên, tường ở bên tay trái.\n\nHãy cho robot đi **một vòng quanh phòng theo chiều kim đồng hồ**, luôn đi sát tường: qua góc trên trái, góc trên phải, góc dưới phải rồi **về lại góc xuất phát**. Không được đi vào vùng đỏ giữa phòng.\n\nMỗi lượt, căn phòng có kích thước khác nhau, nên bạn không biết trước mỗi cạnh dài bao nhiêu.",
+  "nguyenLi": "Robot không có bản đồ phòng. Nó chỉ cần một quy tắc lặp lại: **đi thẳng cho đến khi cảm biến thấy tường phía trước còn gần, rồi rẽ phải**. Phòng có 4 góc nên lặp 4 lần. Quy tắc này đúng với phòng to hay nhỏ, vuông hay dài, vì robot quyết định dựa trên số đo lúc đang chạy chứ không dựa trên số cm tính sẵn.\n\nRobot dừng cách tường phía trước bao nhiêu thì sau khi rẽ, nó cũng cách tường bên trái bấy nhiêu. Vì vậy chọn ngưỡng dừng cũng là chọn khoảng cách men tường. Robot còn trôi thêm vài cm sau lệnh dừng (quán tính), nên ngưỡng phải chừa chỗ cho đoạn trôi và cho thân xe khi quay.\n\nNói với học sinh: bạn bịt mắt, một tay chạm tường, đi tới khi gậy chạm tường trước mặt thì quay phải. Lặp lại 4 lần là về chỗ cũ.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "gocA",
+        "gocB",
+        "gocC"
+      ],
+      "theoThuTu": true
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "gocD"
+    },
+    {
+      "loai": "khongVaoVung",
+      "vung": "giuaPhong",
+      "moTa": "Đi sát tường, không vào vùng đỏ giữa phòng"
+    },
+    {
+      "loai": "dungKhoi",
+      "khoi": "sra_khoang_cach"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi hết một vòng sát tường, về góc xuất phát"
+    },
+    {
+      "moTa": "Không chạm tường",
+      "dieuKien": [
+        {
+          "loai": "khongChamTuong"
+        }
+      ]
+    },
+    {
+      "moTa": "Dùng vòng lặp, tối đa 5 khối lệnh",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "controls_repeat_ext",
+            "controls_repeat"
+          ]
+        },
+        {
+          "loai": "soKhoiToiDa",
+          "khoi": 5
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Làm trước một cạnh: robot chạy lên, dừng trước tường trên rồi rẽ phải. Giống bài \"Dừng cách tường 20 cm\".",
+    {
+      "noiDung": "Một cạnh gồm: **chạy tới** → **chờ đến khi** ⟨khoảng cách < 20⟩ → **dừng** → **quay phải 90 độ**. Phòng có mấy góc thì làm mấy lần?",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **lặp lại 4 lần** { **chạy tới**, **chờ đến khi** ⟨khoảng cách phía trước (cm) < 20⟩, **dừng**, **quay phải 90 độ** }. Robot quẹt tường lúc quay? Đuôi xe cần chỗ để xoay: tăng ngưỡng hoặc giảm tốc độ.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 90
+}

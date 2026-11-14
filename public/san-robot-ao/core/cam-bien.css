@@ -1,0 +1,4 @@
+/* Sân Robot Ảo – ô bật/tắt tia đo của cảm biến (gói G6). GPL v3. */
+#sraKhung .sra-bang-cam-bien { margin-bottom: 8px; }
+#sraKhung .sra-bang-cam-bien .sra-bat-tia { font-size: 13px; cursor: pointer; }
+#sraKhung .sra-bang-cam-bien .sra-bien-the { margin: 2px 0 0; }

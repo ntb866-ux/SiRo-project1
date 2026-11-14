@@ -1,5 +1,5 @@
 /*
- * Sân Robot Ảo – khối cảm biến màu nhiều cổng và khối chạy hai bánh (gói G7).
+ * Sân Robot Ảo – khối cảm biến màu nhiều cổng (gói G7).
  * Copyright (C) 2026 những người đóng góp cho Sân Robot Ảo. Phát hành theo GPL v3.
  *
  * Nạp ngay sau san-robot-ao/giao-dien.js, trước blockly.init(). Tệp này chỉ bọc
@@ -8,7 +8,7 @@
  * Khối mới:
  *   sra_do_sang   "độ sáng phản xạ cảm biến [giữa/trái/phải]"   → số 0..100
  *   sra_mau_thay  "cảm biến [giữa/trái/phải] thấy màu [đen…] ?"  → đúng/sai
- *   sra_chay_banh "chạy bánh trái [..] % bánh phải [..] %"       → lệnh
+ * Khối "chạy bánh trái … % bánh phải … %" (sra_chay_banh) do gói G5 định nghĩa trong giao-dien.js.
  *
  * Cảm biến "giữa/trái/phải" được đổi ra cổng lúc sinh mã, theo vị trí gắn trên robot
  * (x < 0 là bên trái), nên cùng chương trình chạy được trên robot 1 hay 3 cảm biến.
@@ -27,11 +27,6 @@
     '#sra-giua#': { en: 'middle', vi: 'giữa' },
     '#sra-ben_trai#': { en: 'left', vi: 'trái' },
     '#sra-ben_phai#': { en: 'right', vi: 'phải' },
-    '#sra-chay_banh#': { en: 'run left wheel %1 %% right wheel %2 %%', vi: 'chạy bánh trái %1 %% bánh phải %2 %%' },
-    '#sra-chay_banh_tooltip#': {
-      en: 'Keep both wheels turning at these speeds (-100 to 100 %). Different speeds make the robot curve',
-      vi: 'Cho hai bánh quay mãi với tốc độ này (-100 đến 100 %). Hai bánh khác tốc độ thì robot đi theo đường cong'
-    },
   });
 
   const VI_TRI = [['#sra-giua#', 'GIUA'], ['#sra-ben_trai#', 'TRAI'], ['#sra-ben_phai#', 'PHAI']];
@@ -58,22 +53,10 @@
         ],
         output: 'Boolean', style: 'sra_cam_bien', tooltip: '#sra-mau_thay_tooltip#',
       },
-      {
-        type: 'sra_chay_banh', message0: '#sra-chay_banh#',
-        args0: [
-          { type: 'input_value', name: 'TRAI', check: 'Number' },
-          { type: 'input_value', name: 'PHAI', check: 'Number' },
-        ],
-        inputsInline: true, previousStatement: null, nextStatement: null,
-        style: 'sra_chuyen_dong', tooltip: '#sra-chay_banh_tooltip#',
-      },
     ]);
   };
 
   // ---------- Bảng khối Cơ bản ----------
-  function soBong(ten, gt) {
-    return '<value name="' + ten + '"><shadow type="math_number"><field name="NUM">' + gt + '</field></shadow></value>';
-  }
   function themKhoi(toolbox, idNhom, xml, sauLoai) {
     let nhom = toolbox.querySelector('[id="' + idNhom + '"]');
     if (!nhom) return;
@@ -88,8 +71,6 @@
   let toolboxGoc = sanRobotAo.toolboxCoBan;
   sanRobotAo.toolboxCoBan = function() {
     let toolbox = toolboxGoc.apply(sanRobotAo, arguments);
-    themKhoi(toolbox, 'sraChuyenDong',
-      '<block type="sra_chay_banh">' + soBong('TRAI', 50) + soBong('PHAI', 50) + '</block>', 'sra_chay');
     // Khối "cảm biến … thấy màu" chọn được cảm biến, thay khối một cảm biến cũ trong bảng
     // (khối cũ vẫn được định nghĩa nên chương trình cũ vẫn mở được).
     let cu = toolbox.querySelector('block[type="sra_thay_mau"]');
@@ -152,11 +133,6 @@
         let ten = uyQuyen(gen, 'color', { color: block.getFieldValue('color'), type: 'NUMBER' }, block)[0];
         return ['sra_doc_mau(color_sensor_in' + cong + ') == ' + ten, Blockly.Python.ORDER_RELATIONAL];
       },
-      sra_chay_banh: function(block) {
-        let trai = Blockly.Python.valueToCode(block, 'TRAI', Blockly.Python.ORDER_NONE) || '0';
-        let phai = Blockly.Python.valueToCode(block, 'PHAI', Blockly.Python.ORDER_NONE) || '0';
-        return 'sra_chay_banh(' + trai + ', ' + phai + ')\n';
-      },
     };
   }
 
@@ -165,15 +141,11 @@
   // làm bánh trượt lúc tăng tốc nên "đi mãi" lệch 5–15°, trong khi xe thật đi gần thẳng.
   // Vòng "chờ đến khi …" đọc cảm biến liên tục nên giữ được hướng mà học sinh không phải lo.
   const MA_EV3DEV =
-    '# San Robot Ao: cam bien mau, chay hai banh (G7)\n' +
+    '# San Robot Ao: cam bien mau (G7)\n' +
     'sra_giu = {\'bat\': False, \'v\': 0}\n' +
     '\n' +
     'def sra_gioi_han(v):\n' +
     '    return max(-100, min(100, v))\n' +
-    '\n' +
-    'def sra_chay_banh(trai, phai):\n' +
-    '    sra_giu[\'bat\'] = False\n' +
-    '    tank_drive.on(sra_gioi_han(trai), sra_gioi_han(phai))\n' +
     '\n' +
     'def sra_sua_huong():\n' +
     '    pass\n' +
@@ -196,13 +168,12 @@
     '            v = sra_giu[\'v\']\n' +
     '            tank_drive.on(sra_gioi_han(v - sua), sra_gioi_han(v + sua))\n' +
     '\n' +
+    '    sra_chay_goc = sra_chay\n' +
+    '\n' +
     '    def sra_chay(huong):\n' +
-    '        if abs(sra_dt.gyro.angle - sra_dt.heading) > 15:\n' +
-    '            sra_dong_bo_huong()\n' +
-    '        v = sra[\'toc_do\'] * huong\n' +
+    '        sra_chay_goc(huong)\n' +
     '        sra_giu[\'bat\'] = True\n' +
-    '        sra_giu[\'v\'] = v\n' +
-    '        tank_drive.on(v, v)\n' +
+    '        sra_giu[\'v\'] = sra[\'toc_do\'] * huong\n' +
     '\n' +
     '    def sra_tat_giu(ham):\n' +
     '        def moi(*so):\n' +
@@ -213,14 +184,12 @@
     '    sra_di = sra_tat_giu(sra_di)\n' +
     '    sra_quay = sra_tat_giu(sra_quay)\n' +
     '    sra_dung = sra_tat_giu(sra_dung)\n' +
+    '    sra_chay_banh = sra_tat_giu(sra_chay_banh)\n' +
     '\n';
   const MA_PYBRICKS =
-    '# San Robot Ao: cam bien mau, chay hai banh (G7)\n' +
+    '# San Robot Ao: cam bien mau (G7)\n' +
     'def sra_gioi_han(v):\n' +
     '    return max(-100, min(100, v))\n' +
-    '\n' +
-    'def sra_chay_banh(trai, phai):\n' +
-    '    move_tank(sra_gioi_han(trai) / 100 * 1050, sra_gioi_han(phai) / 100 * 1050)\n' +
     '\n' +
     'def sra_doc_sang(cb):\n' +
     '    return cb.reflection()\n' +
@@ -241,7 +210,7 @@
       let code = genCodeGoc.apply(gen, arguments);
       let moc = '# Here is where your code starts';
       let them = '';
-      if (/\bsra_(chay_banh|doc_sang|doc_mau)\(/.test(code)) {
+      if (/\bsra_(doc_sang|doc_mau)\(/.test(code)) {
         them += cap[1];
         if (gen === ev3dev2_generator && /^sra_dt = None$/m.test(code) && /\bdef sra_dung\(/.test(code)) them += MA_GIU_HUONG;
       }
@@ -250,5 +219,5 @@
       return code;
     };
   });
-  Blockly.Python.addReservedWords('sra_chay_banh,sra_gioi_han,sra_thieu_cam_bien,sra_giu,sra_sua_huong,sra_doc_sang,sra_doc_mau,sra_tat_giu');
+  Blockly.Python.addReservedWords('sra_gioi_han,sra_chay_goc,sra_thieu_cam_bien,sra_giu,sra_sua_huong,sra_doc_sang,sra_doc_mau,sra_tat_giu');
 })();

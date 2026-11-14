@@ -55,7 +55,6 @@ const CA = {
     { ten: 'bật tắt 25/5', sao: 2, ma: [['lapDen', ['mau', 'GIUA', 'GREEN'], [['neu', ['sang', 'GIUA', '<', 50], [['banh', 5, 25]], [['banh', 25, 5]]]]], ['dung']] },
     { ten: 'bật tắt 40/10', sao: 2, ma: [['lapDen', ['mau', 'GIUA', 'GREEN'], [['neu', ['sang', 'GIUA', '<', 50], [['banh', 10, 40]], [['banh', 40, 10]]]]], ['dung']] },
     { ten: 'bật tắt 60/15', sao: 3, ma: [['lapDen', ['mau', 'GIUA', 'GREEN'], [['neu', ['sang', 'GIUA', '<', 50], [['banh', 15, 60]], [['banh', 60, 15]]]]], ['dung']] },
-    { ten: 'bật tắt 80/20', sao: 3, ma: [['lapDen', ['mau', 'GIUA', 'GREEN'], [['neu', ['sang', 'GIUA', '<', 50], [['banh', 20, 80]], [['banh', 80, 20]]]]], ['dung']] },
     { ten: 'bật tắt 60/0', sao: 2, ma: [['lapDen', ['mau', 'GIUA', 'GREEN'], [['neu', ['sang', 'GIUA', '<', 50], [['banh', 0, 60]], [['banh', 60, 0]]]]], ['dung']] },
     { ten: 'lái ngược chiều', sao: 0, ma: [['lapDen', ['mau', 'GIUA', 'GREEN'], [['neu', ['sang', 'GIUA', '<', 50], [['banh', 40, 10]], [['banh', 10, 40]]]]], ['dung']] },
   ],
