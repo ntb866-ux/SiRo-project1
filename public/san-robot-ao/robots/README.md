@@ -13,6 +13,7 @@ Các tệp được sinh từ một nguồn duy nhất là `scripts/robot/tao-ro
 | `banh-to.json` | Robot bánh to | Bài so sánh: bánh to đi nhanh hơn, xa hơn mỗi vòng |
 | `banh-nho.json` | Robot bánh nhỏ | Bài so sánh: bánh nhỏ chậm hơn, dễ dừng đúng chỗ |
 | `do-line.json` | Robot dò đường (3 cảm biến màu) | Bài dò vạch |
+| `xe-lap-rap.json` | Xe lắp mô-đun (2 bánh) | Xe kiểu xe kit, tự dựng từng linh kiện; xem [`../xe/README.md`](../xe/README.md). Sinh bằng `scripts/robot/tao-xe.js`. Các bài hiện có vẫn dùng robot chuẩn |
 
 ## Bảng thông số
 

@@ -369,6 +369,9 @@ SRA.datCamera = function(kieu) {
 
 SRA.napRobot = function(ten) {
   if (!ten) return Promise.resolve();
+  // Thử một bài bằng robot khác (ví dụ xe lắp mô-đun): thêm &robot=xe-lap-rap vào địa chỉ trang
+  let thay = new URLSearchParams(location.search).get('robot');
+  if (thay && /^[a-z0-9-]+$/.test(thay)) ten = thay;
   return SRA.docJSON(SRA.GOC + 'robots/' + ten + '.json')
     .then(function(data) {
       robot.options = data;

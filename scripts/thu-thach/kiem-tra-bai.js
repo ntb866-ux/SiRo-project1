@@ -5,6 +5,8 @@
 const { chromium } = require('playwright');
 
 const URL = process.env.SIRO_URL || 'http://localhost:1337/index.html';
+// Thử bài bằng robot khác: SIRO_ROBOT=xe-lap-rap node …
+const ROBOT = process.env.SIRO_ROBOT ? '&robot=' + process.env.SIRO_ROBOT : '';
 
 // Lời giải viết gọn: ['di', cm] ['lui', cm] ['phai', độ] ['trai', độ] ['but'] ['lap', n, [...]]
 // Thêm cho bài cảm biến (G7): ['chay'] ['dung'] ['toc', %] ['banh', trái %, phải %] ['cho', đk]
@@ -184,7 +186,7 @@ function xml(ds) {
     // Khung nhìn nhỏ để trình duyệt không màn hình vẫn chạy đủ 60 khung hình/giây
     const page = await browser.newPage({ viewport: { width: 480, height: 360 } });
     page.on('pageerror', (e) => console.log('  Lỗi trang:', e.message));
-    await page.goto(URL + '?baiTap=' + ma);
+    await page.goto(URL + '?baiTap=' + ma + ROBOT);
     await page.waitForFunction(() => window.SRA && SRA.daSanSang, null, { timeout: 90000 });
     await page.evaluate(() => { $('.dialogScreen').remove(); $('#navSim').click(); });
     // Đợi GEARS nạp xong chương trình mở đầu, kẻo nó chèn vào sau khi ta đã nạp lời giải

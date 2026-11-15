@@ -7,6 +7,8 @@
 const { chromium } = require('playwright');
 
 const URL = process.env.SIRO_URL || 'http://localhost:1337/index.html';
+// Thử bài bằng robot khác: SIRO_ROBOT=xe-lap-rap node …
+const ROBOT = process.env.SIRO_ROBOT ? '&robot=' + process.env.SIRO_ROBOT : '';
 
 // Lời giải viết gọn:
 //   ['qb', trái, phải]        quay bánh trái/phải … vòng      ['qbd', trái, phải]  … độ
@@ -72,7 +74,7 @@ function xml(ds) {
 async function moBai(browser, ma) {
   const page = await browser.newPage({ viewport: { width: 480, height: 360 } });
   page.on('pageerror', (e) => console.log('  Lỗi trang:', e.message));
-  await page.goto(URL + '?baiTap=' + ma);
+  await page.goto(URL + '?baiTap=' + ma + ROBOT);
   await page.waitForFunction(() => window.SRA && SRA.daSanSang, null, { timeout: 90000 });
   await page.evaluate(() => { $('.dialogScreen').remove(); $('#navSim').click(); });
   await page.evaluate(() => { try { SRA.tienDo.xoaBai(SRA.bai.id); } catch (e) {} });
