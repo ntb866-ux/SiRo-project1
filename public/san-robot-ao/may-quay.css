@@ -1,0 +1,7 @@
+/* Bốn nút máy quay góc thứ ba (sau, trước, trái, phải) xếp 2 × 2 trong một hàng của hộp chọn máy quay */
+.cameraSelector { height: 7.9em; }
+.sraChaseGroup { display: grid; grid-template-columns: 1fr 1fr; gap: 0.05em 0.15em; font-size: 0.55em; margin: 0.25em 0.35em !important; }
+.sraChaseGroup .cameraOptions { margin: 0; line-height: 1; }
+.sraChaseGroup .cameraOptions.dang-chon { color: #1d4ed8; }
+.cameraSelector.closed .sraChaseGroup { display: none; }
+.camera .icon-chase-sau svg, .camera .icon-chase-truoc svg, .camera .icon-chase-trai svg, .camera .icon-chase-phai svg { vertical-align: -0.1em; }
