@@ -383,7 +383,7 @@ var sanRobotAo = new function() {
   }
 
   this.boSinhMa = function(gen) {
-    return {
+    return self.baoThieuLinhKien({
       sra_di: function(block) {
         let dau = block.getFieldValue('HUONG') == 'LUI' ? '-' : '';
         return 'sra_di(' + dau + '(' + so(block, 'CM', '0') + '))\n';
@@ -435,7 +435,37 @@ var sanRobotAo = new function() {
           : uyQuyen(gen, 'reset_gyro', { port: 'AUTO' })(block);
         return ma + 'sra_dong_bo_huong()\n';
       },
-    };
+    });
+  };
+
+  // Khối cần một loại linh kiện mà robot đang dùng chưa có (xe lắp mô-đun đã tháo cảm biến, robot không
+  // có bút…): GEARS vẫn sinh mã gọi biến của cổng không tồn tại, và chạy ra lỗi Python khó hiểu
+  // ("name 'ultrasonic_sensor_in1' is not defined"). Ở đây thay bằng lời báo rõ linh kiện nào còn thiếu.
+  const CAN_LINH_KIEN = {
+    sra_khoang_cach: ['UltrasonicSensor', 'cam bien sieu am', true],
+    sra_dang_cham: ['TouchSensor', 'cam bien cham', true],
+    sra_goc_quay: ['GyroSensor', 'cam bien gyro', true],
+    sra_thay_mau: ['ColorSensor', 'cam bien mau', true],
+    sra_dat_lai_goc: ['GyroSensor', 'cam bien gyro', false],
+    sra_ha_but: ['Pen', 'but ve', false],
+    sra_nhac_but: ['Pen', 'but ve', false],
+    sra_mau_but: ['Pen', 'but ve', false],
+    sra_net_but: ['Pen', 'but ve', false],
+  };
+  this.coLinhKien = function(loai) {
+    return typeof robot != 'undefined' && Array.isArray(robot.components) && robot.components.some(c => c.type == loai);
+  };
+  this.baoThieuLinhKien = function(boSinh) {
+    Object.keys(CAN_LINH_KIEN).forEach(function(khoi) {
+      let goc = boSinh[khoi], can = CAN_LINH_KIEN[khoi];
+      if (!goc) return;
+      boSinh[khoi] = function(block) {
+        if (self.coLinhKien(can[0])) return goc.apply(this, arguments);
+        let lenh = 'sra_thieu_linh_kien(\'' + can[1] + '\')';
+        return can[2] ? [lenh, Blockly.Python.ORDER_FUNCTION_CALL] : lenh + '\n';
+      };
+    });
+    return boSinh;
   };
 
   // Hàm Python dùng chung, chỉ chèn vào khi chương trình có khối sra_.
@@ -580,10 +610,16 @@ var sanRobotAo = new function() {
           let k = self.kichThuocRobot();
           code = code.replace(moc, cap[1](k) + self.maDrivetrain(k) + moc);
         }
+        if (/\bsra_thieu_linh_kien\(/.test(code)) {
+          code = code.replace('# Here is where your code starts',
+            'def sra_thieu_linh_kien(ten):\n' +
+            '    raise ValueError("Robot chua gan " + ten + ". Mo menu Robot, chon Lap rap xe de gan them.")\n' +
+            '\n# Here is where your code starts');
+        }
         return code;
       };
     });
-    Blockly.Python.addReservedWords('sra_quay_banh,sra_chay_banh,sra_toc_do_doc,sra,sra_di,sra_quay,sra_chay,sra_xoay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
+    Blockly.Python.addReservedWords('sra_thieu_linh_kien,sra_quay_banh,sra_chay_banh,sra_toc_do_doc,sra,sra_di,sra_quay,sra_chay,sra_xoay,sra_dung,sra_dps,sra_dt,sra_dong_bo_huong,Drivetrain,SRA_BANH_CM,SRA_TRUC_CM');
   };
 
   // ==========================================================================
