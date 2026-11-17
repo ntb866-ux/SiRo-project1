@@ -302,21 +302,17 @@ var SRAXeCamBien = (function() {
       return m;
     }
     this.denBao = taoDen('sraDenBao', 'cau', 0.6);
-    this.quangDen = taoDen('sraQuangDen', 'dia', 2.0);
     const XANH = BABYLON.Color3.FromHexString('#2ee86a'), TAT = BABYLON.Color3.FromHexString('#3b3f45');
     const NHAT = BABYLON.Color3.FromHexString('#fff1e0'), DAM = BABYLON.Color3.FromHexString('#e04a0b');
     function toDen() {
-      let loi = self.denBao.material, quang = self.quangDen.material;
+      let loi = self.denBao.material;
       if (self.che == 'so') {
         loi.emissiveColor = self.so ? XANH : TAT; loi.alpha = 1;
-        quang.emissiveColor = XANH; quang.alpha = self.so ? 0.4 : 0;
       } else {
         let t = self.tinHieu;
         // tín hiệu yếu: đèn nhạt, gần như trong suốt; tín hiệu mạnh: cam đậm, đục hẳn
         loi.emissiveColor = BABYLON.Color3.Lerp(NHAT, DAM, t); loi.alpha = 0.2 + 0.8 * t;
-        quang.emissiveColor = loi.emissiveColor; quang.alpha = 0.04 + 0.4 * t;
       }
-      self.quangDen.isVisible = quang.alpha > 0.01;
     }
     let lanToDen = 0;
     this.render = function() {
