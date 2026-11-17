@@ -1,0 +1,102 @@
+/* Sân Robot Ảo – bảng lắp ráp xe (kéo thả cảm biến). GPL v3. */
+.sra-lr-bang {
+  --lr-nen: #ffffff; --lr-chu: #1f2937; --lr-phu: #5b6472; --lr-vien: #d1d5db;
+  --lr-chinh: #2563eb; --lr-nhan: #15803d; --lr-nhan-nen: #dcfce7; --lr-san: #eef1f5;
+  position: absolute; top: 8px; left: 8px; width: 468px; max-height: calc(100% - 64px); z-index: 30;
+  display: flex; flex-direction: column; gap: 8px;
+  box-sizing: border-box; padding: 10px 12px 12px;
+  background: var(--lr-nen); color: var(--lr-chu);
+  border: solid 1px var(--lr-vien); border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.22);
+  font-size: 14px; line-height: 1.4; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-user-select: none; user-select: none;
+}
+.sra-lr-bang header { display: flex; align-items: center; justify-content: space-between; background: none; color: inherit; height: auto; padding: 0; margin: 0; }
+.sra-lr-bang h2 { margin: 0; padding: 0; font-size: 17px; font-weight: 700; color: inherit; background: none; }
+.sra-lr-bang p { margin: 0; }
+.sra-lr-dong {
+  width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent;
+  color: var(--lr-phu); font-size: 24px; line-height: 1; cursor: pointer;
+}
+.sra-lr-dong:hover { background: var(--lr-san); color: var(--lr-chu); }
+.sra-lr-than { display: grid; grid-template-columns: 254px minmax(0, 1fr); gap: 10px; align-items: start; }
+.sra-lr-cot { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+/* Khay linh kiện */
+.sra-lr-khay {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5px;
+  padding: 5px; border-radius: 8px; background: var(--lr-san); border: dashed 2px transparent;
+}
+.sra-lr-the {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px;
+  min-height: 68px; padding: 5px 2px 4px; box-sizing: border-box;
+  background: #fff; color: var(--lr-chu); border: solid 1px var(--lr-vien); border-radius: 7px;
+  font: inherit; font-size: 12.5px; white-space: nowrap; cursor: grab; touch-action: none;
+}
+.sra-lr-the:first-child { grid-column: 1 / -1; min-height: 60px; }
+.sra-lr-the svg { flex: 0 0 auto; max-width: 100%; pointer-events: none; }
+.sra-lr-the .sra-lr-ten { font-weight: 600; }
+.sra-lr-the .sra-lr-con { color: var(--lr-phu); font-size: 11.5px; }
+.sra-lr-the:hover:not(:disabled) { border-color: var(--lr-chinh); }
+.sra-lr-the:disabled { cursor: default; background: transparent; border-style: dashed; }
+.sra-lr-the:disabled svg { opacity: 0.25; }
+.sra-lr-the.dang-chon { border-color: var(--lr-chinh); box-shadow: 0 0 0 2px var(--lr-chinh); }
+.sra-lr-khay.nhan-duoc { border-color: var(--lr-nhan); background: var(--lr-nhan-nen); }
+
+/* Sơ đồ xe */
+.sra-lr-vung-so-do { background: var(--lr-san); border-radius: 8px; padding: 4px; }
+.sra-lr-so-do { width: 100%; height: auto; display: block; touch-action: none; }
+.sra-lr-nen { pointer-events: none; }
+.sra-lr-nen polygon, .sra-lr-nen circle { stroke: rgba(15, 23, 42, 0.35); stroke-width: 0.035; stroke-linejoin: round; }
+.sra-lr-chu-mo { font-size: 0.78px; fill: var(--lr-phu); }
+.sra-lr-gia { stroke: #9aa3ad; stroke-width: 0.5; stroke-linecap: round; fill: none; }
+.sra-lr-thanh { fill: rgba(185, 192, 199, 0.55); stroke: #9aa3ad; stroke-width: 0.06; }
+.sra-lr-day { pointer-events: none; }
+.sra-lr-day path { fill: none; stroke: #f8fafc; stroke-width: 0.3; stroke-linecap: round; opacity: 0.95; filter: drop-shadow(0 0 0.06px #0f172a); }
+.sra-lr-day circle { fill: #f8fafc; stroke: #334155; stroke-width: 0.08; }
+.sra-lr-cho { cursor: pointer; outline: none; }
+.sra-lr-cho.co { cursor: grab; }
+.sra-lr-cho .sra-lr-o { fill: rgba(255, 255, 255, 0.6); stroke: #64748b; stroke-width: 0.1; stroke-dasharray: 0.34 0.24; }
+.sra-lr-cho.co .sra-lr-o { fill: rgba(255, 255, 255, 0.92); stroke: #475569; stroke-dasharray: none; }
+.sra-lr-cho .sra-lr-hinh { pointer-events: none; }
+.sra-lr-cong-them { stroke: #64748b; stroke-width: 0.14; stroke-linecap: round; pointer-events: none; }
+.sra-lr-cong { fill: var(--lr-chinh); stroke: #fff; stroke-width: 0.12; pointer-events: none; }
+.sra-lr-so-cong { fill: #fff; font-size: 1.05px; font-weight: 700; text-anchor: middle; pointer-events: none; }
+.sra-lr-cho:focus-visible .sra-lr-o { stroke: var(--lr-chinh); stroke-width: 0.22; stroke-dasharray: none; }
+.sra-lr-cho.nhan-duoc .sra-lr-o { fill: var(--lr-nhan-nen); stroke: var(--lr-nhan); stroke-width: 0.18; stroke-dasharray: none; }
+.sra-lr-cho.nhan-duoc.dang-tren .sra-lr-o, .sra-lr-cho.nhan-duoc:hover .sra-lr-o { fill: #86efac; stroke-width: 0.28; }
+.sra-lr-cho.dang-chon .sra-lr-o { stroke: var(--lr-chinh); stroke-width: 0.26; stroke-dasharray: none; }
+.sra-lr-bang.dang-cam .sra-lr-cho.trong:not(.nhan-duoc) { opacity: 0.35; }
+
+.sra-lr-thong-bao { min-height: 2.8em; font-size: 13px; color: var(--lr-chinh); font-weight: 600; }
+.sra-lr-thong-bao.goi-y { color: var(--lr-phu); font-weight: 400; }
+
+/* Cổng và khối lượng */
+.sra-lr-tieu-de-nho { font-size: 12px; font-weight: 700; color: var(--lr-phu); margin-bottom: 3px; }
+.sra-lr-ds-cong { list-style: none; margin: 0 0 6px; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 13px; }
+.sra-lr-huy-hieu {
+  display: inline-block; min-width: 1.5em; height: 1.5em; line-height: 1.5em; text-align: center;
+  border-radius: 50%; background: var(--lr-chinh); color: #fff; font-weight: 700; font-size: 12px;
+}
+.sra-lr-trong-khong, .sra-lr-khoi-luong { font-size: 12.5px; color: var(--lr-phu); }
+.sra-lr-bang footer { display: flex; gap: 8px; background: none; height: auto; }
+.sra-lr-bang footer button {
+  flex: 1; min-height: 34px; padding: 4px 8px; font: inherit; font-size: 13px; cursor: pointer;
+  background: #fff; color: var(--lr-chu); border: solid 1px var(--lr-vien); border-radius: 7px;
+}
+.sra-lr-bang footer button:hover { border-color: var(--lr-chinh); color: var(--lr-chinh); }
+.sra-lr-bang button:focus-visible { outline: solid 2px var(--lr-chinh); outline-offset: 1px; }
+
+/* Bảng nằm bên trái che mất các nút chạy, đặt lại, thước đo: dời các nút đó sang phải bảng */
+#simPanel.sra-lr-dang-mo > .runSim, #simPanel.sra-lr-dang-mo > .world, #simPanel.sra-lr-dang-mo > .reset,
+#simPanel.sra-lr-dang-mo > .ruler, #simPanel.sra-lr-dang-mo > .worldInfo { transform: translateX(476px); }
+
+/* Bóng của linh kiện đang kéo */
+.sra-lr-bong { position: fixed; left: 0; top: 0; z-index: 10000; pointer-events: none; opacity: 0.9; filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.35)); }
+
+/* Khung mô phỏng hẹp (đang làm bài, màn hình nhỏ): bảng nằm ở phía dưới, chừa phần trên để thấy xe */
+.sra-lr-bang.hep { top: auto; bottom: 56px; left: 6px; right: 6px; width: auto; max-width: 468px; margin: 0 auto; max-height: 64%; }
+.sra-lr-bang.hep .sra-lr-than { grid-template-columns: minmax(150px, 46%) minmax(0, 1fr); }
+@media (prefers-reduced-motion: no-preference) {
+  .sra-lr-cho .sra-lr-o { transition: fill 0.12s, stroke-width 0.12s; }
+}

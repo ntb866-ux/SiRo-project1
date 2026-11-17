@@ -24,7 +24,7 @@ public/
     │   ├── co-ban.json            Robot chuẩn lớp 6: 2 motor, bút, chạm, khoảng cách, màu, gyro (G2)
     │   ├── do-line.json           Biến thể 2–3 cảm biến màu dưới gầm
     │   └── thi-dau.json           Robot cho sumo/bóng đá (G11)
-    ├── xe/                        Xe lắp mô-đun tự dựng: hình 3D, hitbox, vật lí, cảm biến (xem xe/README.md)
+    ├── xe/                        Xe lắp mô-đun tự dựng: hình 3D, hitbox, vật lí, cảm biến, bảng lắp ráp (xem xe/README.md)
     │   ├── hinh-khoi.js           Khối đặc, khối lượng, quán tính, khoảng cách tới mặt khối
     │   ├── linh-kien.js           Danh mục linh kiện và hàm lắp xe
     │   ├── dung-hinh.js           Sinh lưới 3D từ các khối

@@ -200,11 +200,19 @@ var SRAXe = new function() {
     if (typeof robot != 'undefined' && robot.sraHitbox) robot.sraHitbox.forEach((m) => m.setEnabled(self.hienHitbox));
   };
 
-  // Mục "Hiện hitbox của xe" trong menu Robot (chỉ có khi đang dùng xe lắp mô-đun)
+  // Mục "Lắp ráp xe" và "Hiện hitbox của xe" trong menu Robot
   if (typeof window != 'undefined' && typeof window.menuDropDown == 'function') {
     let menuGoc = window.menuDropDown;
     window.menuDropDown = function($nut, muc, tuyChon) {
-      if (tuyChon && tuyChon.className == 'robotMenuDropDown' && typeof robot != 'undefined' && robot.sraHitbox) {
+      let laMenuRobot = tuyChon && tuyChon.className == 'robotMenuDropDown' && typeof robot != 'undefined';
+      if (laMenuRobot && typeof SRABangLapRap != 'undefined' && SRABangLapRap.dungDuoc()) {
+        muc = muc.concat([{
+          html: (SRABangLapRap.dangMo ? '<span class="tick">&#x2713;</span> ' : '') + 'Lắp ráp xe (kéo thả cảm biến)',
+          line: false,
+          callback: function() { SRABangLapRap.batTat(); }
+        }]);
+      }
+      if (laMenuRobot && robot.sraHitbox) {
         muc = muc.concat([{
           html: (self.hienHitbox ? '<span class="tick">&#x2713;</span> ' : '') + 'Hiện hitbox của xe',
           line: false,
@@ -235,6 +243,7 @@ var SRAXe = new function() {
   this.TEP.forEach(function(url) {
     fetch(url, { cache: 'no-cache' }).then((x) => x.ok ? x.json() : null).then(function(data) {
       if (!data || typeof robotTemplates == 'undefined') return;
+      if (typeof SRABangLapRap != 'undefined') SRABangLapRap.apVaoMau(data);     // bản lắp người dùng đã lưu
       if (!robotTemplates.some((t) => t.name == data.name)) robotTemplates.push(data);
     }).catch(function() {});
   });
