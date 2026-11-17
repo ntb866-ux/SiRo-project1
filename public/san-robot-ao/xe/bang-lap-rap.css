@@ -19,7 +19,7 @@
   color: var(--lr-phu); font-size: 24px; line-height: 1; cursor: pointer;
 }
 .sra-lr-dong:hover { background: var(--lr-san); color: var(--lr-chu); }
-.sra-lr-than { display: grid; grid-template-columns: 254px minmax(0, 1fr); gap: 10px; align-items: start; }
+.sra-lr-than { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 10px; align-items: start; }
 .sra-lr-cot { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 
 /* Khay linh kiện */
@@ -136,3 +136,30 @@
 @media (prefers-reduced-motion: no-preference) {
   .sra-lr-vung { transition: fill 0.12s, stroke-width 0.12s; }
 }
+
+/* Nút tháo (×) trên từng cảm biến: hiện khi rê chuột, khi chọn bằng bàn phím hoặc đang cầm */
+.sra-lr-thao { display: none; cursor: pointer; }
+.sra-lr-thao circle { fill: #fff; stroke: #dc2626; stroke-width: 0.12; }
+.sra-lr-thao path { stroke: #dc2626; stroke-width: 0.16; stroke-linecap: round; fill: none; }
+.sra-lr-thao:hover circle { fill: #dc2626; }
+.sra-lr-thao:hover path { stroke: #fff; }
+.sra-lr-mo-dun:hover .sra-lr-thao, .sra-lr-mo-dun:focus-visible .sra-lr-thao, .sra-lr-mo-dun.dang-chon .sra-lr-thao { display: inline; }
+.sra-lr-mo-dun.xem-truoc .sra-lr-thao, .sra-lr-mo-dun.loi .sra-lr-thao { display: none; }
+@media (hover: none) { .sra-lr-thao { display: inline; } }
+.sra-lr-vung-gia-phu { fill: rgba(255, 255, 255, 0.18); stroke-dasharray: 0.35 0.25; }
+
+/* Danh sách cổng: nút Tháo ở cuối mỗi dòng */
+.sra-lr-ds-cong li { display: flex; align-items: center; gap: 6px; }
+.sra-lr-ten-cong { flex: 1; min-width: 0; }
+.sra-lr-nut-thao { font: inherit; font-size: 12px; padding: 1px 7px; border: 1px solid #fca5a5; border-radius: 4px; background: #fff; color: #b91c1c; cursor: pointer; }
+.sra-lr-nut-thao:hover, .sra-lr-nut-thao:focus-visible { background: #fee2e2; }
+
+/* Sơn xe */
+.sra-lr-son { margin-top: 4px; }
+.sra-lr-hang-son { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; margin: 3px 0; }
+.sra-lr-ten-son { width: 100%; font-size: 12px; color: #475569; }
+.sra-lr-o-son { width: 18px; height: 18px; padding: 0; border: 1px solid rgba(0, 0, 0, 0.25); border-radius: 50%; cursor: pointer; }
+.sra-lr-o-son.goc { border-style: dashed; }
+.sra-lr-o-son.chon { outline: 2px solid var(--lr-chinh); outline-offset: 1px; }
+.sra-lr-o-son:focus-visible { outline: 2px solid #0f172a; outline-offset: 1px; }
+.sra-lr-ten-cong small { color: var(--lr-phu); font-size: 11px; white-space: nowrap; }

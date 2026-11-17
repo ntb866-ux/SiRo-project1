@@ -42,11 +42,16 @@ var SRAXeDungHinh = (function() {
   };
 
   function mau3(hex) { return BABYLON.Color3.FromHexString(hex); }
+  // Sơn do người dùng chọn: tên vật liệu 'son:#rrggbb' (sơn tĩnh điện, bóng vừa)
+  function laySon(ten) {
+    let m = /^son:(#[0-9a-f]{6})$/i.exec(ten || '');
+    return m ? { mau: m[1], bong: [0.45, 40] } : null;
+  }
   function vatLieu(scene, ten) {
     let id = 'sraXe_' + ten;
     let m = scene.getMaterialByID(id);
     if (m) return m;
-    let d = VAT_LIEU[ten] || VAT_LIEU.nhua_den;
+    let d = laySon(ten) || VAT_LIEU[ten] || VAT_LIEU.nhua_den;
     m = new BABYLON.StandardMaterial(id, scene);
     m.diffuseColor = mau3(d.mau);
     m.specularColor = new BABYLON.Color3(d.bong[0], d.bong[0], d.bong[0]);
@@ -411,5 +416,5 @@ var SRAXeDungHinh = (function() {
     return mesh;
   }
 
-  return { VAT_LIEU: VAT_LIEU, vatLieu: vatLieu, dungVat: dungVat, dungKhungHitbox: dungKhungHitbox, Gom: Gom, themKhoi: themKhoi };
+  return { VAT_LIEU: VAT_LIEU, laySon: laySon, vatLieu: vatLieu, dungVat: dungVat, dungKhungHitbox: dungKhungHitbox, Gom: Gom, themKhoi: themKhoi };
 })();

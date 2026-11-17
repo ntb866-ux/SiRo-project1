@@ -68,6 +68,20 @@ function phanTuDo(bc) {
     let c = thu({ sieuAmGoc: g, sieuAmX: x }, 'siêu âm ' + g + '° x = ' + x);
     if (c && (c.sieuAmGoc != g || Math.abs(c.sieuAmX - x) > 1e-6)) loi.push('siêu âm bị đổi vị trí: ' + g + '°, ' + x);
   }
+  // siêu âm trên từng giá trái, phải, sau (cùng giá trước), mọi góc bước 15°, u ở hai đầu và giữa khoảng trượt
+  for (const gia of ['trai', 'phai', 'sau']) for (let g = -45; g <= 45; g += 15) {
+    let gh = L.gioiHanU(gia, g);
+    for (const u of [gh[0], (gh[0] + gh[1]) / 2, gh[1]]) {
+      let c = thu({ sa: [{ gia: 'truoc' }, { gia: gia, u: u, goc: g }] }, 'siêu âm ' + gia + ' ' + g + '° u = ' + u);
+      if (c && c.sa.length != 2) loi.push('bỏ mất siêu âm ' + gia);
+    }
+  }
+  // đủ 4 siêu âm cùng xoay 45° (cùng chiều và ngược chiều), kèm 2 mắt dò line, chạm, gyro: vừa đủ 8 ổ
+  for (const g of [-45, 45]) for (const s of [1, -1]) {
+    let sa = L.DS_GIA.map((gia, i) => ({ gia: gia, u: L.gioiHanU(gia, g)[i % 2], goc: (i % 2 ? s : 1) * g }));
+    let c = thu({ sa: sa, tren: [{ loai: 'gyro', x: -3 }] }, '4 siêu âm ' + JSON.stringify(sa));
+    if (c && (c.sa.length != 4 || c.duoi.length + c.tren.length + c.sa.length != 8)) loi.push('4 siêu âm không đủ: ' + JSON.stringify(c.sa));
+  }
   // gyro, GPS: mọi vị trí trên lưới 0,5 cm trong miền cho phép, từng cặp không chồng nhau
   let diem = (loai) => { let m = L.mienNap(loai), ds = []; for (let x = Math.ceil(m.x0 * 2) / 2; x <= m.x1 + 1e-9; x += 0.5) for (let z = Math.ceil(m.z0 * 2) / 2; z <= m.z1 + 1e-9; z += 0.5) ds.push({ loai: loai, x: x, z: z }); return ds; };
   let dg = diem('gyro'), dp = diem('gps'), soCap = 0;
@@ -80,6 +94,8 @@ function phanTuDo(bc) {
   // chỗ không hợp lệ thì bị bỏ
   let c = L.chuanHoaCauHinh({ duoi: [{ loai: 'doLine', x: 0 }, { loai: 'doLine', x: 1 }, { loai: 'cham', x: 3.5 }], tren: [{ loai: 'gyro', x: 0, z: 4 }, { loai: 'gps', x: 1, z: 4 }] });
   bc.dong(loi.length == 0, soBan + ' bản lắp đặt tự do (' + soCap + ' cặp vị trí gyro, GPS) đều dựng được, mô-đun không lấn nhau, dây không bắt chéo', loi.length ? loi.slice(0, 4).join(' | ') : '');
+  let c9 = L.chuanHoaCauHinh({ sa: L.DS_GIA.map((g) => ({ gia: g })) });
+  bc.dong(c9.sa.length == 3 && c9.sa.length + c9.duoi.length + c9.tren.length == 8, 'Bản mặc định thêm 4 siêu âm (9 cảm biến): bỏ bớt siêu âm sau cho vừa 8 ổ', c9.sa.map((m) => m.gia).join());
   bc.dong(c.duoi.length == 1 && c.tren.length == 1, 'Mắt cách nhau dưới 1,5 cm, cảm biến chạm ra ngoài 3 cm, hai mô-đun chồng nhau trên nắp: bị bỏ', JSON.stringify([c.duoi, c.tren]));
 }
 
@@ -199,7 +215,7 @@ function phanMot(bc) {
   bc.dong(t.c.tren[1].loai == 'gps' && t.c.tren[1].x == 0.5 && t.c.tren[1].z == 5,
     'Kéo GPS trên nắp tới (0,6; 5,2): bám lưới về (0,5; 5)', JSON.stringify(t.c.tren[1]));
 
-  t = await keo(await diem({ vung: 'gia', x: 0 }), [900, 420]);
+  t = await keo(await diem({ vung: 'gia:truoc', u: 0 }), [900, 420]);
   bc.dong(!t.c.sieuAm && t.cb.indexOf('Ultrasonic') < 0 && t.luoi.indexOf('sieuAm') < 0, 'Kéo siêu âm ra ngoài bảng: tháo khỏi xe, mô-đun và giá biến mất', t.kl + ' g');
   await chup('bang-lap-rap-da-doi');
 
@@ -207,14 +223,14 @@ function phanMot(bc) {
   await page.click('.sra-lr-the[data-loai=sieuAm]');
   let sang = await page.evaluate(() => $('.sra-lr-vung.nhan-duoc').attr('data-vung') + ' ' + $('.sra-lr-vung.nhan-duoc').length);
   await chup('bang-lap-rap-dang-cam');
-  let g = await diem({ vung: 'gia', x: -1.2 });
+  let g = await diem({ vung: 'gia:truoc', u: -1.2 });
   await page.mouse.click(g[0], g[1]);
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
-  bc.dong(sang == 'gia 1' && t.c.sieuAm && t.c.sieuAmX == -1, 'Bấm thẻ siêu âm rồi bấm giá ở x = −1,2 cm: chỉ giá được tô sáng, siêu âm gắn ở x = −1 cm', sang + ', x = ' + t.c.sieuAmX);
+  bc.dong(sang == 'gia:truoc 4' && t.c.sieuAm && t.c.sieuAmX == -1, 'Bấm thẻ siêu âm rồi bấm giá mũi ở x = −1,2 cm: chỉ bốn giá siêu âm được tô sáng, siêu âm gắn ở x = −1 cm', sang + ', x = ' + t.c.sieuAmX);
 
   // núm xoay
-  a = await diem({ vung: 'xoay', goc: 0 }); b = await diem({ vung: 'xoay', goc: 33 });
+  a = await diem({ vung: 'xoay', khoa: 'sa:truoc', goc: 0 }); b = await diem({ vung: 'xoay', khoa: 'sa:truoc', goc: 33 });
   await page.mouse.move(a[0], a[1]); await page.mouse.down();
   await page.mouse.move(b[0], b[1], { steps: 8 }); await page.mouse.up();
   await page.evaluate(() => SRABangLapRap.choDungXong());
@@ -222,7 +238,7 @@ function phanMot(bc) {
   let quay = await page.evaluate(() => { let c = robot.components.find((x) => x.type == 'UltrasonicSensor'); let q = c.body.rotationQuaternion || BABYLON.Quaternion.Identity(); let v = new BABYLON.Vector3(0, 0, 1); v.rotateByQuaternionToRef(q, v); return [v.x, v.z]; });
   bc.dong(t.c.sieuAmGoc == 30 && Math.abs(quay[0] + 0.5) < 0.02, 'Kéo núm xoay tới 33°: bám về 30°, chùm siêu âm trên xe 3D lệch sang trái 30°', 'hướng (' + quay.map((x) => x.toFixed(2)).join(', ') + ')');
   await chup('bang-lap-rap-xoay');
-  await page.focus('.sra-lr-num');
+  await page.focus('.sra-lr-num[data-xoay="sa:truoc"]');
   await page.keyboard.press('ArrowRight');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
@@ -251,6 +267,47 @@ function phanMot(bc) {
   t = await trangThai();
   bc.dong(xDuoi(t.c) == 'c-3 d-1.5 d1.5 d3', 'Phím mũi tên phải trên mắt dò line ở x = 1 cm: sang 1,5 cm', xDuoi(t.c));
 
+  // thêm siêu âm bên trái: đủ 8 ổ cắm thì khay khoá
+  t = await keo('.sra-lr-the[data-loai=sieuAm]', await diem({ vung: 'gia:trai', u: 1.6 }));
+  let huongSa = () => page.evaluate(() => robot.sraBanLap.camBien.filter((c) => c.loai == 'sieuAm').map((cb) => {
+    let c = robot.components.find((x) => x.port == cb.cong); let q = c.body.rotationQuaternion || BABYLON.Quaternion.Identity();
+    let v = new BABYLON.Vector3(0, 0, 1); v.rotateByQuaternionToRef(q, v); return cb.gia + ' ' + v.x.toFixed(2) + ' ' + v.z.toFixed(2);
+  }));
+  let hsa = await huongSa();
+  let khay = await page.evaluate(() => ({ tat: $('.sra-lr-the:not([disabled])').length, chu: $('.sra-lr-the[data-loai=sieuAm] .sra-lr-con').text(), de: $('.sra-lr-vung-thong-tin .sra-lr-tieu-de-nho').first().text() }));
+  bc.dong(t.c.sa.map((m) => m.gia + m.u).join() == 'truoc-1,trai1.5' && (t.cb.match(/Ultrasonic/g) || []).length == 2 && /^trai -1\.00 0\.00$/.test(hsa[1]),
+    'Kéo siêu âm thứ hai vào giá bên trái ở z = 1,6 cm: bám về 1,5 cm, xe có 2 siêu âm, cái bên trái nhìn sang trái (−x)', hsa.join(' | '));
+  bc.dong(khay.tat == 0 && khay.chu == 'hết ổ' && /8\/8/.test(khay.de), 'Đủ 8 ổ cắm: mọi thẻ trong khay bị khoá, ghi "hết ổ"', khay.de);
+  await chup('bang-lap-rap-hai-sieu-am');
+  await page.focus('.sra-lr-num[data-xoay="sa:trai"]');
+  await page.keyboard.press('ArrowLeft');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai(); hsa = await huongSa();
+  bc.dong(t.c.sa[1].goc == 15 && /^trai -0\.97 -0\.26$/.test(hsa[1]), 'Núm xoay của giá trái: phím mũi tên trái xoay 15° sang trái (chếch về đuôi xe)', hsa[1]);
+  // nút × trên sơ đồ
+  await page.hover('[data-cho="sa:trai"] .sra-lr-khung', { force: true });
+  await page.click('[data-cho="sa:trai"] .sra-lr-thao');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  bc.dong(t.c.sa.length == 1 && (t.cb.match(/Ultrasonic/g) || []).length == 1, 'Rê chuột lên siêu âm trái rồi bấm nút ×: tháo đúng cái đó', t.c.sa.map((m) => m.gia).join());
+  // nút Tháo trong danh sách cổng
+  await page.click('.sra-lr-nut-thao[data-thao="duoi:0"]');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  bc.dong(!t.c.cham && t.cb.indexOf('Touch') < 0 && xDuoi(t.c) == 'd-1.5 d1.5 d3', 'Nút "Tháo" cạnh cảm biến chạm trong danh sách cổng: tháo cảm biến chạm', xDuoi(t.c));
+  await page.evaluate(() => SRABangLapRap.dat('cham', 'khay', { vung: 'duoi', x: -3 }));
+  // sơn
+  await page.click('.sra-lr-o-son[data-son-phan=khung][data-son-mau="#1565c0"]');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  await page.click('.sra-lr-o-son[data-son-phan=vanh][data-son-mau="#263238"]');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  let son = await page.evaluate(() => ({ khung: babylon.scene.meshes.filter((m) => m.material && m.material.id == 'sraXe_son:#1565c0').length, vanh: babylon.scene.meshes.filter((m) => m.material && m.material.id == 'sraXe_son:#263238').length,
+    chon: $('.sra-lr-o-son.chon').map((i, e) => e.getAttribute('data-son-mau')).get().join() }));
+  bc.dong(t.c.son.khung == '#1565c0' && t.c.son.vanh == '#263238' && son.khung > 0 && son.vanh > 0 && son.chon == '#1565c0,,#263238',
+    'Sơn khung xanh dương và vành bánh đen: xe 3D đổi màu, ô màu đang chọn được đánh dấu', son.khung + ' khối khung, ' + son.vanh + ' khối vành');
+  await chup('bang-lap-rap-son');
+
   // xe vừa lắp chạy và đọc cảm biến bình thường
   await page.waitForFunction(() => robot.sraVatLi && robot.sraVatLi.thoiGian > 0.5, null, { timeout: 30000 });
   let doc = await page.evaluate(async () => {
@@ -269,7 +326,7 @@ function phanMot(bc) {
   await page.reload();
   await page.waitForFunction(() => typeof robotTemplates != 'undefined' && robotTemplates.some((r) => r.name == 'siro_xeLapRap'), null, { timeout: 90000 });
   let mau = await page.evaluate(() => JSON.stringify(robotTemplates.find((r) => r.name == 'siro_xeLapRap').sraXe));
-  bc.dong(luu == mau && JSON.parse(mau).doLine == 3 && JSON.parse(mau).sieuAmGoc == 15, 'Nạp lại trang: mẫu "Xe lắp mô-đun" mang đúng bản lắp đã lưu', xDuoi(JSON.parse(mau)));
+  bc.dong(luu == mau && JSON.parse(mau).doLine == 3 && JSON.parse(mau).sieuAmGoc == 15 && JSON.parse(mau).son.khung == '#1565c0', 'Nạp lại trang: mẫu "Xe lắp mô-đun" mang đúng bản lắp đã lưu', xDuoi(JSON.parse(mau)));
   await page.waitForFunction(() => typeof babylon != 'undefined' && babylon.world && robot.body, null, { timeout: 90000 });
   await page.waitForTimeout(2500);
   await page.evaluate(() => { $('.dialogScreen').remove(); try { $('#navSim').click(); } catch (e) {} });
@@ -283,12 +340,12 @@ function phanMot(bc) {
   await page.click('.sra-lr-thao-het');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
-  bc.dong(t.cb == '' && t.kl < 460 && await soModun() == 0, 'Nút "Tháo hết cảm biến": xe không còn cảm biến', t.kl + ' g');
+  bc.dong(t.cb == '' && t.kl < 460 && await soModun() == 0 && t.c.son.khung == '#1565c0', 'Nút "Tháo hết cảm biến": xe không còn cảm biến, giữ màu sơn', t.kl + ' g');
   await chup('bang-lap-rap-trong');
   await page.click('.sra-lr-mac-dinh');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
-  bc.dong(t.c.doLine == 2 && t.cb.split(' ').length == 6 && t.luu === null, 'Nút "Về mặc định": 6 cảm biến như ban đầu, xoá bản đã lưu', t.kl + ' g');
+  bc.dong(t.c.doLine == 2 && t.cb.split(' ').length == 6 && t.luu === null && !t.c.son.khung, 'Nút "Về mặc định": 6 cảm biến như ban đầu, xoá bản đã lưu', t.kl + ' g');
 
   // khung hẹp
   await page.setViewportSize({ width: 600, height: 760 });
