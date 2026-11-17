@@ -157,22 +157,83 @@
       trangTri: [{ k: 'dai', khung: khung, rong: DAY.rong, day: DAY.day, vl: 'day_xam' }] };
   }
 
-  // ---------- Cấu hình mặc định ----------
+  // ---------- Cấu hình lắp ----------
+  // Chỗ gắn cảm biến trên xe:
+  //   - 5 lỗ dưới mũi xe (X_LO, cách nhau 1,5 cm): mỗi lỗ nhận một mắt dò line hoặc công tắc chạm.
+  //     Lỗ thứ i cắm dây thẳng lên ổ i + 1 ở hàng ổ trước của mạch chủ, nên dây không bắt chéo nhau.
+  //   - Giá phía mũi: cảm biến siêu âm, cắm vào ổ trước còn trống gần giữa nhất.
+  //   - 2 chỗ trên nắp mạch chủ (trái, phải): gyro hoặc GPS, cắm ổ 6 và ổ 8 ở hàng sau.
+  const X_LO = [-3, -1.5, 0, 1.5, 3];
+  const X_NAP = [-3, 3], O_NAP = [6, 8];
+  const TOI_DA = { doLine: 3, cham: 1, sieuAm: 1, gyro: 1, gps: 1 };
   const MAC_DINH = {
     banh: 'thuong',     // hiện chỉ có bánh thường (vi sai 2 bánh + bi tự do)
     sieuAm: true,
-    doLine: 2,          // số mắt TCRT5000: 0–3
-    cachMat: 3,         // cm giữa hai mắt cạnh nhau (1,5 … 3)
-    cham: true,
-    gyro: true,
-    gps: true
+    lo: [null, 'doLine', null, 'doLine', 'cham'],   // 5 lỗ dưới mũi, từ trái sang phải: 'doLine', 'cham' hoặc null
+    nap: ['gyro', 'gps']                            // 2 chỗ trên nắp mạch chủ: 'gyro', 'gps' hoặc null
   };
+
+  // Đưa cấu hình về dạng chuẩn { banh, sieuAm, lo, nap } kèm các trường đếm doLine, cham, gyro, gps.
+  // Vẫn nhận kiểu viết cũ: doLine (số mắt), cachMat (cm giữa hai mắt), cham, gyro, gps (true/false).
+  // Mắt dò line đặt lệch khỏi 5 lỗ (ví dụ 2 mắt cách nhau 2 cm) thì lo = null và giữ nguyên cachMat.
+  function chuanHoaCauHinh(vao) {
+    vao = vao || {};
+    let c = { banh: vao.banh || MAC_DINH.banh, sieuAm: vao.sieuAm == null ? MAC_DINH.sieuAm : !!vao.sieuAm };
+    let kieuCu = !Array.isArray(vao.lo) && (vao.doLine != null || vao.cachMat != null || vao.cham != null);
+    if (!kieuCu) {
+      let lo = Array.isArray(vao.lo) ? vao.lo : MAC_DINH.lo, dem = { doLine: 0, cham: 0 };
+      c.lo = X_LO.map(function(x, i) {
+        let v = lo[i];
+        if ((v != 'doLine' && v != 'cham') || dem[v] >= TOI_DA[v]) return null;
+        dem[v]++;
+        return v;
+      });
+    } else {
+      let n = Math.max(0, Math.min(3, Math.round(Number(vao.doLine == null ? 2 : vao.doLine) || 0)));
+      let cach = Math.max(1.5, Math.min(3, Number(vao.cachMat) || 3));
+      let cham = vao.cham == null ? true : !!vao.cham;
+      let viTri = [];
+      for (let i = 0; i < n; i++) viTri.push(X_LO.findIndex((x) => Math.abs(x - (i - (n - 1) / 2) * cach) < 1e-6));
+      if (viTri.every((i) => i >= 0)) {
+        c.lo = X_LO.map((x, i) => viTri.indexOf(i) >= 0 ? 'doLine' : null);
+        if (cham) { let i = [4, 0, 2, 3, 1].find((j) => !c.lo[j]); c.lo[i] = 'cham'; }
+      } else {
+        c.lo = null; c.cachMat = cach; c.doLine = n; c.cham = cham;
+      }
+    }
+    if (c.lo) {
+      c.doLine = c.lo.filter((v) => v == 'doLine').length;
+      c.cham = c.lo.indexOf('cham') >= 0;
+      if (c.doLine == 2) { let a = c.lo.indexOf('doLine'), b = c.lo.lastIndexOf('doLine'); c.cachMat = X_LO[b] - X_LO[a]; }
+    }
+    let nap = Array.isArray(vao.nap) ? vao.nap
+      : [(vao.gyro == null ? true : vao.gyro) ? 'gyro' : null, (vao.gps == null ? true : vao.gps) ? 'gps' : null];
+    c.nap = [0, 1].map((i) => (nap[i] == 'gyro' || nap[i] == 'gps') ? nap[i] : null);
+    if (c.nap[0] && c.nap[0] == c.nap[1]) c.nap[1] = null;
+    c.gyro = c.nap.indexOf('gyro') >= 0;
+    c.gps = c.nap.indexOf('gps') >= 0;
+    return c;
+  }
 
   // ---------- Lắp xe ----------
   function lapXe(cauHinhVao) {
-    let c = Object.assign({}, MAC_DINH, cauHinhVao || {});
-    c.doLine = Math.max(0, Math.min(3, Math.round(Number(c.doLine) || 0)));
-    c.cachMat = Math.max(1.5, Math.min(3, Number(c.cachMat) || 3));
+    let c = chuanHoaCauHinh(cauHinhVao);
+    // Vị trí (x) và ổ mạch chủ của các mô-đun dưới mũi xe
+    let xMat = [], oMat = [], xCham = null, oCham = 4, oSieuAm = 2;
+    if (c.lo) {
+      c.lo.forEach(function(v, i) {
+        if (v == 'doLine') { xMat.push(X_LO[i]); oMat.push(i + 1); }
+        if (v == 'cham') { xCham = X_LO[i]; oCham = i + 1; }
+      });
+      oSieuAm = [3, 2, 4, 1, 5].find((o) => !c.lo[o - 1]);
+    } else {
+      for (let i = 0; i < c.doLine; i++) xMat.push((i - (c.doLine - 1) / 2) * c.cachMat);
+      oMat = c.doLine == 1 ? [3] : (c.doLine == 2 ? [1, 5] : [1, 3, 5]);
+      if (c.cham) {
+        xCham = [0, -1.5, 1.5, -3, 3].find((x) => xMat.every((m) => Math.abs(m - x) >= 1.5 - 1e-6));
+        if (xCham == null) xCham = 0;
+      }
+    }
     let R = TS.rBanh, e = TS.dayKhung, y0 = TS.yDay, y1 = y0 + e;   // y1: mặt trên tấm đáy
     let than = [], day = [], camBien = [];
     let them = (ct) => { than.push(ct); return ct; };
@@ -256,11 +317,6 @@
     let cong = () => 'in' + (++soCong);
 
     // --- Cảm biến dò line TCRT5000: mỗi mắt một mô-đun (đầu đo dưới gầm, ổ RJ25 phía trên tấm đáy) ---
-    let xMat = [];
-    for (let i = 0; i < c.doLine; i++) xMat.push((i - (c.doLine - 1) / 2) * c.cachMat);
-    let oMat = [1, 3, 5];                       // ổ mạch chủ cho mắt trái, giữa, phải
-    if (c.doLine == 1) oMat = [3];
-    if (c.doLine == 2) oMat = [1, 5];
     let zMat = 12.35, yMatDo = 0.6;             // mặt đầu đo cách sân 6 mm
     xMat.forEach(function(x, i) {
       let ten = c.doLine == 1 ? 'giữa' : (i == 0 ? 'trái' : (i == c.doLine - 1 ? 'phải' : 'giữa'));
@@ -274,7 +330,7 @@
         { k: 'dia', d: 0.3, vt: [x + 0.25, yMatDo, zMat], phap: [0, -1, 0], vl: 'kinh_den' }
       ]) });
       let cg = cong();
-      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, vt: [x, yMatDo, zMat], huong: [0, -1, 0], oMach: oMat[i], ten: ten });
+      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, lo: c.lo ? X_LO.indexOf(x) : null, vt: [x, yMatDo, zMat], huong: [0, -1, 0], oMach: oMat[i], ten: ten });
       let xo = oMach[oMat[i]].mieng[0];
       day.push(dayRJ25('day_' + ct.id, 'Dây RJ25 dò line ' + ten, o, oMach[oMat[i]],
         [[x + (xo - x) * 0.15, 2.9, 9.7], [x + (xo - x) * 0.6, 5.2, 9.25], [xo, 7.9, 9.15], [xo, 9.35, 8.45]], [1, 0, 0]));
@@ -300,16 +356,14 @@
       ], trangTri: [] });
       let cg = cong();
       camBien.push({ loai: 'sieuAm', cong: cg, chiTiet: ct.id, vt: [0, ySa, zVo + 1.7], huong: [0, 0, 1],
-        dau: [[-1.3, ySa, zVo + 1.7], [1.3, ySa, zVo + 1.7]], oMach: 2 });
-      day.push(dayRJ25('day_sieuAm', 'Dây RJ25 siêu âm', o, oMach[2], [[-0.5, 8.9, 10.1], [-1.4, 9.5, 8.8]], [1, 0, 0]));
+        dau: [[-1.3, ySa, zVo + 1.7], [1.3, ySa, zVo + 1.7]], oMach: oSieuAm });
+      let xo = oMach[oSieuAm].mieng[0];
+      day.push(dayRJ25('day_sieuAm', 'Dây RJ25 siêu âm', o, oMach[oSieuAm], [[xo * 0.3, 8.9, 10.1], [xo * 0.8, 9.5, 8.8]], [1, 0, 0]));
     }
 
     // --- Cảm biến chạm: công tắc hành trình + tấm cản treo bản lề phía mũi ---
     let canGat = null;
     if (c.cham) {
-      // Chỗ đặt khối công tắc: vị trí đầu tiên không đụng các mô-đun dò line
-      let xCham = [0, -1.5, 1.5, -3, 3].find((x) => xMat.every((m) => Math.abs(m - x) >= 1.5 - 1e-6));
-      if (xCham == null) xCham = 0;
       let o = oRJ25([xCham, y1 + KT_O[1] / 2, 12.05], 'sau');
       let yCt = y1 + KT_O[1] + 0.5;
       let ct = them({ id: 'cham', ten: 'Cảm biến chạm (công tắc hành trình)', nhom: 'cham', khoiLuong: 9, khoi: [
@@ -338,9 +392,9 @@
         tayDon: 1.2             // cm từ bản lề tới nút bấm
       };
       let cg = cong();
-      camBien.push({ loai: 'cham', cong: cg, chiTiet: ct.id, oMach: 4 });
-      let xo = oMach[4].mieng[0];
-      day.push(dayRJ25('day_cham', 'Dây RJ25 cảm biến chạm', o, oMach[4],
+      camBien.push({ loai: 'cham', cong: cg, chiTiet: ct.id, oMach: oCham, lo: c.lo ? X_LO.indexOf(xCham) : null });
+      let xo = oMach[oCham].mieng[0];
+      day.push(dayRJ25('day_cham', 'Dây RJ25 cảm biến chạm', o, oMach[oCham],
         [[xCham + (xo - xCham) * 0.15, 2.9, 9.7], [xCham + (xo - xCham) * 0.6, 5.2, 9.25], [xo, 7.9, 9.15], [xo, 9.35, 8.45]], [1, 0, 0]));
     }
 
@@ -351,26 +405,29 @@
       let yg = (o.mieng[1] + m[1]) / 2, r = (o.mieng[1] - m[1]) / 2;
       return dayRJ25(id, ten, o, oMach[so], [[(o.mieng[0] + m[0]) / 2, o.mieng[1], zc - 0.25], [m[0], yg, zc - 0.25 - r]], [1, 0, 0]);
     }
-    if (c.gyro) {
-      let o = oRJ25([-3, yNap + KT_O[1] / 2, 2.0], 'sau');
-      let ct = them({ id: 'gyro', ten: 'Cảm biến gyro (con quay)', nhom: 'gyro', khoiLuong: 6, khoi: [
-        o.khoi, hop([2.2, 0.8, 2.0], [-3, yNap + 0.4, 3.95], 'nhua_tim', { vat: 0.06 })
-      ], trangTri: o.trangTri.concat([
-        { k: 'nhan', kt: [1.8, 1.6], vt: [-3, yNap + 0.8, 3.95], phap: [0, 1, 0], len: [0, 0, 1], ve: 'nhan_gyro' }
-      ]) });
-      camBien.push({ loai: 'gyro', cong: cong(), chiTiet: ct.id, vt: [-3, yNap + 0.4, 3.95], oMach: 6 });
-      day.push(dayVongSau('day_gyro', 'Dây RJ25 gyro', o, 6));
-    }
-    if (c.gps) {
-      let o = oRJ25([3, yNap + KT_O[1] / 2, 2.0], 'sau');
-      let ct = them({ id: 'gps', ten: 'Mô-đun GPS', nhom: 'gps', khoiLuong: 13, khoi: [
-        o.khoi, hop([2.6, 0.9, 2.6], [3, yNap + 0.45, 4.25], 'nhua_xam', { vat: 0.06 }),
-        hop([1.5, 0.4, 1.5], [3, yNap + 1.1, 4.25], 'gom', { vat: 0.04 })                         // ăng-ten gốm
-      ], trangTri: o.trangTri.concat([
-        { k: 'nhan', kt: [1.1, 1.1], vt: [3, yNap + 1.3, 4.25], phap: [0, 1, 0], len: [0, 0, 1], ve: 'antenna' }
-      ]) });
-      camBien.push({ loai: 'gps', cong: cong(), chiTiet: ct.id, vt: [3, yNap + 1.3, 4.25], oMach: 8 });
-      day.push(dayVongSau('day_gps', 'Dây RJ25 GPS', o, 8));
+    for (let loai of ['gyro', 'gps']) {      // gyro luôn nhận số cổng trước GPS
+      let ben = c.nap.indexOf(loai);
+      if (ben < 0) continue;
+      let x = X_NAP[ben], so = O_NAP[ben];
+      let o = oRJ25([x, yNap + KT_O[1] / 2, 2.0], 'sau');
+      if (loai == 'gyro') {
+        let ct = them({ id: 'gyro', ten: 'Cảm biến gyro (con quay)', nhom: 'gyro', khoiLuong: 6, khoi: [
+          o.khoi, hop([2.2, 0.8, 2.0], [x, yNap + 0.4, 3.95], 'nhua_tim', { vat: 0.06 })
+        ], trangTri: o.trangTri.concat([
+          { k: 'nhan', kt: [1.8, 1.6], vt: [x, yNap + 0.8, 3.95], phap: [0, 1, 0], len: [0, 0, 1], ve: 'nhan_gyro' }
+        ]) });
+        camBien.push({ loai: 'gyro', cong: cong(), chiTiet: ct.id, vt: [x, yNap + 0.4, 3.95], oMach: so, nap: ben });
+        day.push(dayVongSau('day_gyro', 'Dây RJ25 gyro', o, so));
+      } else {
+        let ct = them({ id: 'gps', ten: 'Mô-đun GPS', nhom: 'gps', khoiLuong: 13, khoi: [
+          o.khoi, hop([2.6, 0.9, 2.6], [x, yNap + 0.45, 4.25], 'nhua_xam', { vat: 0.06 }),
+          hop([1.5, 0.4, 1.5], [x, yNap + 1.1, 4.25], 'gom', { vat: 0.04 })                         // ăng-ten gốm
+        ], trangTri: o.trangTri.concat([
+          { k: 'nhan', kt: [1.1, 1.1], vt: [x, yNap + 1.3, 4.25], phap: [0, 1, 0], len: [0, 0, 1], ve: 'antenna' }
+        ]) });
+        camBien.push({ loai: 'gps', cong: cong(), chiTiet: ct.id, vt: [x, yNap + 1.3, 4.25], oMach: so, nap: ben });
+        day.push(dayVongSau('day_gps', 'Dây RJ25 GPS', o, so));
+      }
     }
 
     // --- Bánh xe (vật thể riêng, nối với khung bằng khớp bản lề có motor) ---
@@ -442,6 +499,24 @@
       taiBanh: 1 - tam[2] / banLap.thongSo.zBi };   // phần trọng lượng đè lên hai bánh chủ động
   }
 
+  // Phần mô tả (HTML) và các trường tương thích của tệp robot, tính từ bản lắp.
+  // Dùng chung cho scripts/robot/tao-xe.js và bảng lắp ráp trong trình duyệt.
+  const TEN_CB = { doLine: 'Cảm biến dò line TCRT5000', sieuAm: 'Cảm biến siêu âm HC-SR04', cham: 'Cảm biến chạm', gyro: 'Gyro (con quay)', gps: 'GPS' };
+  function moTaRobot(banLap, kl) {
+    const so = (x, n) => x.toFixed(n == null ? 1 : n).replace('.', ',');
+    let cb = banLap.camBien.map((c) => '<li>Cổng ' + c.cong.slice(2) + ' (ổ ' + c.oMach + ' trên mạch chủ): ' + TEN_CB[c.loai] + (c.ten ? ' ' + c.ten : '') + '</li>');
+    return Object.assign({
+      longerDescription:
+        '<h3>Kích thước</h3><ul>' +
+        '<li>Đường kính bánh: ' + so(banLap.thongSo.dBanh, 2) + ' cm (chu vi ' + banLap.thongSo.chuViBanh + ' cm)</li>' +
+        '<li>Khoảng cách hai bánh (tâm đến tâm): ' + so(2 * banLap.thongSo.xBanh) + ' cm</li>' +
+        '<li>Khối lượng: ' + Math.round(kl.tong) + ' g, ' + Math.round(kl.taiBanh * 100) + ' % đè lên hai bánh chủ động</li></ul>' +
+        '<h3>Động cơ</h3><ul><li>Cổng A: Bánh trái</li><li>Cổng B: Bánh phải</li></ul>' +
+        '<h3>Cảm biến</h3><ul>' + (cb.length ? cb.join('') : '<li>Chưa lắp cảm biến nào</li>') + '</ul>',
+      sraXe: banLap.cauHinh
+    }, truongTuongThich(banLap, kl));
+  }
+
   // Các trường tương thích với GEARS và khung thử thách (đọc bởi mã có sẵn):
   //   wheelDiameter, bodyWidth + wheelWidth + 2·wheelToBodyOffset = khoảng cách hai bánh,
   //   bodyLength / 2 − bodyEdgeToWheelCenterZ = trục bánh nằm trước tâm thân bao nhiêu.
@@ -463,5 +538,5 @@
     };
   }
 
-  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
+  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
 });

@@ -2,7 +2,7 @@
 
 Xe 2 bánh kiểu xe kit bán lẻ (khung nhôm, motor giảm tốc TT, mạch chủ có nắp, cảm biến dạng mô-đun nối bằng dây RJ25). Toàn bộ hình 3D, hitbox, khối lượng và mô phỏng cảm biến trong thư mục này là mã viết riêng cho Sân Robot Ảo, không dùng thân hộp, bánh và cảm biến có sẵn của GEARS.
 
-Đây là giai đoạn 1: khung, bánh thường, cảm biến. Bánh omni, mecanum (giai đoạn 2) và bảng lắp ráp (giai đoạn 3) chưa có.
+Đã có: khung, bánh thường, cảm biến và bảng lắp ráp kéo thả cảm biến. Chưa có: bánh omni, mecanum, tài liệu cho giáo viên.
 
 ![Xe nhìn từ trước](../../../docs/anh/xe-lap-rap/xe-truoc-trai.jpg)
 
@@ -10,6 +10,7 @@ Xe 2 bánh kiểu xe kit bán lẻ (khung nhôm, motor giảm tốc TT, mạch c
 
 - Menu **Robot → Chọn robot → Xe lắp mô-đun (2 bánh)**.
 - Thử một bài có sẵn bằng xe này: thêm `&robot=xe-lap-rap` vào địa chỉ, ví dụ `index.html?baiTap=01-di-chuyen/01-tien-toi-o-dich&robot=xe-lap-rap`.
+- Tháo lắp cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**.
 - Xem hitbox: menu **Robot → Hiện hitbox của xe** (khung dây xanh lá).
 
 Robot nào có trường `sraXe` trong tệp JSON thì được dựng bằng mã ở đây; robot không có trường đó (robot chuẩn `co-ban` của các bài cũ) vẫn do GEARS dựng như trước.
@@ -24,6 +25,7 @@ Robot nào có trường `sraXe` trong tệp JSON thì được dựng bằng m�
 | `vat-li.js` | Vật thể, khớp, motor và bước tính vật lí (Bullet qua Ammo.js). |
 | `cam-bien.js` | Mô phỏng 5 loại cảm biến theo nguyên lí linh kiện thật. |
 | `xe.js` | Nối xe vào GEARS: nạp robot, giao diện bánh và cảm biến mà khối lệnh, Python đang dùng. |
+| `bang-lap-rap.js`, `.css` | Bảng lắp ráp: khay linh kiện, sơ đồ xe, kéo thả, lưu bản lắp của người dùng. |
 
 Một bản mô tả khối duy nhất sinh ra cả ba thứ: hình nhìn thấy, hình va chạm, khối lượng. Vì vậy sửa kích thước một chi tiết ở `linh-kien.js` thì ba thứ cùng đổi.
 
@@ -53,13 +55,37 @@ Cả xe 549 g, 273 khối va chạm. Hai bánh cách nhau 11,4 cm (tâm đến t
 |---|---|
 | A (`outA`) | Bánh trái |
 | B (`outB`) | Bánh phải |
-| 1, 2 | Dò line trái, phải |
+| 1, 2 | Dò line trái, phải (lỗ thứ 2 và thứ 4 dưới mũi xe) |
 | 3 | Siêu âm |
-| 4 | Chạm |
+| 4 | Chạm (công tắc ở lỗ thứ 5) |
 | 5 | Gyro |
 | 6 | GPS |
 
-Cấu hình lắp (trường `sraXe` trong tệp robot): `sieuAm`, `cham`, `gyro`, `gps` (true/false), `doLine` (0 đến 3 mắt), `cachMat` (khoảng cách hai mắt, cm). Cảm biến nào tắt thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo; các cổng còn lại dồn lên cho liền nhau.
+## Chỗ gắn cảm biến và bảng lắp ráp
+
+![Bảng lắp ráp](../../../docs/anh/xe-lap-rap/bang-lap-rap.jpg)
+
+Xe có 8 chỗ gắn cảm biến:
+
+| Chỗ gắn | Nhận | Ổ trên mạch chủ |
+|---|---|---|
+| Giá phía mũi | Siêu âm | Ổ trước còn trống gần giữa nhất (ưu tiên ổ 3) |
+| 5 lỗ dưới mũi xe, x = −3; −1,5; 0; 1,5; 3 cm | Mắt dò line (nhiều nhất 3) hoặc công tắc chạm (nhiều nhất 1) | Lỗ thứ i cắm ổ i, dây đi thẳng, không bắt chéo |
+| 2 chỗ trên nắp mạch chủ (trái, phải) | Gyro hoặc GPS | Ổ 6 (trái), ổ 8 (phải) |
+
+Trong bảng lắp ráp, kéo một cảm biến từ khay vào chỗ gắn, kéo từ chỗ này sang chỗ khác, kéo vào chỗ đang có cảm biến cùng nhóm để đổi chỗ, kéo ra ngoài bảng để tháo. Không kéo được thì bấm cảm biến rồi bấm chỗ gắn; bàn phím dùng Tab, Enter và Delete. Mỗi lần đổi, xe 3D được dựng lại ngay: hình, hitbox, khối lượng và mô phỏng cảm biến đều tính lại từ danh mục linh kiện. Sơ đồ trong bảng vẽ chỗ gắn to hơn thật và tách khỏi thân xe cho dễ kéo; vị trí thật là trên xe 3D.
+
+Số cổng trong chương trình đánh liền nhau theo thứ tự: các mắt dò line từ trái sang phải, siêu âm, chạm, gyro, GPS. Thêm bớt cảm biến thì số cổng của các cảm biến đứng sau đổi theo; bảng ghi số cổng trên từng cảm biến. Số ổ in trên mạch chủ (1 đến 8) là chỗ cắm dây, không phải số cổng trong chương trình.
+
+Bản lắp của người dùng lưu trên máy đang dùng (`localStorage`, khoá `sanRobotAo.xeLapRap`) và được dùng lại mỗi khi chọn "Xe lắp mô-đun". Nút **Về mặc định** xoá bản đã lưu. Bài học nào chỉ định robot thì dùng đúng tệp robot của bài, không dùng bản đã lưu.
+
+Cấu hình lắp là trường `sraXe` trong tệp robot:
+
+```json
+{ "sieuAm": true, "lo": [null, "doLine", null, "doLine", "cham"], "nap": ["gyro", "gps"] }
+```
+
+`lo` là 5 lỗ dưới mũi từ trái sang phải, `nap` là 2 chỗ trên nắp mạch chủ. Kiểu viết cũ vẫn dùng được: `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false); hai mắt đặt lệch lỗ (ví dụ `cachMat: 2`) vẫn lắp đúng chỗ đã ghi. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
 
 ## Vật lí
 
@@ -127,6 +153,8 @@ cd public && python3 -m http.server 1337 &
 node scripts/xe/kiem-tra-hitbox.js          # hình vẽ, khối và hình trong Bullet khớp nhau dưới 1 mm
 node scripts/xe/kiem-tra-chuyen-dong.js     # 15 phép đo chuyển động so với lí thuyết
 node scripts/xe/kiem-tra-cam-bien.js        # 27 phép đo cảm biến với đáp số biết trước
+node scripts/xe/kiem-tra-lap-rap.js         # 1414 bản lắp đều dựng được; kéo thả, bấm chọn, bàn phím, lưu lại
+SIRO_LAP='{"lo":["doLine","cham","doLine","doLine",null]}' node scripts/xe/kiem-tra-hitbox.js   # hitbox của một bản lắp khác
 node scripts/xe/do-fps.js                   # tốc độ khung hình, so với robot chuẩn
 node scripts/xe/chup-anh.js thu-muc         # chụp xe từ 9 góc
 SIRO_ROBOT=xe-lap-rap node scripts/thu-thach/kiem-tra-bai.js 01-di-chuyen/01-tien-toi-o-dich   # chạy bài cũ bằng xe mới

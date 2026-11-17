@@ -9,7 +9,8 @@ const DUNG_SAI = 0.1;      // cm (1 mm)
 
 (async () => {
   const { browser, page } = await mo();
-  await napXe(page);
+  // SIRO_LAP: thử một bản lắp khác, ví dụ SIRO_LAP='{"lo":["cham","doLine","doLine","doLine",null]}'
+  await napXe(page, process.env.SIRO_LAP ? { sraXe: JSON.parse(process.env.SIRO_LAP) } : null);
   const kq = await page.evaluate((DUNG_SAI) => {
     const H = SRAHinhKhoi, V = H.V, Q = H.Q;
     const r = robot, bl = r.sraBanLap, kl = r.sraKhoiLuong, vl = r.sraVatLi;
