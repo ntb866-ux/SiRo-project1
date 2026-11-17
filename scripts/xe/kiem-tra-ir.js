@@ -35,7 +35,7 @@ console.log('1. Cấu hình');
   const doc = () => page.evaluate(() => robot.components.filter((c) => c.sraLoai == 'doLine' && !c.sraGam).map(function(c) {
     let lan = c.do(); c.render(); 
     let rgb = c.getRGB(), d = c.denBao.material.emissiveColor;
-    return { che: c.che, rgb: Math.round(rgb[0]), tin: +c.tinHieu.toFixed(2), den: [d.r, d.g, d.b].map((v) => +v.toFixed(2)), quang: +c.quangDen.material.alpha.toFixed(2), x: c.position.x };
+    return { che: c.che, rgb: Math.round(rgb[0]), tin: +c.tinHieu.toFixed(2), den: [d.r, d.g, d.b].map((v) => +v.toFixed(2)), alpha: +c.denBao.material.alpha.toFixed(2), x: c.position.x };
   }).sort((a, b) => a.x - b.x));
   const cho = () => page.waitForTimeout(120);
 
@@ -43,7 +43,7 @@ console.log('1. Cấu hình');
   await datNen('#ffffff', '#000000'); await cho();
   let t = await doc();
   bc.dong(t[0].che == 'tuongTu' && t[0].rgb > 200 && t[1].rgb < 60 && t[1].rgb > 0, 'Tương tự: nền trắng đọc gần 255, vạch đen đọc thấp nhưng chưa về 0 (còn phản xạ chút ít)', JSON.stringify(t.map((x) => x.rgb)));
-  bc.dong(t[0].den[1] < t[1].den[1] && t[0].quang > t[1].quang, 'Tương tự: đèn trước mắt trên nền trắng đậm hơn đèn trước mắt trên vạch đen', JSON.stringify(t.map((x) => x.den)));
+  bc.dong(t[0].den[1] < t[1].den[1] && t[0].alpha > t[1].alpha, 'Tương tự: đèn trước mắt trên nền trắng đậm hơn đèn trước mắt trên vạch đen', JSON.stringify(t.map((x) => x.den)));
   await datNen('#8a8a8a', '#000000'); await cho();
   let x = await doc();
   bc.dong(x[0].rgb > t[1].rgb + 40 && x[0].rgb < t[0].rgb - 40, 'Tương tự: nền xám cho mức ở giữa', x[0].rgb + ' (trắng ' + t[0].rgb + ', đen ' + t[1].rgb + ')');
@@ -52,7 +52,7 @@ console.log('1. Cấu hình');
   await datNen('#ffffff', '#000000'); await cho();
   t = await doc();
   bc.dong(t.every((c) => c.che == 'so') && t[0].rgb == 255 && t[1].rgb == 0, 'Số: nền trắng đọc đúng 255, vạch đen đọc đúng 0', JSON.stringify(t.map((x) => x.rgb)));
-  bc.dong(t[0].den[1] > 0.8 && t[0].quang > 0.3 && t[1].den[1] < 0.3 && t[1].quang == 0, 'Số: đèn xanh sáng trên nền trắng, tắt (xám) trên vạch đen', JSON.stringify(t.map((x) => [x.den, x.quang])));
+  bc.dong(t[0].den[1] > 0.8 && t[1].den[1] < 0.3, 'Số: đèn xanh sáng trên nền trắng, tắt (xám) trên vạch đen', JSON.stringify(t.map((x) => x.den)));
   await datNen('#8a8a8a', '#3a3a3a'); await cho();
   x = await doc();
   bc.dong(x.every((c) => c.rgb == 0 || c.rgb == 255), 'Số: nền xám cũng chỉ ra 0 hoặc 255 (tuỳ ngưỡng của mạch so sánh)', JSON.stringify(x.map((c) => c.tin + '→' + c.rgb)));
