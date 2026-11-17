@@ -178,11 +178,13 @@
   //   sau    tấm bắt vào vách sau, nhìn ra sau
   //   trai, phai  tấm bắt vào vách bên, nâng cao hơn bánh xe, nhìn sang ngang
   const GIA = {
-    truoc: { ten: 'trước', n: [0, 0, 1], mat: 11.4, y: 5.6, truc: 'x', gocN: 0 },
-    trai: { ten: 'trái', n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 5.5] },
-    phai: { ten: 'phải', n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 5.5] },
-    sau: { ten: 'sau', n: [0, 0, -1], mat: -4.2, y: 5.6, truc: 'x', gocN: 180 }
+    truoc: { ten: 'trước', n: [0, 0, 1], mat: 11.4, y: 5.6, truc: 'x', gocN: 0, cao: [5.6, 10.6] },
+    trai: { ten: 'trái', n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 5.5], cao: [7.5, 13.0] },
+    phai: { ten: 'phải', n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 5.5], cao: [7.5, 13.0] },
+    sau: { ten: 'sau', n: [0, 0, -1], mat: -4.2, y: 5.6, truc: 'x', gocN: 180, cao: [3.0, 10.6] }
   };
+  // y: độ cao mặc định của tâm cảm biến so với mặt sân (cm); cao: khoảng chỉnh độ cao (giá có dãy lỗ bắt vít).
+  // Thấp hơn khoảng đó thì vỏ đụng: giá mũi đụng công tắc chạm, giá bên đụng bánh xe; giá đuôi hạ được tới sát sân.
   const DS_GIA = ['truoc', 'trai', 'phai', 'sau'];
   // Màu sơn cho phép (khung nhôm, tấm cản, vành bánh); null là màu gốc
   const SON = ['#c62828', '#ef6c00', '#f9a825', '#2e7d32', '#00838f', '#1565c0', '#6a1b9a', '#d81b60', '#263238', '#eceff1'];
@@ -258,7 +260,8 @@
     saVao.forEach(function(m) {
       if (!m || !GIA[m.gia] || c.sa.some((n) => n.gia == m.gia)) return;
       let goc = tron2(kep(Number(m.goc) || 0, -GOC_SA, GOC_SA)), gh = gioiHanU(m.gia, goc);
-      c.sa.push({ gia: m.gia, u: tron2(kep(Number(m.u) || 0, gh[0], gh[1])), goc: goc });
+      let ch = GIA[m.gia].cao, cao = m.cao == null || !isFinite(Number(m.cao)) ? GIA[m.gia].y : Number(m.cao);
+      c.sa.push({ gia: m.gia, u: tron2(kep(Number(m.u) || 0, gh[0], gh[1])), goc: goc, cao: tron2(kep(Math.round(cao * 10) / 10, ch[0], ch[1])) });
     });
     c.sa.sort((a, b) => DS_GIA.indexOf(a.gia) - DS_GIA.indexOf(b.gia));
 
@@ -472,10 +475,11 @@
       let ct = them({ id: 'doLine' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [
         o.khoi,
         hop([1.4, 0.5, 1.5], [x, y0 - 0.25, zMat], 'mach_den', { vat: 0.04 }),                    // mạch có vỏ dưới gầm
-        hop([1.02, 0.7, 0.58], [x, y0 - 0.5 - 0.35, zMat], 'nhua_den')                            // thân TCRT5000
+        // thân TCRT5000 xoay dọc theo thân xe: đầu phát hồng ngoại phía mũi, đầu thu phía sau, cùng nằm trên một đường dọc
+        hop([0.58, 0.7, 1.02], [x, y0 - 0.5 - 0.35, zMat], 'nhua_den')
       ], trangTri: o.trangTri.concat([
-        { k: 'dia', d: 0.3, vt: [x - 0.25, yMatDo, zMat], phap: [0, -1, 0], vl: 'led_hong_ngoai' },
-        { k: 'dia', d: 0.3, vt: [x + 0.25, yMatDo, zMat], phap: [0, -1, 0], vl: 'kinh_den' }
+        { k: 'dia', d: 0.3, vt: [x, yMatDo, zMat + 0.25], phap: [0, -1, 0], vl: 'led_hong_ngoai' },
+        { k: 'dia', d: 0.3, vt: [x, yMatDo, zMat - 0.25], phap: [0, -1, 0], vl: 'kinh_den' }
       ]) });
       let cg = cong();
       camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, lo: c.lo ? X_LO.indexOf(x) : null, duoi: iMat[i], vt: [x, yMatDo, zMat], huong: [0, -1, 0], oMach: oMat[i], ten: ten });
@@ -489,7 +493,7 @@
     c.sa.forEach(function(m) {
       // Mô-đun bắt vào giá qua một khớp xoay ở giữa mặt sau. Khi xoay, mô-đun được đẩy ra ngoài vừa đủ để
       // góc vỏ không lấn vào giá, chốt khớp xoay nối mặt sau vỏ với giá.
-      let g = GIA[m.gia], goc = m.goc, u = m.u, ySa = g.y;
+      let g = GIA[m.gia], goc = m.goc, u = m.u, ySa = m.cao, dy = ySa - g.y;      // dy: nâng (+) hoặc hạ (−) so với mặc định
       let day0 = 2.35 * Math.sin(Math.abs(goc) * PI / 180);
       let q = Q.nhan(Q.truc([0, 1, 0], -goc), Q.truc([0, 1, 0], g.gocN));   // quay theo hướng giá, rồi xoay (dương: sang trái)
       let mat0 = g.truc == 'x' ? [u, ySa, g.mat] : [g.mat, ySa, u];          // giữa mặt giá chỗ bắt mô-đun
@@ -500,23 +504,25 @@
       // ổ cắm dây: giá trước có ổ sau thanh ngang; giá khác có một tai ngang phía trên mô-đun, ổ nằm trên tai
       let o, khoiGia = [];
       if (m.gia == 'truoc') {
-        o = oRJ25([u, 5.75, 10.55], 'len');
+        o = oRJ25([u, 5.75 + dy, 10.55], 'len');
+        let hc = 2.7 + dy;                                                                                            // chân dài thêm khi nâng giá
         khoiGia = [
-          hop([0.6, 2.7, e], [-4.15, y1 + 1.35, 11.3], vlKhung), hop([0.6, 2.7, e], [4.15, y1 + 1.35, 11.3], vlKhung),   // hai chân
+          hop([0.6, hc, e], [-4.15, y1 + hc / 2, 11.3], vlKhung), hop([0.6, hc, e], [4.15, y1 + hc / 2, 11.3], vlKhung),   // hai chân
           hop([8.9, 2.4, e], [0, ySa, 11.3], vlKhung, { vat: 0.04 })                                                    // thanh ngang
         ];
       } else if (m.gia == 'sau') {
         let yTai = ySa + 1.1 + e / 2;
         o = oRJ25([u, yTai + e / 2 + KT_O[2] / 2, -5.05], 'len');
         khoiGia = [
-          hop([8.9, 3.0, e], [0, ySa - 0.2 + 0.0, g.mat + e / 2], vlKhung, { vat: 0.04 }),                           // tấm bắt vào vách sau
+          // tấm bắt vào vách sau: chân tấm luôn bắt ở chỗ cũ, nâng thì tấm dài lên, hạ thì tấm thòng xuống
+          hop([8.9, 3.0 + Math.abs(dy), e], [0, g.y - 0.2 + dy / 2, g.mat + e / 2], vlKhung, { vat: 0.04 }),
           hop([1.7, e, 1.7], [u, yTai, -5.05], vlKhung)                                                               // tai đỡ ổ cắm
         ];
       } else {
         let s = Math.sign(g.mat), yTai = ySa + 1.1 + e / 2;
         o = oRJ25([s * 5.55, yTai + e / 2 + KT_O[2] / 2, u], 'len');
         khoiGia = [
-          hop([e, 5.1, 3.0], [g.mat - s * e / 2, 6.55, u], vlKhung, { vat: 0.04 }),                                 // tấm bắt vào vách bên
+          hop([e, 5.1 + dy, 3.0], [g.mat - s * e / 2, 6.55 + dy / 2, u], vlKhung, { vat: 0.04 }),                   // tấm bắt vào vách bên, dài thêm khi nâng
           hop([1.7, e, 1.7], [s * 5.55, yTai, u], vlKhung)                                                            // tai đỡ ổ cắm
         ];
       }
@@ -536,11 +542,11 @@
         ]) });
       them({ id: 'giaSieuAm' + hau, ten: 'Giá đỡ cảm biến siêu âm (' + g.ten + ')', nhom: 'sieuAm', matDo: TS.nhom, khoi: khoiGia, trangTri: [] });
       let so = oSa[m.gia];
-      camBien.push({ loai: 'sieuAm', cong: cong(), chiTiet: ct.id, vt: ra([0, 0, 2.2]), huong: huong, xoay: q, gia: m.gia, u: u, x: g.truc == 'x' ? u : g.mat, goc: goc,
+      camBien.push({ loai: 'sieuAm', cong: cong(), chiTiet: ct.id, vt: ra([0, 0, 2.2]), huong: huong, xoay: q, gia: m.gia, u: u, x: g.truc == 'x' ? u : g.mat, goc: goc, cao: ySa,
         ten: c.sa.length > 1 ? g.ten : '', dau: [ra([-1.3, 0, 2.2]), ra([1.3, 0, 2.2])], oMach: so });
       let mo = oMach[so].mieng, xo = mo[0];
       let moc;
-      if (m.gia == 'truoc' && so <= 5) moc = [[u + (xo - u) * 0.3, 8.9, 10.1], [u + (xo - u) * 0.8, 9.5, 8.8]];
+      if (m.gia == 'truoc' && so <= 5) moc = [[u + (xo - u) * 0.3, 8.9 + dy, 10.1], [u + (xo - u) * 0.8, 9.5 + Math.max(0, dy * 0.6), 8.8]];
       else {
         // từ ổ trên tai, vòng lên trên rồi đi tới ổ trên mạch chủ (hàng trước: ổ hướng lên; hàng sau: ổ hướng ra sau)
         let dau = V.cong(o.mieng, [0, 1.6, 0]), cao = Math.max(o.mieng[1] + 1.6, 10.6);

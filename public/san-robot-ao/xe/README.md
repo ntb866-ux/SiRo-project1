@@ -43,7 +43,7 @@ Hệ trục xe: gốc ở mặt sân, ngay dưới điểm giữa trục hai bá
 | Mạch chủ | Mạch in, nắp, 8 ổ RJ25, 4 trụ đồng | 56 g |
 | Bánh | 2 bánh Ø 6,37 cm (chu vi 20 cm), rộng 1,8 cm, lốp cao su mặt cắt tròn | 2 × 29 g |
 | Bi tự do | Bi thép Ø 1,6 cm và vỏ | 17 g + 6 g |
-| Dò line | 2 mô-đun TCRT5000, cách nhau 3 cm, mặt đo cao 6 mm | 2 × 7,5 g |
+| Dò line | 2 mô-đun TCRT5000, cách nhau 3 cm, mặt đo cao 6 mm; đầu phát và đầu thu xếp dọc thân xe (đầu phát phía mũi) | 2 × 7,5 g |
 | Siêu âm | HC-SR04 và giá đỡ | 25 g |
 | Chạm | Công tắc hành trình, tấm cản có bản lề và lò xo | 9 g + 10 g |
 | Gyro, GPS | Hai mô-đun đặt trên nắp mạch chủ | 6 g, 13 g |
@@ -85,6 +85,7 @@ Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
 - **Thước đo.** Trên thanh dưới mũi có vạch 0,5 cm, trục giữa xe và khoảng cách giữa các cảm biến cạnh nhau.
 - **Thông tin.** Rê chuột lên một cảm biến thì dòng dưới sơ đồ ghi vị trí, số cổng, ổ cắm, và dây của nó sáng lên.
 - **Nhiều siêu âm.** Có 4 cảm biến siêu âm trong khay, mỗi giá gắn một cái. Kéo siêu âm từ giá này sang giá đang có siêu âm khác thì hai cái đổi chỗ.
+- **Độ cao siêu âm.** Mục "Độ cao siêu âm" có nút − và + (bước 0,5 cm) cho từng cảm biến; hoặc Tab tới cảm biến rồi bấm PageUp/PageDown. Độ cao là tâm cảm biến so với mặt sân: giá mũi 5,6 đến 10,6 cm (thấp hơn thì đụng công tắc chạm), giá bên 7,5 đến 13 cm (thấp hơn thì đụng bánh), giá đuôi 3 đến 10,6 cm. Giá kéo dài hoặc thòng xuống theo cảm biến. Độ cao thuộc về giá: kéo cảm biến sang giá khác thì nó lấy độ cao của giá đó.
 - **Xoay siêu âm.** Mỗi siêu âm có núm tròn riêng trên cung phía trước nó. Mô-đun bắt vào giá qua một chốt xoay; khi xoay, mô-đun được đẩy ra trước vừa đủ để vỏ không lấn vào thanh giá.
 - **Tháo từng cảm biến.** Rê chuột lên cảm biến (hoặc Tab tới nó) thì hiện nút × đỏ ở góc; bấm để tháo. Danh sách cổng cũng có nút "Tháo" cạnh mỗi cảm biến. Trên màn hình cảm ứng nút × luôn hiện.
 - **Sơn xe.** Dưới sơ đồ có ba hàng ô màu cho khung, tấm cản và vành bánh (10 màu, ô viền đứt là màu gốc). "Tháo hết cảm biến" giữ màu sơn; "Về mặc định" trả về màu gốc.
@@ -100,14 +101,14 @@ Cấu hình lắp là trường `sraXe` trong tệp robot:
 
 ```json
 {
-  "sa": [{ "gia": "truoc", "u": 0, "goc": 0 }, { "gia": "trai", "u": 1.5, "goc": 15 }],
+  "sa": [{ "gia": "truoc", "u": 0, "goc": 0, "cao": 5.6 }, { "gia": "trai", "u": 1.5, "goc": 15, "cao": 9 }],
   "duoi": [{ "loai": "doLine", "x": -1.5 }, { "loai": "doLine", "x": 1.5 }, { "loai": "cham", "x": 3 }],
   "tren": [{ "loai": "gyro", "x": -3, "z": 3.95 }, { "loai": "gps", "x": 3, "z": 4.25 }],
   "son": { "khung": "#1565c0", "canGat": null, "vanh": "#263238" }
 }
 ```
 
-`duoi` là các mô-đun dưới mũi (x tính bằng cm, âm là bên trái), `tren` là các mô-đun trên nắp mạch chủ (x, z là tâm thân mô-đun, z tính từ trục bánh về phía mũi), `sa` là các siêu âm: `gia` là `truoc`, `trai`, `phai` hoặc `sau`, `u` là vị trí dọc giá (x với giá mũi và đuôi, z với hai giá bên), `goc` tính bằng độ, dương là quay sang trái. `son` là màu sơn (mã hex) của khung, tấm cản, vành bánh; `null` là màu gốc. Kiểu viết cũ `sieuAm`, `sieuAmX`, `sieuAmGoc` (một siêu âm trên giá mũi) vẫn dùng được và vẫn có trong cấu hình chuẩn hoá. Quá 8 cảm biến thì bỏ bớt, bỏ siêu âm thêm trước. Mô-đun quá số lượng, ra ngoài vùng gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ. Các kiểu viết cũ vẫn dùng được: `lo` (5 lỗ dưới mũi, x = −3; −1,5; 0; 1,5; 3 cm) và `nap` (2 chỗ trên nắp), hoặc `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false). Khi mọi mô-đun nằm đúng các chỗ cũ, cấu hình chuẩn hoá vẫn có `lo` và `nap`; lệch đi thì hai trường đó là `null`. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
+`duoi` là các mô-đun dưới mũi (x tính bằng cm, âm là bên trái), `tren` là các mô-đun trên nắp mạch chủ (x, z là tâm thân mô-đun, z tính từ trục bánh về phía mũi), `sa` là các siêu âm: `gia` là `truoc`, `trai`, `phai` hoặc `sau`, `u` là vị trí dọc giá (x với giá mũi và đuôi, z với hai giá bên), `goc` tính bằng độ, dương là quay sang trái, `cao` là độ cao tâm cảm biến so với mặt sân (cm, bỏ trống là độ cao mặc định của giá). `son` là màu sơn (mã hex) của khung, tấm cản, vành bánh; `null` là màu gốc. Kiểu viết cũ `sieuAm`, `sieuAmX`, `sieuAmGoc` (một siêu âm trên giá mũi) vẫn dùng được và vẫn có trong cấu hình chuẩn hoá. Quá 8 cảm biến thì bỏ bớt, bỏ siêu âm thêm trước. Mô-đun quá số lượng, ra ngoài vùng gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ. Các kiểu viết cũ vẫn dùng được: `lo` (5 lỗ dưới mũi, x = −3; −1,5; 0; 1,5; 3 cm) và `nap` (2 chỗ trên nắp), hoặc `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false). Khi mọi mô-đun nằm đúng các chỗ cũ, cấu hình chuẩn hoá vẫn có `lo` và `nap`; lệch đi thì hai trường đó là `null`. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
 
 ## Vật lí
 

@@ -160,10 +160,10 @@ var SRABangLapRap = new function() {
         // đổi chỗ: cảm biến đang ở giá đích chuyển sang giá của cảm biến đang kéo
         c.sa = c.sa.filter((m) => m.gia != gia);
         let gh2 = L.gioiHanU(goc.gia, goc.goc);
-        doi = { gia: goc.gia, u: tron2(kep(goc.u, gh2[0], gh2[1])), goc: goc.goc };
+        doi = { gia: goc.gia, u: tron2(kep(goc.u, gh2[0], gh2[1])), goc: goc.goc, cao: goc.cao };      // độ cao gắn với giá: mỗi giá giữ độ cao của mình
         c.sa.push(doi);
       }
-      c.sa.push({ gia: gia, u: u, goc: gocXoay });
+      c.sa.push({ gia: gia, u: u, goc: gocXoay, cao: goc && goc.gia == gia ? goc.cao : (dangCo ? dangCo.cao : null) });
       let cc = L.chuanHoaCauHinh(c), den = 'sa:' + gia;
       if (JSON.stringify(cc) == JSON.stringify(c0) && tu == den) return { loi: '', khongDoi: true, den: den, c: cc };
       return { c: cc, den: den, doi: doi ? 'sa:' + doi.gia : null,
@@ -326,6 +326,16 @@ var SRABangLapRap = new function() {
     c.son = Object.assign({}, c.son); c.son[phan] = mau || null;
     return { c: L.chuanHoaCauHinh(c), tb: mau ? 'Đã sơn ' + TEN_SON[phan].toLowerCase() + ' màu ' + (TEN_MAU[mau] || mau) + '.' : TEN_SON[phan] + ' về màu gốc.' };
   }
+  // Đổi độ cao (cm, tâm cảm biến so với mặt sân) của cảm biến siêu âm khoa
+  function datCao(khoa, cao) {
+    let c = tho(self.cauHinh), m = c.sa.find((n) => 'sa:' + n.gia == khoa);
+    if (!m) return null;
+    let gh = L.GIA[m.gia].cao;
+    cao = tron2(kep(Math.round(cao * 10) / 10, gh[0], gh[1]));
+    if (cao == m.cao) return { loi: cao <= gh[0] ? 'Siêu âm ' + L.GIA[m.gia].ten + ' đã ở thấp nhất (' + soViet(gh[0]) + ' cm), hạ nữa thì đụng ' + (m.gia == 'truoc' ? 'công tắc chạm' : (m.gia == 'sau' ? 'mặt sân' : 'bánh xe')) + '.' : 'Siêu âm ' + L.GIA[m.gia].ten + ' đã ở cao nhất (' + soViet(gh[1]) + ' cm).' };
+    m.cao = cao;
+    return { c: L.chuanHoaCauHinh(c), den: khoa, tb: 'Siêu âm ' + L.GIA[m.gia].ten + ' cao ' + soViet(cao) + ' cm so với mặt sân.' };
+  }
   const moTaGoc = (g) => Math.abs(g) < 1e-6 ? 'nhìn thẳng ra trước' : 'xoay ' + soViet(Math.abs(g)) + '° sang ' + (g > 0 ? 'trái' : 'phải');
 
   function tenMoDun(khoa, banLap, c) {
@@ -333,7 +343,7 @@ var SRABangLapRap = new function() {
     if (!m) return '';
     let cb = banLap && banLap.camBien.find((x) => khoaCua(x) == khoa);
     let ten = LOAI[m.loai].tenDay + (cb && cb.ten && m.loai != 'cham' ? ' (' + cb.ten + ')' : '');
-    let viTri = m.loai == 'sieuAm' ? 'trên ' + TEN_VUNG['gia:' + m.gia] + ', ' + (L.GIA[m.gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(m.u) + ' cm, ' + moTaGoc(m.goc)
+    let viTri = m.loai == 'sieuAm' ? 'trên ' + TEN_VUNG['gia:' + m.gia] + ', ' + (L.GIA[m.gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(m.u) + ' cm, cao ' + soViet(m.cao) + ' cm, ' + moTaGoc(m.goc)
       : (LOAI[m.loai].vung == 'duoi' ? 'dưới mũi xe, ' + moTaX(m.x) : 'trên nắp mạch chủ, x = ' + soViet(m.x) + ' cm, z = ' + soViet(m.z) + ' cm');
     return viet(ten) + ' ' + viTri + (cb ? '. Cổng ' + cb.cong.slice(2) + ' trong chương trình, cắm ổ ' + cb.oMach + ' trên mạch chủ.' : '.');
   }
@@ -419,8 +429,9 @@ var SRABangLapRap = new function() {
       for (let s of [-1, 1]) { tron(s * 1.3, 0, 0.8, '#d7d9dc'); tron(s * 1.3, 0, 0.55, '#8d9299'); tron(s * 1.3, 0, 0.18, '#d7d9dc'); }
     } else if (loai == 'doLine') {
       hcn(0, 0, 1.3, 2.0, '#1b1d22', 0.18);
-      hcn(0, -0.35, 1.0, 0.62, '#34373d', 0.08);
-      tron(-0.25, -0.35, 0.17, '#7fb6ff'); tron(0.25, -0.35, 0.17, '#0c0c0e', { stroke: '#555a61', 'stroke-width': 0.05 });
+      // TCRT5000 dọc theo thân xe: đầu phát (xanh nhạt) phía mũi, đầu thu (đen) phía sau
+      hcn(0, -0.35, 0.62, 1.0, '#34373d', 0.08);
+      tron(0, -0.6, 0.17, '#7fb6ff'); tron(0, -0.1, 0.17, '#0c0c0e', { stroke: '#555a61', 'stroke-width': 0.05 });
       hcn(0, 0.55, 0.9, 0.5, '#ecebe6', 0.06);
     } else if (loai == 'cham') {
       hcn(0, -0.78, 1.5, 0.34, '#f07a1a', 0.1);
@@ -634,7 +645,24 @@ var SRABangLapRap = new function() {
     });
     $d.append($('<div class="sra-lr-tieu-de-nho"></div>').text('Cổng trong chương trình (' + tongMoDun(self.cauHinh) + '/' + L.SO_O + ' ổ cắm)'));
     if (banLap.camBien.length) $d.append($ds); else $d.append('<p class="sra-lr-trong-khong">Xe chưa có cảm biến nào. Kéo một cảm biến từ khay vào xe.</p>');
+    if (self.cauHinh.sa.length) $d.append(veDoCao());
     return $d;
+  }
+
+  // Độ cao từng cảm biến siêu âm (tâm cảm biến so với mặt sân): nút − và + bước 0,5 cm
+  function veDoCao() {
+    let $s = $('<div class="sra-lr-do-cao"></div>');
+    $s.append('<div class="sra-lr-tieu-de-nho">Độ cao siêu âm (tâm cảm biến so với mặt sân)</div>');
+    self.cauHinh.sa.forEach(function(m) {
+      let gh = L.GIA[m.gia].cao, khoa = 'sa:' + m.gia, ten = 'siêu âm ' + L.GIA[m.gia].ten;
+      $s.append($('<div class="sra-lr-hang-cao"></div>').attr('data-khoa', khoa)
+        .append($('<span class="sra-lr-ten-cao"></span>').text(viet(L.GIA[m.gia].ten)))
+        .append($('<button type="button" class="sra-lr-nut-cao">−</button>').attr({ 'data-cao': khoa, 'data-buoc': -0.5, 'aria-label': 'Hạ ' + ten + ' 0,5 cm' }).prop('disabled', m.cao <= gh[0]))
+        .append($('<output class="sra-lr-gia-tri-cao"></output>').text(soViet(m.cao) + ' cm').attr('aria-label', ten + ' cao ' + soViet(m.cao) + ' cm'))
+        .append($('<button type="button" class="sra-lr-nut-cao">+</button>').attr({ 'data-cao': khoa, 'data-buoc': 0.5, 'aria-label': 'Nâng ' + ten + ' 0,5 cm' }).prop('disabled', m.cao >= gh[1]))
+        .append($('<span class="sra-lr-mien-cao"></span>').text(soViet(gh[0]) + '–' + soViet(gh[1]))));
+    });
+    return $s;
   }
 
   // Ô chọn màu sơn: mỗi phần một hàng, ô đầu là màu gốc
@@ -657,8 +685,16 @@ var SRABangLapRap = new function() {
     return $s;
   }
   function bamThongTin(ev) {
-    let e = $(ev.target).closest('[data-thao], [data-son-phan]')[0];
+    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao]')[0];
     if (!e) return;
+    if (e.getAttribute('data-cao')) {
+      let khoa = e.getAttribute('data-cao'), buoc = Number(e.getAttribute('data-buoc'));
+      if (apDung(datCao(khoa, layMoDun(self.cauHinh, khoa).cao + buoc))) {
+        let n = $bang.find('.sra-lr-nut-cao[data-cao="' + khoa + '"][data-buoc="' + buoc + '"]')[0];
+        if (n && !n.disabled) n.focus();
+      }
+      return;
+    }
     if (e.getAttribute('data-thao')) { dangCam = null; apDung(thao(e.getAttribute('data-thao'))); return; }
     let phan = e.getAttribute('data-son-phan'), mau = e.getAttribute('data-son-mau') || null;
     if (apDung(datSon(phan, mau))) {
@@ -707,7 +743,7 @@ var SRABangLapRap = new function() {
     let t = khoa ? tenMoDun(khoa, banLapHien) : '';
     $bang.find('.sra-lr-chi-tiet').text(t || 'Rê chuột lên một cảm biến để xem cổng và vị trí.').toggleClass('goi-y', !t);
     $bang.find('.sra-lr-day path').each(function() { this.classList.toggle('sang', !!khoa && this.getAttribute('data-day') == khoa); });
-    $bang.find('.sra-lr-ds-cong li').each(function() { this.classList.toggle('sang', !!khoa && this.getAttribute('data-khoa') == khoa); });
+    $bang.find('.sra-lr-ds-cong li, .sra-lr-hang-cao').each(function() { this.classList.toggle('sang', !!khoa && this.getAttribute('data-khoa') == khoa); });
   }
 
   // Tô sáng vùng nhận được linh kiện đang cầm (bấm chọn)
@@ -940,6 +976,12 @@ var SRABangLapRap = new function() {
     }
     if (!khoa || !loai || e.getAttribute('data-tu')) return;
     if (ev.key == 'Delete' || ev.key == 'Backspace') { ev.preventDefault(); apDung(thao(khoa)); return; }
+    if ((ev.key == 'PageUp' || ev.key == 'PageDown') && loai == 'sieuAm') {
+      ev.preventDefault();
+      let m = layMoDun(self.cauHinh, khoa), kq = datCao(khoa, m.cao + (ev.key == 'PageUp' ? 1 : -1) * (ev.altKey ? 0.1 : 0.5));
+      if (kq) apDung(kq, true);
+      return;
+    }
     let b = ev.altKey ? 0.1 : 0.5, d = { ArrowLeft: [-b, 0], ArrowRight: [b, 0], ArrowUp: [0, b], ArrowDown: [0, -b] }[ev.key];
     if (d) {
       ev.preventDefault();
@@ -1103,6 +1145,8 @@ var SRABangLapRap = new function() {
     apDung(kq);
     return self.choDungXong().then(() => kq);
   };
+  //   SRABangLapRap.cao(9, 'sa:trai')          đặt tâm siêu âm bên trái cao 9 cm so với mặt sân
+  this.cao = function(cao, khoa) { apDung(datCao(khoa || 'sa:truoc', cao)); return self.choDungXong(); };
   this.xoay = function(goc, khoa) { apDung(datGoc(khoa || 'sa:truoc', goc)); return self.choDungXong(); };
   //   SRABangLapRap.son('khung', '#c62828')    sơn khung xe; mau null là màu gốc
   this.son = function(phan, mau) { apDung(datSon(phan, mau)); return self.choDungXong(); };

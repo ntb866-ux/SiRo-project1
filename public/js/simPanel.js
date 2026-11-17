@@ -233,7 +233,9 @@ var simPanel = new function() {
     }
 
     function drive() {
-      let l, r;
+      // Không giữ phím nào thì cả hai bánh dừng. (Trước đây l, r để undefined: nhả phím thì motor nhận tốc độ
+      // undefined, phép tính ra NaN và bánh quay giật ngược hết cỡ.)
+      let l = 0, r = 0;
       let SPEED = 200;
 
       if (up) {
