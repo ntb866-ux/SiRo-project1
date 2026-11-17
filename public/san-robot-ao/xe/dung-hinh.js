@@ -25,6 +25,8 @@ var SRAXeDungHinh = (function() {
     nhua_xam: { mau: '#5d646d', bong: [0.3, 28] },
     nhua_xanh: { mau: '#1f6fb5', bong: [0.35, 32] },
     nhua_tim: { mau: '#6a4bb3', bong: [0.35, 32] },
+    nhua_xanh_duong: { mau: '#2453b8', bong: [0.35, 32] },
+    nhua_trang: { mau: '#f3f4f2', bong: [0.4, 36] },
     nhua_cam: { mau: '#f07a1a', bong: [0.35, 32] },
     nhua_o: { mau: '#ecebe6', bong: [0.4, 36] },
     nhua_trong: { mau: '#e9f1f4', bong: [0.6, 64], trong: 0.55 },

@@ -21,6 +21,7 @@ const DUNG_SAI = 0.1;      // cm (1 mm)
     bl.banh.forEach((b, i) => vat.push({ ten: b.ten.toLowerCase(), nut: vl.banh[i].imp.object, goc: [0, 0, 0], khoi: b.khoi, body: vl.banh[i].body }));
     if (vl.bi) vat.push({ ten: 'bi tự do', nut: vl.bi.object, goc: [0, 0, 0], khoi: [H.chuanHoa({ k: 'cau', d: bl.bi.d })], body: vl.bi.physicsBody });
     if (vl.canGat) vat.push({ ten: 'tấm cản', nut: vl.canGat.object, goc: kl.canGat.tam, khoi: bl.canGat.khoi, body: vl.canGat.physicsBody });
+    if (vl.servo) vat.push({ ten: 'tay quay servo', nut: vl.servo.object, goc: kl.servo.tam, khoi: bl.servo.khoi, body: vl.servo.physicsBody });
 
     const out = [];
     for (const v of vat) {

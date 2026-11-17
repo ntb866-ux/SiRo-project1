@@ -30,6 +30,27 @@ function lanNhau(b, ten) {
   return loi;
 }
 
+// Mắt dò line dưới gầm (mạch, đầu đo, ổ cắm) không lấn vào phần khác của xe và vẫn cách mặt sân
+function gamLanXe(b, ten) {
+  let loi = [];
+  let hop = (k0, dich) => { let k = H.chuanHoa(k0); if (dich) k.vt = H.V.cong(k.vt, dich); return hopBao(k); };
+  let khac = b.than.map((ct) => ({ id: ct.id, khoi: ct.khoi })).concat(b.banh.map((w) => ({ id: 'banh_' + w.id, khoi: w.khoi, dich: w.tam })));
+  khac.push({ id: 'bi', khoi: [{ k: 'cau', d: b.bi.d, vt: b.bi.tam || [0, b.bi.d / 2, L.TS.zBi] }] });
+  b.than.filter((ct) => ct.id.indexOf('doLineGam') == 0).forEach(function(ct) {
+    for (const a of ct.khoi) {
+      let A = hop(a);
+      if (A[1][0] < 0.45) loi.push(ct.id + ' sát mặt sân (' + A[1][0].toFixed(2) + ' cm): ' + ten);
+      for (const o of khac) {
+        if (o.id == ct.id || o.id.indexOf('day_') == 0) continue;
+        if (o.khoi.some((c) => c.k != 'lang' && (function(C) { return [0, 1, 2].every((t) => A[t][0] < C[t][1] - 0.01 && C[t][0] < A[t][1] - 0.01); })(hop(c, o.dich)))) {
+          loi.push(ct.id + ' lấn vào ' + o.id + ': ' + ten);
+        }
+      }
+    }
+  });
+  return loi;
+}
+
 // Cảm biến siêu âm và giá của nó không lấn vào phần khác của xe (khung, bánh, motor, mô-đun khác)
 function saLanXe(b, ten) {
   let loi = [];
@@ -133,9 +154,24 @@ function phanTuDo(bc) {
     let c = thu({ tren: [a, b] }, 'nắp ' + JSON.stringify([a, b]));
     if (c && c.tren.length != 2) loi.push('bỏ mất mô-đun trên nắp: ' + JSON.stringify([a, b]));
   }
+  // mắt dò line dưới gầm: mọi chỗ trên lưới 0,5 cm (và hai mép ±3,75 cm) trong khoảng z cho phép, cùng bản mặc định
+  // (thanh dưới mũi có 2 mắt và cảm biến chạm); chỗ được nhận thì không lấn, chỗ bị từ chối phải là chỗ đụng vỏ bi
+  let soGam = 0, gx = [-3.75]; for (let x = -3.5; x <= 3.5 + 1e-9; x += 0.5) gx.push(Math.round(x * 10) / 10); gx.push(3.75);
+  for (const x of gx) for (let z = L.GAM.z0; z <= L.GAM.z1 + 1e-9; z += 0.5) {
+    let tg = { loai: 'doLine', x: x, z: z }, dung = !L.loiGam(x, z, []);
+    let c = thu({ gam: [tg], tren: [] }, 'gầm ' + JSON.stringify(tg));
+    if (!c) continue;
+    if (dung != (c.gam.length == 1)) loi.push('gầm: kiểm tra chỗ và chuẩn hoá không khớp ' + JSON.stringify(tg));
+    if (!dung && !/vỏ bi/.test(L.loiGam(x, z, []))) loi.push('gầm: từ chối chỗ hợp lệ ' + JSON.stringify(tg));
+    if (dung) { soGam++; loi = loi.concat(gamLanXe(L.lapXe(c), 'gầm ' + JSON.stringify(tg))); }
+  }
+  // bốn mắt dưới gầm cùng lúc (cách nhau 1,5 cm theo bề ngang) với thanh dưới mũi đủ 3 mắt: vừa đủ 8 ổ (không gyro, GPS, siêu âm…)
+  let c4 = thu({ sa: [], duoi: [-1.5, 0, 1.5].map((x) => ({ loai: 'doLine', x: x })), tren: [], gam: [-3, -1.5, 0, 1.5].map((x, i) => ({ loai: 'doLine', x: x, z: 2 * i })) }, 'gầm 4 mắt');
+  if (c4) { loi = loi.concat(gamLanXe(L.lapXe(c4), 'gầm 4 mắt')); if (c4.gam.length != 4) loi.push('gầm 4 mắt bị bỏ bớt'); }
+
   // chỗ không hợp lệ thì bị bỏ
   let c = L.chuanHoaCauHinh({ duoi: [{ loai: 'doLine', x: 0 }, { loai: 'doLine', x: 1 }, { loai: 'cham', x: 3.5 }], tren: [{ loai: 'gyro', x: 0, z: 4 }, { loai: 'gps', x: 1, z: 4 }] });
-  bc.dong(loi.length == 0, soBan + ' bản lắp đặt tự do (' + soCao + ' bản đổi độ cao siêu âm) (' + soCap + ' cặp vị trí gyro, GPS) đều dựng được, mô-đun không lấn nhau, dây không bắt chéo', loi.length ? loi.slice(0, 4).join(' | ') : '');
+  bc.dong(loi.length == 0, soBan + ' bản lắp đặt tự do (' + soCao + ' bản đổi độ cao siêu âm) (' + soCap + ' cặp vị trí gyro, GPS) (' + soGam + ' chỗ mắt dò line dưới gầm) đều dựng được, mô-đun không lấn nhau, dây không bắt chéo', loi.length ? loi.slice(0, 4).join(' | ') : '');
   let cc = L.chuanHoaCauHinh({ sa: [{ gia: 'truoc', cao: 2 }, { gia: 'trai', cao: 20 }, { gia: 'sau', cao: 'x' }] });
   let cb = L.chuanHoaCauHinh({ sa: [{ gia: 'trai', u: 1.5, cao: 3 }, { gia: 'phai', u: 6.5, cao: 3 }] });
   bc.dong(cb.sa.map((m) => m.cao).join() == '7.5,3', 'Giá bên: ngang bánh xe (z = 1,5 cm) thì thấp nhất 7,5 cm; dời lên trước qua bánh (z = 6,5 cm) thì hạ được tới 3 cm', cb.sa.map((m) => m.gia + ' ' + m.cao).join(' | '));
@@ -146,6 +182,11 @@ function phanTuDo(bc) {
   bc.dong(phat && thu2 && Math.abs(phat.vt[0] - thu2.vt[0]) < 1e-6 && phat.vt[2] - thu2.vt[2] > 0.4, 'Mắt dò line: đầu phát và đầu thu hồng ngoại xếp dọc theo thân xe, đầu phát phía mũi', phat && 'phát z = ' + phat.vt[2] + ', thu z = ' + thu2.vt[2]);
   let c9 = L.chuanHoaCauHinh({ sa: L.DS_GIA.map((g) => ({ gia: g })) });
   bc.dong(c9.sa.length == 3 && c9.sa.length + c9.duoi.length + c9.tren.length == 8, 'Bản mặc định thêm 4 siêu âm (9 cảm biến): bỏ bớt siêu âm sau cho vừa 8 ổ', c9.sa.map((m) => m.gia).join());
+  let cg = L.chuanHoaCauHinh({ gam: [{ loai: 'doLine', x: 0, z: 2 }, { loai: 'doLine', x: 1, z: 6 }, { loai: 'doLine', x: 4, z: 2 }, { loai: 'doLine', x: -2, z: -1 }, { loai: 'doLine', x: 0.5 * 0 - 3, z: 4 }, { loai: 'cham', x: 3, z: 3 }] });
+  bc.dong(cg.gam.map((m) => m.x + '/' + m.z).join() == '-3/4,0/2', 'Gầm xe: bỏ mắt lệch dưới 1,5 cm theo bề ngang, mắt lòi ra ngoài tấm đáy, mắt quá sát đuôi, cảm biến chạm', JSON.stringify(cg.gam));
+  let b4 = L.lapXe({ sa: [{ gia: 'truoc' }], tren: [], gam: [{ loai: 'doLine', x: -1.5, z: 3 }, { loai: 'doLine', x: 1.5, z: 3 }] });
+  bc.dong(b4.camBien.map((x) => x.cong + ':' + x.loai + (x.ten ? ' ' + x.ten : '')).join(', ') == 'in1:doLine trái, in2:doLine phải, in3:doLine gầm 1, in4:doLine gầm 2, in5:sieuAm, in6:cham',
+    'Số cổng: mắt dưới mũi trước, rồi mắt dưới gầm (trái sang phải), rồi các cảm biến khác', b4.camBien.map((x) => x.cong + ' ổ ' + x.oMach).join(', '));
   bc.dong(c.duoi.length == 1 && c.tren.length == 1, 'Mắt cách nhau dưới 1,5 cm, cảm biến chạm ra ngoài 3 cm, hai mô-đun chồng nhau trên nắp: bị bỏ', JSON.stringify([c.duoi, c.tren]));
 }
 
@@ -233,7 +274,10 @@ function phanMot(bc) {
   t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'duoi', x: 0.1 }));
   bc.dong(t.c.doLine == 3 && t.cb == 'in1:ColorSensor in2:ColorSensor in3:ColorSensor in4:UltrasonicSensor in5:TouchSensor in6:GyroSensor in7:GPSSensor' && t.luoi.indexOf('doLine3') >= 0,
     'Kéo mắt dò line thứ ba từ khay vào giữa thanh (bám lưới về x = 0): xe có 3 mắt, 7 cổng', xDuoi(t.c));
-  bc.dong(await page.locator('.sra-lr-the[data-loai=doLine]').isDisabled(), 'Khay hết mắt dò line thì thẻ bị khoá');
+  let theDl = await page.evaluate(() => ({ khoa: $('.sra-lr-the[data-loai=doLine]').prop('disabled'), con: $('.sra-lr-the[data-loai=doLine] .sra-lr-con').text() }));
+  let thuMat4 = await page.evaluate(() => SRABangLapRap.dat('doLine', 'khay', { vung: 'duoi', x: -3 }).then((kq) => kq.loi || ''));
+  bc.dong(!theDl.khoa && theDl.con == 'còn 4' && /tối đa 3/.test(thuMat4) && /Nhìn gầm xe/.test(thuMat4),
+    'Thanh dưới mũi đủ 3 mắt: khay vẫn còn 4 mắt cho gầm xe, thả thêm vào thanh thì báo đủ và chỉ sang "Nhìn gầm xe"', theDl.con + ' | ' + thuMat4);
 
   // đang kéo: sơ đồ vẽ trước kết quả, chưa đổi cấu hình
   let a = await diem({ vung: 'duoi', x: 0 }), b = await diem({ vung: 'duoi', x: -2.6 });
@@ -430,6 +474,34 @@ function phanMot(bc) {
   t = await trangThai();
   bc.dong(t.cb == '' && t.kl < 460 && await soModun() == 0 && t.c.son.khung == '#1565c0', 'Nút "Tháo hết cảm biến": xe không còn cảm biến, giữ màu sơn', t.kl + ' g');
   await chup('bang-lap-rap-trong');
+  // gầm xe: đổi sang "Nhìn gầm xe", kéo mắt dò line vào dưới tấm đáy
+  await page.click('.sra-lr-che-do [data-xem="gam"]');
+  await page.waitForTimeout(500);
+  let nhinGam = await page.evaluate(() => ({ vung: $('.sra-lr-so-do [data-vung]').map((i, e) => e.getAttribute('data-vung')).get().join(), camY: babylon.cameraArc.position.y - robot.body.getAbsolutePosition().y,
+    chon: $('.sra-lr-che-do .chon').attr('data-xem') }));
+  bc.dong(nhinGam.vung == 'gam' && nhinGam.chon == 'gam' && nhinGam.camY < -1, 'Bấm "Nhìn gầm xe": sơ đồ chỉ còn vùng gầm, máy quay 3D hạ xuống dưới gầm', JSON.stringify(nhinGam));
+  t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: -2.1, z: 4.9 }));
+  let mGam = await page.evaluate(() => { let c = robot.getComponentByPort('in1'); return c ? { x: c.position.x, y: c.position.y, gam: c.sraGam } : null; });
+  bc.dong(JSON.stringify(t.c.gam) == '[{"loai":"doLine","x":-2,"z":5}]' && t.cb == 'in1:ColorSensor' && t.luoi.indexOf('doLineGam1') >= 0 && mGam && mGam.gam,
+    'Kéo mắt dò line vào gầm ở (−2,1; 4,9): bám lưới về (−2; 5), xe 3D có mắt dưới gầm ở cổng 1', JSON.stringify(t.c.gam) + ' ' + t.tb);
+  t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: -1.2, z: 5 }));
+  bc.dong(t.c.gam.map((m) => m.x + '/' + m.z).join() == '-2/5,-0.5/5', 'Thả mắt thứ hai ngay cạnh (lệch 0,8 cm): tự hút ra x = −0,5 cm cho đủ 1,5 cm', t.c.gam.map((m) => m.x + '/' + m.z).join() + ' | ' + t.tb);
+  t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: 0.5, z: 10.5 }));
+  bc.dong(t.c.gam.length == 2 && /vỏ bi/.test(t.tb), 'Thả mắt thứ ba ngay lên vỏ bi tự do: không nhận, có lời giải thích', t.tb);
+  t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: 2.4, z: 10 }));
+  bc.dong(t.c.gam.map((m) => m.x + '/' + m.z).join() == '-2/5,-0.5/5,2.5/10', 'Thả cạnh vỏ bi (x = 2,4 cm): bám về x = 2,5 cm, vừa đủ tránh vỏ bi', t.c.gam.map((m) => m.x + '/' + m.z).join());
+  await page.locator('.sra-lr-so-do [data-cho="gam:0"]').focus();
+  await page.keyboard.press('ArrowDown');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  bc.dong(t.c.gam[0].x == -2 && t.c.gam[0].z == 4.5 && /z = 4,5 cm/.test(t.tb), 'Phím mũi tên xuống trên mắt dưới gầm: lùi 0,5 cm về phía đuôi', JSON.stringify(t.c.gam[0]));
+  t = await keo('.sra-lr-the[data-loai=gps]', await diem({ vung: 'gam', x: 2, z: 2 }));
+  bc.dong(t.c.tren.length == 0 && /Gầm xe chỉ gắn được mắt dò line/.test(t.tb), 'Kéo GPS vào gầm: không nhận, có lời giải thích', t.tb);
+  await chup('bang-lap-rap-gam');
+  await page.click('.sra-lr-che-do [data-xem="tren"]');
+  await page.waitForTimeout(300);
+  let veTren = await page.evaluate(() => ({ vung: $('.sra-lr-so-do [data-vung]').length, camY: babylon.cameraArc.position.y - robot.body.getAbsolutePosition().y }));
+  bc.dong(veTren.vung > 3 && veTren.camY > 1, 'Bấm "Nhìn từ trên": sơ đồ và máy quay trở lại nhìn từ trên', JSON.stringify(veTren));
   await page.click('.sra-lr-mac-dinh');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
