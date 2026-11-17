@@ -64,6 +64,8 @@ var SRAXeCamBien = (function() {
     this.body.parent = r.body;
     let tam = r.sraKhoiLuong.than.tam;
     this.body.position = bVec(V.tru(cb.vt, tam));
+    // mô-đun xoay trên giá: chùm sóng xoay theo (hướng phát là trục +z của nút)
+    if (cb.xoay) this.body.rotationQuaternion = new BABYLON.Quaternion(cb.xoay[0], cb.xoay[1], cb.xoay[2], cb.xoay[3]);
     this.body.component = this;
     this.position = bVec(cb.vt);
 

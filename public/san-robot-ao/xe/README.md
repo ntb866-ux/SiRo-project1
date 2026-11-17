@@ -65,15 +65,25 @@ Cả xe 549 g, 273 khối va chạm. Hai bánh cách nhau 11,4 cm (tâm đến t
 
 ![Bảng lắp ráp](../../../docs/anh/xe-lap-rap/bang-lap-rap.jpg)
 
-Xe có 8 chỗ gắn cảm biến:
+Xe có 3 vùng gắn cảm biến. Trong mỗi vùng, cảm biến đặt ở vị trí bất kì trên lưới 0,5 cm:
 
-| Chỗ gắn | Nhận | Ổ trên mạch chủ |
-|---|---|---|
-| Giá phía mũi | Siêu âm | Ổ trước còn trống gần giữa nhất (ưu tiên ổ 3) |
-| 5 lỗ dưới mũi xe, x = −3; −1,5; 0; 1,5; 3 cm | Mắt dò line (nhiều nhất 3) hoặc công tắc chạm (nhiều nhất 1) | Lỗ thứ i cắm ổ i, dây đi thẳng, không bắt chéo |
-| 2 chỗ trên nắp mạch chủ (trái, phải) | Gyro hoặc GPS | Ổ 6 (trái), ổ 8 (phải) |
+| Vùng gắn | Nhận | Giới hạn | Ổ trên mạch chủ |
+|---|---|---|---|
+| Giá phía mũi | Siêu âm | Trượt ngang trong thanh giá (±2,1 cm khi nhìn thẳng, hẹp lại khi xoay), xoay quanh trục đứng ±45° | Ổ trước còn trống gần nó nhất |
+| Thanh dưới mũi xe | Mắt dò line (nhiều nhất 3), công tắc chạm (nhiều nhất 1) | x từ −3 đến 3 cm; hai mô-đun cách nhau (tâm đến tâm) ít nhất 1,5 cm | Ổ 1 đến 5, xếp theo thứ tự trái sang phải để dây không bắt chéo |
+| Nắp mạch chủ | Gyro, GPS | Cả mô-đun lẫn ổ cắm phía sau nằm gọn trên nắp, hai mô-đun không chồng nhau | Ổ 6 đến 8, theo thứ tự trái sang phải |
 
-Trong bảng lắp ráp, kéo một cảm biến từ khay vào chỗ gắn, kéo từ chỗ này sang chỗ khác, kéo vào chỗ đang có cảm biến cùng nhóm để đổi chỗ, kéo ra ngoài bảng để tháo. Không kéo được thì bấm cảm biến rồi bấm chỗ gắn; bàn phím dùng Tab, Enter và Delete. Mỗi lần đổi, xe 3D được dựng lại ngay: hình, hitbox, khối lượng và mô phỏng cảm biến đều tính lại từ danh mục linh kiện. Sơ đồ trong bảng vẽ chỗ gắn to hơn thật và tách khỏi thân xe cho dễ kéo; vị trí thật là trên xe 3D.
+Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
+
+- **Bám lưới.** Vị trí làm tròn theo bước 0,5 cm; giữ Alt khi thả thì bước 0,1 cm. Góc xoay bám 15°; giữ Shift thì bám 45°, giữ Alt thì 5°.
+- **Hút.** Thả gần một cảm biến khác (chỗ đó không đủ rộng) thì cảm biến tự trượt tới chỗ trống gần nhất trong 1,5 cm. Thả ngay lên một cảm biến khác cùng vùng thì hai cảm biến đổi chỗ; kéo từ khay thả lên thì cảm biến cũ về khay.
+- **Xem trước.** Trong lúc kéo, vùng nhận được tô xanh và sơ đồ vẽ luôn kết quả nếu thả ở đó: bóng mờ của cảm biến, dây, số cổng, thước đo. Chỗ không thả được hiện bóng đỏ kèm lời giải thích.
+- **Thước đo.** Trên thanh dưới mũi có vạch 0,5 cm, trục giữa xe và khoảng cách giữa các cảm biến cạnh nhau.
+- **Thông tin.** Rê chuột lên một cảm biến thì dòng dưới sơ đồ ghi vị trí, số cổng, ổ cắm, và dây của nó sáng lên.
+- **Xoay siêu âm.** Kéo núm tròn trên cung phía trước cảm biến. Mô-đun bắt vào giá qua một chốt xoay; khi xoay, mô-đun được đẩy ra trước vừa đủ để vỏ không lấn vào thanh giá.
+- **Bàn phím.** Tab tới cảm biến, mũi tên để dời (trên nắp dời được cả lên xuống), Q/E hoặc mũi tên trên núm để xoay, Delete để tháo, Enter trên thẻ khay để tự gắn vào chỗ trống.
+
+Kéo ra ngoài bảng để tháo. Không kéo được thì bấm cảm biến rồi bấm vào vùng gắn. Mỗi lần đổi, xe 3D được dựng lại ngay: hình, hitbox, khối lượng và mô phỏng cảm biến đều tính lại từ danh mục linh kiện. Sơ đồ vẽ thân xe, nắp mạch và giá siêu âm đúng tỉ lệ; thanh dưới mũi vẽ tách ra phía trước và phóng to 1,9 lần theo chiều ngang cho dễ kéo.
 
 Số cổng trong chương trình đánh liền nhau theo thứ tự: các mắt dò line từ trái sang phải, siêu âm, chạm, gyro, GPS. Thêm bớt cảm biến thì số cổng của các cảm biến đứng sau đổi theo; bảng ghi số cổng trên từng cảm biến. Số ổ in trên mạch chủ (1 đến 8) là chỗ cắm dây, không phải số cổng trong chương trình.
 
@@ -82,10 +92,14 @@ Bản lắp của người dùng lưu trên máy đang dùng (`localStorage`, kh
 Cấu hình lắp là trường `sraXe` trong tệp robot:
 
 ```json
-{ "sieuAm": true, "lo": [null, "doLine", null, "doLine", "cham"], "nap": ["gyro", "gps"] }
+{
+  "sieuAm": true, "sieuAmX": 0, "sieuAmGoc": 0,
+  "duoi": [{ "loai": "doLine", "x": -1.5 }, { "loai": "doLine", "x": 1.5 }, { "loai": "cham", "x": 3 }],
+  "tren": [{ "loai": "gyro", "x": -3, "z": 3.95 }, { "loai": "gps", "x": 3, "z": 4.25 }]
+}
 ```
 
-`lo` là 5 lỗ dưới mũi từ trái sang phải, `nap` là 2 chỗ trên nắp mạch chủ. Kiểu viết cũ vẫn dùng được: `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false); hai mắt đặt lệch lỗ (ví dụ `cachMat: 2`) vẫn lắp đúng chỗ đã ghi. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
+`duoi` là các mô-đun dưới mũi (x tính bằng cm, âm là bên trái), `tren` là các mô-đun trên nắp mạch chủ (x, z là tâm thân mô-đun, z tính từ trục bánh về phía mũi), `sieuAmGoc` tính bằng độ, dương là quay sang trái. Mô-đun quá số lượng, ra ngoài vùng gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ. Các kiểu viết cũ vẫn dùng được: `lo` (5 lỗ dưới mũi, x = −3; −1,5; 0; 1,5; 3 cm) và `nap` (2 chỗ trên nắp), hoặc `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false). Khi mọi mô-đun nằm đúng các chỗ cũ, cấu hình chuẩn hoá vẫn có `lo` và `nap`; lệch đi thì hai trường đó là `null`. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
 
 ## Vật lí
 

@@ -50,23 +50,58 @@
 .sra-lr-nen polygon, .sra-lr-nen circle { stroke: rgba(15, 23, 42, 0.35); stroke-width: 0.035; stroke-linejoin: round; }
 .sra-lr-chu-mo { font-size: 0.78px; fill: var(--lr-phu); }
 .sra-lr-gia { stroke: #9aa3ad; stroke-width: 0.5; stroke-linecap: round; fill: none; }
-.sra-lr-thanh { fill: rgba(185, 192, 199, 0.55); stroke: #9aa3ad; stroke-width: 0.06; }
 .sra-lr-day { pointer-events: none; }
 .sra-lr-day path { fill: none; stroke: #f8fafc; stroke-width: 0.3; stroke-linecap: round; opacity: 0.95; filter: drop-shadow(0 0 0.06px #0f172a); }
+.sra-lr-day path.sang { stroke: #fde047; stroke-width: 0.42; }
+.sra-lr-day path.xem-truoc { stroke-dasharray: 0.5 0.3; }
 .sra-lr-day circle { fill: #f8fafc; stroke: #334155; stroke-width: 0.08; }
-.sra-lr-cho { cursor: pointer; outline: none; }
-.sra-lr-cho.co { cursor: grab; }
-.sra-lr-cho .sra-lr-o { fill: rgba(255, 255, 255, 0.6); stroke: #64748b; stroke-width: 0.1; stroke-dasharray: 0.34 0.24; }
-.sra-lr-cho.co .sra-lr-o { fill: rgba(255, 255, 255, 0.92); stroke: #475569; stroke-dasharray: none; }
-.sra-lr-cho .sra-lr-hinh { pointer-events: none; }
-.sra-lr-cong-them { stroke: #64748b; stroke-width: 0.14; stroke-linecap: round; pointer-events: none; }
-.sra-lr-cong { fill: var(--lr-chinh); stroke: #fff; stroke-width: 0.12; pointer-events: none; }
-.sra-lr-so-cong { fill: #fff; font-size: 1.05px; font-weight: 700; text-anchor: middle; pointer-events: none; }
-.sra-lr-cho:focus-visible .sra-lr-o { stroke: var(--lr-chinh); stroke-width: 0.22; stroke-dasharray: none; }
-.sra-lr-cho.nhan-duoc .sra-lr-o { fill: var(--lr-nhan-nen); stroke: var(--lr-nhan); stroke-width: 0.18; stroke-dasharray: none; }
-.sra-lr-cho.nhan-duoc.dang-tren .sra-lr-o, .sra-lr-cho.nhan-duoc:hover .sra-lr-o { fill: #86efac; stroke-width: 0.28; }
-.sra-lr-cho.dang-chon .sra-lr-o { stroke: var(--lr-chinh); stroke-width: 0.26; stroke-dasharray: none; }
-.sra-lr-bang.dang-cam .sra-lr-cho.trong:not(.nhan-duoc) { opacity: 0.35; }
+
+/* Vùng gắn: thanh dưới mũi, giá siêu âm, nắp mạch chủ */
+.sra-lr-vung { fill: rgba(255, 255, 255, 0.0); stroke: #94a3b8; stroke-width: 0.08; stroke-dasharray: 0.34 0.24; }
+.sra-lr-thanh { fill: rgba(185, 192, 199, 0.55); stroke: #9aa3ad; stroke-width: 0.06; stroke-dasharray: none; }
+.sra-lr-vung-gia { fill: rgba(255, 255, 255, 0.35); }
+.sra-lr-vung-nap { fill: rgba(255, 255, 255, 0.08); }
+.sra-lr-thanh-gia { fill: #b9c0c7; stroke: #8b949e; stroke-width: 0.05; pointer-events: none; }
+.sra-lr-vung.nhan-duoc { fill: rgba(220, 252, 231, 0.75); stroke: var(--lr-nhan); stroke-width: 0.16; stroke-dasharray: none; }
+.sra-lr-vung.nhan-duoc.dang-tren { fill: rgba(134, 239, 172, 0.7); stroke-width: 0.24; }
+.sra-lr-bang.dang-cam .sra-lr-vung:not(.nhan-duoc) { opacity: 0.45; }
+.sra-lr-truc { stroke: #64748b; stroke-width: 0.06; stroke-dasharray: 0.25 0.2; pointer-events: none; }
+.sra-lr-vach path { stroke: #64748b; stroke-width: 0.06; pointer-events: none; }
+.sra-lr-thuoc { pointer-events: none; }
+.sra-lr-thuoc path { stroke: #1e293b; stroke-width: 0.07; fill: none; }
+.sra-lr-thuoc text { font-size: 0.72px; font-weight: 700; fill: #1e293b; text-anchor: middle; paint-order: stroke; stroke: var(--lr-san); stroke-width: 0.2px; }
+.sra-lr-thuoc .xem-truoc path, .sra-lr-thuoc .xem-truoc text { fill: var(--lr-chinh); stroke-color: var(--lr-chinh); }
+.sra-lr-thuoc .xem-truoc path { stroke: var(--lr-chinh); }
+
+/* Mô-đun đang gắn */
+.sra-lr-mo-dun { cursor: grab; outline: none; }
+.sra-lr-mo-dun .sra-lr-hinh, .sra-lr-mo-dun .sra-lr-o-cam, .sra-lr-mo-dun .sra-lr-chum { pointer-events: none; }
+.sra-lr-khung { fill: rgba(255, 255, 255, 0.0); stroke: transparent; stroke-width: 0.14; }
+.sra-lr-mo-dun:hover .sra-lr-khung { stroke: #475569; }
+.sra-lr-mo-dun:focus-visible .sra-lr-khung, .sra-lr-mo-dun.dang-chon .sra-lr-khung { stroke: var(--lr-chinh); stroke-width: 0.24; }
+.sra-lr-mo-dun.xem-truoc { opacity: 0.62; }
+.sra-lr-mo-dun.xem-truoc .sra-lr-khung { stroke: var(--lr-chinh); stroke-width: 0.18; stroke-dasharray: 0.4 0.25; fill: rgba(37, 99, 235, 0.12); }
+.sra-lr-mo-dun.dang-keo { opacity: 0.3; }
+.sra-lr-mo-dun.loi { opacity: 0.5; pointer-events: none; }
+.sra-lr-mo-dun.loi .sra-lr-khung { stroke: #dc2626; stroke-width: 0.2; fill: rgba(220, 38, 38, 0.18); }
+.sra-lr-o-cam { fill: #e5e7eb; stroke: #475569; stroke-width: 0.06; }
+.sra-lr-chum { fill: rgba(59, 130, 246, 0.16); stroke: rgba(37, 99, 235, 0.45); stroke-width: 0.05; }
+.sra-lr-nhan-cong { pointer-events: none; }
+.sra-lr-cong { fill: var(--lr-chinh); stroke: #fff; stroke-width: 0.12; }
+.sra-lr-so-cong { fill: #fff; font-size: 1.05px; font-weight: 700; text-anchor: middle; }
+
+/* Núm xoay cảm biến siêu âm */
+.sra-lr-cung { fill: none; stroke: #94a3b8; stroke-width: 0.08; pointer-events: none; }
+.sra-lr-vach-goc { stroke: #94a3b8; stroke-width: 0.08; pointer-events: none; }
+.sra-lr-num { cursor: grab; outline: none; touch-action: none; }
+.sra-lr-num circle { fill: #fff; stroke: var(--lr-chinh); stroke-width: 0.14; }
+.sra-lr-num path { stroke: var(--lr-chinh); stroke-width: 0.12; stroke-linecap: round; }
+.sra-lr-num:hover circle, .sra-lr-num:focus-visible circle { fill: #dbeafe; stroke-width: 0.22; }
+.sra-lr-chu-goc { font-size: 0.8px; font-weight: 700; fill: var(--lr-chinh); pointer-events: none; }
+
+.sra-lr-chi-tiet { font-size: 12.5px; min-height: 2.8em; color: var(--lr-chu); }
+.sra-lr-chi-tiet.goi-y { color: var(--lr-phu); }
+.sra-lr-ds-cong li.sang { background: #fef9c3; border-radius: 4px; }
 
 .sra-lr-thong-bao { min-height: 2.8em; font-size: 13px; color: var(--lr-chinh); font-weight: 600; }
 .sra-lr-thong-bao.goi-y { color: var(--lr-phu); font-weight: 400; }
@@ -92,11 +127,12 @@
 #simPanel.sra-lr-dang-mo > .ruler, #simPanel.sra-lr-dang-mo > .worldInfo { transform: translateX(476px); }
 
 /* Bóng của linh kiện đang kéo */
-.sra-lr-bong { position: fixed; left: 0; top: 0; z-index: 10000; pointer-events: none; opacity: 0.9; filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.35)); }
+.sra-lr-bong { position: fixed; left: 0; top: 0; z-index: 10000; pointer-events: none; opacity: 0.9; filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.35)); transition: opacity 0.1s; }
+.sra-lr-bong.trong-vung { opacity: 0.25; }
 
 /* Khung mô phỏng hẹp (đang làm bài, màn hình nhỏ): bảng nằm ở phía dưới, chừa phần trên để thấy xe */
 .sra-lr-bang.hep { top: auto; bottom: 56px; left: 6px; right: 6px; width: auto; max-width: 468px; margin: 0 auto; max-height: 64%; }
 .sra-lr-bang.hep .sra-lr-than { grid-template-columns: minmax(150px, 46%) minmax(0, 1fr); }
 @media (prefers-reduced-motion: no-preference) {
-  .sra-lr-cho .sra-lr-o { transition: fill 0.12s, stroke-width 0.12s; }
+  .sra-lr-vung { transition: fill 0.12s, stroke-width 0.12s; }
 }
