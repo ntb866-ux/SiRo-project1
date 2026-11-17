@@ -170,7 +170,22 @@
   // siêu âm lấy ổ trước còn trống gần nó nhất; gyro, GPS cắm ổ sau (6…8) cũng theo thứ tự trái sang phải.
   const X_LO = [-3, -1.5, 0, 1.5, 3];
   const X_NAP = [-3, 3], O_NAP = [6, 8];
-  const TOI_DA = { doLine: 3, cham: 1, sieuAm: 1, gyro: 1, gps: 1 };
+  const TOI_DA = { doLine: 3, cham: 1, sieuAm: 4, gyro: 1, gps: 1 };
+  const SO_O = 8;                                  // mạch chủ có 8 ổ RJ25: tổng số cảm biến không quá 8
+  // Bốn giá siêu âm, mỗi giá một cảm biến. Mỗi giá có: mặt bắt mô-đun (mat, theo trục pháp tuyến n), độ cao
+  // tâm mô-đun (y), trục trượt (truc: toạ độ u là x hoặc z) và góc quay từ hướng +z tới hướng n (gocN, độ).
+  //   truoc  thanh ngang phía mũi (có từ trước), cảm biến nhìn ra trước
+  //   sau    tấm bắt vào vách sau, nhìn ra sau
+  //   trai, phai  tấm bắt vào vách bên, nâng cao hơn bánh xe, nhìn sang ngang
+  const GIA = {
+    truoc: { ten: 'trước', n: [0, 0, 1], mat: 11.4, y: 5.6, truc: 'x', gocN: 0 },
+    trai: { ten: 'trái', n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 5.5] },
+    phai: { ten: 'phải', n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 5.5] },
+    sau: { ten: 'sau', n: [0, 0, -1], mat: -4.2, y: 5.6, truc: 'x', gocN: 180 }
+  };
+  const DS_GIA = ['truoc', 'trai', 'phai', 'sau'];
+  // Màu sơn cho phép (khung nhôm, tấm cản, vành bánh); null là màu gốc
+  const SON = ['#c62828', '#ef6c00', '#f9a825', '#2e7d32', '#00838f', '#1565c0', '#6a1b9a', '#d81b60', '#263238', '#eceff1'];
   // Ổ RJ25 trên mô-đun rộng 1,5 cm: ra ngoài 3 cm thì ổ đụng chân giá siêu âm, công tắc chạm đụng tai bản lề tấm cản
   const X_DUOI = { doLine: 3.0, cham: 3.0 };
   const KC_DUOI = 1.5;
@@ -194,6 +209,12 @@
     return Math.max(2.35 * c + 1.0 * s, 2.1 * c + 1.7 * s);
   }
   const gioiHanSieuAmX = (goc) => Math.max(0, Math.floor((NUA_THANH_GIA - nuaRongSieuAm(goc)) * 100) / 100);
+  // Khoảng trượt (u nhỏ nhất, lớn nhất) của cảm biến siêu âm trên giá, khi xoay một góc
+  function gioiHanU(gia, goc) {
+    if (GIA[gia].u) return GIA[gia].u.slice();
+    let g = gioiHanSieuAmX(goc);
+    return [-g, g];
+  }
 
   // Hai mô-đun trên nắp có chồng lên nhau không
   function chongNap(a, b) {
@@ -229,10 +250,17 @@
   // Mô-đun vượt số lượng, ra ngoài chỗ gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ.
   function chuanHoaCauHinh(vao) {
     vao = vao || {};
-    let c = { banh: vao.banh || MAC_DINH.banh, sieuAm: vao.sieuAm == null ? MAC_DINH.sieuAm : !!vao.sieuAm };
-    c.sieuAmGoc = tron2(kep(Number(vao.sieuAmGoc) || 0, -GOC_SA, GOC_SA));
-    let gh = gioiHanSieuAmX(c.sieuAmGoc);
-    c.sieuAmX = tron2(kep(Number(vao.sieuAmX) || 0, -gh, gh));
+    let c = { banh: vao.banh || MAC_DINH.banh };
+    // --- Siêu âm: mỗi giá nhiều nhất một cảm biến ---
+    let saVao = Array.isArray(vao.sa) ? vao.sa
+      : ((vao.sieuAm == null ? MAC_DINH.sieuAm : !!vao.sieuAm) ? [{ gia: 'truoc', u: vao.sieuAmX, goc: vao.sieuAmGoc }] : []);
+    c.sa = [];
+    saVao.forEach(function(m) {
+      if (!m || !GIA[m.gia] || c.sa.some((n) => n.gia == m.gia)) return;
+      let goc = tron2(kep(Number(m.goc) || 0, -GOC_SA, GOC_SA)), gh = gioiHanU(m.gia, goc);
+      c.sa.push({ gia: m.gia, u: tron2(kep(Number(m.u) || 0, gh[0], gh[1])), goc: goc });
+    });
+    c.sa.sort((a, b) => DS_GIA.indexOf(a.gia) - DS_GIA.indexOf(b.gia));
 
     // --- Dưới mũi ---
     let duoiVao;
@@ -279,6 +307,19 @@
     });
     c.tren.sort((a, b) => a.x - b.x);
 
+    // --- Mạch chủ chỉ có 8 ổ: bớt siêu âm (từ giá cuối danh sách), rồi mô-đun trên nắp, rồi dưới mũi ---
+    while (c.sa.length + c.duoi.length + c.tren.length > SO_O) {
+      if (c.sa.length > 1) c.sa.pop(); else if (c.tren.length) c.tren.pop(); else c.duoi.pop();
+    }
+
+    // --- Sơn ---
+    let sonVao = vao.son || {};
+    c.son = {};
+    ['khung', 'canGat', 'vanh'].forEach(function(k) {
+      let m = typeof sonVao[k] == 'string' ? sonVao[k].toLowerCase() : null;
+      c.son[k] = /^#[0-9a-f]{6}$/.test(m || '') ? m : null;
+    });
+
     // --- Trường suy ra (cho mã cũ và cho kiểu viết lo/nap) ---
     let tenLo = X_LO.map(() => null), deuTrenLo = c.duoi.every(function(m) {
       let i = X_LO.findIndex((x) => Math.abs(x - m.x) < 1e-6);
@@ -297,6 +338,11 @@
     c.cham = c.duoi.some((m) => m.loai == 'cham');
     if (mat.length == 2) c.cachMat = tron2(mat[1].x - mat[0].x);
     c.gyro = c.tren.some((m) => m.loai == 'gyro');
+    let truoc = c.sa.find((m) => m.gia == 'truoc');
+    c.sieuAm = !!truoc;
+    c.sieuAmX = truoc ? truoc.u : 0;
+    c.sieuAmGoc = truoc ? truoc.goc : 0;
+    c.soSieuAm = c.sa.length;
     c.gps = c.tren.some((m) => m.loai == 'gps');
     return c;
   }
@@ -323,24 +369,34 @@
       if (m.loai == 'doLine') { xMat.push(m.x); oMat.push(oDuoi[i]); iMat.push(i); }
       else { xCham = m.x; oCham = oDuoi[i]; iCham = i; }
     });
-    let trong = [1, 2, 3, 4, 5].filter((o) => oDuoi.indexOf(o) < 0);
-    let oSieuAm = trong.sort((a, b) => Math.abs(X_O_TRUOC[a - 1] - c.sieuAmX) - Math.abs(X_O_TRUOC[b - 1] - c.sieuAmX) || a - b)[0];
     let oTren = ganO(c.tren.map((m) => m.x), X_O_SAU).map((k) => k + 6);
+    // Siêu âm: mỗi cảm biến lấy ổ còn trống gần chỗ cắm dây của nó nhất (giá trước chỉ xét hàng ổ trước,
+    // vì hàng trước luôn còn ít nhất một ổ: dưới mũi có tối đa 4 mô-đun)
+    let viTriO = (o) => o <= 5 ? [X_O_TRUOC[o - 1], 7.55] : [X_O_SAU[o - 6], -0.45];
+    let daDung = oDuoi.concat(oTren), oSa = {};
+    c.sa.forEach(function(m) {
+      let g = GIA[m.gia], p = g.truc == 'x' ? [m.u, m.gia == 'truoc' ? 10.55 : g.mat - 0.85] : [g.mat + Math.sign(g.mat) * 0.85, m.u];
+      let ung = [1, 2, 3, 4, 5, 6, 7, 8].filter((o) => daDung.indexOf(o) < 0 && (m.gia != 'truoc' || o <= 5));
+      ung.sort((a, b) => Math.hypot(viTriO(a)[0] - p[0], viTriO(a)[1] - p[1]) - Math.hypot(viTriO(b)[0] - p[0], viTriO(b)[1] - p[1]) || a - b);
+      oSa[m.gia] = ung[0];
+      daDung.push(ung[0]);
+    });
     let R = TS.rBanh, e = TS.dayKhung, y0 = TS.yDay, y1 = y0 + e;   // y1: mặt trên tấm đáy
     let than = [], day = [], camBien = [];
     let them = (ct) => { than.push(ct); return ct; };
 
     // --- Khung nhôm chữ U ---
     let yVach = 5.0;   // mép trên vách bên
+    let vlKhung0 = c.son.khung ? 'son:' + c.son.khung : 'nhom';     // khung sơn màu hay để nhôm trần
     them({ id: 'khung', ten: 'Khung nhôm', nhom: 'khung', matDo: TS.nhom, khoi: [
-      hop([9.0, e, 17.0], [0, y0 + e / 2, 4.5], 'nhom', { vat: 0.04 }),                           // tấm đáy z -4…13
-      hop([e, yVach - y1, 11.0], [-4.4, (y1 + yVach) / 2, 1.5], 'nhom'),                          // vách trái z -4…7
-      hop([e, yVach - y1, 11.0], [4.4, (y1 + yVach) / 2, 1.5], 'nhom'),
-      lang([[7.0, y1], [10.0, y1], [7.0, yVach]], e, 'x', [-4.4, 0, 0], 'nhom'),                  // vách vát xuống phía mũi
-      lang([[7.0, y1], [10.0, y1], [7.0, yVach]], e, 'x', [4.4, 0, 0], 'nhom'),
-      hop([8.6, yVach - y1, e], [0, (y1 + yVach) / 2, -3.9], 'nhom'),                             // vách sau
-      hop([1.0, e, 11.0], [-3.8, yVach - e / 2, 1.5], 'nhom'),                                    // mép gập trong đỡ mạch chủ
-      hop([1.0, e, 11.0], [3.8, yVach - e / 2, 1.5], 'nhom')
+      hop([9.0, e, 17.0], [0, y0 + e / 2, 4.5], vlKhung0, { vat: 0.04 }),                           // tấm đáy z -4…13
+      hop([e, yVach - y1, 11.0], [-4.4, (y1 + yVach) / 2, 1.5], vlKhung0),                          // vách trái z -4…7
+      hop([e, yVach - y1, 11.0], [4.4, (y1 + yVach) / 2, 1.5], vlKhung0),
+      lang([[7.0, y1], [10.0, y1], [7.0, yVach]], e, 'x', [-4.4, 0, 0], vlKhung0),                  // vách vát xuống phía mũi
+      lang([[7.0, y1], [10.0, y1], [7.0, yVach]], e, 'x', [4.4, 0, 0], vlKhung0),
+      hop([8.6, yVach - y1, e], [0, (y1 + yVach) / 2, -3.9], vlKhung0),                             // vách sau
+      hop([1.0, e, 11.0], [-3.8, yVach - e / 2, 1.5], vlKhung0),                                    // mép gập trong đỡ mạch chủ
+      hop([1.0, e, 11.0], [3.8, yVach - e / 2, 1.5], vlKhung0)
     ], trangTri: [
       // lỗ bắt vít trên tấm đáy (vẽ, không khoét), đầu vít giữ motor trên vách
       { k: 'luoiLo', vt: [0, y1, 8.9], phap: [0, 1, 0], len: [0, 0, 1], kt: [7.2, 4.8], buoc: 0.8, d: 0.4 },
@@ -428,42 +484,71 @@
         [[x + (xo - x) * 0.15, 2.9, 9.7], [x + (xo - x) * 0.6, 5.2, 9.25], [xo, 7.9, 9.15], [xo, 9.35, 8.45]], [1, 0, 0]));
     });
 
-    // --- Cảm biến siêu âm kiểu HC-SR04 trên giá phía mũi ---
-    if (c.sieuAm) {
-      // Mô-đun bắt vào giá qua một khớp xoay ở giữa mặt sau. Khi xoay, mô-đun được đẩy ra trước vừa đủ để
-      // góc vỏ không lấn vào thanh giá, chốt khớp xoay nối mặt sau vỏ với thanh giá.
-      let ySa = 5.6, xSa = c.sieuAmX, goc = c.sieuAmGoc;
-      let zThanh = 11.3 + e / 2;                  // mặt trước thanh ngang của giá
+    // --- Cảm biến siêu âm kiểu HC-SR04 trên các giá (trước, trái, phải, sau) ---
+    let vlKhung = c.son.khung ? 'son:' + c.son.khung : 'nhom';
+    c.sa.forEach(function(m) {
+      // Mô-đun bắt vào giá qua một khớp xoay ở giữa mặt sau. Khi xoay, mô-đun được đẩy ra ngoài vừa đủ để
+      // góc vỏ không lấn vào giá, chốt khớp xoay nối mặt sau vỏ với giá.
+      let g = GIA[m.gia], goc = m.goc, u = m.u, ySa = g.y;
       let day0 = 2.35 * Math.sin(Math.abs(goc) * PI / 180);
-      let q = Q.truc([0, 1, 0], -goc);            // góc dương: quay sang trái (từ +z về −x)
-      let goc0 = [xSa, ySa, zThanh + day0];       // giữa mặt sau vỏ
+      let q = Q.nhan(Q.truc([0, 1, 0], -goc), Q.truc([0, 1, 0], g.gocN));   // quay theo hướng giá, rồi xoay (dương: sang trái)
+      let mat0 = g.truc == 'x' ? [u, ySa, g.mat] : [g.mat, ySa, u];          // giữa mặt giá chỗ bắt mô-đun
+      let goc0 = V.cong(mat0, V.nhan(g.n, day0));                            // giữa mặt sau vỏ
       let ra = (p) => V.cong(goc0, Q.quay(q, p));
-      let xoay = [0, -goc, 0];
-      let o = oRJ25([xSa, 5.75, 10.55], 'len');
+      let xoay = [0, g.gocN - goc, 0];
+      let hau = m.gia == 'truoc' ? '' : '_' + m.gia;
+      // ổ cắm dây: giá trước có ổ sau thanh ngang; giá khác có một tai ngang phía trên mô-đun, ổ nằm trên tai
+      let o, khoiGia = [];
+      if (m.gia == 'truoc') {
+        o = oRJ25([u, 5.75, 10.55], 'len');
+        khoiGia = [
+          hop([0.6, 2.7, e], [-4.15, y1 + 1.35, 11.3], vlKhung), hop([0.6, 2.7, e], [4.15, y1 + 1.35, 11.3], vlKhung),   // hai chân
+          hop([8.9, 2.4, e], [0, ySa, 11.3], vlKhung, { vat: 0.04 })                                                    // thanh ngang
+        ];
+      } else if (m.gia == 'sau') {
+        let yTai = ySa + 1.1 + e / 2;
+        o = oRJ25([u, yTai + e / 2 + KT_O[2] / 2, -5.05], 'len');
+        khoiGia = [
+          hop([8.9, 3.0, e], [0, ySa - 0.2 + 0.0, g.mat + e / 2], vlKhung, { vat: 0.04 }),                           // tấm bắt vào vách sau
+          hop([1.7, e, 1.7], [u, yTai, -5.05], vlKhung)                                                               // tai đỡ ổ cắm
+        ];
+      } else {
+        let s = Math.sign(g.mat), yTai = ySa + 1.1 + e / 2;
+        o = oRJ25([s * 5.55, yTai + e / 2 + KT_O[2] / 2, u], 'len');
+        khoiGia = [
+          hop([e, 5.1, 3.0], [g.mat - s * e / 2, 6.55, u], vlKhung, { vat: 0.04 }),                                 // tấm bắt vào vách bên
+          hop([1.7, e, 1.7], [s * 5.55, yTai, u], vlKhung)                                                            // tai đỡ ổ cắm
+        ];
+      }
       let khoiSa = [
         hop([4.7, 2.2, 1.0], ra([0, 0, 0.5]), 'nhua_xanh', { vat: 0.08, xoay: xoay }),           // vỏ mô-đun
         tru(1.6, 1.2, 'z', ra([-1.3, 0, 1.6]), 'bac', { xoay: xoay }),                            // đầu phát (T)
         tru(1.6, 1.2, 'z', ra([1.3, 0, 1.6]), 'bac', { xoay: xoay }),                             // đầu thu (R)
         o.khoi
       ];
-      if (day0 > 0.05) khoiSa.push(tru(0.8, day0, 'z', [xSa, ySa, zThanh + day0 / 2], 'nhom'));   // chốt khớp xoay
+      if (day0 > 0.05) khoiSa.push(tru(0.8, day0, g.truc == 'x' ? 'z' : 'x', V.cong(mat0, V.nhan(g.n, day0 / 2)), vlKhung));   // chốt khớp xoay
       let huong = Q.quay(q, [0, 0, 1]);
-      let ct = them({ id: 'sieuAm', ten: 'Cảm biến siêu âm HC-SR04', nhom: 'sieuAm', khoiLuong: 12, khoi: khoiSa,
+      let ct = them({ id: 'sieuAm' + hau, ten: 'Cảm biến siêu âm HC-SR04 (' + g.ten + ')', nhom: 'sieuAm', khoiLuong: 12, khoi: khoiSa,
         trangTri: o.trangTri.concat([
           { k: 'nhan', kt: [1.3, 1.3], vt: ra([-1.3, 0, 2.2]), phap: huong, len: [0, 1, 0], ve: 'luoi_sieu_am', tron: true },
           { k: 'nhan', kt: [1.3, 1.3], vt: ra([1.3, 0, 2.2]), phap: huong, len: [0, 1, 0], ve: 'luoi_sieu_am', tron: true },
           { k: 'nhan', kt: [0.8, 0.5], vt: ra([0, 0.6, 1.0]), phap: huong, len: [0, 1, 0], ve: 'chu', chu: 'T  R' }
         ]) });
-      them({ id: 'giaSieuAm', ten: 'Giá đỡ cảm biến siêu âm', nhom: 'sieuAm', matDo: TS.nhom, khoi: [
-        hop([0.6, 2.7, e], [-4.15, y1 + 1.35, 11.3], 'nhom'), hop([0.6, 2.7, e], [4.15, y1 + 1.35, 11.3], 'nhom'),   // hai chân
-        hop([8.9, 2.4, e], [0, ySa, 11.3], 'nhom', { vat: 0.04 })                                                   // thanh ngang
-      ], trangTri: [] });
-      let cg = cong();
-      camBien.push({ loai: 'sieuAm', cong: cg, chiTiet: ct.id, vt: ra([0, 0, 2.2]), huong: huong, xoay: q, x: xSa, goc: goc,
-        dau: [ra([-1.3, 0, 2.2]), ra([1.3, 0, 2.2])], oMach: oSieuAm });
-      let xo = oMach[oSieuAm].mieng[0];
-      day.push(dayRJ25('day_sieuAm', 'Dây RJ25 siêu âm', o, oMach[oSieuAm], [[xSa + (xo - xSa) * 0.3, 8.9, 10.1], [xSa + (xo - xSa) * 0.8, 9.5, 8.8]], [1, 0, 0]));
-    }
+      them({ id: 'giaSieuAm' + hau, ten: 'Giá đỡ cảm biến siêu âm (' + g.ten + ')', nhom: 'sieuAm', matDo: TS.nhom, khoi: khoiGia, trangTri: [] });
+      let so = oSa[m.gia];
+      camBien.push({ loai: 'sieuAm', cong: cong(), chiTiet: ct.id, vt: ra([0, 0, 2.2]), huong: huong, xoay: q, gia: m.gia, u: u, x: g.truc == 'x' ? u : g.mat, goc: goc,
+        ten: c.sa.length > 1 ? g.ten : '', dau: [ra([-1.3, 0, 2.2]), ra([1.3, 0, 2.2])], oMach: so });
+      let mo = oMach[so].mieng, xo = mo[0];
+      let moc;
+      if (m.gia == 'truoc' && so <= 5) moc = [[u + (xo - u) * 0.3, 8.9, 10.1], [u + (xo - u) * 0.8, 9.5, 8.8]];
+      else {
+        // từ ổ trên tai, vòng lên trên rồi đi tới ổ trên mạch chủ (hàng trước: ổ hướng lên; hàng sau: ổ hướng ra sau)
+        let dau = V.cong(o.mieng, [0, 1.6, 0]), cao = Math.max(o.mieng[1] + 1.6, 10.6);
+        let toi = so <= 5 ? [xo, cao, mo[2]] : [xo, mo[1] + 1.4, mo[2] - 1.6];
+        moc = [dau, [(dau[0] + toi[0]) / 2, cao, (dau[2] + toi[2]) / 2], toi];
+      }
+      day.push(dayRJ25('day_sieuAm' + hau, 'Dây RJ25 siêu âm ' + g.ten, o, oMach[so], moc, [1, 0, 0]));
+    });
 
     // --- Cảm biến chạm: công tắc hành trình + tấm cản treo bản lề phía mũi ---
     let canGat = null;
@@ -476,7 +561,7 @@
         tru(0.3, 0.5, 'x', [xCham, yCt, 13.14], 'do')                                             // nút bấm tì vào tấm cản
       ], trangTri: o.trangTri });
       them({ id: 'giaCham', ten: 'Tai bản lề tấm cản', nhom: 'cham', matDo: TS.nhom, khoi: [
-        hop([e, 2.5, 0.5], [-4.2, y1 + 1.25, 13.0], 'nhom'), hop([e, 2.5, 0.5], [4.2, y1 + 1.25, 13.0], 'nhom')
+        hop([e, 2.5, 0.5], [-4.2, y1 + 1.25, 13.0], vlKhung0), hop([e, 2.5, 0.5], [4.2, y1 + 1.25, 13.0], vlKhung0)
       ], trangTri: [] });
       // Tấm cản: vật thể riêng, quay quanh bản lề nằm ngang ở mép trên, lò xo đẩy ra trước
       let yBanLe = y1 + 2.3, zBanLe = 13.3;
@@ -485,7 +570,7 @@
         tam: [0, yBanLe, zBanLe], truc: [1, 0, 0],
         // khối viết trong hệ gắn với bản lề (tấm treo thẳng xuống, mặt sau trùng mặt phẳng bản lề)
         khoi: [
-          hop([10.0, 2.2, 0.4], [0, -1.1, 0.2], 'nhua_cam', { vat: 0.06 }),
+          hop([10.0, 2.2, 0.4], [0, -1.1, 0.2], c.son.canGat ? 'son:' + c.son.canGat : 'nhua_cam', { vat: 0.06 }),
           tru(0.3, 8.1, 'x', [0, 0, 0], 'thep')                                                    // chốt bản lề
         ],
         trangTri: [],
@@ -542,7 +627,7 @@
         // giữa bề rộng, nên khoảng cách hai điểm chạm sân bằng đúng khoảng cách hai bánh. Lốp trụ phẳng tuyệt
         // đối cứng thì điểm chạm có thể nằm bất kì đâu trên bề rộng lốp: đo được xe quay lệch ±4 % so với lí thuyết.
         tru(TS.dBanh, TS.rongBanh, 'x', [0, 0, 0], 'cao_su', { dTrong: 5.0, kieu: 'lop', bo: TS.boLop }),
-        tru(5.0, TS.rongBanh - 0.16, 'x', [0, 0, 0], 'nhua_vanh', { trong: true, kieu: 'vanh' })  // vành (nằm trong hình trụ của lốp)
+        tru(5.0, TS.rongBanh - 0.16, 'x', [0, 0, 0], c.son.vanh ? 'son:' + c.son.vanh : 'nhua_vanh', { trong: true, kieu: 'vanh' })  // vành (nằm trong hình trụ của lốp)
       ];
       banh.push({
         id: s < 0 ? 'trai' : 'phai', ten: s < 0 ? 'Bánh trái' : 'Bánh phải', cong: s < 0 ? 'outA' : 'outB', ben: s,
@@ -642,6 +727,6 @@
     };
   }
 
-  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
+  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
     gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, chongNap: chongNap, mienNap: mienNap, ganO: ganO, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
 });
