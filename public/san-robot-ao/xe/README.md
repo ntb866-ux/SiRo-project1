@@ -90,6 +90,10 @@ Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
 - **Độ cao siêu âm.** Mục "Độ cao siêu âm" có nút − và + (bước 0,5 cm) cho từng cảm biến; hoặc Tab tới cảm biến rồi bấm PageUp/PageDown. Độ cao là tâm cảm biến so với mặt sân: giá mũi 5,6 đến 10,6 cm (thấp hơn thì đụng công tắc chạm), giá bên 7,5 đến 13 cm khi cảm biến nằm ngang bánh xe, còn khi dời lên phía mũi qua khỏi bánh (z từ khoảng 6 cm khi nhìn thẳng, xa hơn khi xoay) thì hạ được tới 3 cm. Dời cảm biến thấp lùi về ngang bánh thì nó tự nâng lên 7,5 cm và bảng báo lại, giá đuôi 3 đến 10,6 cm. Giá kéo dài hoặc thòng xuống theo cảm biến. Độ cao thuộc về giá: kéo cảm biến sang giá khác thì nó lấy độ cao của giá đó.
 - **Xoay siêu âm.** Mỗi siêu âm có núm tròn riêng trên cung phía trước nó. Mô-đun bắt vào giá qua một chốt xoay; khi xoay, mô-đun được đẩy ra trước vừa đủ để vỏ không lấn vào thanh giá.
 - **Tháo từng cảm biến.** Rê chuột lên cảm biến (hoặc Tab tới nó) thì hiện nút × đỏ ở góc; bấm để tháo. Danh sách cổng cũng có nút "Tháo" cạnh mỗi cảm biến. Trên màn hình cảm ứng nút × luôn hiện.
+- **Chế độ đọc mắt dò line.** Phía trên "Sơn xe" có hai nút, áp dụng cho mọi mắt dò line của xe (dưới mũi, dưới gầm, trên tay quay servo):
+  - *Tương tự (A0)*, mặc định: chương trình đọc mức 0 đến 100 (khối "độ sáng phản xạ", `reflected_light_intensity`). Trước mỗi mắt có đèn cam: tín hiệu yếu thì đèn nhạt, gần như trong suốt; tín hiệu càng mạnh đèn càng đậm.
+  - *Số (D0)*: chương trình chỉ đọc 0 (vạch tối) hoặc 100 (nền sáng), là ngõ ra của mạch so sánh (ngưỡng 0,5, trễ ±0,03). Đèn xanh lá trước mỗi mắt sáng khi ngõ ra bật, tắt (xám) khi gặp vạch, như đèn báo D0 trên mô-đun thật. Nền xám có thể ra 0 hoặc 100 tuỳ nó ở bên nào của ngưỡng.
+  - Đèn chỉ để nhìn: không có khối lượng, cảm biến không thấy nó, và luôn vẽ đè lên xe để thấy được cả khi bị khung hay tấm cản che. Cấu hình ghi `"ir": "so"` hoặc `"ir": "tuongTu"`; "Tháo hết cảm biến" giữ chế độ, "Về mặc định" trả về tương tự.
 - **Sơn xe.** Dưới sơ đồ có ba hàng ô màu cho khung, tấm cản và vành bánh (10 màu, ô viền đứt là màu gốc). "Tháo hết cảm biến" giữ màu sơn; "Về mặc định" trả về màu gốc.
 - **Nhìn gầm xe.** Phía trên sơ đồ có hai nút "Nhìn từ trên" và "Nhìn gầm xe". Nhìn gầm thì sơ đồ vẽ gầm xe từ dưới lên, đúng tỉ lệ (không lật trái phải: bên trái sơ đồ vẫn là bên trái xe), chỉ còn vùng gầm để thả mắt dò line, còn máy quay 3D hạ xuống dưới mặt sân (mặt sân tự trong suốt nhẹ) để thấy gầm. Mỗi mắt dưới gầm gồm mạch đầu đo treo dưới tấm đáy và ổ RJ25 ngay phía sau mạch (đáy ổ cách sân 5 mm); dây chạy dọc gầm ra quá vách đuôi, vòng lên sát mặt ngoài vách rồi tới ổ trên mạch chủ.
 - **Servo.** Kéo servo từ khay lên nắp mạch chủ thì bên trái bảng hiện mục "Servo (động cơ C)":
@@ -133,7 +137,7 @@ Cấu hình lắp là trường `sraXe` trong tệp robot:
 | Cảm biến | Mô phỏng |
 |---|---|
 | HC-SR04 | 37 tia trong hình nón 15°. Tiếng vọng sớm nhất quyết định kết quả; mặt nghiêng quá 30° không cho tiếng vọng. Khoảng cách = thời gian vọng × 343 m/s ÷ 2. Tầm 2 đến 400 cm, bước 0,3 cm, 50 ms một lần đo. |
-| TCRT5000 | 15 tia trong vùng nhìn đường kính khoảng 6 mm. Tín hiệu = hệ số phản xạ hồng ngoại × đáp ứng theo khoảng cách (mạnh nhất ở 2,5 mm). Hệ số phản xạ = 0,04 + 0,86 × max(R, G, B): mực màu gần như trong suốt với hồng ngoại 950 nm, chỉ màu đen hấp thụ. Có ngõ tương tự 0 đến 1023 (`docTuongTu`) và ngõ số có trễ (`docSo`). |
+| TCRT5000 | 15 tia trong vùng nhìn đường kính khoảng 6 mm. Tín hiệu = hệ số phản xạ hồng ngoại × đáp ứng theo khoảng cách (mạnh nhất ở 2,5 mm). Hệ số phản xạ = 0,04 + 0,86 × max(R, G, B): mực màu gần như trong suốt với hồng ngoại 950 nm, chỉ màu đen hấp thụ. Có ngõ tương tự 0 đến 1023 (`docTuongTu`) và ngõ số có trễ (`docSo`); chế độ đọc của xe (`ir`) quyết định chương trình nhận ngõ nào. |
 | Chạm | Tấm cản là vật thể thật, treo bản lề, có lò xo. Công tắc đóng khi tấm bị ép còn cách thân dưới 3°, mở lại khi quá 4°. |
 | Gyro | Cộng dồn vận tốc góc của thân mỗi bước vật lí. Có thể bật trôi và nhiễu. |
 | GPS | Toạ độ ăng-ten, 10 lần mỗi giây. Có thể bật sai số. |
@@ -186,6 +190,7 @@ cd public && python3 -m http.server 1337 &
 node scripts/xe/kiem-tra-hitbox.js          # hình vẽ, khối và hình trong Bullet khớp nhau dưới 1 mm
 node scripts/xe/kiem-tra-chuyen-dong.js     # 15 phép đo chuyển động so với lí thuyết
 node scripts/xe/kiem-tra-cam-bien.js        # 27 phép đo cảm biến với đáp số biết trước
+node scripts/xe/kiem-tra-ir.js              # chế độ tương tự và số của mắt dò line, đèn báo, Python, bảng lắp ráp
 node scripts/xe/kiem-tra-servo.js           # hướng lắp, tay quay, chương trình Python điều khiển servo, bảng lắp ráp
 node scripts/xe/kiem-tra-lap-rap.js         # 1414 bản lắp đều dựng được; kéo thả, bấm chọn, bàn phím, lưu lại
 SIRO_LAP='{"lo":["doLine","cham","doLine","doLine",null]}' node scripts/xe/kiem-tra-hitbox.js   # hitbox của một bản lắp khác
