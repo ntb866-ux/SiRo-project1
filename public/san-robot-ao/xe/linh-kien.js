@@ -179,12 +179,13 @@
   //   trai, phai  tấm bắt vào vách bên, nâng cao hơn bánh xe, nhìn sang ngang
   const GIA = {
     truoc: { ten: 'trước', n: [0, 0, 1], mat: 11.4, y: 5.6, truc: 'x', gocN: 0, cao: [5.6, 10.6] },
-    trai: { ten: 'trái', n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 5.5], cao: [7.5, 13.0] },
-    phai: { ten: 'phải', n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 5.5], cao: [7.5, 13.0] },
+    trai: { ten: 'trái', n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 8.0], cao: [3.0, 13.0], caoTrenBanh: 7.5 },
+    phai: { ten: 'phải', n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 8.0], cao: [3.0, 13.0], caoTrenBanh: 7.5 },
     sau: { ten: 'sau', n: [0, 0, -1], mat: -4.2, y: 5.6, truc: 'x', gocN: 180, cao: [3.0, 10.6] }
   };
   // y: độ cao mặc định của tâm cảm biến so với mặt sân (cm); cao: khoảng chỉnh độ cao (giá có dãy lỗ bắt vít).
-  // Thấp hơn khoảng đó thì vỏ đụng: giá mũi đụng công tắc chạm, giá bên đụng bánh xe; giá đuôi hạ được tới sát sân.
+  // Thấp hơn khoảng đó thì vỏ đụng: giá mũi đụng công tắc chạm; giá đuôi hạ được tới sát sân. Giá bên: khi cảm biến
+  // còn nằm ngang bánh xe thì phải cao ít nhất caoTrenBanh (vỏ ở trên lốp); dời lên trước qua khỏi bánh thì hạ được tới cao[0].
   const DS_GIA = ['truoc', 'trai', 'phai', 'sau'];
   // Màu sơn cho phép (khung nhôm, tấm cản, vành bánh); null là màu gốc
   const SON = ['#c62828', '#ef6c00', '#f9a825', '#2e7d32', '#00838f', '#1565c0', '#6a1b9a', '#d81b60', '#263238', '#eceff1'];
@@ -216,6 +217,14 @@
     if (GIA[gia].u) return GIA[gia].u.slice();
     let g = gioiHanSieuAmX(goc);
     return [-g, g];
+  }
+
+  // Cảm biến trên giá bên ở vị trí u, góc goc có nằm ngang bánh xe không (theo chiều dọc thân xe)
+  const nganBanh = (gia, u, goc) => !!GIA[gia].caoTrenBanh && u - nuaRongSieuAm(goc) < TS.rBanh + 0.45;      // 0,45 cm: khi xoay, vỏ còn bị đẩy ra và lệch về phía bánh
+  // Khoảng độ cao (tâm cảm biến so với mặt sân, cm) cho phép tại vị trí u, góc goc
+  function gioiHanCao(gia, u, goc) {
+    let g = GIA[gia];
+    return [nganBanh(gia, u, goc) ? g.caoTrenBanh : g.cao[0], g.cao[1]];
   }
 
   // Hai mô-đun trên nắp có chồng lên nhau không
@@ -260,8 +269,8 @@
     saVao.forEach(function(m) {
       if (!m || !GIA[m.gia] || c.sa.some((n) => n.gia == m.gia)) return;
       let goc = tron2(kep(Number(m.goc) || 0, -GOC_SA, GOC_SA)), gh = gioiHanU(m.gia, goc);
-      let ch = GIA[m.gia].cao, cao = m.cao == null || !isFinite(Number(m.cao)) ? GIA[m.gia].y : Number(m.cao);
-      c.sa.push({ gia: m.gia, u: tron2(kep(Number(m.u) || 0, gh[0], gh[1])), goc: goc, cao: tron2(kep(Math.round(cao * 10) / 10, ch[0], ch[1])) });
+      let u = tron2(kep(Number(m.u) || 0, gh[0], gh[1])), ch = gioiHanCao(m.gia, u, goc), cao = m.cao == null || !isFinite(Number(m.cao)) ? GIA[m.gia].y : Number(m.cao);
+      c.sa.push({ gia: m.gia, u: u, goc: goc, cao: tron2(kep(Math.round(cao * 10) / 10, ch[0], ch[1])) });
     });
     c.sa.sort((a, b) => DS_GIA.indexOf(a.gia) - DS_GIA.indexOf(b.gia));
 
@@ -522,7 +531,8 @@
         let s = Math.sign(g.mat), yTai = ySa + 1.1 + e / 2;
         o = oRJ25([s * 5.55, yTai + e / 2 + KT_O[2] / 2, u], 'len');
         khoiGia = [
-          hop([e, 5.1 + dy, 3.0], [g.mat - s * e / 2, 6.55 + dy / 2, u], vlKhung, { vat: 0.04 }),                   // tấm bắt vào vách bên, dài thêm khi nâng
+          // tấm bắt vào vách bên: từ mép dưới (4 cm, hoặc thấp hơn khi hạ cảm biến) lên tới đỉnh vỏ cảm biến
+          hop([e, ySa + 1.1 - Math.min(4.0, ySa - 1.5), 3.0], [g.mat - s * e / 2, (ySa + 1.1 + Math.min(4.0, ySa - 1.5)) / 2, u], vlKhung, { vat: 0.04 }),
           hop([1.7, e, 1.7], [s * 5.55, yTai, u], vlKhung)                                                            // tai đỡ ổ cắm
         ];
       }
@@ -733,6 +743,6 @@
     };
   }
 
-  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
+  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, gioiHanCao: gioiHanCao, nganBanh: nganBanh, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
     gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, chongNap: chongNap, mienNap: mienNap, ganO: ganO, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
 });

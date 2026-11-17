@@ -72,7 +72,7 @@ Xe có 6 vùng gắn cảm biến: bốn giá siêu âm (mũi, trái, phải, đ
 | Vùng gắn | Nhận | Giới hạn | Ổ trên mạch chủ |
 |---|---|---|---|
 | Giá phía mũi | Siêu âm | Trượt ngang trong thanh giá (±2,1 cm khi nhìn thẳng, hẹp lại khi xoay), xoay quanh trục đứng ±45° | Ổ trước còn trống gần nó nhất |
-| Giá bên trái, bên phải | Siêu âm | Tấm nhôm dựng đứng trên khung, phía trên bánh xe; trượt dọc thân (z từ −2,5 đến 5,5 cm), xoay ±45° | Ổ còn trống gần nó nhất |
+| Giá bên trái, bên phải | Siêu âm | Tấm nhôm bắt vào vách bên; trượt dọc thân (z từ −2,5 đến 8 cm), xoay ±45° | Ổ còn trống gần nó nhất |
 | Giá phía đuôi | Siêu âm | Tấm nhôm sau đuôi xe; trượt ngang như giá mũi, xoay ±45° | Ổ còn trống gần nó nhất |
 | Thanh dưới mũi xe | Mắt dò line (nhiều nhất 3), công tắc chạm (nhiều nhất 1) | x từ −3 đến 3 cm; hai mô-đun cách nhau (tâm đến tâm) ít nhất 1,5 cm | Ổ 1 đến 5, xếp theo thứ tự trái sang phải để dây không bắt chéo |
 | Nắp mạch chủ | Gyro, GPS | Cả mô-đun lẫn ổ cắm phía sau nằm gọn trên nắp, hai mô-đun không chồng nhau | Ổ 6 đến 8, theo thứ tự trái sang phải |
@@ -85,7 +85,7 @@ Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
 - **Thước đo.** Trên thanh dưới mũi có vạch 0,5 cm, trục giữa xe và khoảng cách giữa các cảm biến cạnh nhau.
 - **Thông tin.** Rê chuột lên một cảm biến thì dòng dưới sơ đồ ghi vị trí, số cổng, ổ cắm, và dây của nó sáng lên.
 - **Nhiều siêu âm.** Có 4 cảm biến siêu âm trong khay, mỗi giá gắn một cái. Kéo siêu âm từ giá này sang giá đang có siêu âm khác thì hai cái đổi chỗ.
-- **Độ cao siêu âm.** Mục "Độ cao siêu âm" có nút − và + (bước 0,5 cm) cho từng cảm biến; hoặc Tab tới cảm biến rồi bấm PageUp/PageDown. Độ cao là tâm cảm biến so với mặt sân: giá mũi 5,6 đến 10,6 cm (thấp hơn thì đụng công tắc chạm), giá bên 7,5 đến 13 cm (thấp hơn thì đụng bánh), giá đuôi 3 đến 10,6 cm. Giá kéo dài hoặc thòng xuống theo cảm biến. Độ cao thuộc về giá: kéo cảm biến sang giá khác thì nó lấy độ cao của giá đó.
+- **Độ cao siêu âm.** Mục "Độ cao siêu âm" có nút − và + (bước 0,5 cm) cho từng cảm biến; hoặc Tab tới cảm biến rồi bấm PageUp/PageDown. Độ cao là tâm cảm biến so với mặt sân: giá mũi 5,6 đến 10,6 cm (thấp hơn thì đụng công tắc chạm), giá bên 7,5 đến 13 cm khi cảm biến nằm ngang bánh xe, còn khi dời lên phía mũi qua khỏi bánh (z từ khoảng 6 cm khi nhìn thẳng, xa hơn khi xoay) thì hạ được tới 3 cm. Dời cảm biến thấp lùi về ngang bánh thì nó tự nâng lên 7,5 cm và bảng báo lại, giá đuôi 3 đến 10,6 cm. Giá kéo dài hoặc thòng xuống theo cảm biến. Độ cao thuộc về giá: kéo cảm biến sang giá khác thì nó lấy độ cao của giá đó.
 - **Xoay siêu âm.** Mỗi siêu âm có núm tròn riêng trên cung phía trước nó. Mô-đun bắt vào giá qua một chốt xoay; khi xoay, mô-đun được đẩy ra trước vừa đủ để vỏ không lấn vào thanh giá.
 - **Tháo từng cảm biến.** Rê chuột lên cảm biến (hoặc Tab tới nó) thì hiện nút × đỏ ở góc; bấm để tháo. Danh sách cổng cũng có nút "Tháo" cạnh mỗi cảm biến. Trên màn hình cảm ứng nút × luôn hiện.
 - **Sơn xe.** Dưới sơ đồ có ba hàng ô màu cho khung, tấm cản và vành bánh (10 màu, ô viền đứt là màu gốc). "Tháo hết cảm biến" giữ màu sơn; "Về mặc định" trả về màu gốc.

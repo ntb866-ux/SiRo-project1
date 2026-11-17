@@ -167,7 +167,7 @@ var SRABangLapRap = new function() {
       let cc = L.chuanHoaCauHinh(c), den = 'sa:' + gia;
       if (JSON.stringify(cc) == JSON.stringify(c0) && tu == den) return { loi: '', khongDoi: true, den: den, c: cc };
       return { c: cc, den: den, doi: doi ? 'sa:' + doi.gia : null,
-        tb: doi ? 'Đã đổi chỗ hai cảm biến siêu âm.' : 'Đã gắn ' + LOAI[loai].tenDay + ' lên ' + tenGia + ', ' + (L.GIA[gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(u) + ' cm.' };
+        tb: doi ? 'Đã đổi chỗ hai cảm biến siêu âm.' : 'Đã gắn ' + LOAI[loai].tenDay + ' lên ' + tenGia + ', ' + (L.GIA[gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(u) + ' cm.' + ghiNang(goc && goc.gia == gia ? goc.cao : null, cc, gia) };
     }
 
     if (vung == 'duoi') {
@@ -290,8 +290,9 @@ var SRABangLapRap = new function() {
         let doc = L.GIA[m.gia].truc == 'z', d = doc ? dz : dx, gh = L.gioiHanU(m.gia, m.goc), u = tron2(m.u + d);
         if (d == 0) return null;
         if (u < gh[0] - 1e-6 || u > gh[1] + 1e-6) return { loi: 'Cảm biến siêu âm đã ra tới mép giá.' };
-        c.sa.push({ gia: m.gia, u: u, goc: m.goc });
-        return { c: L.chuanHoaCauHinh(c), den: tu, tb: 'Siêu âm ' + L.GIA[m.gia].ten + ' ở ' + (doc ? 'z' : 'x') + ' = ' + soViet(u) + ' cm.' };
+        c.sa.push({ gia: m.gia, u: u, goc: m.goc, cao: m.cao });
+        let cc = L.chuanHoaCauHinh(c);
+        return { c: cc, den: tu, tb: 'Siêu âm ' + L.GIA[m.gia].ten + ' ở ' + (doc ? 'z' : 'x') + ' = ' + soViet(u) + ' cm.' + ghiNang(m.cao, cc, m.gia) };
       }
       if (LOAI[m.loai].vung == 'duoi') {
         let x = tron2(m.x + k * dx);
@@ -326,15 +327,31 @@ var SRABangLapRap = new function() {
     c.son = Object.assign({}, c.son); c.son[phan] = mau || null;
     return { c: L.chuanHoaCauHinh(c), tb: mau ? 'Đã sơn ' + TEN_SON[phan].toLowerCase() + ' màu ' + (TEN_MAU[mau] || mau) + '.' : TEN_SON[phan] + ' về màu gốc.' };
   }
+  // Vị trí u nhỏ nhất (bước 0,5 cm) để cảm biến trên giá bên qua khỏi bánh xe
+  function zQuaBanh(gia, goc) {
+    let u = L.GIA[gia].u[0];
+    while (u < L.GIA[gia].u[1] && L.nganBanh(gia, u, goc)) u += 0.5;
+    return u;
+  }
   // Đổi độ cao (cm, tâm cảm biến so với mặt sân) của cảm biến siêu âm khoa
   function datCao(khoa, cao) {
     let c = tho(self.cauHinh), m = c.sa.find((n) => 'sa:' + n.gia == khoa);
     if (!m) return null;
-    let gh = L.GIA[m.gia].cao;
+    let gh = L.gioiHanCao(m.gia, m.u, m.goc);
     cao = tron2(kep(Math.round(cao * 10) / 10, gh[0], gh[1]));
-    if (cao == m.cao) return { loi: cao <= gh[0] ? 'Siêu âm ' + L.GIA[m.gia].ten + ' đã ở thấp nhất (' + soViet(gh[0]) + ' cm), hạ nữa thì đụng ' + (m.gia == 'truoc' ? 'công tắc chạm' : (m.gia == 'sau' ? 'mặt sân' : 'bánh xe')) + '.' : 'Siêu âm ' + L.GIA[m.gia].ten + ' đã ở cao nhất (' + soViet(gh[1]) + ' cm).' };
+    if (cao == m.cao) {
+      if (cao > gh[0] + 1e-6) return { loi: 'Siêu âm ' + L.GIA[m.gia].ten + ' đã ở cao nhất (' + soViet(gh[1]) + ' cm).' };
+      let lyDo = m.gia == 'truoc' ? 'hạ nữa thì đụng công tắc chạm.' : (m.gia == 'sau' ? 'hạ nữa thì quá sát mặt sân.'
+        : (L.nganBanh(m.gia, m.u, m.goc) ? 'cảm biến đang nằm ngang bánh xe. Dời nó lên phía mũi (z từ ' + soViet(zQuaBanh(m.gia, m.goc)) + ' cm) thì hạ được tới ' + soViet(L.GIA[m.gia].cao[0]) + ' cm.' : 'hạ nữa thì quá sát mặt sân.'));
+      return { loi: 'Siêu âm ' + L.GIA[m.gia].ten + ' đã ở thấp nhất (' + soViet(gh[0]) + ' cm): ' + lyDo };
+    }
     m.cao = cao;
     return { c: L.chuanHoaCauHinh(c), den: khoa, tb: 'Siêu âm ' + L.GIA[m.gia].ten + ' cao ' + soViet(cao) + ' cm so với mặt sân.' };
+  }
+  // Câu ghi thêm khi độ cao bị nâng lên tự động vì cảm biến đã dời về chỗ ngang bánh xe
+  function ghiNang(cu, cc, gia) {
+    let moi = cc.sa.find((n) => n.gia == gia);
+    return cu != null && moi && moi.cao > cu + 1e-6 ? ' Cảm biến được nâng lên ' + soViet(moi.cao) + ' cm để vỏ không đụng bánh xe.' : '';
   }
   const moTaGoc = (g) => Math.abs(g) < 1e-6 ? 'nhìn thẳng ra trước' : 'xoay ' + soViet(Math.abs(g)) + '° sang ' + (g > 0 ? 'trái' : 'phải');
 
@@ -654,10 +671,10 @@ var SRABangLapRap = new function() {
     let $s = $('<div class="sra-lr-do-cao"></div>');
     $s.append('<div class="sra-lr-tieu-de-nho">Độ cao siêu âm (tâm cảm biến so với mặt sân)</div>');
     self.cauHinh.sa.forEach(function(m) {
-      let gh = L.GIA[m.gia].cao, khoa = 'sa:' + m.gia, ten = 'siêu âm ' + L.GIA[m.gia].ten;
+      let gh = L.gioiHanCao(m.gia, m.u, m.goc), khoa = 'sa:' + m.gia, ten = 'siêu âm ' + L.GIA[m.gia].ten;
       $s.append($('<div class="sra-lr-hang-cao"></div>').attr('data-khoa', khoa)
         .append($('<span class="sra-lr-ten-cao"></span>').text(viet(L.GIA[m.gia].ten)))
-        .append($('<button type="button" class="sra-lr-nut-cao">−</button>').attr({ 'data-cao': khoa, 'data-buoc': -0.5, 'aria-label': 'Hạ ' + ten + ' 0,5 cm' }).prop('disabled', m.cao <= gh[0]))
+        .append($('<button type="button" class="sra-lr-nut-cao">−</button>').attr({ 'data-cao': khoa, 'data-buoc': -0.5, 'aria-label': 'Hạ ' + ten + ' 0,5 cm' }).prop('disabled', m.cao <= gh[0] && !L.nganBanh(m.gia, m.u, m.goc)))      // ngang bánh: vẫn bấm được để xem gợi ý dời lên trước
         .append($('<output class="sra-lr-gia-tri-cao"></output>').text(soViet(m.cao) + ' cm').attr('aria-label', ten + ' cao ' + soViet(m.cao) + ' cm'))
         .append($('<button type="button" class="sra-lr-nut-cao">+</button>').attr({ 'data-cao': khoa, 'data-buoc': 0.5, 'aria-label': 'Nâng ' + ten + ' 0,5 cm' }).prop('disabled', m.cao >= gh[1]))
         .append($('<span class="sra-lr-mien-cao"></span>').text(soViet(gh[0]) + '–' + soViet(gh[1]))));

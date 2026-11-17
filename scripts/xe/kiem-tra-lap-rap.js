@@ -101,9 +101,11 @@ function phanTuDo(bc) {
   }
   // độ cao: mỗi giá ở thấp nhất, mặc định, cao nhất, với góc và vị trí ở hai đầu; không lấn vào khung, bánh, mô-đun khác
   let soCao = 0;
-  for (const gia of L.DS_GIA) for (const cao of [L.GIA[gia].cao[0], L.GIA[gia].y, L.GIA[gia].cao[1]]) for (const g of [-45, 0, 45]) {
-    let gh = L.gioiHanU(gia, g);
-    for (const u of [gh[0], gh[1]]) {
+  // (giá bên: mọi u bước 0,5 cm, vì độ cao thấp nhất đổi theo chỗ đó có ngang bánh xe hay không)
+  for (const gia of L.DS_GIA) for (const g of [-45, -15, 0, 15, 45]) {
+    let gh = L.gioiHanU(gia, g), dsU = [gh[0], gh[1]];
+    if (L.GIA[gia].caoTrenBanh) { dsU = []; for (let u = gh[0]; u <= gh[1] + 1e-9; u += 0.5) dsU.push(u); }
+    for (const u of dsU) for (const cao of [L.gioiHanCao(gia, u, g)[0], L.GIA[gia].y, L.GIA[gia].cao[1]]) {
       let sa = [{ gia: gia, u: u, goc: g, cao: cao }];
       if (gia != 'truoc') sa.unshift({ gia: 'truoc' });
       let c = thu({ sa: sa }, 'siêu âm ' + gia + ' cao ' + cao + ' ' + g + '° u = ' + u);
@@ -135,6 +137,8 @@ function phanTuDo(bc) {
   let c = L.chuanHoaCauHinh({ duoi: [{ loai: 'doLine', x: 0 }, { loai: 'doLine', x: 1 }, { loai: 'cham', x: 3.5 }], tren: [{ loai: 'gyro', x: 0, z: 4 }, { loai: 'gps', x: 1, z: 4 }] });
   bc.dong(loi.length == 0, soBan + ' bản lắp đặt tự do (' + soCao + ' bản đổi độ cao siêu âm) (' + soCap + ' cặp vị trí gyro, GPS) đều dựng được, mô-đun không lấn nhau, dây không bắt chéo', loi.length ? loi.slice(0, 4).join(' | ') : '');
   let cc = L.chuanHoaCauHinh({ sa: [{ gia: 'truoc', cao: 2 }, { gia: 'trai', cao: 20 }, { gia: 'sau', cao: 'x' }] });
+  let cb = L.chuanHoaCauHinh({ sa: [{ gia: 'trai', u: 1.5, cao: 3 }, { gia: 'phai', u: 6.5, cao: 3 }] });
+  bc.dong(cb.sa.map((m) => m.cao).join() == '7.5,3', 'Giá bên: ngang bánh xe (z = 1,5 cm) thì thấp nhất 7,5 cm; dời lên trước qua bánh (z = 6,5 cm) thì hạ được tới 3 cm', cb.sa.map((m) => m.gia + ' ' + m.cao).join(' | '));
   bc.dong(cc.sa.map((m) => m.cao).join() == '5.6,13,5.6', 'Độ cao ngoài khoảng cho phép bị kẹp lại (giá mũi thấp nhất 5,6 cm, giá bên cao nhất 13 cm), giá trị hỏng về mặc định', cc.sa.map((m) => m.cao).join(' | '));
   // TCRT5000: đầu phát và đầu thu nằm dọc thân xe (cùng x, khác z), đầu phát phía mũi
   let tt = L.lapXe({}).than.find((x) => x.id == 'doLine1').trangTri.filter((t) => t.k == 'dia');
@@ -346,6 +350,26 @@ function phanMot(bc) {
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
   bc.dong(t.c.sa[0].cao == 5.6 && /thấp nhất/.test(t.tb), 'Phím PageDown trên siêu âm mũi đang ở thấp nhất: không hạ, có lời giải thích', t.tb);
+  // giá bên: ngang bánh thì không hạ dưới 7,5 cm; dời lên trước qua bánh thì hạ được; dời lùi lại thì tự nâng
+  await page.evaluate(() => SRABangLapRap.xoay(0, 'sa:trai'));
+  await page.evaluate(() => SRABangLapRap.cao(7.5, 'sa:trai'));
+  await page.click('.sra-lr-nut-cao[data-cao="sa:trai"][data-buoc="-0.5"]');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  bc.dong(t.c.sa[1].cao == 7.5 && /Dời nó lên phía mũi \(z từ 6 cm\)/.test(t.tb), 'Siêu âm trái ngang bánh xe ở 7,5 cm: không hạ thêm, gợi ý dời lên trước từ z = 6 cm', t.tb);
+  await page.evaluate(() => SRABangLapRap.dat('sieuAm', 'sa:trai', { vung: 'gia:trai', u: 6.5 }));
+  await page.evaluate(() => SRABangLapRap.cao(3, 'sa:trai'));
+  t = await trangThai();
+  let ySaThap = await page.evaluate(() => robot.sraBanLap.camBien.find((x) => x.gia == 'trai').vt[1]);
+  bc.dong(t.c.sa[1].u == 6.5 && t.c.sa[1].cao == 3 && ySaThap == 3, 'Dời siêu âm trái lên z = 6,5 cm (qua khỏi bánh): hạ được tới 3 cm', JSON.stringify(t.c.sa[1]));
+  await chup('bang-lap-rap-sieu-am-thap');
+  let tbs = [];
+  for (let i = 0; i < 2; i++) { await page.focus('[data-cho="sa:trai"]'); await page.keyboard.press('ArrowDown'); await page.evaluate(() => SRABangLapRap.choDungXong()); tbs.push((await trangThai()).tb); }
+  t = await trangThai();
+  bc.dong(t.c.sa[1].u == 5.5 && t.c.sa[1].cao == 7.5 && /nâng lên 7,5 cm/.test(tbs[1]) && !/nâng/.test(tbs[0]), 'Hai lần mũi tên xuống: z = 6 cm vẫn qua khỏi bánh, giữ 3 cm; z = 5,5 cm ngang bánh thì tự nâng lên 7,5 cm, có thông báo', tbs.join(' / '));
+  await page.evaluate(() => SRABangLapRap.dat('sieuAm', 'sa:trai', { vung: 'gia:trai', u: 1.5 }));
+  await page.evaluate(() => SRABangLapRap.cao(9, 'sa:trai'));
+  await page.evaluate(() => SRABangLapRap.xoay(15, 'sa:trai'));
   await chup('bang-lap-rap-do-cao');
 
   // nút × trên sơ đồ
