@@ -76,7 +76,8 @@ Xe có 7 vùng gắn cảm biến: bốn giá siêu âm (mũi, trái, phải, đ
 | Giá phía đuôi | Siêu âm | Tấm nhôm sau đuôi xe; trượt ngang như giá mũi, xoay ±45° | Ổ còn trống gần nó nhất |
 | Thanh dưới mũi xe | Mắt dò line (nhiều nhất 3), công tắc chạm (nhiều nhất 1) | x từ −3 đến 3 cm; hai mô-đun cách nhau (tâm đến tâm) ít nhất 1,5 cm | Ổ 1 đến 5, xếp theo thứ tự trái sang phải để dây không bắt chéo |
 | Gầm xe (dưới tấm đáy) | Mắt dò line (nhiều nhất 4) | Tâm mạch: x từ −3,75 đến 3,75 cm, z từ −0,5 đến 10,5 cm; không lấn vào vỏ bi tự do; hai mắt lệch nhau ít nhất 1,5 cm theo bề ngang vì dây mỗi mắt chạy thẳng dọc gầm ra đuôi | Ổ còn trống gần đuôi xe nhất |
-| Nắp mạch chủ | Gyro, GPS | Cả mô-đun lẫn ổ cắm phía sau nằm gọn trên nắp, hai mô-đun không chồng nhau | Ổ 6 đến 8, theo thứ tự trái sang phải |
+| Nắp mạch chủ | Gyro, GPS, servo SG90 (nhiều nhất 1) | Cả mô-đun lẫn ổ cắm phía sau nằm gọn trên nắp, hai mô-đun không chồng nhau | Ổ 6 đến 8, theo thứ tự trái sang phải |
+| Tay quay của servo | Siêu âm, mắt dò line | Mỗi đầu tay quay một cảm biến, hai cảm biến không chồng nhau; tính chung giới hạn khay (4 siêu âm, 7 mắt dò line) | Ổ còn trống gần servo nhất |
 
 Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
 
@@ -91,6 +92,12 @@ Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
 - **Tháo từng cảm biến.** Rê chuột lên cảm biến (hoặc Tab tới nó) thì hiện nút × đỏ ở góc; bấm để tháo. Danh sách cổng cũng có nút "Tháo" cạnh mỗi cảm biến. Trên màn hình cảm ứng nút × luôn hiện.
 - **Sơn xe.** Dưới sơ đồ có ba hàng ô màu cho khung, tấm cản và vành bánh (10 màu, ô viền đứt là màu gốc). "Tháo hết cảm biến" giữ màu sơn; "Về mặc định" trả về màu gốc.
 - **Nhìn gầm xe.** Phía trên sơ đồ có hai nút "Nhìn từ trên" và "Nhìn gầm xe". Nhìn gầm thì sơ đồ vẽ gầm xe từ dưới lên, đúng tỉ lệ (không lật trái phải: bên trái sơ đồ vẫn là bên trái xe), chỉ còn vùng gầm để thả mắt dò line, còn máy quay 3D hạ xuống dưới mặt sân (mặt sân tự trong suốt nhẹ) để thấy gầm. Mỗi mắt dưới gầm gồm mạch đầu đo treo dưới tấm đáy và ổ RJ25 ngay phía sau mạch (đáy ổ cách sân 5 mm); dây chạy dọc gầm ra quá vách đuôi, vòng lên sát mặt ngoài vách rồi tới ổ trên mạch chủ.
+- **Servo.** Kéo servo từ khay lên nắp mạch chủ thì bên trái bảng hiện mục "Servo (động cơ C)":
+  - *Hướng*: "Trục đứng" (tay quay quét ngang, từ phải qua trước sang trái), "Trục nằm dọc" (trục dọc thân xe, tay quay lắc từ phải lên đỉnh sang trái), "Trục nằm ngang" (trục ngang thân xe, tay quay gật từ trước lên đỉnh ra sau). Nút − + ở *Nghiêng* (0 đến 90°) và *Xoay* (−180 đến 180°, dương là sang trái) cho hướng tuỳ chọn, bước 15°.
+  - *Tay quay*: đơn (1 đầu, dài 1,9 cm), đôi (2 đầu đối nhau), chữ thập (4 nhánh ngắn), đĩa tròn (gắn 1 cảm biến ở tâm).
+  - Mỗi đầu tay quay chọn Trống, Siêu âm hoặc Dò line. Nút bị khoá kèm lí do khi hai cảm biến chồng nhau hoặc khay đã hết loại đó.
+  - *Thử góc*: kéo thanh trượt để servo trên xe 3D quay tới góc đó.
+  - Trong chương trình, servo là động cơ ở cổng C: góc 0° chỉ sang phải (theo hướng lắp), 90° là giữa hành trình (lúc lắp), 180° chỉ sang trái; lệnh ngoài 0 đến 180° bị giữ ở biên. Ví dụ Python: `LargeMotor(OUTPUT_C).on_to_position(50, 30)`; khối "chạy động cơ ở cổng C … tới vị trí … độ"; khối "vị trí động cơ ở cổng C" đọc góc hiện tại. Servo mô phỏng SG90: mô-men kẹt 1,8 kgf·cm, 0,1 s cho 60°. Cảm biến trên tay quay mang số cổng sau cùng.
 - **Bàn phím.** Tab tới cảm biến, mũi tên để dời (trên nắp dời được cả lên xuống), Q/E hoặc mũi tên trên núm để xoay, Delete để tháo, Enter trên thẻ khay để tự gắn vào chỗ trống.
 
 Kéo ra ngoài bảng để tháo. Không kéo được thì bấm cảm biến rồi bấm vào vùng gắn. Mỗi lần đổi, xe 3D được dựng lại ngay: hình, hitbox, khối lượng và mô phỏng cảm biến đều tính lại từ danh mục linh kiện. Sơ đồ vẽ thân xe, nắp mạch và giá siêu âm đúng tỉ lệ; thanh dưới mũi vẽ tách ra phía trước và phóng to 1,9 lần theo chiều ngang cho dễ kéo.
@@ -110,7 +117,7 @@ Cấu hình lắp là trường `sraXe` trong tệp robot:
 }
 ```
 
-`duoi` là các mô-đun dưới mũi (x tính bằng cm, âm là bên trái), `gam` là các mắt dò line dưới gầm (`{ "loai": "doLine", "x": -2, "z": 5 }`, x, z là tâm mạch đầu đo), `tren` là các mô-đun trên nắp mạch chủ (x, z là tâm thân mô-đun, z tính từ trục bánh về phía mũi), `sa` là các siêu âm: `gia` là `truoc`, `trai`, `phai` hoặc `sau`, `u` là vị trí dọc giá (x với giá mũi và đuôi, z với hai giá bên), `goc` tính bằng độ, dương là quay sang trái, `cao` là độ cao tâm cảm biến so với mặt sân (cm, bỏ trống là độ cao mặc định của giá). `son` là màu sơn (mã hex) của khung, tấm cản, vành bánh; `null` là màu gốc. Kiểu viết cũ `sieuAm`, `sieuAmX`, `sieuAmGoc` (một siêu âm trên giá mũi) vẫn dùng được và vẫn có trong cấu hình chuẩn hoá. Quá 8 cảm biến thì bỏ bớt, bỏ siêu âm thêm trước. Mô-đun quá số lượng, ra ngoài vùng gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ. Các kiểu viết cũ vẫn dùng được: `lo` (5 lỗ dưới mũi, x = −3; −1,5; 0; 1,5; 3 cm) và `nap` (2 chỗ trên nắp), hoặc `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false). Khi mọi mô-đun nằm đúng các chỗ cũ, cấu hình chuẩn hoá vẫn có `lo` và `nap`; lệch đi thì hai trường đó là `null`. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
+`duoi` là các mô-đun dưới mũi (x tính bằng cm, âm là bên trái), `gam` là các mắt dò line dưới gầm (`{ "loai": "doLine", "x": -2, "z": 5 }`, x, z là tâm mạch đầu đo), `tren` là các mô-đun trên nắp mạch chủ (x, z là tâm thân mô-đun, z tính từ trục bánh về phía mũi; servo viết `{ "loai": "servo", "x": 0, "z": 4.5, "nghieng": 90, "xoay": 90, "tay": "doi", "gan": ["sieuAm", "doLine"] }`, `tay` là `don`, `doi`, `chuThap` hoặc `dia`, `gan` liệt kê cảm biến ở từng đầu tay quay, `null` là trống), `sa` là các siêu âm: `gia` là `truoc`, `trai`, `phai` hoặc `sau`, `u` là vị trí dọc giá (x với giá mũi và đuôi, z với hai giá bên), `goc` tính bằng độ, dương là quay sang trái, `cao` là độ cao tâm cảm biến so với mặt sân (cm, bỏ trống là độ cao mặc định của giá). `son` là màu sơn (mã hex) của khung, tấm cản, vành bánh; `null` là màu gốc. Kiểu viết cũ `sieuAm`, `sieuAmX`, `sieuAmGoc` (một siêu âm trên giá mũi) vẫn dùng được và vẫn có trong cấu hình chuẩn hoá. Quá 8 cảm biến thì bỏ bớt, bỏ siêu âm thêm trước. Mô-đun quá số lượng, ra ngoài vùng gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ. Các kiểu viết cũ vẫn dùng được: `lo` (5 lỗ dưới mũi, x = −3; −1,5; 0; 1,5; 3 cm) và `nap` (2 chỗ trên nắp), hoặc `doLine` (0 đến 3 mắt), `cachMat` (cm giữa hai mắt), `cham`, `gyro`, `gps` (true/false). Khi mọi mô-đun nằm đúng các chỗ cũ, cấu hình chuẩn hoá vẫn có `lo` và `nap`; lệch đi thì hai trường đó là `null`. Cảm biến nào tháo thì mô-đun, dây và hitbox của nó biến mất, khối lượng xe giảm theo (từ 448 g khi tháo hết đến 561 g khi gắn đủ 3 mắt dò line).
 
 ## Vật lí
 
@@ -167,6 +174,7 @@ Những chỗ mô hình chưa đúng hẳn với xe thật, kèm mức sai đã 
 - **Motor.** Chưa mô phỏng điện cảm cuộn dây, độ rơ bánh răng, pin sụt áp.
 - **HC-SR04.** Mô hình tia hình học: không có phản xạ nhiều lần, không có nhiễu chéo. Ngưỡng 30° là cắt đứt, cảm biến thật yếu dần.
 - **TCRT5000.** Đường đáp ứng theo khoảng cách đọc từ đồ thị trong tài liệu kĩ thuật. Hệ số phản xạ hồng ngoại suy ra từ màu nhìn thấy; vật liệu thật có thể khác (nhựa đen bóng vẫn phản xạ hồng ngoại mạnh).
+- **Dây cảm biến trên tay quay.** Không vẽ dây từ cảm biến trên tay quay về mạch chủ (dây thật xoắn theo tay quay); sơ đồ bảng lắp ráp vẽ dây đó từ servo.
 - **Chưa có bút vẽ.** Các bài vẽ hình cần robot chuẩn cũ.
 - **Không nhận màu.** TCRT5000 chỉ phân biệt sáng và tối, nên bài phân loại ô màu không làm được bằng xe này.
 - **Bài cũ căn theo robot cũ.** Vùng chấm điểm sát tường và quãng trôi khi phanh trong các bài cảm biến chạm, khoảng cách được đo theo kích thước và quán tính của robot `co-ban`. Xe mới dài hơn và dừng gấp hơn nên nhiều lời giải mẫu không đạt đủ sao.
@@ -178,6 +186,7 @@ cd public && python3 -m http.server 1337 &
 node scripts/xe/kiem-tra-hitbox.js          # hình vẽ, khối và hình trong Bullet khớp nhau dưới 1 mm
 node scripts/xe/kiem-tra-chuyen-dong.js     # 15 phép đo chuyển động so với lí thuyết
 node scripts/xe/kiem-tra-cam-bien.js        # 27 phép đo cảm biến với đáp số biết trước
+node scripts/xe/kiem-tra-servo.js           # hướng lắp, tay quay, chương trình Python điều khiển servo, bảng lắp ráp
 node scripts/xe/kiem-tra-lap-rap.js         # 1414 bản lắp đều dựng được; kéo thả, bấm chọn, bàn phím, lưu lại
 SIRO_LAP='{"lo":["doLine","cham","doLine","doLine",null]}' node scripts/xe/kiem-tra-hitbox.js   # hitbox của một bản lắp khác
 node scripts/xe/do-fps.js                   # tốc độ khung hình, so với robot chuẩn

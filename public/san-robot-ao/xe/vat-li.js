@@ -268,6 +268,27 @@ var SRAXeVatLi = (function() {
       });
     }
 
+    // Servo: tay quay và cảm biến trên đó là một vật thể, nối với thân bằng bản lề quanh trục servo.
+    // Motor của khớp chạy theo đặc tính SG90 qua bộ điều khiển giữ góc như motor bánh (DongCo).
+    if (banLap.servo && nut.servo) {
+      let sv = banLap.servo, kls = kl.servo, Is = kls.I;
+      // quán tính rôto motor quy về trục ra (nhân tỉ số truyền bình phương) cộng theo phương trục servo:
+      // tay quay rất nhẹ nên chính rôto quyết định servo tăng tốc nhanh chậm ra sao
+      let J = sv.dongCo.quanTinhRoto * sv.dongCo.tiSoTruyen * sv.dongCo.tiSoTruyen, a = sv.truc;
+      this.servo = taoVat(scene, nut.servo, hinhGhep(sv.khoi, kls.tam), kls.m,
+        [Is[0][0] + J * a[0] * a[0], Is[1][1] + J * a[1] * a[1], Is[2][2] + J * a[2] * a[2]], 0.4, 0.1);
+      let pA = bv(V.tru(sv.tam, kl.than.tam)), pB = bv(V.nhan(kls.tam, -1)), aA = bv(sv.truc), aB = bv(sv.truc);
+      let khop = themKhop(new Ammo.btHingeConstraint(thanBody, this.servo.physicsBody, pA, pB, aA, aB, true));
+      [pA, pB, aA, aB].forEach((x) => Ammo.destroy(x));
+      this.khopServo = khop;
+      this.dongCoServo = new DongCo(sv.dongCo, khop, 1);
+      let body = this.servo.physicsBody, dc = this.dongCoServo;
+      this.truocBuoc.push(function(h) {
+        let qThan = docQuay(thanBody), truc = Q.quay(qThan, sv.truc);
+        dc.buoc(h, V.cham(V.tru(docVanTocGoc(body), docVanTocGoc(thanBody)), truc));
+      });
+    }
+
     // Chiều dương của góc bản lề theo quy ước của Bullet (đã đo: tấm cản bung ra là góc âm)
     this.dauCanGat = -1;
 
@@ -320,7 +341,7 @@ var SRAXeVatLi = (function() {
       try { for (let k of self.khop) { world.removeConstraint(k); Ammo.destroy(k); } } catch (e) {}
       self.khop = [];
     };
-    [this.than, this.bi, this.canGat].concat(this.banh.map((b) => b.imp)).forEach(function(imp) {
+    [this.than, this.bi, this.canGat, this.servo].concat(this.banh.map((b) => b.imp)).forEach(function(imp) {
       if (!imp) return;
       let huyGoc = imp.dispose.bind(imp);
       imp.dispose = function() { self.huy(); return huyGoc(); };

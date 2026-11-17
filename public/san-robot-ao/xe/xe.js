@@ -108,6 +108,35 @@ var SRAXe = new function() {
     };
   }
 
+  // ---------- Servo: motor cổng C, góc tuyệt đối 0…180° (lúc lắp ở 90°) ----------
+  // Dùng chung giao diện với motor của GEARS (LargeMotor(OUTPUT_C) trong Python, khối "động cơ C tới vị trí"),
+  // nhưng vị trí là góc thật của tay quay và không vượt khỏi 0…180° như servo thật.
+  function ServoXe(moTa, vl, mesh) {
+    let ts = moTa.dongCo;
+    BanhXe.call(this, { cong: 'outC', d: 2, rong: 1, dongCo: ts }, { dongCo: vl.dongCoServo }, mesh);
+    let b = this, dc = vl.dongCoServo, gocBanh = ts.gocDau;
+    this.type = 'SwivelActuator';         // để bộ sinh mã Python khai báo motorC
+    this.sraServo = true;
+    this.positionAdjustment = -gocBanh;   // góc encoder 0 ứng với 90°
+    this.position = gocBanh; this.prevPosition = gocBanh; this.position_target = gocBanh;
+    let kep = (g) => Math.max(ts.gocMin, Math.min(ts.gocMax, g));
+    let runToPosGoc = this.runToPosition, stopGoc = this.stop, renderGoc = this.render;
+    this.runToPosition = function() { b.position_target = kep(b.position_target); runToPosGoc(); };
+    this.stop = function(giuTai) { stopGoc(typeof giuTai == 'number' ? kep(giuTai) : kep(b.position)); };
+    // servo luôn biết góc tuyệt đối: đặt lại thì chỉ dừng và giữ tại chỗ
+    this.reset = function() { b.mode = b.modes.STOP; b._speed_sp = 0; dc.gocDung = null; b.stop_action = 'hold'; b.stop(); };
+    this.render = function(delta) {
+      renderGoc(delta);
+      // chạy mãi hoặc chạy theo thời gian: tới đầu hành trình thì dừng và giữ ở đó
+      if ((b.mode == b.modes.RUN || b.mode == b.modes.RUN_TIL_TIME) && ((b.position >= ts.gocMax && b._speed_sp > 0) || (b.position <= ts.gocMin && b._speed_sp < 0))) {
+        b.stop(b.position >= ts.gocMax ? ts.gocMax : ts.gocMin);
+      }
+    };
+    // Lệnh gọn cho bảng lắp ráp và kiểm tra: quay tới góc (độ) với tốc độ tối đa
+    this.quayToi = function(goc, tocDo) { b.speed_sp = tocDo || ts.tocDoLenhToiDa; b.position_target = goc; b.runToPosition(); };
+    this.stop();
+  }
+
   // ---------- Dựng xe ----------
   this.dung = function(r, scene, robotStart) {
     let o = r.options;
@@ -145,6 +174,7 @@ var SRAXe = new function() {
     let nut = { than: than, banh: banLap.banh.map((b) => nutGoc('wheel', b.tam)) };
     if (banLap.bi) nut.bi = nutGoc('sraBi', banLap.bi.tam);
     if (banLap.canGat) nut.canGat = nutGoc('sraTamCan', V.cong(banLap.canGat.tam, kl.canGat.tam));
+    if (banLap.servo) nut.servo = nutGoc('sraServo', V.cong(banLap.servo.tam, kl.servo.tam));
 
     // Lưới 3D
     let luoi = SRAXeDungHinh.dungVat(scene, 'sraThan', banLap.than, tam, than);
@@ -164,6 +194,11 @@ var SRAXe = new function() {
       luoi = luoi.concat(SRAXeDungHinh.dungVat(scene, 'sraTamCan', [banLap.canGat], kl.canGat.tam, nut.canGat));
       hitbox.push(SRAXeDungHinh.dungKhungHitbox(scene, 'sraTamCan', banLap.canGat.khoi, kl.canGat.tam, nut.canGat));
     }
+    if (nut.servo) {
+      luoi = luoi.concat(SRAXeDungHinh.dungVat(scene, 'sraServo', [banLap.servo], kl.servo.tam, nut.servo));
+      hitbox.push(SRAXeDungHinh.dungKhungHitbox(scene, 'sraServo', banLap.servo.khoi, kl.servo.tam, nut.servo));
+    }
+    r.sraServoNut = nut.servo || null;
     r.sraLuoi = luoi;
     r.sraHitbox = hitbox.filter((m) => m);
     r.sraHitbox.forEach((m) => m.setEnabled(self.hienHitbox));
@@ -183,6 +218,13 @@ var SRAXe = new function() {
     r.sensorCount = 0;
     r.motorCount = 2;
     r.componentIndex = 0;
+    if (vl.servo) {
+      let s = new ServoXe(banLap.servo, vl, nut.servo);
+      s.componentIndex = r.componentIndex++;
+      r.motorCount++;
+      r.components.push(s);
+      r.sraServo = s;
+    } else r.sraServo = null;
     if (typeof SRAXeCamBien != 'undefined') {
       banLap.camBien.forEach(function(cb) {
         let c = SRAXeCamBien.tao(cb, r, scene, banLap);

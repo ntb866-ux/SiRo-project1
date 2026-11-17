@@ -22,15 +22,19 @@ var SRAXeCamBien = (function() {
   }
   function tuyChon(macDinh, rieng) { return Object.assign({}, macDinh, rieng || {}); }
 
-  // Điểm và hướng trong hệ trục xe → toạ độ sân, theo vị trí hiện tại của thân
-  function Khung(r) {
-    let tam = r.sraKhoiLuong.than.tam;
-    this.docQ = function() { let q = r.body.rotationQuaternion; return [q.x, q.y, q.z, q.w]; };
+  // Điểm và hướng trong hệ trục xe → toạ độ sân, theo vị trí hiện tại của thân.
+  // Cảm biến trên tay quay servo (cb.servo != null): theo vật thể tay quay; điểm và hướng cho theo lúc lắp (servo ở 90°).
+  function Khung(r, cb) {
+    let trenServo = cb && cb.servo != null && r.sraServoNut;
+    let nut = trenServo ? r.sraServoNut : r.body;
+    let tam = trenServo ? V.cong(r.sraBanLap.servo.tam, r.sraKhoiLuong.servo.tam) : r.sraKhoiLuong.than.tam;
+    this.docQ = function() { let q = nut.rotationQuaternion; return [q.x, q.y, q.z, q.w]; };
     this.diem = function(p) {
-      let b = r.body.position;
+      let b = nut.position;
       return V.cong([b.x, b.y, b.z], Q.quay(this.docQ(), V.tru(p, tam)));
     };
     this.huong = function(n) { return Q.quay(this.docQ(), n); };
+    this.nut = nut; this.tam = tam;
   }
   const bVec = (p) => new BABYLON.Vector3(p[0], p[1], p[2]);
 
@@ -54,16 +58,15 @@ var SRAXeCamBien = (function() {
   };
 
   function SieuAm(cb, r, scene) {
-    let self = this, kh = new Khung(r);
+    let self = this, kh = new Khung(r, cb);
     this.type = 'UltrasonicSensor';
     this.sraLoai = 'sieuAm';
     this.tuyChon = tuyChon(SA_MAC_DINH, (r.options.sraCamBien || {}).sieuAm);
     let o = this.tuyChon;
     // Nút đặt tại điểm giữa hai đầu phát/thu (để mã vẽ tia có sẵn của khung thử thách dùng được)
     this.body = new BABYLON.TransformNode('sraSieuAm', scene);
-    this.body.parent = r.body;
-    let tam = r.sraKhoiLuong.than.tam;
-    this.body.position = bVec(V.tru(cb.vt, tam));
+    this.body.parent = kh.nut;                 // trên tay quay servo thì quay theo tay quay
+    this.body.position = bVec(V.tru(cb.vt, kh.tam));
     // mô-đun xoay trên giá: chùm sóng xoay theo (hướng phát là trục +z của nút)
     if (cb.xoay) this.body.rotationQuaternion = new BABYLON.Quaternion(cb.xoay[0], cb.xoay[1], cb.xoay[2], cb.xoay[3]);
     this.body.component = this;
@@ -206,10 +209,10 @@ var SRAXeCamBien = (function() {
   }
 
   function DoLine(cb, r, scene) {
-    let self = this, kh = new Khung(r);
+    let self = this, kh = new Khung(r, cb);
     this.type = 'ColorSensor';            // để thư viện Python và khối "độ sáng phản xạ" có sẵn đọc được
     this.sraLoai = 'doLine';
-    this.sraGam = cb.gam != null;          // mắt gắn dưới gầm (không phải thanh dưới mũi)
+    this.sraGam = cb.gam != null || cb.servo != null;    // mắt không ở thanh dưới mũi (dưới gầm hoặc trên tay quay servo)
     this.tuyChon = tuyChon(DL_MAC_DINH, (r.options.sraCamBien || {}).doLine);
     let o = this.tuyChon;
     this.position = bVec(cb.vt);          // x < 0 là mắt trái (khối "cảm biến trái/giữa/phải" dựa vào đây)
@@ -233,7 +236,11 @@ var SRAXeCamBien = (function() {
     });
 
     this.do = function() {
-      let goc = kh.diem(cb.vt), xuong = kh.huong(cb.huong), ngang = kh.huong([1, 0, 0]), doc = kh.huong([0, 0, 1]);
+      let goc = kh.diem(cb.vt), xuong = kh.huong(cb.huong);
+      // hai hướng vuông góc với hướng nhìn để trải các tia trong cửa sổ quang (mắt dưới mũi: ngang và dọc xe)
+      let ngang = kh.huong(Math.abs(cb.huong[0]) > 0.9 ? [0, 0, 1] : [1, 0, 0]);
+      ngang = V.donVi(V.tru(ngang, V.nhan(xuong, V.cham(ngang, xuong))));
+      let doc = V.co(xuong, ngang);
       let tanG = Math.tan(o.nuaGocNhin * RAD), tong = 0;
       for (let m of mau) {
         // tia xuất phát trong cửa sổ quang, toả ra theo góc nhìn
