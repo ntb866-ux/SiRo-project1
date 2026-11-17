@@ -275,9 +275,57 @@ var SRAXeCamBien = (function() {
     this.docTuongTu = function() { capNhat(); return Math.round(self.tinHieu * 1023); };
     // Ngõ ra số: true khi nền sáng, false khi gặp vạch đen
     this.docSo = function() { capNhat(); return self.so; };
+    // Mức chương trình đọc được (0–1). Chế độ tương tự (chân A0): đúng mức tín hiệu. Chế độ số (chân D0):
+    // ngõ ra của mạch so sánh, chỉ có 0 (vạch tối) hoặc 1 (nền sáng).
+    this.che = cb.che == 'so' ? 'so' : 'tuongTu';
+    const mucDoc = () => self.che == 'so' ? (self.so ? 1 : 0) : self.tinHieu;
     // TCRT5000 không phân biệt được màu: ba kênh bằng nhau, tỉ lệ với hồng ngoại phản xạ
-    this.getRGB = function() { capNhat(); let v = self.tinHieu * 255; return [v, v, v]; };
-    this.getHSV = function() { capNhat(); return [0, 0, self.tinHieu * 100]; };
+    this.getRGB = function() { capNhat(); let v = mucDoc() * 255; return [v, v, v]; };
+    this.getHSV = function() { capNhat(); return [0, 0, mucDoc() * 100]; };
+
+    // ---------- Đèn báo phía trước mắt đo ----------
+    // Chế độ số: đèn xanh lá sáng khi ngõ ra số bật (nền sáng), tắt (xám) khi gặp vạch tối, như đèn báo D0
+    // trên mô-đun thật. Chế độ tương tự: đèn cam, càng đậm khi tín hiệu càng mạnh.
+    // Đèn chỉ để nhìn (không bắt tia, không có khối lượng) và luôn vẽ đè lên xe để thấy được từ mọi góc.
+    let lechDen = cb.servo != null ? V.nhan(cb.huong, 0.6) : [0, 0.35, 0.95];
+    let viTriDen = bVec(V.tru(V.cong(cb.vt, lechDen), kh.tam));
+    function taoDen(ten, hinh, cao) {
+      let m = hinh == 'cau' ? BABYLON.MeshBuilder.CreateSphere(ten, { diameter: cao, segments: 8 }, scene)
+        : BABYLON.MeshBuilder.CreateDisc(ten, { radius: cao / 2, tessellation: 24 }, scene);
+      m.parent = kh.nut; m.position = viTriDen.clone();
+      m.isPickable = false; m.sraXe = true; m.sraDenBao = true; m.renderingGroupId = 1;
+      let vl = new BABYLON.StandardMaterial(ten + 'Vl', scene);
+      vl.disableLighting = true; vl.backFaceCulling = false;
+      vl.diffuseColor = BABYLON.Color3.Black(); vl.specularColor = BABYLON.Color3.Black();
+      m.material = vl;
+      if (hinh != 'cau') m.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+      return m;
+    }
+    this.denBao = taoDen('sraDenBao', 'cau', 0.6);
+    this.quangDen = taoDen('sraQuangDen', 'dia', 2.0);
+    const XANH = BABYLON.Color3.FromHexString('#2ee86a'), TAT = BABYLON.Color3.FromHexString('#3b3f45');
+    const NHAT = BABYLON.Color3.FromHexString('#fff1e0'), DAM = BABYLON.Color3.FromHexString('#e04a0b');
+    function toDen() {
+      let loi = self.denBao.material, quang = self.quangDen.material;
+      if (self.che == 'so') {
+        loi.emissiveColor = self.so ? XANH : TAT; loi.alpha = 1;
+        quang.emissiveColor = XANH; quang.alpha = self.so ? 0.4 : 0;
+      } else {
+        let t = self.tinHieu;
+        // tín hiệu yếu: đèn nhạt, gần như trong suốt; tín hiệu mạnh: cam đậm, đục hẳn
+        loi.emissiveColor = BABYLON.Color3.Lerp(NHAT, DAM, t); loi.alpha = 0.2 + 0.8 * t;
+        quang.emissiveColor = loi.emissiveColor; quang.alpha = 0.04 + 0.4 * t;
+      }
+      self.quangDen.isVisible = quang.alpha > 0.01;
+    }
+    let lanToDen = 0;
+    this.render = function() {
+      let bay = performance.now();
+      if (bay - lanToDen < 50) return;      // 20 lần mỗi giây là đủ cho mắt nhìn
+      lanToDen = bay;
+      capNhat(); toDen();
+    };
+    toDen();
   }
 
   // ======================================================================

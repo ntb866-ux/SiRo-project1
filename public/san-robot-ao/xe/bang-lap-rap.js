@@ -99,7 +99,7 @@ var SRABangLapRap = new function() {
 
   // ---------- Cấu hình: mô-đun và vị trí ----------
   // Mỗi mô-đun đang gắn có một khoá: 'duoi:i', 'tren:i', 'gam:i' (i: thứ tự trái sang phải trong vùng), 'sa:<giá>'
-  const tho = (c) => ({ banh: c.banh, sa: c.sa.map((m) => Object.assign({}, m)), son: Object.assign({}, c.son),
+  const tho = (c) => ({ banh: c.banh, ir: c.ir, sa: c.sa.map((m) => Object.assign({}, m)), son: Object.assign({}, c.son),
     duoi: c.duoi.map((m) => Object.assign({}, m)), tren: c.tren.map((m) => Object.assign({}, m, m.gan ? { gan: m.gan.slice() } : {})), gam: c.gam.map((m) => Object.assign({}, m)) });
   // servo trên nắp và các cảm biến gắn trên tay quay của nó (khoá 'servo:i', i là điểm gắn)
   const servoCua = (c) => c.tren.find((m) => m.loai == 'servo') || null;
@@ -923,6 +923,32 @@ var SRABangLapRap = new function() {
     return true;
   }
 
+  // Chế độ đọc của mắt dò line (chung cho mọi mắt): tương tự (A0) hoặc số (D0)
+  const CHE_IR = [
+    { ma: 'tuongTu', ten: 'Tương tự (A0)', moTa: 'Chương trình đọc mức 0–100: càng sáng càng lớn. Đèn cam trước mỗi mắt càng đậm khi tín hiệu càng mạnh.' },
+    { ma: 'so', ten: 'Số (D0)', moTa: 'Chương trình chỉ đọc 0 (vạch tối) hoặc 100 (nền sáng). Đèn xanh trước mỗi mắt sáng khi ngõ ra bật, tắt khi gặp vạch.' }
+  ];
+  function veIR() {
+    let $s = $('<div class="sra-lr-ir"></div>');
+    $s.append('<div class="sra-lr-tieu-de-nho">Mắt dò line: chế độ đọc</div>');
+    let $h = $('<div class="sra-lr-hang-servo" role="radiogroup" aria-label="Chế độ đọc của mắt dò line"></div>');
+    CHE_IR.forEach(function(k) {
+      let chon = (self.cauHinh.ir || 'tuongTu') == k.ma;
+      $h.append($('<button type="button" class="sra-lr-nut-servo" role="radio"></button>').attr('data-ir', k.ma).text(k.ten)
+        .toggleClass('chon', chon).attr('aria-checked', chon ? 'true' : 'false').attr('title', k.moTa));
+    });
+    $s.append($h);
+    $s.append($('<p class="sra-lr-servo-mo-ta"></p>').text(CHE_IR.find((k) => k.ma == (self.cauHinh.ir || 'tuongTu')).moTa));
+    return $s;
+  }
+  function datIR(che) {
+    let k = CHE_IR.find((x) => x.ma == che);
+    if (!k) return null;
+    let c = tho(self.cauHinh);
+    c.ir = che;
+    return { c: L.chuanHoaCauHinh(c), tb: 'Mắt dò line đọc ở chế độ ' + k.ten.replace(/^./, (a) => a.toLowerCase()) + '.' };
+  }
+
   // Ô chọn màu sơn: mỗi phần một hàng, ô đầu là màu gốc
   function veSon() {
     let $s = $('<div class="sra-lr-son"></div>');
@@ -943,9 +969,14 @@ var SRABangLapRap = new function() {
     return $s;
   }
   function bamThongTin(ev) {
-    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao], [data-servo-truc], [data-servo-goc], [data-servo-tay], [data-servo-gan]')[0];
+    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao], [data-servo-truc], [data-servo-goc], [data-servo-tay], [data-servo-gan], [data-ir]')[0];
     if (!e) return;
     if (bamServo(e)) return;
+    if (e.getAttribute('data-ir')) {
+      let che = e.getAttribute('data-ir');
+      if (apDung(datIR(che))) { let n = $bang.find('[data-ir="' + che + '"]')[0]; if (n) n.focus(); }
+      return;
+    }
     if (e.getAttribute('data-cao')) {
       let khoa = e.getAttribute('data-cao'), buoc = Number(e.getAttribute('data-buoc'));
       if (apDung(datCao(khoa, layMoDun(self.cauHinh, khoa).cao + buoc))) {
@@ -972,7 +1003,7 @@ var SRABangLapRap = new function() {
     $bang.find('.sra-lr-vung-khay').empty().append(veKhay());
     $bang.find('.sra-lr-vung-so-do').empty().append(sd.svg);
     $bang.find('.sra-lr-vung-thong-tin').empty().append(veDanhSachCong(sd.banLap));
-    $bang.find('.sra-lr-vung-son').empty().append(veSon());
+    $bang.find('.sra-lr-vung-son').empty().append(veIR(), veSon());
     $bang.find('.sra-lr-vung-servo').empty().append(servoCua(self.cauHinh) ? veServo(sd.banLap) : '');
     $bang.find('.sra-lr-che-do [data-xem]').each(function() {
       let chon = (this.getAttribute('data-xem') == 'gam') == xemGam;
@@ -1404,7 +1435,7 @@ var SRABangLapRap = new function() {
         veLai('Đã đưa xe về bản lắp mặc định.'); henDungLai();
       });
       $bang.find('.sra-lr-thao-het').on('click', function() {
-        self.cauHinh = L.chuanHoaCauHinh({ sa: [], duoi: [], tren: [], gam: [], son: self.cauHinh.son }); dangCam = null; luu(self.cauHinh);
+        self.cauHinh = L.chuanHoaCauHinh({ sa: [], duoi: [], tren: [], gam: [], son: self.cauHinh.son, ir: self.cauHinh.ir }); dangCam = null; luu(self.cauHinh);
         veLai('Đã tháo hết cảm biến.'); henDungLai();
       });
       veLai('');
@@ -1448,6 +1479,7 @@ var SRABangLapRap = new function() {
   this.xoay = function(goc, khoa) { apDung(datGoc(khoa || 'sa:truoc', goc)); return self.choDungXong(); };
   //   SRABangLapRap.son('khung', '#c62828')    sơn khung xe; mau null là màu gốc
   this.son = function(phan, mau) { apDung(datSon(phan, mau)); return self.choDungXong(); };
+  this.cheIR = function(che) { apDung(datIR(che)); return self.choDungXong(); };
   // Toạ độ trên màn hình của một vị trí thật trên xe (để kiểm tra tự động kéo chuột tới đó)
   this.toaDoManHinh = function(diem) {
     let s = $bang && $bang.find('.sra-lr-so-do')[0];

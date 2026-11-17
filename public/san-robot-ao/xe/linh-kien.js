@@ -435,6 +435,9 @@
       if (c.sa.length > 1) c.sa.pop(); else if (c.gam.length) c.gam.pop(); else if (soGan()) boGan(); else if (c.tren.length) { c.tren.pop(); sv = c.tren.find((m) => m.loai == 'servo'); } else c.duoi.pop();
     }
 
+    // --- Chế độ đọc của mắt dò line: 'tuongTu' (chân A0, mức 0–100) hoặc 'so' (chân D0, chỉ bật/tắt) ---
+    c.ir = vao.ir == 'so' ? 'so' : 'tuongTu';
+
     // --- Sơn ---
     let sonVao = vao.son || {};
     c.son = {};
@@ -620,7 +623,7 @@
         { k: 'dia', d: 0.3, vt: [x, yMatDo, zMat - 0.25], phap: [0, -1, 0], vl: 'kinh_den' }
       ]) });
       let cg = cong();
-      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, lo: c.lo ? X_LO.indexOf(x) : null, duoi: iMat[i], vt: [x, yMatDo, zMat], huong: [0, -1, 0], oMach: oMat[i], ten: ten });
+      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, lo: c.lo ? X_LO.indexOf(x) : null, duoi: iMat[i], vt: [x, yMatDo, zMat], huong: [0, -1, 0], oMach: oMat[i], ten: ten, che: c.ir });
       let xo = oMach[oMat[i]].mieng[0];
       day.push(dayRJ25('day_' + ct.id, 'Dây RJ25 dò line ' + ten, o, oMach[oMat[i]],
         [[x + (xo - x) * 0.15, 2.9, 9.7], [x + (xo - x) * 0.6, 5.2, 9.25], [xo, 7.9, 9.15], [xo, 9.35, 8.45]], [1, 0, 0]));
@@ -639,7 +642,7 @@
         { k: 'dia', d: 0.3, vt: [x, yMatDo, z - 0.25], phap: [0, -1, 0], vl: 'kinh_den' }
       ]) });
       let cg = cong(), so = oGam[i], om = oMach[so];
-      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, z: z, gam: i, vt: [x, yMatDo, z], huong: [0, -1, 0], oMach: so, ten: ten });
+      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, z: z, gam: i, vt: [x, yMatDo, z], huong: [0, -1, 0], oMach: so, ten: ten, che: c.ir });
       // dây: dọc gầm (sát tấm đáy) ra quá vách đuôi, vòng lên sát mặt ngoài vách đuôi, qua mép trên vách rồi tới ổ
       let zRa = o.mieng[2] - DAY.dauCam[2] - 0.5, xo = om.mieng[0];
       let moc = [];
@@ -853,6 +856,7 @@
       camServo.forEach(function(x) {
         let cb = { loai: x.loai, cong: cong(), chiTiet: 'servo', servo: x.i, vtTay: x.vtTay, vt: V.cong(truc, x.vtTay), huong: x.huong, oMach: oGanServo[x.i], ten: 'servo' + (camServo.length > 1 ? ' ' + (x.i + 1) : '') };
         if (x.loai == 'sieuAm') Object.assign(cb, { xoay: x.xoay, dau: x.dau.map((p) => V.cong(truc, p)), gia: null });
+        else cb.che = c.ir;
         camBien.push(cb);
       });
     }
