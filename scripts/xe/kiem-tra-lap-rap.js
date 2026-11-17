@@ -30,6 +30,29 @@ function lanNhau(b, ten) {
   return loi;
 }
 
+// Cảm biến siêu âm và giá của nó không lấn vào phần khác của xe (khung, bánh, motor, mô-đun khác)
+function saLanXe(b, ten) {
+  let loi = [];
+  let hop = (k0, dich) => { let k = H.chuanHoa(k0); if (dich) k.vt = H.V.cong(k.vt, dich); return hopBao(k); };
+  let khac = b.than.map((ct) => ({ id: ct.id, khoi: ct.khoi })).concat(b.banh.map((w) => ({ id: 'banh_' + w.id, khoi: w.khoi, dich: w.tam })));
+  b.cauHinh.sa.forEach(function(m) {
+    let hau = m.gia == 'truoc' ? '' : '_' + m.gia;
+    ['sieuAm' + hau, 'giaSieuAm' + hau].forEach(function(id) {
+      let ct = b.than.find((x) => x.id == id);
+      for (const o of khac) {
+        if (o.id == 'sieuAm' + hau || o.id == 'giaSieuAm' + hau || o.id.indexOf('day_') == 0 || (id.indexOf('gia') == 0 && o.id == 'khung')) continue;
+        let trung = ct.khoi.some((a) => a.k != 'lang' && o.khoi.some((c) => {
+          if (c.k == 'lang') return false;
+          let A = hop(a), C = hop(c, o.dich);
+          return [0, 1, 2].every((t) => A[t][0] < C[t][1] - 0.01 && C[t][0] < A[t][1] - 0.01);
+        }));
+        if (trung) loi.push(id + ' lấn vào ' + o.id + ': ' + ten);
+      }
+    });
+  });
+  return loi;
+}
+
 // Đặt tự do: mọi vị trí trên lưới 0,5 cm mà bảng cho phép đều dựng được và không mô-đun nào lấn nhau
 function phanTuDo(bc) {
   let soBan = 0, loi = [];
@@ -76,6 +99,23 @@ function phanTuDo(bc) {
       if (c && c.sa.length != 2) loi.push('bỏ mất siêu âm ' + gia);
     }
   }
+  // độ cao: mỗi giá ở thấp nhất, mặc định, cao nhất, với góc và vị trí ở hai đầu; không lấn vào khung, bánh, mô-đun khác
+  let soCao = 0;
+  for (const gia of L.DS_GIA) for (const cao of [L.GIA[gia].cao[0], L.GIA[gia].y, L.GIA[gia].cao[1]]) for (const g of [-45, 0, 45]) {
+    let gh = L.gioiHanU(gia, g);
+    for (const u of [gh[0], gh[1]]) {
+      let sa = [{ gia: gia, u: u, goc: g, cao: cao }];
+      if (gia != 'truoc') sa.unshift({ gia: 'truoc' });
+      let c = thu({ sa: sa }, 'siêu âm ' + gia + ' cao ' + cao + ' ' + g + '° u = ' + u);
+      if (!c) continue;
+      soCao++;
+      let m = c.sa.find((x) => x.gia == gia);
+      if (!m || m.cao != cao) loi.push('độ cao bị đổi: ' + gia + ' ' + cao);
+      let b = L.lapXe(c), cb = b.camBien.find((x) => x.loai == 'sieuAm' && x.gia == gia);
+      if (Math.abs(cb.vt[1] - cao) > 1e-6) loi.push('đầu đo không ở đúng độ cao: ' + gia + ' ' + cao + ' (' + cb.vt[1] + ')');
+      loi = loi.concat(saLanXe(b, gia + ' cao ' + cao + ' ' + g + '° u = ' + u));
+    }
+  }
   // đủ 4 siêu âm cùng xoay 45° (cùng chiều và ngược chiều), kèm 2 mắt dò line, chạm, gyro: vừa đủ 8 ổ
   for (const g of [-45, 45]) for (const s of [1, -1]) {
     let sa = L.DS_GIA.map((gia, i) => ({ gia: gia, u: L.gioiHanU(gia, g)[i % 2], goc: (i % 2 ? s : 1) * g }));
@@ -93,7 +133,13 @@ function phanTuDo(bc) {
   }
   // chỗ không hợp lệ thì bị bỏ
   let c = L.chuanHoaCauHinh({ duoi: [{ loai: 'doLine', x: 0 }, { loai: 'doLine', x: 1 }, { loai: 'cham', x: 3.5 }], tren: [{ loai: 'gyro', x: 0, z: 4 }, { loai: 'gps', x: 1, z: 4 }] });
-  bc.dong(loi.length == 0, soBan + ' bản lắp đặt tự do (' + soCap + ' cặp vị trí gyro, GPS) đều dựng được, mô-đun không lấn nhau, dây không bắt chéo', loi.length ? loi.slice(0, 4).join(' | ') : '');
+  bc.dong(loi.length == 0, soBan + ' bản lắp đặt tự do (' + soCao + ' bản đổi độ cao siêu âm) (' + soCap + ' cặp vị trí gyro, GPS) đều dựng được, mô-đun không lấn nhau, dây không bắt chéo', loi.length ? loi.slice(0, 4).join(' | ') : '');
+  let cc = L.chuanHoaCauHinh({ sa: [{ gia: 'truoc', cao: 2 }, { gia: 'trai', cao: 20 }, { gia: 'sau', cao: 'x' }] });
+  bc.dong(cc.sa.map((m) => m.cao).join() == '5.6,13,5.6', 'Độ cao ngoài khoảng cho phép bị kẹp lại (giá mũi thấp nhất 5,6 cm, giá bên cao nhất 13 cm), giá trị hỏng về mặc định', cc.sa.map((m) => m.cao).join(' | '));
+  // TCRT5000: đầu phát và đầu thu nằm dọc thân xe (cùng x, khác z), đầu phát phía mũi
+  let tt = L.lapXe({}).than.find((x) => x.id == 'doLine1').trangTri.filter((t) => t.k == 'dia');
+  let phat = tt.find((t) => t.vl == 'led_hong_ngoai'), thu2 = tt.find((t) => t.vl == 'kinh_den');
+  bc.dong(phat && thu2 && Math.abs(phat.vt[0] - thu2.vt[0]) < 1e-6 && phat.vt[2] - thu2.vt[2] > 0.4, 'Mắt dò line: đầu phát và đầu thu hồng ngoại xếp dọc theo thân xe, đầu phát phía mũi', phat && 'phát z = ' + phat.vt[2] + ', thu z = ' + thu2.vt[2]);
   let c9 = L.chuanHoaCauHinh({ sa: L.DS_GIA.map((g) => ({ gia: g })) });
   bc.dong(c9.sa.length == 3 && c9.sa.length + c9.duoi.length + c9.tren.length == 8, 'Bản mặc định thêm 4 siêu âm (9 cảm biến): bỏ bớt siêu âm sau cho vừa 8 ổ', c9.sa.map((m) => m.gia).join());
   bc.dong(c.duoi.length == 1 && c.tren.length == 1, 'Mắt cách nhau dưới 1,5 cm, cảm biến chạm ra ngoài 3 cm, hai mô-đun chồng nhau trên nắp: bị bỏ', JSON.stringify([c.duoi, c.tren]));
@@ -284,6 +330,24 @@ function phanMot(bc) {
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai(); hsa = await huongSa();
   bc.dong(t.c.sa[1].goc == 15 && /^trai -0\.97 -0\.26$/.test(hsa[1]), 'Núm xoay của giá trái: phím mũi tên trái xoay 15° sang trái (chếch về đuôi xe)', hsa[1]);
+  // độ cao: bấm + hai lần trên giá trái, PageDown một lần trên siêu âm mũi
+  let yTruoc = await page.evaluate(() => robot.components.filter((x) => x.type == 'UltrasonicSensor').map((x) => BABYLON.Vector3.TransformCoordinates(x.body.getAbsolutePosition(), robot.body.getWorldMatrix().clone().invert()).y));
+  await page.click('.sra-lr-nut-cao[data-cao="sa:trai"][data-buoc="0.5"]');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  await page.click('.sra-lr-nut-cao[data-cao="sa:trai"][data-buoc="0.5"]');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  let ySau = await page.evaluate(() => robot.components.filter((x) => x.type == 'UltrasonicSensor').map((x) => BABYLON.Vector3.TransformCoordinates(x.body.getAbsolutePosition(), robot.body.getWorldMatrix().clone().invert()).y));
+  let chuCao = await page.locator('.sra-lr-hang-cao[data-khoa="sa:trai"] output').textContent();
+  bc.dong(t.c.sa[1].cao == 9 && Math.abs((ySau[1] - ySau[0]) - (yTruoc[1] - yTruoc[0]) - 1) < 0.01 && chuCao == '9 cm',
+    'Bấm + hai lần ở hàng độ cao của siêu âm trái: tâm cảm biến từ 8 lên 9 cm, trên xe 3D cao hơn siêu âm mũi thêm đúng 1 cm', ((ySau[1] - ySau[0]) - (yTruoc[1] - yTruoc[0])).toFixed(3) + ' cm');
+  await page.focus('[data-cho="sa:truoc"]');
+  await page.keyboard.press('PageDown');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  t = await trangThai();
+  bc.dong(t.c.sa[0].cao == 5.6 && /thấp nhất/.test(t.tb), 'Phím PageDown trên siêu âm mũi đang ở thấp nhất: không hạ, có lời giải thích', t.tb);
+  await chup('bang-lap-rap-do-cao');
+
   // nút × trên sơ đồ
   await page.hover('[data-cho="sa:trai"] .sra-lr-khung', { force: true });
   await page.click('[data-cho="sa:trai"] .sra-lr-thao');

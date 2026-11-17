@@ -156,6 +156,9 @@ var SRAXeVatLi = (function() {
       let w0 = self.w0 * self.heSo, Ts = ts.momenKet * self.heSo, Tf = ts.momenMaSat;
       let u = 0, capDien = true;
       let cheDo = self.cheDo, dich = self.dich;
+      // lệnh hỏng (NaN): dừng hãm thay vì để NaN làm hướng mô-men ngược và xung lực vô nghĩa
+      if (!isFinite(dich)) { cheDo = 'giu'; dich = self.goc; self.dich = dich; self.cheDo = 'giu'; }
+      if (!isFinite(self.tich)) self.tich = 0;
       if (cheDo == 'tocDo' && self.gocDung != null) {
         let con = self.gocDung - self.goc, xa = Math.abs(con);
         if (xa < self.vungGiu) { cheDo = 'giu'; dich = self.gocDung; }

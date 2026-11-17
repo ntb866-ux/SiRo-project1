@@ -73,7 +73,9 @@ var SRAXe = new function() {
     };
 
     this.setMotorSpeed = function(delta, nguoc, tocDoDich) {
-      let dich = tocDoDich == null ? b.speed_sp : tocDoDich;
+      let dich = Number(tocDoDich == null ? b.speed_sp : tocDoDich);
+      if (!isFinite(dich)) dich = 0;      // lệnh tốc độ hỏng (undefined, NaN): coi như 0, không để NaN lọt xuống motor
+      if (!isFinite(b._speed_sp)) b._speed_sp = 0;
       let diff = dich - b._speed_sp, gh = delta * b.maxAcceleration;
       if (diff > gh) { b._speed_sp += gh; b.state = b.states.RAMPING; }
       else if (diff < -gh) { b._speed_sp -= gh; b.state = b.states.RAMPING; }
