@@ -170,7 +170,16 @@
   // siêu âm lấy ổ trước còn trống gần nó nhất; gyro, GPS cắm ổ sau (6…8) cũng theo thứ tự trái sang phải.
   const X_LO = [-3, -1.5, 0, 1.5, 3];
   const X_NAP = [-3, 3], O_NAP = [6, 8];
-  const TOI_DA = { doLine: 3, cham: 1, sieuAm: 4, gyro: 1, gps: 1 };
+  const TOI_DA = { doLine: 7, cham: 1, sieuAm: 4, gyro: 1, gps: 1 };   // số có trong khay (mắt dò line: 3 dưới mũi + 4 dưới gầm)
+  const TOI_DA_DUOI = { doLine: 3, cham: 1 };      // thanh dưới mũi
+  // Gầm xe (dưới tấm đáy): mắt dò line TCRT5000 đặt ở (x, z) bất kì. Mạch đầu đo 1,4 × 1,5 cm treo dưới tấm đáy,
+  // ổ RJ25 nằm ngay sau mạch (cũng treo dưới tấm đáy, cách sân 5 mm), dây chạy dọc gầm ra phía đuôi rồi vòng lên.
+  //   x: tâm mạch cách giữa tối đa GAM.x để mạch nằm gọn dưới tấm đáy (rộng 9 cm)
+  //   z: từ GAM.z0 (ổ cắm và đầu cắm phía sau còn nằm dưới tấm đáy) tới GAM.z1 (trước đó là thanh dưới mũi)
+  //   vỏ bi tự do chiếm |x| < 1,6, z 9,4…11,6: mạch không được lấn vào
+  //   dây của mô-đun chạy thẳng ra sau, nên hai mô-đun gầm phải lệch nhau ít nhất KC_GAM theo bề ngang
+  const GAM = { x: 3.75, z0: -0.5, z1: 10.5, toiDa: 4, nuaRong: 0.75, nuaDai: 0.75, xBi: 1.6, zBi: 9.4 };
+  const KC_GAM = 1.5;
   const SO_O = 8;                                  // mạch chủ có 8 ổ RJ25: tổng số cảm biến không quá 8
   // Bốn giá siêu âm, mỗi giá một cảm biến. Mỗi giá có: mặt bắt mô-đun (mat, theo trục pháp tuyến n), độ cao
   // tâm mô-đun (y), trục trượt (truc: toạ độ u là x hoặc z) và góc quay từ hướng +z tới hướng n (gocN, độ).
@@ -246,6 +255,14 @@
     if (gan) return 'Hai mô-đun dưới mũi phải cách nhau ít nhất ' + so1(KC_DUOI) + ' cm vì mỗi mô-đun rộng 1,5 cm.';
     return null;
   }
+  function loiGam(x, z, ds) {
+    if (Math.abs(x) > GAM.x + 1e-6) return 'Mắt dò line dưới gầm chỉ đặt được cách giữa tối đa ' + so1(GAM.x) + ' cm, xa hơn thì mạch lòi ra ngoài tấm đáy.';
+    if (z < GAM.z0 - 1e-6) return 'Mắt dò line dưới gầm phải đặt từ z = ' + so1(GAM.z0) + ' cm trở lên: phía sau mạch còn ổ cắm và đầu dây.';
+    if (z > GAM.z1 + 1e-6) return 'Mắt dò line dưới gầm chỉ đặt tới z = ' + so1(GAM.z1) + ' cm, trước đó là thanh dưới mũi xe.';
+    if (Math.abs(x) < GAM.xBi + GAM.nuaRong - 1e-6 && z + GAM.nuaDai > GAM.zBi + 1e-6) return 'Chỗ này đụng vỏ bi tự do. Dời mắt dò line ra sau hoặc sang bên.';
+    if (ds.some((m) => Math.abs(m.x - x) < KC_GAM - 1e-6)) return 'Hai mắt dò line dưới gầm phải lệch nhau ít nhất ' + so1(KC_GAM) + ' cm theo bề ngang, vì dây của mỗi mắt chạy thẳng dọc gầm ra phía đuôi.';
+    return null;
+  }
   function loiNap(m, ds) {
     let mi = mienNap(m.loai);
     if (m.x < mi.x0 - 1e-6 || m.x > mi.x1 + 1e-6 || m.z < mi.z0 - 1e-6 || m.z > mi.z1 + 1e-6) return 'Mô-đun và ổ cắm của nó phải nằm gọn trên nắp mạch chủ.';
@@ -294,13 +311,23 @@
     let dem = { doLine: 0, cham: 0 };
     c.duoi = [];
     duoiVao.forEach(function(m) {
-      if (!m || (m.loai != 'doLine' && m.loai != 'cham') || dem[m.loai] >= TOI_DA[m.loai]) return;
+      if (!m || (m.loai != 'doLine' && m.loai != 'cham') || dem[m.loai] >= TOI_DA_DUOI[m.loai]) return;
       let x = tron2(Number(m.x) || 0);
       if (loiDuoi(m.loai, x, c.duoi)) return;
       dem[m.loai]++;
       c.duoi.push({ loai: m.loai, x: x });
     });
     c.duoi.sort((a, b) => a.x - b.x);
+
+    // --- Dưới gầm ---
+    c.gam = [];
+    (Array.isArray(vao.gam) ? vao.gam : []).forEach(function(m) {
+      if (!m || m.loai != 'doLine' || c.gam.length >= GAM.toiDa) return;
+      let x = tron2(Number(m.x) || 0), z = tron2(Number(m.z) || 0);
+      if (loiGam(x, z, c.gam)) return;
+      c.gam.push({ loai: 'doLine', x: x, z: z });
+    });
+    c.gam.sort((a, b) => a.x - b.x);
 
     // --- Trên nắp ---
     let trenVao;
@@ -320,8 +347,8 @@
     c.tren.sort((a, b) => a.x - b.x);
 
     // --- Mạch chủ chỉ có 8 ổ: bớt siêu âm (từ giá cuối danh sách), rồi mô-đun trên nắp, rồi dưới mũi ---
-    while (c.sa.length + c.duoi.length + c.tren.length > SO_O) {
-      if (c.sa.length > 1) c.sa.pop(); else if (c.tren.length) c.tren.pop(); else c.duoi.pop();
+    while (c.sa.length + c.duoi.length + c.tren.length + c.gam.length > SO_O) {
+      if (c.sa.length > 1) c.sa.pop(); else if (c.gam.length) c.gam.pop(); else if (c.tren.length) c.tren.pop(); else c.duoi.pop();
     }
 
     // --- Sơn ---
@@ -347,6 +374,7 @@
     c.nap = deuTrenNap ? tenNap : null;
     let mat = c.duoi.filter((m) => m.loai == 'doLine');
     c.doLine = mat.length;
+    c.doLineGam = c.gam.length;
     c.cham = c.duoi.some((m) => m.loai == 'cham');
     if (mat.length == 2) c.cachMat = tron2(mat[1].x - mat[0].x);
     c.gyro = c.tren.some((m) => m.loai == 'gyro');
@@ -392,6 +420,13 @@
       ung.sort((a, b) => Math.hypot(viTriO(a)[0] - p[0], viTriO(a)[1] - p[1]) - Math.hypot(viTriO(b)[0] - p[0], viTriO(b)[1] - p[1]) || a - b);
       oSa[m.gia] = ung[0];
       daDung.push(ung[0]);
+    });
+    // Mắt dò line dưới gầm: dây vòng lên sau vách đuôi, nên lấy ổ còn trống gần phía đuôi nhất (hàng sau trước)
+    let oGam = c.gam.map(function(m) {
+      let ung = [1, 2, 3, 4, 5, 6, 7, 8].filter((o) => daDung.indexOf(o) < 0);
+      ung.sort((a, b) => Math.hypot(viTriO(a)[0] - m.x, viTriO(a)[1] + 4.6) - Math.hypot(viTriO(b)[0] - m.x, viTriO(b)[1] + 4.6) || a - b);
+      daDung.push(ung[0]);
+      return ung[0];
     });
     let R = TS.rBanh, e = TS.dayKhung, y0 = TS.yDay, y1 = y0 + e;   // y1: mặt trên tấm đáy
     let than = [], day = [], camBien = [];
@@ -495,6 +530,29 @@
       let xo = oMach[oMat[i]].mieng[0];
       day.push(dayRJ25('day_' + ct.id, 'Dây RJ25 dò line ' + ten, o, oMach[oMat[i]],
         [[x + (xo - x) * 0.15, 2.9, 9.7], [x + (xo - x) * 0.6, 5.2, 9.25], [xo, 7.9, 9.15], [xo, 9.35, 8.45]], [1, 0, 0]));
+    });
+
+    // --- Mắt dò line dưới gầm: mạch đầu đo treo dưới tấm đáy, ổ RJ25 ngay sau mạch, dây chạy dọc gầm ra đuôi ---
+    c.gam.forEach(function(m, i) {
+      let x = m.x, z = m.z, ten = 'gầm ' + (i + 1);
+      let o = oRJ25([x, y0 - KT_O[1] / 2, z - GAM.nuaDai - KT_O[2] / 2], 'sau');
+      let ct = them({ id: 'doLineGam' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [
+        o.khoi,
+        hop([1.4, 0.5, 1.5], [x, y0 - 0.25, z], 'mach_den', { vat: 0.04 }),
+        hop([0.58, 0.7, 1.02], [x, y0 - 0.5 - 0.35, z], 'nhua_den')
+      ], trangTri: o.trangTri.concat([
+        { k: 'dia', d: 0.3, vt: [x, yMatDo, z + 0.25], phap: [0, -1, 0], vl: 'led_hong_ngoai' },
+        { k: 'dia', d: 0.3, vt: [x, yMatDo, z - 0.25], phap: [0, -1, 0], vl: 'kinh_den' }
+      ]) });
+      let cg = cong(), so = oGam[i], om = oMach[so];
+      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, z: z, gam: i, vt: [x, yMatDo, z], huong: [0, -1, 0], oMach: so, ten: ten });
+      // dây: dọc gầm (sát tấm đáy) ra quá vách đuôi, vòng lên sát mặt ngoài vách đuôi, qua mép trên vách rồi tới ổ
+      let zRa = o.mieng[2] - DAY.dauCam[2] - 0.5, xo = om.mieng[0];
+      let moc = [];
+      if (zRa - 1.0 > -3.4) moc.push([x, y0 - 0.25, zRa - 1.0]);
+      moc.push([x, y0 - 0.3, -3.9], [x, y0 + 0.4, -4.35], [x, 4.4, -4.3], [x + (xo - x) * 0.3, 5.75, -4.1]);
+      if (so <= 5) moc.push([x + (xo - x) * 0.7, 9.8, -1.0], [xo, 10.2, 4.5]);
+      day.push(dayRJ25('day_' + ct.id, 'Dây RJ25 dò line ' + ten, o, om, moc, [1, 0, 0]));
     });
 
     // --- Cảm biến siêu âm kiểu HC-SR04 trên các giá (trước, trái, phải, sau) ---
@@ -744,5 +802,5 @@
   }
 
   return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, gioiHanCao: gioiHanCao, nganBanh: nganBanh, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
-    gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, chongNap: chongNap, mienNap: mienNap, ganO: ganO, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
+    gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, loiGam: loiGam, GAM: GAM, KC_GAM: KC_GAM, TOI_DA_DUOI: TOI_DA_DUOI, chongNap: chongNap, mienNap: mienNap, ganO: ganO, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
 });

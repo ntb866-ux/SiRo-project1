@@ -209,6 +209,7 @@ var SRAXeCamBien = (function() {
     let self = this, kh = new Khung(r);
     this.type = 'ColorSensor';            // để thư viện Python và khối "độ sáng phản xạ" có sẵn đọc được
     this.sraLoai = 'doLine';
+    this.sraGam = cb.gam != null;          // mắt gắn dưới gầm (không phải thanh dưới mũi)
     this.tuyChon = tuyChon(DL_MAC_DINH, (r.options.sraCamBien || {}).doLine);
     let o = this.tuyChon;
     this.position = bVec(cb.vt);          // x < 0 là mắt trái (khối "cảm biến trái/giữa/phải" dựa vào đây)

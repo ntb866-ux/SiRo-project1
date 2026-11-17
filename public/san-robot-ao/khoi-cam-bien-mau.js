@@ -91,9 +91,12 @@
       for (let i = 1; i <= 20; i++) {
         let c = robot.getComponentByPort('in' + i);
         if (!c) break;
-        if (c.type == 'ColorSensor') ds.push({ cong: String(i), x: c.position ? c.position.x : 0 });
+        if (c.type == 'ColorSensor') ds.push({ cong: String(i), x: c.position ? c.position.x : 0, gam: !!c.sraGam });
       }
     }
+    // xe lắp mô-đun có cả mắt dưới mũi lẫn mắt dưới gầm: trái/giữa/phải là các mắt dưới mũi
+    // (mắt dưới gầm đọc bằng khối chọn theo số cổng)
+    if (ds.some((c) => !c.gam)) ds = ds.filter((c) => !c.gam);
     let kq = { GIUA: null, TRAI: null, PHAI: null };
     if (!ds.length) return kq;
     kq.GIUA = ds.reduce((a, b) => Math.abs(b.x) < Math.abs(a.x) ? b : a).cong;

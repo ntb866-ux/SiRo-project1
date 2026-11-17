@@ -175,3 +175,16 @@
 .sra-lr-gia-tri-cao { min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
 .sra-lr-mien-cao { color: var(--lr-phu); font-size: 11px; margin-left: 2px; white-space: nowrap; }
 .sra-lr-gia-tri-cao { white-space: nowrap; }
+
+/* Hướng nhìn sơ đồ: từ trên xuống hoặc gầm xe từ dưới lên */
+.sra-lr-che-do { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: solid 1px var(--lr-vien); border-radius: 7px; overflow: hidden; }
+.sra-lr-che-do button {
+  border: 0; padding: 5px 4px; background: #fff; color: var(--lr-phu); font: inherit; font-size: 12.5px; cursor: pointer;
+}
+.sra-lr-che-do button + button { border-left: solid 1px var(--lr-vien); }
+.sra-lr-che-do button.chon { background: var(--lr-chinh); color: #fff; font-weight: 600; }
+.sra-lr-che-do button:not(.chon):hover { color: var(--lr-chinh); }
+.sra-lr-vung-gam { fill: rgba(255, 255, 255, 0.12); }
+.sra-lr-vung-gam.nhan-duoc { fill: rgba(220, 252, 231, 0.3); }
+.sra-lr-vung-gam.nhan-duoc.dang-tren { fill: rgba(134, 239, 172, 0.35); }
+.sra-lr-nen-gam polygon, .sra-lr-nen-gam circle { stroke: rgba(15, 23, 42, 0.5); }
