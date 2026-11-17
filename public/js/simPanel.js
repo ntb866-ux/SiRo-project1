@@ -738,6 +738,18 @@ var simPanel = new function() {
 
   // switch camera
   this.switchCamera = function(e) {
+    // Máy quay góc thứ ba kiểu game đua xe (san-robot-ao/may-quay.js)
+    if (typeof SRAMayQuay != 'undefined') {
+      if (e.currentTarget.classList.contains('cameraChase')) {
+        let goc = e.currentTarget.getAttribute('data-goc');
+        SRAMayQuay.chon(goc);
+        self.$camera.html(e.currentTarget.innerHTML);
+        self.$cameraSelector.addClass('closed');
+        e.stopPropagation();
+        return;
+      }
+      SRAMayQuay.chon(null);
+    }
     if (e.currentTarget.classList.contains('cameraArc')) {
       babylon.setCameraMode('arc');
       self.$camera.html('<span class="icon-cameraArc"></span>');
@@ -762,8 +774,10 @@ var simPanel = new function() {
   // Toggle camera selector
   this.toggleCameraSelector = function() {
     let current = self.$camera.children()[0].className.replace('icon-', '');
+    self.$cameraSelector.find('.cameraChase').each(function() { this.classList.toggle('dang-chon', 'chase-' + this.getAttribute('data-goc') == current); });
     self.$cameraSelector.children().removeClass('hide');
-    self.$cameraSelector.find('.' + current).addClass('hide');
+    self.$cameraSelector.find('.hide').removeClass('hide');
+    self.$cameraSelector.children('.' + current).addClass('hide');
     self.$cameraSelector.toggleClass('closed');
   };
 
