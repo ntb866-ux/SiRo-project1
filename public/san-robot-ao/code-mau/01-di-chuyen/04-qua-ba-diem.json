@@ -1,0 +1,40 @@
+{
+  "bai": "01-di-chuyen/04-qua-ba-diem",
+  "tenXe": "Xe gọn chỉ có con quay",
+  "giaiThichXe": "Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối \"đi … cm\" và \"quay … độ\" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#1565c0"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "di",
+      75
+    ],
+    [
+      "phai",
+      90
+    ],
+    [
+      "di",
+      75
+    ],
+    [
+      "lui",
+      125
+    ]
+  ],
+  "giaiThichCode": "Tiến tới điểm 1, rẽ phải tới điểm 2, rồi lùi thẳng về điểm 3 thay vì quay đầu.",
+  "sao": 3
+}

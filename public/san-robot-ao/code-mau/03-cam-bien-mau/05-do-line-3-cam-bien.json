@@ -1,0 +1,140 @@
+{
+  "bai": "03-cam-bien-mau/05-do-line-3-cam-bien",
+  "tenXe": "Xe ba mắt dưới gầm",
+  "giaiThichXe": "Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh chỉ 4 cm (không đặt dưới mũi). Ở góc vuông xe phải quay tại chỗ; mắt càng xa trục bánh thì khi quay càng quét ngang nhanh, lướt qua đường rộng 2 cm mà chương trình không kịp đọc. Đặt gần trục, mắt quét chậm và bắt được đường.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [
+      {
+        "loai": "doLine",
+        "x": -3,
+        "z": 4
+      },
+      {
+        "loai": "doLine",
+        "x": 0,
+        "z": 4
+      },
+      {
+        "loai": "doLine",
+        "x": 3,
+        "z": 4
+      }
+    ],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#ef6c00"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lapDen",
+      [
+        "va",
+        [
+          "va",
+          [
+            "<",
+            [
+              "sang",
+              "TRAI"
+            ],
+            75
+          ],
+          [
+            "<",
+            [
+              "sang",
+              "PHAI"
+            ],
+            75
+          ]
+        ],
+        [
+          ">",
+          [
+            "sang",
+            "GIUA"
+          ],
+          30
+        ]
+      ],
+      [
+        [
+          "neu",
+          [
+            "<",
+            [
+              "sang",
+              "TRAI"
+            ],
+            50
+          ],
+          [
+            [
+              "banh",
+              -15,
+              30
+            ]
+          ],
+          [
+            [
+              "neu",
+              [
+                "<",
+                [
+                  "sang",
+                  "PHAI"
+                ],
+                50
+              ],
+              [
+                [
+                  "banh",
+                  30,
+                  -15
+                ]
+              ],
+              [
+                [
+                  "neu",
+                  [
+                    "<",
+                    [
+                      "sang",
+                      "GIUA"
+                    ],
+                    50
+                  ],
+                  [
+                    [
+                      "banh",
+                      30,
+                      30
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "di",
+      21
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Mắt trái thấy đen thì quay trái tại chỗ, mắt phải thấy đen thì quay phải, chỉ mắt giữa thấy đen thì đi thẳng. Cả ba mắt đều thấy trắng thì giữ nguyên lệnh trước (đang quay thì quay tiếp cho tới khi bắt lại đường), nên khối \"nếu\" cuối không có nhánh \"không thì\". Ô đích xanh lá hắt hồng ngoại khoảng 57 (nền trắng 90, đường đen 11): khi hai mắt ngoài cùng dưới 75 mà mắt giữa trên 30 thì xe đã vào ô đích (ở góc vuông luôn có một mắt ngoài còn thấy trắng), đi thêm 21 cm cho tâm xe vào giữa ô.",
+  "sao": 3
+}

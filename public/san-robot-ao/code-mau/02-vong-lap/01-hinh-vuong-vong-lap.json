@@ -1,0 +1,38 @@
+{
+  "bai": "02-vong-lap/01-hinh-vuong-vong-lap",
+  "tenXe": "Xe gọn chỉ có con quay",
+  "giaiThichXe": "Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối \"đi … cm\" và \"quay … độ\" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#1565c0"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lap",
+      4,
+      [
+        [
+          "di",
+          100
+        ],
+        [
+          "phai",
+          90
+        ]
+      ]
+    ]
+  ],
+  "giaiThichCode": "Vòng lặp 4 lần, mỗi lần đi 100 cm rồi quay phải 90°: 3 khối thay cho 8 khối.",
+  "sao": 3
+}

@@ -1,0 +1,30 @@
+{
+  "bai": "03-hieu-chinh/02-quay-goc-vuong",
+  "tenXe": "Xe trần (không cảm biến)",
+  "giaiThichXe": "Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [],
+    "son": {
+      "khung": "#9e9e9e"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "quayBanh",
+      161,
+      -161,
+      "DO"
+    ],
+    [
+      "quayBanh",
+      3,
+      3,
+      "VONG"
+    ]
+  ],
+  "giaiThichCode": "Quay tại chỗ: mỗi bánh lăn trên vòng tròn đường kính bằng khoảng cách hai bánh (11,4 cm). Thân quay 90° thì mỗi bánh lăn 90 × 11,4 ÷ 6,37 ≈ 161° quanh trục của nó. Sau đó đi 3 vòng = 60 cm.",
+  "sao": 3
+}

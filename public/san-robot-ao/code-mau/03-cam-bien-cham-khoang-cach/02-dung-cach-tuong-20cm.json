@@ -1,0 +1,51 @@
+{
+  "bai": "03-cam-bien-cham-khoang-cach/02-dung-cach-tuong-20cm",
+  "tenXe": "Xe siêu âm mũi",
+  "giaiThichXe": "Một siêu âm HC-SR04 trên giá phía mũi, nhìn thẳng ra trước. Không cần công tắc chạm vì xe không được đụng tường.",
+  "xe": {
+    "sa": [
+      {
+        "gia": "truoc",
+        "u": 0,
+        "goc": 0,
+        "cao": 5.6
+      }
+    ],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#2e7d32"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "toc",
+      30
+    ],
+    [
+      "chay"
+    ],
+    [
+      "cho",
+      [
+        "<",
+        [
+          "kc"
+        ],
+        20.5
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Đi chậm (30 %) để quãng trôi khi phanh ngắn, chờ khoảng cách nhỏ hơn 20,5 cm thì dừng.",
+  "sao": 3
+}

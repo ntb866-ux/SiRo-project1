@@ -1,0 +1,66 @@
+{
+  "bai": "03-cam-bien-cham-khoang-cach/03-do-xe-giua-hai-xe",
+  "tenXe": "Xe siêu âm mũi",
+  "giaiThichXe": "Một siêu âm trên giá phía mũi đo khe trống tới xe đỗ phía trước.",
+  "xe": {
+    "sa": [
+      {
+        "gia": "truoc",
+        "u": 0,
+        "goc": 0,
+        "cao": 5.6
+      }
+    ],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#2e7d32"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "di",
+      [
+        "/",
+        [
+          "-",
+          [
+            "kc"
+          ],
+          3
+        ],
+        2
+      ]
+    ]
+  ],
+  "giaiThichCode": "Khe trước còn kc cm, đi một nửa khe (trừ phần hở phía sau) là xe nằm giữa hai xe.",
+  "sao": 3,
+  "lechBai": {
+    "viTriBatDau": [
+      0,
+      -8
+    ],
+    "vung": {
+      "choDo": [
+        0,
+        -8.5
+      ],
+      "giua": [
+        0,
+        -8.5
+      ],
+      "chinhGiua": [
+        0,
+        -8.5
+      ]
+    }
+  },
+  "ghiChu": "Robot của bài có đuôi dài (12 cm sau trục bánh), xe lắp mô-đun đuôi ngắn (4 cm) mà mũi dài. Khi chạy bằng xe này, chỗ xuất phát được dời để đuôi xe vẫn cách xe đỏ 3 cm, và vùng chấm được dời theo để \"đỗ chính giữa\" vẫn đúng nghĩa."
+}
