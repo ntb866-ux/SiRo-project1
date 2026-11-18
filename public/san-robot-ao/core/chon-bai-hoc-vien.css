@@ -1,0 +1,15 @@
+/* Xem thử: Academia (Scholarly). Nền gỗ gụ tối, chữ màu giấy da, nhấn đồng thau, chữ có chân cổ điển. */
+@import url("chon-bai-sach.css");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Crimson+Pro:wght@400;500;600&display=swap");
+:root { --nen:#1c1714; --the:#251e19; --chu:#e8dfd4; --phu:#b9ab99; --vien:#4a3f35; --ke:#c9a962; --chinh:#c9a962; --chinh-nhat:#2f2620;
+  --sao:#c9a962; --sao-tat:#6e6154; --nguy:#e58a96; --tieu-de:"Cormorant Garamond",Georgia,serif; --than:"Crimson Pro",Georgia,serif; }
+body { font-size:18px; }
+header { border-bottom:1px solid var(--ke); box-shadow:0 6px 0 -5px var(--ke); }
+header h1 { color:var(--chu); font-size:44px; font-weight:700; }
+.dau-chang h2 { font-size:28px; font-weight:700; }
+.the { border:1px solid var(--vien); border-top:3px solid var(--chinh); border-left-width:1px; border-left-color:var(--vien); border-radius:4px; box-shadow:0 4px 6px rgba(0,0,0,.4); }
+.the .so { border-color:var(--chinh); color:var(--chinh); border-radius:50% 50% 4px 4px; font-size:19px; }
+.the.du-sao { border-left-color:var(--vien); }
+.ngon-ngu button.dang-chon { background:var(--chinh); color:#1c1714; }
+.nut { background:transparent; }
+footer a, a { color:var(--chinh); }

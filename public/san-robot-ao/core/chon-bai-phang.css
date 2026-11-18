@@ -1,0 +1,21 @@
+/* Xem thử: Flat Design. Khối màu đặc, không bóng, không chuyển sắc, bo góc 2px. */
+@import url("chon-bai-sach.css");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
+:root { --nen:#f3f4f6; --the:#ffffff; --chu:#111827; --phu:#4b5563; --vien:#e5e7eb; --chinh:#1d4ed8; --chinh-nhat:#dbeafe;
+  --sao:#b45309; --sao-tat:#9ca3af; --tieu-de:"Nunito",system-ui,sans-serif; --than:"Nunito",system-ui,sans-serif; }
+body { background:var(--nen); }
+header { max-width:none; margin:0; background:var(--chinh); color:#fff; border:0; padding:28px max(16px, calc((100% - 1068px)/2)) 22px; }
+header h1 { color:#fff; font-weight:800; }
+header p, .tong-ket { color:#dbeafe; }
+.tong-ket .to { color:#fde68a; font-family:var(--than); font-weight:800; }
+.ngon-ngu { background:transparent; border:2px solid #fff; border-radius:2px; }
+.ngon-ngu button { color:#fff; } .ngon-ngu button + button { border-left:2px solid #fff; }
+.ngon-ngu button.dang-chon { background:#fff; color:var(--chinh); }
+.dau-chang { border:0; } .dau-chang h2 { font-weight:800; }
+.the { border:0; border-radius:2px; border-top:6px solid var(--chinh); }
+a.the:hover { background:var(--chinh-nhat); }
+.the .so { background:var(--chinh); color:#fff; border:0; border-radius:2px; font:800 17px var(--than); }
+.the.du-sao { border-top-color:#16a34a; } .the.du-sao .so { background:#15803d; color:#fff; }
+.the.khoa { border-top-color:#9ca3af; }
+.nut { border:0; border-radius:2px; background:#e5e7eb; font-weight:700; }
+footer { border:0; }

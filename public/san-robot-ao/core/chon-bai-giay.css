@@ -1,0 +1,20 @@
+/* Xem thử: E-Ink / Paper. Giấy trắng ngà, mực đen, chì xám, một vệt bút dạ vàng. Không hiệu ứng chuyển động. */
+@import url("chon-bai-sach.css");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap");
+:root { --nen:#fdfbf7; --the:#fdfbf7; --chu:#1a1a1a; --phu:#4a4a4a; --vien:#d8d4cc; --ke:#1a1a1a; --chinh:#1a1a1a; --chinh-nhat:#f4f0e6;
+  --sao:#1a1a1a; --sao-tat:#8c8c8c; --tieu-de:"Source Serif 4",Georgia,serif; --than:"Source Serif 4",Georgia,serif; }
+* { transition:none !important; }
+body { font-size:17px; }
+header { border-bottom:1px solid var(--chu); }
+header h1 { color:var(--chu); font-weight:700; }
+.tong-ket .to { color:var(--chu); background:linear-gradient(transparent 55%, #fff27a 55%); padding:0 2px; }
+.dau-chang { border-bottom:1px dashed var(--vien); }
+.dau-chang .dem { color:var(--chu); }
+.the { border:0; border-bottom:1px solid var(--vien); border-radius:0; padding:12px 4px; background:transparent; }
+a.the:hover .ten { background:linear-gradient(transparent 60%, #fff27a 60%); }
+.the .so { border:0; min-width:24px; font:600 20px var(--tieu-de); color:var(--chu); justify-content:flex-start; }
+.the.du-sao .so { border:0; color:var(--chu); }
+.the.du-sao .ten { background:linear-gradient(transparent 60%, #fff27a 60%); }
+.ngon-ngu, .nut { border-radius:0; border-color:var(--chu); background:transparent; }
+.ngon-ngu button + button { border-left-color:var(--chu); }
+.ngon-ngu button.dang-chon { background:var(--chu); color:var(--nen); }

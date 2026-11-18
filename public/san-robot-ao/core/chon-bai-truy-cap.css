@@ -1,0 +1,18 @@
+/* Xem thử: Accessible & Ethical. Tương phản ≥ 7:1, chữ 18px, vùng bấm ≥ 48px, viền focus 4px. */
+@import url("chon-bai-sach.css");
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap");
+:root { --nen:#ffffff; --the:#ffffff; --chu:#111827; --phu:#374151; --vien:#4b5563; --ke:#0b3d91; --chinh:#0b3d91; --chinh-nhat:#e6eefb;
+  --sao:#8a4b00; --sao-tat:#6b7280; --nguy:#9b1c1c; --tieu-de:"Lexend",system-ui,sans-serif; --than:"Lexend",system-ui,sans-serif; }
+body { font-size:18px; line-height:1.65; }
+:focus-visible { outline:4px solid #0b3d91; outline-offset:3px; box-shadow:0 0 0 7px #ffd400; }
+header { border-bottom:4px solid var(--chinh); }
+header h1 { font-weight:700; font-size:34px; }
+.dau-chang h2 { font-weight:600; font-size:24px; }
+.the { border:2px solid var(--vien); border-left-width:8px; border-left-color:var(--chinh); border-radius:8px; padding:14px 16px; min-height:72px; }
+.the .so { border-radius:50%; background:var(--chinh); color:#fff; border:0; min-width:40px; height:40px; font:700 18px var(--than); }
+.the.du-sao .so { background:var(--sao); color:#fff; }
+.the .phu { font-size:16px; color:var(--phu); }
+.hang-sao .sao { font-size:20px; }
+.ngon-ngu, .nut { border:2px solid var(--vien); border-radius:8px; }
+.ngon-ngu button, .nut { min-height:48px; font-size:16px; }
+.ngon-ngu button.dang-chon { text-decoration: underline; text-underline-offset:4px; }

@@ -7,9 +7,9 @@
   <link rel="icon" href="../favicon-32.png">
   <link rel="stylesheet" id="kieuTrang" href="core/chon-bai.css?v=1">
   <script>
-    // Xem thử hướng thiết kế: ?giaoDien=sach hoặc ?giaoDien=swiss (tạm thời, để so sánh)
+    // Xem thử hướng thiết kế: ?giaoDien=sach|swiss|truy-cap|phang|giay|tap-chi|hoc-vien (tạm thời, để so sánh)
     (function() { var g = new URLSearchParams(location.search).get('giaoDien');
-      if (g == 'sach' || g == 'swiss') document.getElementById('kieuTrang').href = 'core/chon-bai-' + g + '.css?v=1'; })();
+      if (['sach', 'swiss', 'truy-cap', 'phang', 'giay', 'tap-chi', 'hoc-vien'].indexOf(g) >= 0) document.getElementById('kieuTrang').href = 'core/chon-bai-' + g + '.css?v=1'; })();
   </script>
 </head>
 <body>

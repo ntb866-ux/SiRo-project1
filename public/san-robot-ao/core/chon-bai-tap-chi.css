@@ -1,0 +1,25 @@
+/* Xem thử: Editorial Grid / Magazine. Thân chữ có chân Merriweather, tiêu đề không chân đậm, lưới bất đối xứng, chữ hoa đầu đoạn. */
+@import url("chon-bai-sach.css");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap");
+:root { --nen:#ffffff; --the:#ffffff; --chu:#0a0a0a; --phu:#4a4a4a; --vien:#d4d4d4; --ke:#0a0a0a; --chinh:#0a0a0a; --chinh-nhat:#f5f5f5;
+  --sao:#b4161b; --sao-tat:#8f8f8f; --tieu-de:"Be Vietnam Pro",system-ui,sans-serif; --than:"Merriweather",Georgia,serif; }
+body { font-size:16px; line-height:1.7; }
+header { border-bottom:8px solid var(--chu); padding-top:36px; }
+header h1 { font:800 52px/1 var(--tieu-de); letter-spacing:-.03em; color:var(--chu); }
+header p { font-style:italic; }
+.tong-ket .to { color:var(--chu); font-family:var(--tieu-de); font-weight:800; }
+.chang { display:grid; grid-template-columns:1fr 2fr; grid-template-rows:auto 1fr; gap:0 40px; border-top:1px solid var(--chu); padding-top:20px; }
+.dau-chang { grid-column:1; border:0; flex-direction:column; align-items:flex-start; justify-content:flex-start; gap:4px; margin-bottom:8px; }
+.dau-chang h2 { font:800 24px/1.2 var(--tieu-de); text-transform:none; }
+.dau-chang .dem { font:700 12px var(--tieu-de); letter-spacing:.12em; text-transform:uppercase; color:var(--sao); }
+.mo-ta { grid-column:1; font-size:15px; }
+.mo-ta::first-letter { float:left; font:800 46px/.9 var(--tieu-de); margin:4px 8px 0 0; color:var(--sao); }
+.luoi { grid-column:2; grid-row:1 / span 2; grid-template-columns:1fr 1fr; gap:0 28px; align-content:start; }
+.the { border:0; border-bottom:1px solid var(--vien); border-radius:0; padding:12px 0; }
+a.the:hover { background:none; } a.the:hover .ten { text-decoration:underline; }
+.the .so { border:0; font:800 26px/1 var(--tieu-de); color:var(--sao-tat); min-width:30px; }
+.the.du-sao .so { color:var(--sao); border:0; }
+.the .ten { font:700 15px/1.45 var(--than); }
+.ngon-ngu, .nut { border-radius:0; border-color:var(--chu); font-family:var(--tieu-de); }
+.ngon-ngu button { font-family:var(--tieu-de); }
+@media (max-width:760px) { .chang { grid-template-columns:1fr; grid-template-rows:none; } .mo-ta, .luoi { grid-column:1; grid-row:auto; } .luoi { grid-template-columns:1fr; } header h1 { font-size:38px; } }
