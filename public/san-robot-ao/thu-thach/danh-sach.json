@@ -58,8 +58,8 @@
     },
     {
       "id": "03-cam-bien-cham-khoang-cach",
-      "ten": "Chặng 3 · Cảm biến chạm và khoảng cách",
-      "tenEn": "Stage 3 · Touch and distance sensors",
+      "ten": "Chặng 3 · Cảm biến chạm, khoảng cách và mê cung",
+      "tenEn": "Stage 3 · Touch and distance sensors, maze",
       "moTa": "Robot tự cảm nhận đường đi: dừng khi chạm tường, đo khoảng cách bằng siêu âm, đỗ xe, men theo tường và thoát mê cung.",
       "moTaEn": "The robot senses its own path: stop on touching a wall, measure distance with ultrasound, park, follow a wall and escape a maze.",
       "moKhoaTuanTu": false,
@@ -73,8 +73,8 @@
     },
     {
       "id": "03-cam-bien-mau",
-      "ten": "Chặng 3 · Cảm biến màu",
-      "tenEn": "Stage 3 · Color sensor",
+      "ten": "Chặng 3 · Cảm biến màu và dò đường",
+      "tenEn": "Stage 3 · Color sensor and line following",
       "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ và dò theo đường đen.",
       "moTaEn": "The robot looks down at the field: stop at a line, count lines, recognise colors to turn, and follow a black line.",
       "moKhoaTuanTu": false,
