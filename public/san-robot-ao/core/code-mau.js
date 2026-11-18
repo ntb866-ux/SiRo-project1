@@ -230,6 +230,7 @@
             '<button type="button" class="sra-nut phu sra-nap-lai-mau">↺ ' + sraT('Nạp lại xe và code mẫu', 'Reload car and sample code') + '</button>' +
             '<button type="button" class="sra-nut phu sra-bo-xe-mau">← ' + sraT('Về robot của bài', 'Back to lesson robot') + '</button>' +
           '</div>' +
+          '<p class="sra-nho"><a href="san-robot-ao/huong-dan/xe-va-code-mau.html" target="_blank" rel="noopener">' + sraT('Hướng dẫn dùng xe và code mẫu', 'Guide to the sample car and code (Vietnamese)') + '</a></p>' +
         '</section>';
     } else {
       html =
@@ -238,6 +239,7 @@
           '<p>' + sraT('Có sẵn cách lắp xe kéo thả cảm biến cho sân này: ', 'A ready-made drag-and-drop sensor car for this field: ') + '<b>' + an(mau.tenXe) + '</b>' + sraT(', kèm chương trình mẫu.', ', with a sample program.') + '</p>' +
           '<div class="sra-nut-hang"><button type="button" class="sra-nut phu sra-dung-xe-mau">' + sraT('Dùng xe và code mẫu', 'Use car and sample code') + '</button></div>' +
           '<p class="sra-nho">' + sraT('Bài làm của bạn với robot của bài vẫn được giữ nguyên.', 'Your work with the lesson robot is kept as it is.') + '</p>' +
+          '<p class="sra-nho"><a href="san-robot-ao/huong-dan/xe-va-code-mau.html" target="_blank" rel="noopener">' + sraT('Hướng dẫn dùng xe và code mẫu', 'Guide to the sample car and code (Vietnamese)') + '</a></p>' +
         '</section>';
     }
     let $s = $(html);

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hướng dẫn xe và code mẫu · Sân Robot Ảo</title>
+  <link rel="icon" href="../../favicon-32.png">
+  <link rel="stylesheet" href="../core/chon-bai.css?v=1">
+  <style>
+    main { max-width: 860px; }
+    main h2 { margin: 32px 0 8px; font-size: 22px; }
+    main h3 { margin: 22px 0 6px; font-size: 18px; }
+    main p, main li { max-width: 72ch; }
+    main img { display: block; max-width: 100%; height: auto; border: solid 1px var(--vien); border-radius: 10px; margin: 10px 0 4px; }
+    figure { margin: 12px 0 18px; }
+    figcaption { color: var(--phu); font-size: 14px; }
+    .ten-nut { font-weight: 600; background: var(--the); border: solid 1px var(--vien); border-radius: 6px; padding: 0 6px; white-space: nowrap; }
+    .en { color: var(--phu); font-size: 14px; font-style: italic; }
+    .o { border-radius: 10px; padding: 10px 14px; margin: 12px 0; border-left: 4px solid; }
+    .o > :first-child { margin-top: 0; } .o > :last-child { margin-bottom: 0; }
+    .o .nhan { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; display: block; margin-bottom: 2px; }
+    .o.gv { background: rgba(37,99,235,.08); border-color: var(--chinh); }
+    .o.hs { background: rgba(21,128,61,.09); border-color: var(--dat); }
+    .o.chu-y { background: rgba(245,158,11,.12); border-color: var(--sao); }
+    ol.buoc > li { margin-bottom: 8px; }
+    pre.khoi { background: var(--the); border: solid 1px var(--vien); border-radius: 8px; padding: 10px 14px; overflow-x: auto; font: 14px/1.6 ui-monospace, Menlo, Consolas, monospace; }
+    .bang-cuon { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--the); border-radius: 10px; overflow: hidden; }
+    th, td { text-align: left; padding: 7px 10px; border-bottom: solid 1px var(--vien); vertical-align: top; }
+    th { background: rgba(37,99,235,.08); }
+    td.sao { color: var(--sao); white-space: nowrap; }
+    tr.chua td { color: var(--phu); }
+    a { color: var(--chinh); }
+    nav.muc-luc { background: var(--the); border: solid 1px var(--vien); border-radius: 12px; padding: 10px 16px; margin-top: 16px; }
+    nav.muc-luc ol { margin: 6px 0; padding-left: 22px; }
+    header a { color: #fff; }
+  </style>
+</head>
+<body>
+  <!--
+    Sân Robot Ảo – hướng dẫn dùng xe mẫu và code mẫu cho giáo viên và học sinh.
+    Copyright (C) 2026 những người đóng góp cho Sân Robot Ảo. GPL v3.
+    Chữ trên nút, menu, khối lấy đúng từ mã (code-mau.js, bang-lap-rap.js, giao-dien.js);
+    sửa giao diện thì sửa cả trang này.
+  -->
+  <header>
+    <div class="dau-trang">
+      <h1>Hướng dẫn xe mẫu và code mẫu</h1>
+      <p>Dành cho giáo viên và học sinh. <a href="../index.html">← Danh sách bài</a></p>
+      <p class="en" style="color:#fff;opacity:.85">This guide is in Vietnamese. English button names are given in italics, for when the site is switched to English.</p>
+    </div>
+  </header>
+
+  <main>
+    <nav class="muc-luc" aria-label="Mục lục">
+      <b>Mục lục</b>
+      <ol>
+        <li><a href="#la-gi">Xe mẫu và code mẫu là gì</a></li>
+        <li><a href="#mo">Mở xe và code mẫu</a></li>
+        <li><a href="#xe">Xe mẫu có cảm biến nào, đặt ở đâu, vì sao</a></li>
+        <li><a href="#doc-code">Đọc và sửa code mẫu</a></li>
+        <li><a href="#hai-sao">Bài code mẫu chỉ đạt 2 sao, và vì sao</a></li>
+        <li><a href="#tu-lap">Tự lắp xe ở bảng Lắp ráp xe</a></li>
+        <li><a href="#lop-hoc">Gợi ý dùng trong lớp</a></li>
+        <li><a href="#danh-sach">Danh sách 23 bài có xe và code mẫu</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="la-gi">1. Xe mẫu và code mẫu là gì</h2>
+    <p>Mỗi bài trong <span class="ten-nut">Danh sách bài</span> có sẵn một robot của bài. Ngoài robot đó, 23 bài còn có thêm một <b>xe mẫu</b>: chiếc xe kiểu mBot lắp mô-đun, đã gắn sẵn cảm biến ở chỗ hợp lí cho sân của bài. Đi kèm là một <b>code mẫu</b>: chương trình khối lệnh giải được bài với chiếc xe đó.</p>
+    <p>Bài làm và số sao khi dùng xe mẫu được <b>lưu riêng</b>. Học sinh mở xe mẫu ra xem không làm mất bài làm và số sao đã có với robot của bài.</p>
+    <div class="o hs"><span class="nhan">Nói với học sinh</span>
+      <p>Code mẫu giống lời giải mẫu trong sách: xem để hiểu cách làm, rồi tự sửa, tự làm lại bằng robot của bài để lấy sao.</p>
+    </div>
+
+    <h2 id="mo">2. Mở xe và code mẫu</h2>
+    <ol class="buoc">
+      <li>Ở trang chính, bấm menu <span class="ten-nut">Danh sách bài</span> <span class="en">(Lesson list)</span>.</li>
+      <li>Bấm vào một bài, ví dụ “Dò đường bằng 1 cảm biến” trong Chặng 3 · Cảm biến màu.</li>
+      <li>Ở khung đề bài bên trái, kéo xuống mục <b>Xe lắp ráp và code mẫu</b> <span class="en">(Built car and sample code)</span>, bấm nút <span class="ten-nut">Dùng xe và code mẫu</span> <span class="en">(Use car and sample code)</span>.</li>
+      <li>Trang mở lại bài: robot của bài được thay bằng xe mẫu, code mẫu nằm sẵn trong tab <span class="ten-nut">Khối lệnh</span> <span class="en">(Blocks)</span>.</li>
+      <li>Bấm <span class="ten-nut">▶ Chạy</span> <span class="en">(Run)</span> để xem xe làm bài. Bấm <span class="ten-nut">↺ Đặt lại</span> <span class="en">(Reset)</span> để đưa xe về chỗ xuất phát.</li>
+    </ol>
+    <figure>
+      <img src="anh/2-nut-dung-xe-mau.png" width="480" alt="Mục Xe lắp ráp và code mẫu với nút Dùng xe và code mẫu">
+      <figcaption>Bài nào có xe mẫu thì mới có mục này. Bài chưa có xe mẫu thì không thấy nút.</figcaption>
+    </figure>
+    <figure>
+      <img src="anh/3-trang-xe-mau.png" width="1280" alt="Trang bài khi đang dùng xe mẫu: đề bài bên trái, code mẫu ở giữa, sân bên phải">
+      <figcaption>Đang dùng xe mẫu: khung đề bài (trái), code mẫu trong tab Khối lệnh (giữa), sân và xe mẫu (phải).</figcaption>
+    </figure>
+    <p>Khi đang dùng xe mẫu, mục <b>Xe lắp ráp và code mẫu</b> đổi thành:</p>
+    <ul>
+      <li>Tên xe và lí do gắn cảm biến ở những chỗ đó.</li>
+      <li><b>Chương trình mẫu làm gì?</b> <span class="en">(What does the sample program do?)</span>: bấm để mở lời giải thích code.</li>
+      <li><span class="ten-nut">↺ Nạp lại xe và code mẫu</span> <span class="en">(Reload car and sample code)</span>: trả cả xe lẫn chương trình về đúng mẫu ban đầu.</li>
+      <li><span class="ten-nut">← Về robot của bài</span> <span class="en">(Back to lesson robot)</span>: quay về robot của bài và bài làm cũ.</li>
+    </ul>
+    <figure>
+      <img src="anh/4-muc-dang-dung.png" width="480" alt="Mục Xe lắp ráp và code mẫu khi đang dùng, đã mở phần Chương trình mẫu làm gì">
+    </figure>
+    <div class="o gv"><span class="nhan">Cho giáo viên: gửi thẳng đường dẫn</span>
+      <p>Thêm <code>&amp;xe=mau</code> vào cuối địa chỉ của bài thì bài mở thẳng bằng xe mẫu. Ví dụ:<br>
+      <code>https://ntb866-ux.github.io/SiRo-project1/index.html?baiTap=03-cam-bien-mau/04-do-line-1-cam-bien&amp;xe=mau</code><br>
+      Bảng ở <a href="#danh-sach">mục 8</a> có sẵn đường dẫn cho từng bài.</p>
+    </div>
+
+    <h2 id="xe">3. Xe mẫu có cảm biến nào, đặt ở đâu, vì sao</h2>
+    <p>Mỗi bài chỉ gắn những cảm biến cần cho bài đó. Xe càng ít đồ thì càng nhẹ, học sinh càng dễ thấy cảm biến nào làm việc gì. Có 9 kiểu xe mẫu:</p>
+    <div class="bang-cuon"><table>
+      <thead><tr><th>Xe mẫu</th><th>Cảm biến và chỗ gắn</th><th>Dùng ở bài</th></tr></thead>
+      <tbody>
+        <tr><td>Xe trần (không cảm biến)</td><td>Không có. Chỉ có hai motor, trong motor có bộ đếm vòng.</td><td>Hiệu chỉnh động cơ</td></tr>
+        <tr><td>Xe trần, motor phải yếu 8 %</td><td>Như trên, motor phải cố ý yếu hơn giống robot của bài.</td><td>Xe bị lệch: bù cho motor yếu</td></tr>
+        <tr><td>Xe gọn chỉ có con quay</td><td>Con quay (gyro) trên nắp mạch chủ.</td><td>Di chuyển, Vòng lặp, Quay 90° trên sân băng</td></tr>
+        <tr><td>Xe có tấm cản trước</td><td>Công tắc chạm giữa thanh dưới mũi, sau tấm cản. Con quay.</td><td>Chạm tường thì dừng</td></tr>
+        <tr><td>Xe siêu âm mũi</td><td>Siêu âm HC-SR04 trên giá mũi, nhìn thẳng ra trước. Con quay.</td><td>Dừng cách tường, Đỗ xe, Men theo tường, Mê cung</td></tr>
+        <tr><td>Xe siêu âm mũi và con quay</td><td>Như trên.</td><td>Giữ hướng khi bị đẩy lệch</td></tr>
+        <tr><td>Xe một mắt dưới gầm</td><td>Một mắt dò line TCRT5000 dưới gầm, ngay giữa hai bánh. Con quay.</td><td>Dừng ở vạch, Đếm vạch, Phân loại màu</td></tr>
+        <tr><td>Xe một mắt dưới mũi và con quay</td><td>Một mắt dò line giữa thanh dưới mũi, trước trục bánh 12 cm. Con quay.</td><td>Dò đường bằng 1 cảm biến</td></tr>
+        <tr><td>Xe ba mắt dưới gầm</td><td>Ba mắt dò line dưới gầm, cách nhau 3 cm, trước trục bánh 4 cm. Con quay.</td><td>Dò đường cua gắt bằng 3 cảm biến</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Con quay (gyro): giữ cho xe đi thẳng, quay đúng góc</h3>
+    <div class="o gv"><span class="nhan">Nguyên lí</span>
+      <p>Con quay đo <b>tốc độ quay</b> của thân xe (độ mỗi giây). Cộng dồn tốc độ quay theo thời gian thì ra góc đã quay. Khối <code>đi tới … cm</code> và <code>quay phải ↻ … độ</code> đọc góc này liên tục: xe lệch khỏi hướng thì bánh bên kia được cho chạy nhanh hơn để kéo xe về. Vì thế hầu hết xe mẫu đều giữ con quay.</p>
+    </div>
+    <div class="o hs"><span class="nhan">Nói với học sinh</span>
+      <p>Con quay giống cái la bàn nhỏ trong xe: nó biết xe đã xoay bao nhiêu độ, nên xe tự sửa khi bị lệch.</p>
+    </div>
+
+    <h3>Công tắc chạm: tấm cản ép vào thì báo</h3>
+    <div class="o gv"><span class="nhan">Nguyên lí</span>
+      <p>Công tắc chạm là một công tắc cơ: tường ép tấm cản lùi lại, tấm cản ấn công tắc, mạch đóng, khối <code>cảm biến chạm đang bị nhấn?</code> thành đúng. Gắn ngay sau tấm cản ở giữa mũi để chạm tường từ chính diện là bấm được.</p>
+    </div>
+    <div class="o hs"><span class="nhan">Nói với học sinh</span>
+      <p>Giống bấm chuông cửa: có gì đẩy vào thì chuông kêu.</p>
+    </div>
+
+    <h3>Siêu âm: đo khoảng cách bằng tiếng vọng</h3>
+    <div class="o gv"><span class="nhan">Nguyên lí</span>
+      <p>HC-SR04 phát một chùm siêu âm (40 kHz) rồi đo thời gian <i>t</i> tới khi nghe tiếng vọng. Âm đi và về nên khoảng cách <i>d</i> = <i>v</i>·<i>t</i> / 2, với tốc độ âm trong không khí <i>v</i> ≈ 343 m/s. Gắn trên giá mũi, nhìn thẳng ra trước, vì bài cần biết vật cản phía trước. Bài mê cung không cần ba cảm biến: xe quay để “nhìn” sang phải, sang trái bằng chính cảm biến đó.</p>
+    </div>
+    <div class="o hs"><span class="nhan">Nói với học sinh</span>
+      <p>Giống con dơi: kêu một tiếng rồi nghe tiếng vọng. Tiếng vọng về càng lâu thì tường càng xa.</p>
+    </div>
+
+    <h3>Mắt dò line TCRT5000: nhìn sáng tối, không nhìn màu</h3>
+    <div class="o gv"><span class="nhan">Nguyên lí</span>
+      <p>Mắt có một đèn hồng ngoại chiếu xuống sân và một đầu thu đo ánh sáng hắt lên. Nền trắng tán xạ nhiều (đo được khoảng 90), vạch đen hấp thụ gần hết (khoảng 11). Đèn chỉ phát một vùng bước sóng hồng ngoại, nên mắt <b>không phân biệt màu</b>: nó chỉ biết mặt sân “sáng” hay “tối” với hồng ngoại. Trên sân phân loại màu, ô đỏ đo khoảng 98, ô xanh lá khoảng 69, nên code mẫu phân biệt đỏ và xanh bằng con số độ sáng chứ không bằng khối “thấy màu”.</p>
+    </div>
+    <div class="o hs"><span class="nhan">Nói với học sinh</span>
+      <p>Mắt dò line giống một chiếc đèn pin chiếu xuống đất kèm một con mắt nhỏ. Giấy trắng hắt ánh sáng lại nhiều, vạch đen “nuốt” ánh sáng. Mắt chỉ biết sáng hay tối, không biết đỏ hay xanh.</p>
+    </div>
+
+    <h3>Vì sao mắt dò line lúc ở gầm, lúc ở mũi?</h3>
+    <div class="o gv"><span class="nhan">Nguyên lí</span>
+      <p><b>Dưới gầm, giữa hai bánh</b> (dừng ở vạch, đếm vạch, phân loại màu): khi mắt thấy vạch thì tâm xe cũng đang ở trên vạch, dừng ngay là đúng chỗ. Mắt đặt dưới mũi sẽ làm xe dừng sớm 12 cm.</p>
+      <p><b>Dưới mũi, trước trục bánh 12 cm</b> (dò đường 1 cảm biến): mắt “nhìn trước” khúc cua nên xe kịp rẽ trên đường cong mềm.</p>
+      <p><b>Ba mắt dưới gầm, trước trục bánh 4 cm</b> (đường có góc vuông): ở góc vuông xe phải quay tại chỗ. Một điểm cách trục quay <i>r</i> thì chạy với tốc độ <i>v</i> = ω·<i>r</i>. Mắt ở 12 cm quét ngang nhanh gấp 3 lần mắt ở 4 cm, lướt qua đường đen rộng 2 cm nhanh tới mức chương trình chưa kịp đọc. Đặt gần trục thì mắt quét chậm và bắt được đường.</p>
+    </div>
+    <div class="o hs"><span class="nhan">Nói với học sinh</span>
+      <p>Thử quay người tại chỗ, tay duỗi thẳng: đầu ngón tay đi một vòng lớn và nhanh, còn khuỷu tay đi vòng nhỏ và chậm. Mắt đặt xa giống đầu ngón tay, dễ lướt qua vạch mà không kịp thấy.</p>
+    </div>
+
+    <h2 id="doc-code">4. Đọc và sửa code mẫu</h2>
+    <h3>Đọc</h3>
+    <ol class="buoc">
+      <li>Mở <b>Chương trình mẫu làm gì?</b> trong khung đề bài để đọc ý chính trước.</li>
+      <li>Đọc khối lệnh từ trên xuống dưới, bắt đầu ở khối <code>khi bấm ▶ chạy</code>. Khối nằm lọt bên trong <code>lặp lại</code> hay <code>nếu … thì</code> là phần được lặp, hoặc chỉ chạy khi điều kiện đúng.</li>
+      <li>Bấm <span class="ten-nut">▶ Chạy</span> và nhìn xe chạy cùng lúc với đọc khối. Bảng <b>Bảng số đo</b> và đồ thị <b>Độ sáng phản xạ theo thời gian</b> ở góc sân cho thấy cảm biến đang đọc được số nào.</li>
+    </ol>
+    <p>Ví dụ code mẫu của bài “Dò đường bằng 1 cảm biến” (đúng chữ trên khối):</p>
+    <pre class="khoi">khi bấm ▶ chạy
+đặt lại góc quay về 0
+lặp lại cho đến khi  góc quay (độ) &lt; -80
+    nếu  độ sáng phản xạ cảm biến giữa &lt; 50  thì
+        chạy bánh trái 30 % bánh phải 60 %
+    nếu không thì
+        chạy bánh trái 60 % bánh phải 30 %
+đi tới 30 cm
+dừng lại</pre>
+    <p>Đọc thành lời: “Mắt thấy đen (dưới 50) thì bánh phải chạy nhanh hơn, xe lái sang trái. Thấy trắng thì bánh trái nhanh hơn, xe lái sang phải. Cứ thế xe bám mép trái của đường. Khi con quay báo xe đã quay trái quá 80° (khúc cua cuối) thì đi thẳng 30 cm vào ô đích.”</p>
+    <div class="o chu-y"><span class="nhan">Chú ý tên khối</span>
+      <p>Khối đọc mắt dò line vẫn mang tên <code>độ sáng phản xạ cảm biến giữa / trái / phải</code> (nằm trong nhóm <b>Cảm biến</b>). Trên xe mẫu, khối này đọc mắt dò line TCRT5000. Cách xe chọn mắt nào là “giữa”, “trái”, “phải” xem ở <a href="#tu-lap">mục 6</a>.</p>
+    </div>
+
+    <h3>Sửa</h3>
+    <ul>
+      <li>Bấm vào ô số trên khối để đổi số, kéo khối mới từ các nhóm bên trái (<b>Chuyển động</b>, <b>Động cơ</b>, <b>Cảm biến</b>, <b>Điều khiển</b>…). Chương trình tự lưu.</li>
+      <li>Sửa xong bấm <span class="ten-nut">↺ Đặt lại</span> rồi <span class="ten-nut">▶ Chạy</span> để thử.</li>
+      <li>Sửa hỏng: bấm <span class="ten-nut">↺ Nạp lại xe và code mẫu</span>. Chương trình và xe trở về đúng mẫu, mọi chỗ đã sửa bị bỏ.</li>
+    </ul>
+    <div class="o gv"><span class="nhan">Cần biết</span>
+      <p>Tải lại trang thì <b>chương trình đã sửa vẫn được giữ</b>, còn <b>xe</b> thì luôn trở về đúng xe mẫu (chỗ đã đổi ở bảng Lắp ráp xe không giữ lại). Muốn có lại đúng code mẫu thì phải bấm <span class="ten-nut">↺ Nạp lại xe và code mẫu</span>.</p>
+    </div>
+    <h3>Thử sửa gì thì học được nhiều?</h3>
+    <ul>
+      <li><b>Dò đường bằng 1 cảm biến:</b> đổi 30/60 thành 15/60. Xe lái gắt hơn, mắt ở xa trục bánh văng khỏi đường. Vì sao?</li>
+      <li><b>Dừng cách tường 20 cm:</b> đổi <code>đặt tốc độ 30 %</code> thành 80 %. Xe dừng gần tường hơn hay xa hơn? (Xe nhanh thì trôi xa hơn sau lệnh dừng: động năng tỉ lệ với bình phương tốc độ.)</li>
+      <li><b>Dừng ở vạch đen:</b> đổi ngưỡng 50 thành 95 hoặc 5. Chuyện gì xảy ra? Xem số đo trên nền trắng và trên vạch để chọn ngưỡng.</li>
+      <li><b>Quay đúng 90° trên sân băng:</b> bỏ đoạn quay chậm, chỉ quay nhanh tới 88°. Xe quay lố bao nhiêu?</li>
+    </ul>
+
+    <h2 id="hai-sao">5. Bài code mẫu chỉ đạt 2 sao, và vì sao</h2>
+    <p>Code mẫu luôn <b>hoàn thành nhiệm vụ</b> (sao 1). Phần lớn bài đạt đủ 3 sao. Các bài dưới đây thì không, vì giới hạn của chiếc xe chứ không phải do chương trình sai:</p>
+    <div class="bang-cuon"><table>
+      <thead><tr><th>Bài</th><th>Code mẫu đạt</th><th>Vì sao</th></tr></thead>
+      <tbody>
+        <tr><td>Vẽ hình vuông</td><td class="sao">★★☆</td><td>Sao 3 cần khối hạ bút. Xe lắp mô-đun chưa có bút vẽ. Muốn đủ 3 sao, dùng robot của bài.</td></tr>
+        <tr><td>Bánh to, bánh nhỏ</td><td class="sao">★★☆</td><td>Bài so robot bánh to với robot bánh nhỏ. Xe lắp mô-đun chỉ có một cỡ bánh (đường kính 6,37 cm, chu vi 20 cm), nên không lấy được sao so sánh hai cỡ bánh.</td></tr>
+        <tr><td>Đi 1 mét trong đúng 4 giây</td><td class="sao">1–3 ★</td><td>Sao 2 và 3 đòi thời gian đúng tới 0,05 giây. Khối <code>đợi … giây</code> đếm theo đồng hồ máy tính: máy chậm hay đang bận thì mỗi lượt lệch vài phần trăm giây, nên số sao đổi giữa các lượt chạy.</td></tr>
+        <tr class="chua"><td>4 bài Bút vẽ và đa giác</td><td>Chưa có mẫu</td><td>Các bài này chấm bằng nét bút. Xe chưa có bút nên chưa làm được.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="o hs"><span class="nhan">Nói với học sinh (bài 1 mét trong 4 giây)</span>
+      <p>Hẹn giờ giống đếm nhẩm “một, hai, ba” rồi dừng: mỗi lần đếm nhanh chậm khác nhau một chút. Đếm số vòng bánh thì chính xác hơn, vì bánh quay bao nhiêu vòng là xe đi bấy nhiêu.</p>
+    </div>
+    <div class="o gv"><span class="nhan">Xe mẫu khác robot của bài ở hai bài</span>
+      <p>Mũi xe mẫu dài (tấm cản cách trục bánh 15,5 cm, robot của bài khoảng 8 cm) và đuôi ngắn (4 cm, robot của bài 12 cm). Ở bài <b>Chạm tường thì dừng</b> và <b>Đỗ xe giữa hai xe</b>, khi dùng xe mẫu, chỗ xuất phát và vùng chấm điểm được dời tương ứng để “mũi chạm tường”, “đỗ chính giữa” vẫn đúng nghĩa. Vì vậy con số trong code mẫu của hai bài này không chép sang robot của bài được.</p>
+      <p>Ở bài <b>Phân loại màu</b>, ô vàng hắt hồng ngoại gần bằng ô đỏ nên khó tách: đoạn cuối code mẫu đi theo quãng đường đo sẵn.</p>
+    </div>
+
+    <h2 id="tu-lap">6. Tự lắp xe ở bảng Lắp ráp xe</h2>
+    <ol class="buoc">
+      <li>Đang dùng xe mẫu, bấm menu <span class="ten-nut">Robot</span> → <span class="ten-nut">Lắp ráp xe (kéo thả cảm biến)</span> <span class="en">(Robot → Build car (drag and drop sensors))</span>. Bảng <b>Lắp ráp xe</b> mở trên sân.</li>
+      <li>Bên trái là sơ đồ xe. Nút <span class="ten-nut">Nhìn từ trên</span> <span class="en">(Top view)</span> và <span class="ten-nut">Nhìn gầm xe</span> <span class="en">(Underside view)</span> đổi hướng nhìn. Mắt dò line dưới gầm chỉ thấy và gắn được ở <b>Nhìn gầm xe</b>.</li>
+      <li>Bên phải là khay linh kiện: <b>Siêu âm</b>, <b>Dò line</b>, <b>Chạm</b>, <b>Gyro</b>, <b>GPS</b>, <b>Servo</b> <span class="en">(Ultrasonic, Line sensor, Touch, Gyro, GPS, Servo)</span>, kèm số còn lại.</li>
+      <li><b>Gắn:</b> kéo một linh kiện từ khay thả vào vùng gắn trên xe (vùng được tô sáng). Giữ Alt để đặt mịn hơn. Siêu âm có 4 giá: trước, trái, phải, sau.</li>
+      <li><b>Tháo:</b> kéo linh kiện ra ngoài bảng, hoặc bấm nút <span class="ten-nut">Tháo</span> <span class="en">(Remove)</span> cạnh nó. <span class="ten-nut">Tháo hết cảm biến</span> <span class="en">(Remove all sensors)</span> tháo tất cả. <span class="ten-nut">Về mặc định</span> <span class="en">(Reset to default)</span> đưa về bản lắp mặc định.</li>
+      <li>Rê chuột lên một cảm biến để xem nó cắm ở cổng nào và nằm ở đâu. Đóng bảng bằng nút ×, rồi bấm <span class="ten-nut">▶ Chạy</span> để thử.</li>
+    </ol>
+    <figure>
+      <img src="anh/5-bang-lap-rap.png" width="447" alt="Bảng Lắp ráp xe, nhìn từ trên: một mắt dò line dưới mũi và con quay trên nắp; khay linh kiện bên phải">
+      <figcaption>Xe mẫu của bài “Dò đường bằng 1 cảm biến”, nhìn từ trên: mắt dò line (1) dưới mũi, con quay (2) trên nắp.</figcaption>
+    </figure>
+    <figure>
+      <img src="anh/6-gam-ba-mat.png" width="194" alt="Sơ đồ gầm xe nhìn từ dưới lên với ba mắt dò line 1, 2, 3">
+      <figcaption>Xe ba mắt dưới gầm, bấm Nhìn gầm xe: ba mắt 1, 2, 3 cách nhau 3 cm.</figcaption>
+    </figure>
+    <div class="o chu-y"><span class="nhan">Mắt nào là “trái”, “giữa”, “phải”?</span>
+      <ul>
+        <li><b>giữa</b>: mắt nằm gần đường giữa xe nhất.</li>
+        <li><b>trái</b> / <b>phải</b>: mắt gần giữa nhất ở bên trái / bên phải xe.</li>
+        <li>Xe vừa có mắt dưới mũi vừa có mắt dưới gầm thì khối <code>độ sáng phản xạ cảm biến …</code> đọc <b>mắt dưới mũi</b>. Muốn khối đọc mắt dưới gầm thì tháo hết mắt dưới mũi.</li>
+      </ul>
+    </div>
+    <div class="o gv"><span class="nhan">Bài tập thiết kế</span>
+      <p>Cho học sinh dời mắt dò line của bài “Dừng ở vạch đen” từ gầm ra dưới mũi, chạy lại và đo xe dừng sai bao nhiêu cm. Hoặc ở bài 3 cảm biến, dời ba mắt ra mũi rồi xem xe có qua được góc vuông không. Học sinh tự thấy vì sao chỗ gắn cảm biến quan trọng như chương trình.</p>
+    </div>
+
+    <h2 id="lop-hoc">7. Gợi ý dùng trong lớp</h2>
+    <ul>
+      <li><b>Dự đoán, chạy, giải thích:</b> chiếu code mẫu, cho học sinh đoán xe sẽ làm gì trước khi bấm ▶ Chạy, rồi giải thích chỗ đoán sai.</li>
+      <li><b>Gỡ kẹt:</b> học sinh làm mãi không qua thì mở xe mẫu xem cách làm, sau đó bấm <span class="ten-nut">← Về robot của bài</span> và tự viết lại. Sao chỉ tính khi làm bằng robot của bài.</li>
+      <li><b>Sửa một chỗ:</b> giao mỗi nhóm đổi một con số (ngưỡng, tốc độ, góc) và báo cáo kết quả, như ở <a href="#doc-code">mục 4</a>.</li>
+      <li><b>So sánh hai robot:</b> cùng một bài, so xe mẫu với robot của bài: cảm biến khác chỗ, chương trình khác chỗ nào?</li>
+    </ul>
+
+    <h2 id="danh-sach">8. Danh sách 23 bài có xe và code mẫu</h2>
+    <p>Bấm tên bài để mở thẳng bài đó bằng xe mẫu.</p>
+    <div class="bang-cuon"><table>
+      <thead><tr><th>Chặng</th><th>Bài</th><th>Xe mẫu</th><th>Code mẫu đạt</th></tr></thead>
+      <tbody>
+        <tr><td>Chặng 1 · Di chuyển</td><td><a href="../../index.html?baiTap=01-di-chuyen/01-tien-toi-o-dich&amp;xe=mau">Tiến tới ô đích</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 1 · Di chuyển</td><td><a href="../../index.html?baiTap=01-di-chuyen/02-re-toi-o-dich&amp;xe=mau">Rẽ tới ô đích</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 1 · Di chuyển</td><td><a href="../../index.html?baiTap=01-di-chuyen/03-do-xe-vao-bai&amp;xe=mau">Đỗ xe vào bãi</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 1 · Di chuyển</td><td><a href="../../index.html?baiTap=01-di-chuyen/04-qua-ba-diem&amp;xe=mau">Đi qua 3 điểm theo thứ tự</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 1 · Di chuyển</td><td><a href="../../index.html?baiTap=01-di-chuyen/05-ve-hinh-vuong&amp;xe=mau">Vẽ hình vuông</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★☆</td></tr>
+        <tr><td>Chặng 2 · Vòng lặp và biến</td><td><a href="../../index.html?baiTap=02-vong-lap/01-hinh-vuong-vong-lap&amp;xe=mau">Hình vuông bằng vòng lặp</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 2 · Hiệu chỉnh động cơ</td><td><a href="../../index.html?baiTap=03-hieu-chinh/01-chu-vi-banh&amp;xe=mau">Một vòng bánh đi bao xa?</a></td><td>Xe trần (không cảm biến)</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 2 · Hiệu chỉnh động cơ</td><td><a href="../../index.html?baiTap=03-hieu-chinh/02-quay-goc-vuong&amp;xe=mau">Quay đúng một góc vuông</a></td><td>Xe trần (không cảm biến)</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 2 · Hiệu chỉnh động cơ</td><td><a href="../../index.html?baiTap=03-hieu-chinh/03-banh-to-banh-nho&amp;xe=mau">Bánh to, bánh nhỏ</a></td><td>Xe trần (không cảm biến)</td><td class="sao">★★☆</td></tr>
+        <tr><td>Chặng 2 · Hiệu chỉnh động cơ</td><td><a href="../../index.html?baiTap=03-hieu-chinh/04-bu-motor-lech&amp;xe=mau">Xe bị lệch: bù cho motor yếu</a></td><td>Xe trần, motor phải yếu 8 %</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 2 · Hiệu chỉnh động cơ</td><td><a href="../../index.html?baiTap=03-hieu-chinh/05-mot-met-bon-giay&amp;xe=mau">Đi 1 mét trong đúng 4 giây</a></td><td>Xe trần (không cảm biến)</td><td class="sao">1–3 ★</td></tr>
+        <tr class="chua"><td>Chặng 2 · Bút vẽ và đa giác</td><td>Vẽ tam giác đều</td><td colspan="2">Chưa có (xe chưa có bút vẽ)</td></tr>
+        <tr class="chua"><td>Chặng 2 · Bút vẽ và đa giác</td><td>Vẽ lục giác đều (tổ ong)</td><td colspan="2">Chưa có (xe chưa có bút vẽ)</td></tr>
+        <tr class="chua"><td>Chặng 2 · Bút vẽ và đa giác</td><td>Vẽ ngôi sao năm cánh</td><td colspan="2">Chưa có (xe chưa có bút vẽ)</td></tr>
+        <tr class="chua"><td>Chặng 2 · Bút vẽ và đa giác</td><td>Vẽ ngôi nhà theo hình mẫu</td><td colspan="2">Chưa có (xe chưa có bút vẽ)</td></tr>
+        <tr><td>Chặng 3 · Cảm biến chạm và khoảng cách</td><td><a href="../../index.html?baiTap=03-cam-bien-cham-khoang-cach/01-cham-tuong-thi-dung&amp;xe=mau">Chạm tường thì dừng</a></td><td>Xe có tấm cản trước</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến chạm và khoảng cách</td><td><a href="../../index.html?baiTap=03-cam-bien-cham-khoang-cach/02-dung-cach-tuong-20cm&amp;xe=mau">Dừng cách tường 20 cm</a></td><td>Xe siêu âm mũi</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến chạm và khoảng cách</td><td><a href="../../index.html?baiTap=03-cam-bien-cham-khoang-cach/03-do-xe-giua-hai-xe&amp;xe=mau">Đỗ xe giữa hai xe</a></td><td>Xe siêu âm mũi</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến chạm và khoảng cách</td><td><a href="../../index.html?baiTap=03-cam-bien-cham-khoang-cach/04-men-theo-tuong&amp;xe=mau">Đi men theo tường</a></td><td>Xe siêu âm mũi</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến chạm và khoảng cách</td><td><a href="../../index.html?baiTap=03-cam-bien-cham-khoang-cach/05-thoat-me-cung-nho&amp;xe=mau">Thoát mê cung nhỏ</a></td><td>Xe siêu âm mũi</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến màu</td><td><a href="../../index.html?baiTap=03-cam-bien-mau/01-dung-o-vach&amp;xe=mau">Dừng ở vạch đen</a></td><td>Xe một mắt dưới gầm</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến màu</td><td><a href="../../index.html?baiTap=03-cam-bien-mau/02-dem-vach&amp;xe=mau">Đếm vạch, dừng ở vạch số 4</a></td><td>Xe một mắt dưới gầm</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến màu</td><td><a href="../../index.html?baiTap=03-cam-bien-mau/03-phan-loai-mau&amp;xe=mau">Phân loại màu: đỏ rẽ trái, xanh rẽ phải</a></td><td>Xe một mắt dưới gầm</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến màu</td><td><a href="../../index.html?baiTap=03-cam-bien-mau/04-do-line-1-cam-bien&amp;xe=mau">Dò đường bằng 1 cảm biến</a></td><td>Xe một mắt dưới mũi và con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Cảm biến màu</td><td><a href="../../index.html?baiTap=03-cam-bien-mau/05-do-line-3-cam-bien&amp;xe=mau">Dò đường cua gắt bằng 3 cảm biến</a></td><td>Xe ba mắt dưới gầm</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Con quay (gyro)</td><td><a href="../../index.html?baiTap=06-gyro/01-quay-90-do-tren-san-bang&amp;xe=mau">Quay đúng 90° trên sân băng</a></td><td>Xe gọn chỉ có con quay</td><td class="sao">★★★</td></tr>
+        <tr><td>Chặng 3 · Con quay (gyro)</td><td><a href="../../index.html?baiTap=06-gyro/02-giu-huong-khi-bi-day&amp;xe=mau">Giữ hướng khi bị đẩy lệch</a></td><td>Xe siêu âm mũi và con quay</td><td class="sao">★★★</td></tr>
+      </tbody>
+    </table></div>
+  </main>
+
+  <footer>
+    <div class="nut-hang">
+      <a class="nut phu" href="../index.html">← Danh sách bài</a>
+      <a class="nut phu" href="../../index.html">Lập trình tự do</a>
+    </div>
+    <p class="nho">Chi tiết kĩ thuật của từng code mẫu (cấu hình xe, cách viết tệp mẫu): <a href="https://github.com/ntb866-ux/SiRo-project1/blob/main/docs/code-mau-xe-lap-rap.md" target="_blank" rel="noopener">docs/code-mau-xe-lap-rap.md</a>.</p>
+  </footer>
+</body>
+</html>

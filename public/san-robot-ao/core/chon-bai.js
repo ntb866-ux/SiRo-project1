@@ -15,6 +15,7 @@
     xuat: ['Tải tiến độ về máy (.json)', 'Download progress (.json)'],
     xoa: ['Xóa tiến độ trên máy này', 'Clear progress on this device'],
     tuDo: ['Lập trình tự do', 'Free programming'],
+    huongDanXeMau: ['Hướng dẫn xe và code mẫu', 'Sample car and code guide (Vietnamese)'],
     chuThich: ['Tiến độ chỉ lưu trong trình duyệt này. Đổi máy, dùng chế độ ẩn danh hoặc xóa dữ liệu trình duyệt thì tiến độ sẽ mất. ' +
       'Sân Robot Ảo dựa trên <a href="https://github.com/QuirkyCort/gears" target="_blank" rel="noopener">GEARS</a> (GPL v3), không liên kết với VEX Robotics hay LEGO.',
       'Progress is saved only in this browser. Switching devices, using a private window or clearing browser data will lose it. ' +

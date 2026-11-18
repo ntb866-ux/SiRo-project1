@@ -240,6 +240,7 @@ var main = new function() {
       e.stopPropagation();
 
       let menuItems = [
+        {html: (typeof sraT == 'function' ? sraT('Hướng dẫn xe và code mẫu', 'Sample car and code guide (Vietnamese)') : 'Sample car and code guide'), line: true, callback: function() { self.openPage('san-robot-ao/huong-dan/xe-va-code-mau.html'); }},
         {html: 'Wiki', line: false, callback: function() { self.openPage('https://github.com/QuirkyCort/gears/wiki'); }},
         {html: 'Github', line: false, callback: function() { self.openPage('https://github.com/QuirkyCort/gears'); }},
         {html: 'URL Generator', line: false, callback: function() { self.openPage('genURL.html'); }},
@@ -249,7 +250,7 @@ var main = new function() {
         {html: i18n.get('#main-display_fps#'), line: false, callback: simPanel.toggleFPS }
       ];
       if (simPanel.showFPS) {
-        menuItems[6].html = '<span class="tick">&#x2713;</span> ' + menuItems[6].html;
+        menuItems[7].html = '<span class="tick">&#x2713;</span> ' + menuItems[7].html;
       }
 
       menuDropDown(self.$helpMenu, menuItems, {className: 'helpMenuDropDown'});
