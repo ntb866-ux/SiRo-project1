@@ -141,17 +141,17 @@ SRA.chuyenDong = new function() {
 
   // Các dòng của bảng số đo. Bài chọn dòng bằng "soDo": [id, …]
   this.DONG = [
-    { id: 'thoiGian', ten: 'Thời gian chạy', doc: doc('thoiGian'), donVi: 's', soLe: 2 },
-    { id: 'vongTrai', ten: 'Bánh trái đã quay', doc: doc('vongTrai'), donVi: 'vòng', soLe: 2 },
-    { id: 'vongPhai', ten: 'Bánh phải đã quay', doc: doc('vongPhai'), donVi: 'vòng', soLe: 2 },
-    { id: 'vongGiay', ten: 'Bánh quay nhanh', doc: doc('vongGiay'), donVi: 'vòng/s', soLe: 2 },
-    { id: 'quangDuong', ten: 'Quãng đường', doc: doc('quangDuong'), donVi: 'cm', soLe: 1 },
-    { id: 'tien', ten: 'Đi tới được', doc: doc('tien'), donVi: 'cm', soLe: 1 },
-    { id: 'tocDo', ten: 'Tốc độ', doc: doc('tocDo'), donVi: 'cm/s', soLe: 1 },
-    { id: 'quayThan', ten: 'Thân xe đã quay', doc: doc('quayThan'), donVi: '°', soLe: 1 },
-    { id: 'lechNgang', ten: 'Lệch ngang (+ là phải)', doc: doc('lechNgang'), donVi: 'cm', soLe: 1 },
+    { id: 'thoiGian', ten: sraT('Thời gian chạy', 'Run time'), doc: doc('thoiGian'), donVi: 's', soLe: 2 },
+    { id: 'vongTrai', ten: sraT('Bánh trái đã quay', 'Left wheel turned'), doc: doc('vongTrai'), donVi: sraT('vòng', 'rot'), soLe: 2 },
+    { id: 'vongPhai', ten: sraT('Bánh phải đã quay', 'Right wheel turned'), doc: doc('vongPhai'), donVi: sraT('vòng', 'rot'), soLe: 2 },
+    { id: 'vongGiay', ten: sraT('Bánh quay nhanh', 'Wheel speed'), doc: doc('vongGiay'), donVi: sraT('vòng/s', 'rot/s'), soLe: 2 },
+    { id: 'quangDuong', ten: sraT('Quãng đường', 'Distance travelled'), doc: doc('quangDuong'), donVi: 'cm', soLe: 1 },
+    { id: 'tien', ten: sraT('Đi tới được', 'Forward progress'), doc: doc('tien'), donVi: 'cm', soLe: 1 },
+    { id: 'tocDo', ten: sraT('Tốc độ', 'Speed'), doc: doc('tocDo'), donVi: 'cm/s', soLe: 1 },
+    { id: 'quayThan', ten: sraT('Thân xe đã quay', 'Body turned'), doc: doc('quayThan'), donVi: '°', soLe: 1 },
+    { id: 'lechNgang', ten: sraT('Lệch ngang (+ là phải)', 'Sideways drift (+ is right)'), doc: doc('lechNgang'), donVi: 'cm', soLe: 1 },
   ];
-  if (SRA.soDo) self.DONG.forEach(d => SRA.soDo.them(Object.assign({ nhom: 'Chuyển động' }, d)));
+  if (SRA.soDo) self.DONG.forEach(d => SRA.soDo.them(Object.assign({ nhom: sraT('Chuyển động', 'Motion') }, d)));
 
   // -------------------------------------------------------------------------
   // Chọn robot trong bài
@@ -162,7 +162,7 @@ SRA.chuyenDong = new function() {
     let ds = bai.robotChon;
     if (!Array.isArray(ds) || !ds.length) return;
     self.robotDangDung = bai.robot;
-    let html = '<section class="sra-chon-robot"><h2>Chọn robot</h2><div class="sra-nut-hang" style="flex-wrap:wrap">';
+    let html = '<section class="sra-chon-robot"><h2>' + sraT('Chọn robot', 'Choose robot') + '</h2><div class="sra-nut-hang" style="flex-wrap:wrap">';
     ds.forEach(function(r) {
       html += '<button type="button" class="sra-nut phu" data-tep="' + r.tep + '">' + r.ten + '</button>';
     });
@@ -205,46 +205,46 @@ SRA.chuyenDong = new function() {
 // ---------------------------------------------------------------------------
 (function() {
   function so(x, le) {
-    return Number(x).toFixed(le == null ? 1 : le).replace('.', ',');
+    return Number(x).toFixed(le == null ? 1 : le).replace('.', sraT(',', '.'));
   }
   // Số gọn: bỏ phần thập phân thừa (2,5 · 3 · 0,05)
   function gon(x) {
-    return String(Math.round(Number(x) * 1000) / 1000).replace('.', ',');
+    return String(Math.round(Number(x) * 1000) / 1000).replace('.', sraT(',', '.'));
   }
   function soDo() {
     return SRA.chuyenDong.so() || {};
   }
 
   Object.assign(SRA.TEN_KHOI, {
-    sra_quay_banh: '"quay bánh trái … bánh phải …"',
-    sra_chay_banh: '"chạy bánh trái … % bánh phải … %"',
-    sra_chay: '"đi … mãi"'
+    sra_quay_banh: sraT('"quay bánh trái … bánh phải …"', '"spin left wheel … right wheel …"'),
+    sra_chay_banh: sraT('"chạy bánh trái … % bánh phải … %"', '"run left wheel … % right wheel … %"'),
+    sra_chay: sraT('"đi … mãi"', '"keep moving …"')
   });
 
   Object.assign(SRA.luat, {
     // Robot đi tới (theo hướng đầu xe lúc xuất phát) được cm ± saiSo
     diDuoc: {
       moTa: function(dk) {
-        return 'Robot đi tới được ' + gon(dk.cm) + ' cm (sai số ±' + gon(dk.saiSo || 2) + ' cm)';
+        return sraT('Robot đi tới được ' + gon(dk.cm) + ' cm (sai số ±' + gon(dk.saiSo || 2) + ' cm)', 'Robot moves forward ' + gon(dk.cm) + ' cm (±' + gon(dk.saiSo || 2) + ' cm)');
       },
       kiemTra: function(dk) {
         let v = soDo().tien || 0;
         let dat = Math.abs(v - dk.cm) <= (dk.saiSo || 2);
-        return { dat: dat, lyDo: 'Robot đi tới được ' + so(v) + ' cm, cần ' + gon(dk.cm) + ' ± ' + gon(dk.saiSo || 2) + ' cm.' };
+        return { dat: dat, lyDo: sraT('Robot đi tới được ' + so(v) + ' cm, cần ' + gon(dk.cm) + ' ± ' + gon(dk.saiSo || 2) + ' cm.', 'The robot moved forward ' + so(v) + ' cm, needs ' + gon(dk.cm) + ' ± ' + gon(dk.saiSo || 2) + ' cm.') };
       }
     },
 
     // Lúc dừng, robot lệch khỏi đường thẳng xuất phát không quá cm
     lechNgangToiDa: {
       moTa: function(dk) {
-        return 'Lệch ngang không quá ' + gon(dk.cm) + ' cm so với đường thẳng';
+        return sraT('Lệch ngang không quá ' + gon(dk.cm) + ' cm so với đường thẳng', 'Drift sideways no more than ' + gon(dk.cm) + ' cm from a straight line');
       },
       kiemTra: function(dk) {
         let v = soDo().lechNgang || 0;
         let dat = Math.abs(v) <= dk.cm;
         return {
           dat: dat,
-          lyDo: 'Robot lệch ' + so(Math.abs(v)) + ' cm sang ' + (v >= 0 ? 'phải' : 'trái') + (dat ? '.' : ', chỉ được lệch tối đa ' + gon(dk.cm) + ' cm.')
+          lyDo: sraT('Robot lệch ' + so(Math.abs(v)) + ' cm sang ' + (v >= 0 ? 'phải' : 'trái') + (dat ? '.' : ', chỉ được lệch tối đa ' + gon(dk.cm) + ' cm.'), 'The robot drifted ' + so(Math.abs(v)) + ' cm to the ' + (v >= 0 ? 'right' : 'left') + (dat ? '.' : ', at most ' + gon(dk.cm) + ' cm allowed.'))
         };
       }
     },
@@ -252,14 +252,14 @@ SRA.chuyenDong = new function() {
     // Thân xe quay được `do` độ so với lúc xuất phát (dương = quay phải)
     quayThan: {
       moTa: function(dk) {
-        return 'Thân xe quay ' + (dk.do >= 0 ? 'phải ' : 'trái ') + so(Math.abs(dk.do), 0) + '° (sai số ±' + gon(dk.saiSo || 2) + '°)';
+        return sraT('Thân xe quay ' + (dk.do >= 0 ? 'phải ' : 'trái ') + so(Math.abs(dk.do), 0) + '° (sai số ±' + gon(dk.saiSo || 2) + '°)', 'Body turns ' + (dk.do >= 0 ? 'right ' : 'left ') + so(Math.abs(dk.do), 0) + '° (±' + gon(dk.saiSo || 2) + '°)');
       },
       kiemTra: function(dk) {
         let v = soDo().quayThan || 0;
         let dat = Math.abs(SRA.hieuGoc(v, dk.do)) <= (dk.saiSo || 2);
         return {
           dat: dat,
-          lyDo: 'Thân xe quay ' + (v >= 0 ? 'phải ' : 'trái ') + so(Math.abs(v)) + '°, cần ' + so(Math.abs(dk.do), 0) + ' ± ' + gon(dk.saiSo || 2) + '°.'
+          lyDo: sraT('Thân xe quay ' + (v >= 0 ? 'phải ' : 'trái ') + so(Math.abs(v)) + '°, cần ' + so(Math.abs(dk.do), 0) + ' ± ' + gon(dk.saiSo || 2) + '°.', 'The body turned ' + (v >= 0 ? 'right ' : 'left ') + so(Math.abs(v)) + '°, needs ' + so(Math.abs(dk.do), 0) + ' ± ' + gon(dk.saiSo || 2) + '°.')
         };
       }
     },
@@ -267,7 +267,7 @@ SRA.chuyenDong = new function() {
     // Lúc dừng, số vòng hai bánh đã quay chênh nhau không quá `vong`
     chenhVongToiDa: {
       moTa: function(dk) {
-        return 'Hai bánh quay số vòng chênh nhau không quá ' + gon(dk.vong) + ' vòng';
+        return sraT('Hai bánh quay số vòng chênh nhau không quá ' + gon(dk.vong) + ' vòng', 'The two wheels differ by no more than ' + gon(dk.vong) + ' rotations');
       },
       kiemTra: function(dk) {
         let v = soDo();
@@ -275,8 +275,10 @@ SRA.chuyenDong = new function() {
         let dat = chenh <= dk.vong;
         return {
           dat: dat,
-          lyDo: 'Bánh trái quay ' + so(v.vongTrai || 0, 2) + ' vòng, bánh phải ' + so(v.vongPhai || 0, 2) + ' vòng: chênh ' + so(chenh, 2) +
-            (dat ? ' vòng.' : ' vòng, chỉ được chênh tối đa ' + gon(dk.vong) + ' vòng.')
+          lyDo: sraT('Bánh trái quay ' + so(v.vongTrai || 0, 2) + ' vòng, bánh phải ' + so(v.vongPhai || 0, 2) + ' vòng: chênh ' + so(chenh, 2) +
+            (dat ? ' vòng.' : ' vòng, chỉ được chênh tối đa ' + gon(dk.vong) + ' vòng.'),
+            'Left wheel ' + so(v.vongTrai || 0, 2) + ' rotations, right wheel ' + so(v.vongPhai || 0, 2) + ' rotations: difference ' + so(chenh, 2) +
+            (dat ? '.' : ', at most ' + gon(dk.vong) + ' allowed.'))
         };
       }
     },
@@ -284,14 +286,14 @@ SRA.chuyenDong = new function() {
     // Chương trình không dùng các loại khối này (vd. khối đi/quay có con quay tự sửa sai)
     khongDungKhoi: {
       moTa: function(dk) {
-        return 'Không dùng khối ' + SRA.tenKhoi(dk);
+        return sraT('Không dùng khối ', 'Do not use the block ') + SRA.tenKhoi(dk);
       },
       kiemTra: function(dk, ctx) {
-        if (!ctx.loaiKhoi) return { dat: false, lyDo: 'Bài này cần làm bằng khối lệnh, không dùng Python tự viết.' };
+        if (!ctx.loaiKhoi) return { dat: false, lyDo: sraT('Bài này cần làm bằng khối lệnh, không dùng Python tự viết.', 'This lesson must be done with blocks, not hand-written Python.') };
         let co = [].concat(dk.khoi).filter(k => ctx.loaiKhoi[k]);
         return {
           dat: co.length == 0,
-          lyDo: co.length == 0 ? 'Không dùng khối ' + SRA.tenKhoi(dk) + '.' : 'Bài này không được dùng khối ' + SRA.tenKhoi(dk) + '.'
+          lyDo: co.length == 0 ? sraT('Không dùng khối ', 'Did not use the block ') + SRA.tenKhoi(dk) + '.' : sraT('Bài này không được dùng khối ', 'This lesson does not allow the block ') + SRA.tenKhoi(dk) + '.'
         };
       }
     },
@@ -299,12 +301,12 @@ SRA.chuyenDong = new function() {
     // Thời gian bánh được lệnh chạy (từ lệnh chạy đầu tiên đến lệnh dừng) nằm trong [tu, den] giây
     thoiGianChuyenDong: {
       moTa: function(dk) {
-        return 'Thời gian chạy từ ' + gon(dk.tu) + ' đến ' + gon(dk.den) + ' giây';
+        return sraT('Thời gian chạy từ ' + gon(dk.tu) + ' đến ' + gon(dk.den) + ' giây', 'Run time from ' + gon(dk.tu) + ' to ' + gon(dk.den) + ' s');
       },
       kiemTra: function(dk) {
         let v = soDo().thoiGian || 0;
         let dat = v >= dk.tu && v <= dk.den;
-        return { dat: dat, lyDo: 'Robot chạy ' + so(v, 2) + ' giây, cần từ ' + gon(dk.tu) + ' đến ' + gon(dk.den) + ' giây.' };
+        return { dat: dat, lyDo: sraT('Robot chạy ' + so(v, 2) + ' giây, cần từ ' + gon(dk.tu) + ' đến ' + gon(dk.den) + ' giây.', 'The robot ran ' + so(v, 2) + ' s, needs ' + gon(dk.tu) + ' to ' + gon(dk.den) + ' s.') };
       }
     },
 
@@ -315,7 +317,7 @@ SRA.chuyenDong = new function() {
           let r = (bai.robotChon || []).find(x => x.tep == t);
           return r ? r.ten : t;
         });
-        return 'Hoàn thành với cả ' + ten.join(' và ');
+        return sraT('Hoàn thành với cả ', 'Complete with both ') + ten.join(sraT(' và ', ' and '));
       },
       kiemTra: function(dk, ctx) {
         let bai = SRA.bai;
@@ -334,7 +336,7 @@ SRA.chuyenDong = new function() {
         };
         return {
           dat: thieu.length == 0,
-          lyDo: thieu.length == 0 ? 'Đã hoàn thành với mọi robot cần thử.' : 'Còn phải hoàn thành với ' + thieu.map(tenRobot).join(' và ') + '.'
+          lyDo: thieu.length == 0 ? sraT('Đã hoàn thành với mọi robot cần thử.', 'Completed with every required robot.') : sraT('Còn phải hoàn thành với ', 'Still to complete with ') + thieu.map(tenRobot).join(sraT(' và ', ' and ')) + '.'
         };
       }
     }

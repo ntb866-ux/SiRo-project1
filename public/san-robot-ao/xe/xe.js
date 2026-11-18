@@ -251,14 +251,14 @@ var SRAXe = new function() {
       let laMenuRobot = tuyChon && tuyChon.className == 'robotMenuDropDown' && typeof robot != 'undefined';
       if (laMenuRobot && typeof SRABangLapRap != 'undefined' && SRABangLapRap.dungDuoc()) {
         muc = muc.concat([{
-          html: (SRABangLapRap.dangMo ? '<span class="tick">&#x2713;</span> ' : '') + 'Lắp ráp xe (kéo thả cảm biến)',
+          html: (SRABangLapRap.dangMo ? '<span class="tick">&#x2713;</span> ' : '') + sraT('Lắp ráp xe (kéo thả cảm biến)', 'Build car (drag and drop sensors)'),
           line: false,
           callback: function() { SRABangLapRap.batTat(); }
         }]);
       }
       if (laMenuRobot && robot.sraHitbox) {
         muc = muc.concat([{
-          html: (self.hienHitbox ? '<span class="tick">&#x2713;</span> ' : '') + 'Hiện hitbox của xe',
+          html: (self.hienHitbox ? '<span class="tick">&#x2713;</span> ' : '') + sraT('Hiện hitbox của xe', 'Show car hitbox'),
           line: false,
           callback: function() { self.datHienHitbox(!self.hienHitbox); }
         }]);

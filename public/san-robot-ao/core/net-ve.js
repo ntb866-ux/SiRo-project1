@@ -229,17 +229,17 @@ SRA.netVe = new function() {
 // ---------------------------------------------------------------------------
 SRA.luat.veGiongMau = {
   moTa: function(dk) {
-    return 'Nét vẽ trùng hình mẫu (lệch không quá ' + (dk.saiSo || 4) + ' cm)';
+    return sraT('Nét vẽ trùng hình mẫu (lệch không quá ' + (dk.saiSo || 4) + ' cm)', 'Drawing matches the model shape (within ' + (dk.saiSo || 4) + ' cm)');
   },
   kiemTra: function(dk, ctx) {
     let saiSo = dk.saiSo || 4;
     let canPhu = dk.phu || 90;
     let canChinhXac = dk.chinhXac || 90;
     let netMau = SRA.netVe.netMau(SRA.bai, dk.mau);
-    if (!netMau) return { dat: false, lyDo: 'Bài chưa khai báo hình mẫu "' + dk.mau + '".' };
+    if (!netMau) return { dat: false, lyDo: sraT('Bài chưa khai báo hình mẫu "', 'The lesson has no model shape "') + dk.mau + '".' };
     let netVe = ctx.netVe || [];
     if (!netVe.length) {
-      return { dat: false, lyDo: 'Robot chưa vẽ gì cả. Bạn đã dùng khối "hạ bút" chưa?' };
+      return { dat: false, lyDo: sraT('Robot chưa vẽ gì cả. Bạn đã dùng khối "hạ bút" chưa?', 'The robot did not draw anything. Did you use the "pen down" block?') };
     }
     let k = SRA.netVe.soSanh(netMau, netVe, saiSo);
     ctx.soSanhNet = ctx.soSanhNet || {};
@@ -248,17 +248,21 @@ SRA.luat.veGiongMau = {
     let datPhu = k.phu >= canPhu, datCx = k.chinhXac >= canChinhXac;
     let lyDo;
     if (datPhu && datCx) {
-      lyDo = 'Nét vẽ phủ ' + phu + '% hình mẫu, ' + cx + '% nét vẽ nằm sát hình mẫu (lệch trung bình ' +
-        k.lechTB.toFixed(1).replace('.', ',') + ' cm).';
+      lyDo = sraT('Nét vẽ phủ ' + phu + '% hình mẫu, ' + cx + '% nét vẽ nằm sát hình mẫu (lệch trung bình ' +
+        k.lechTB.toFixed(1).replace('.', ',') + ' cm).', 'The drawing covers ' + phu + '% of the model shape, ' + cx + '% of the drawing lies close to it (average offset ' +
+        k.lechTB.toFixed(1) + ' cm).');
     } else if (!datPhu && datCx) {
-      lyDo = 'Nét vẽ mới phủ ' + phu + '% hình mẫu (cần ' + canPhu + '%): robot vẽ được ' + Math.round(k.daiVe) +
-        ' cm, hình mẫu dài ' + Math.round(k.daiMau) + ' cm. Còn thiếu cạnh nào?';
+      lyDo = sraT('Nét vẽ mới phủ ' + phu + '% hình mẫu (cần ' + canPhu + '%): robot vẽ được ' + Math.round(k.daiVe) +
+        ' cm, hình mẫu dài ' + Math.round(k.daiMau) + ' cm. Còn thiếu cạnh nào?', 'The drawing covers only ' + phu + '% of the model shape (needs ' + canPhu + '%): the robot drew ' + Math.round(k.daiVe) +
+        ' cm, the model is ' + Math.round(k.daiMau) + ' cm long. Which side is missing?');
     } else if (!datPhu) {
-      lyDo = 'Nét vẽ mới phủ ' + phu + '% hình mẫu (cần ' + canPhu + '%), ' + (100 - cx) +
-        '% nét vẽ lệch ra ngoài hình mẫu quá ' + saiSo + ' cm. Kiểm tra lại số đo góc quay và độ dài cạnh.';
+      lyDo = sraT('Nét vẽ mới phủ ' + phu + '% hình mẫu (cần ' + canPhu + '%), ' + (100 - cx) +
+        '% nét vẽ lệch ra ngoài hình mẫu quá ' + saiSo + ' cm. Kiểm tra lại số đo góc quay và độ dài cạnh.', 'The drawing covers only ' + phu + '% of the model shape (needs ' + canPhu + '%), and ' + (100 - cx) +
+        '% of the drawing is more than ' + saiSo + ' cm off the model. Check the turn angles and side lengths.');
     } else {
-      lyDo = 'Có ' + (100 - cx) + '% nét vẽ lệch ra ngoài hình mẫu quá ' + saiSo + ' cm (chỉ được tối đa ' +
-        (100 - canChinhXac) + '%). Robot vẽ thừa hay vẽ lệch ở đâu?';
+      lyDo = sraT('Có ' + (100 - cx) + '% nét vẽ lệch ra ngoài hình mẫu quá ' + saiSo + ' cm (chỉ được tối đa ' +
+        (100 - canChinhXac) + '%). Robot vẽ thừa hay vẽ lệch ở đâu?', (100 - cx) + '% of the drawing is more than ' + saiSo + ' cm off the model (at most ' +
+        (100 - canChinhXac) + '% allowed). Where did the robot draw extra or off course?');
     }
     return { dat: datPhu && datCx, lyDo: lyDo };
   }

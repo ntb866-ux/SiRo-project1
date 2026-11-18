@@ -25,6 +25,7 @@ Bài mẫu đầy đủ: [`thu-thach/01-di-chuyen/01-tien-toi-o-dich.json`](../p
 | Trường | Bắt buộc | Ý nghĩa |
 |---|---|---|
 | `tieuDe` | có | Tên bài hiện trên trang chọn bài và khung đề. |
+| `tieuDeEn` | không | Tên bài tiếng Anh, hiện khi giao diện không phải tiếng Việt. Vùng (`vung`) có thể thêm `tenEn`, điều kiện có `tenKhoi` có thể thêm `tenKhoiEn`. |
 | `san` | có | Tên thư mục sân trong `san/`. |
 | `robot` | nên có | Tên tệp robot trong `robots/` (không có `.json`), ví dụ `co-ban`. Chưa có tệp đó thì dùng robot mặc định của GEARS. |
 | `viTriBatDau` | có | `{ "x": …, "y": …, "goc": … }` vị trí và hướng xuất phát. |

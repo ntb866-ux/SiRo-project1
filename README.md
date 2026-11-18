@@ -40,6 +40,7 @@ Danh sách này cập nhật dần theo từng gói việc:
 - [x] Khung thử thách có chấm sao: trang chọn bài `san-robot-ao/`, hướng dẫn thêm bài ở [docs/huong-dan-them-bai.md](docs/huong-dan-them-bai.md)
 - [ ] Các sân học tập: di chuyển (đã có 6 bài, xem [docs/bai-di-chuyen.md](docs/bai-di-chuyen.md)), hiệu chỉnh motor (5 bài và bảng số đo, xem [docs/bai-hieu-chinh-dong-co.md](docs/bai-hieu-chinh-dong-co.md)), cảm biến chạm, khoảng cách, màu, gyro, bút vẽ
 - [x] Kho code mẫu cho xe lắp mô-đun: mỗi bài một cách lắp cảm biến và một chương trình mẫu, nạp bằng nút trên khung đề bài (xem [docs/code-mau-xe-lap-rap.md](docs/code-mau-xe-lap-rap.md))
+- [x] Giao diện song ngữ Việt / Anh: đổi ngôn ngữ (nút quả địa cầu ở trang chính, nút Tiếng Việt / English ở trang chọn bài) thì mọi tab, menu, nút, bảng số đo, bảng lắp ráp xe và lời chấm sao đổi theo. Chữ do Sân Robot Ảo tự viết dùng `sraT('tiếng Việt', 'English')` trong `public/san-robot-ao/ngon-ngu.js`. Nội dung bài (đề bài, gợi ý, tên vùng) hiện chỉ có tiếng Việt; tiêu đề bài và tên chặng có thêm `tieuDeEn`, `tenEn`.
 - [ ] Mê cung mã 001–100 có kỉ lục
 - [ ] Sân thi đấu: sumo, bóng đá, bắn bóng
 

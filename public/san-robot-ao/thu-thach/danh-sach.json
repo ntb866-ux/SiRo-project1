@@ -4,7 +4,9 @@
     {
       "id": "01-di-chuyen",
       "ten": "Chặng 1 · Di chuyển",
+      "tenEn": "Stage 1 · Movement",
       "moTa": "Làm quen với robot: tiến, lùi, quay và đo quãng đường trên lưới tọa độ.",
+      "moTaEn": "Get to know the robot: forward, backward, turning and measuring distance on a coordinate grid.",
       "moKhoaTuanTu": false,
       "bai": [
         "01-di-chuyen/01-tien-toi-o-dich",
@@ -17,7 +19,9 @@
     {
       "id": "02-vong-lap",
       "ten": "Chặng 2 · Vòng lặp và biến",
+      "tenEn": "Stage 2 · Loops and variables",
       "moTa": "Viết chương trình gọn hơn bằng vòng lặp: chuyển động lặp lại có chu kì.",
+      "moTaEn": "Write shorter programs with loops: movement that repeats in cycles.",
       "moKhoaTuanTu": false,
       "bai": [
         "02-vong-lap/01-hinh-vuong-vong-lap"
@@ -26,7 +30,9 @@
     {
       "id": "03-hieu-chinh",
       "ten": "Chặng 2 · Hiệu chỉnh động cơ",
+      "tenEn": "Stage 2 · Motor calibration",
       "moTa": "Đo chu vi bánh, chỉnh góc quay, so bánh to và bánh nhỏ, bù motor yếu, chạy đúng tốc độ: robot thật không bao giờ hoàn hảo.",
+      "moTaEn": "Measure wheel circumference, tune turn angles, compare big and small wheels, make up for a weak motor, hit an exact speed: real robots are never perfect.",
       "moKhoaTuanTu": false,
       "bai": [
         "03-hieu-chinh/01-chu-vi-banh",
@@ -39,7 +45,9 @@
     {
       "id": "07-but-ve",
       "ten": "Chặng 2 · Bút vẽ và đa giác",
+      "tenEn": "Stage 2 · Pen and polygons",
       "moTa": "Vẽ tam giác, lục giác, ngôi sao và ngôi nhà theo hình mẫu: góc quay của robot là góc ngoài, tổng góc ngoài là 360°.",
+      "moTaEn": "Draw a triangle, hexagon, star and house from a model: the robot turns through the exterior angle, and the exterior angles add up to 360°.",
       "moKhoaTuanTu": false,
       "bai": [
         "07-but-ve/01-tam-giac-deu",
@@ -51,7 +59,9 @@
     {
       "id": "03-cam-bien-cham-khoang-cach",
       "ten": "Chặng 3 · Cảm biến chạm và khoảng cách",
+      "tenEn": "Stage 3 · Touch and distance sensors",
       "moTa": "Robot tự cảm nhận đường đi: dừng khi chạm tường, đo khoảng cách bằng siêu âm, đỗ xe, men theo tường và thoát mê cung.",
+      "moTaEn": "The robot senses its own path: stop on touching a wall, measure distance with ultrasound, park, follow a wall and escape a maze.",
       "moKhoaTuanTu": false,
       "bai": [
         "03-cam-bien-cham-khoang-cach/01-cham-tuong-thi-dung",
@@ -64,7 +74,9 @@
     {
       "id": "03-cam-bien-mau",
       "ten": "Chặng 3 · Cảm biến màu",
+      "tenEn": "Stage 3 · Color sensor",
       "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ và dò theo đường đen.",
+      "moTaEn": "The robot looks down at the field: stop at a line, count lines, recognise colors to turn, and follow a black line.",
       "moKhoaTuanTu": false,
       "bai": [
         "03-cam-bien-mau/01-dung-o-vach",
@@ -77,7 +89,9 @@
     {
       "id": "06-gyro",
       "ten": "Chặng 3 · Con quay (gyro)",
+      "tenEn": "Stage 3 · Gyro",
       "moTa": "Cảm biến con quay đo tốc độ quay, cộng dồn ra góc hướng: quay chính xác trên sân trơn và tự giữ hướng khi bị đẩy lệch.",
+      "moTaEn": "The gyro sensor measures turning speed and adds it up into a heading: turn precisely on a slippery field and hold the heading when pushed off course.",
       "moKhoaTuanTu": false,
       "bai": [
         "06-gyro/01-quay-90-do-tren-san-bang",

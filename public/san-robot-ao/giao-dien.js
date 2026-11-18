@@ -599,7 +599,7 @@ var sanRobotAo = new function() {
   this.toolboxCoBan = function() {
     let xml =
       '<xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">' +
-      danhMuc('Chuyển động', 'chuyen_dong',
+      danhMuc(i18n.get('#blk-motion#'), 'chuyen_dong',
         '<block type="sra_di"><field name="HUONG">TOI</field>' + soBong('CM', 20) + '</block>' +
         '<block type="sra_di"><field name="HUONG">LUI</field>' + soBong('CM', 20) + '</block>' +
         '<block type="sra_quay"><field name="HUONG">PHAI</field>' + soBong('DO', 90) + '</block>' +
@@ -609,30 +609,30 @@ var sanRobotAo = new function() {
         '<block type="sra_dung"></block>' +
         '<block type="sra_dat_toc_do">' + soBong('TOC_DO', 50) + '</block>'
       , 'id="sraChuyenDong"') +
-      danhMuc('Động cơ', 'dong_co',
+      danhMuc(i18n.get('#blk-motor#'), 'dong_co',
         '<block type="sra_quay_banh">' + soBong('TRAI', 1) + soBong('PHAI', 1) + '<field name="DON_VI">VONG</field></block>' +
         '<block type="sra_chay_banh">' + soBong('TRAI', 50) + soBong('PHAI', 50) + '</block>' +
         '<block type="sra_dung"></block>' +
         '<block type="sleep"><field name="units">SECONDS</field>' + soBong('seconds', 1) + '</block>' +
         '<block type="sra_dat_toc_do">' + soBong('TOC_DO', 50) + '</block>'
       , 'id="sraDongCo"') +
-      danhMuc('Bút vẽ', 'but_ve',
+      danhMuc(i18n.get('#blk-pen-category#'), 'but_ve',
         '<block type="sra_ha_but"></block>' +
         '<block type="sra_nhac_but"></block>' +
         '<block type="sra_mau_but"></block>' +
         '<block type="sra_net_but">' + soBong('width', 3) + '</block>'
       , 'id="sraButVe"') +
-      danhMuc('Âm thanh', 'am_thanh',
+      danhMuc(i18n.get('#blk-sound#'), 'am_thanh',
         '<block type="beep"><field name="block">BLOCK</field></block>'
       , 'id="sraAmThanh"') +
-      danhMuc('Cảm biến', 'cam_bien',
+      danhMuc(i18n.get('#blk-sensors#'), 'cam_bien',
         '<block type="sra_khoang_cach"></block>' +
         '<block type="sra_thay_mau"></block>' +
         '<block type="sra_dang_cham"></block>' +
         '<block type="sra_goc_quay"></block>' +
         '<block type="sra_dat_lai_goc"></block>'
       , 'id="sraCamBien"') +
-      danhMuc('Điều khiển', 'dieu_khien',
+      danhMuc(i18n.get('#blk-control#'), 'dieu_khien',
         '<block type="sleep"><field name="units">SECONDS</field>' + soBong('seconds', 1) + '</block>' +
         '<block type="controls_repeat_ext">' + soBong('TIMES', 4) + '</block>' +
         '<block type="sra_lap_mai"></block>' +
@@ -642,7 +642,7 @@ var sanRobotAo = new function() {
         '<block type="controls_whileUntil"><field name="MODE">UNTIL</field></block>' +
         '<block type="exit"></block>'
       , 'id="sraDieuKhien"') +
-      danhMuc('Phép toán', 'phep_toan',
+      danhMuc(i18n.get('#blk-math#'), 'phep_toan',
         '<block type="math_arithmetic"><field name="OP">ADD</field>' + soBong('A', 1) + soBong('B', 1) + '</block>' +
         '<block type="math_arithmetic"><field name="OP">MINUS</field>' + soBong('A', 1) + soBong('B', 1) + '</block>' +
         '<block type="math_arithmetic"><field name="OP">MULTIPLY</field>' + soBong('A', 1) + soBong('B', 1) + '</block>' +
@@ -656,8 +656,8 @@ var sanRobotAo = new function() {
         '<block type="logic_negate"></block>' +
         '<block type="math_number"><field name="NUM">0</field></block>'
       , 'id="sraPhepToan"') +
-      '<category name="Biến" colour="' + self.MAU.bien[0] + '" custom="VARIABLE2" id="sraBien"></category>' +
-      '<category name="Khối của tôi" colour="' + self.MAU.khoi_cua_toi[0] + '" custom="PROCEDURE2" id="sraKhoiCuaToi"></category>' +
+      '<category name="' + i18n.get('#blk-variables#') + '" colour="' + self.MAU.bien[0] + '" custom="VARIABLE2" id="sraBien"></category>' +
+      '<category name="' + i18n.get('#blk-functions#') + '" colour="' + self.MAU.khoi_cua_toi[0] + '" custom="PROCEDURE2" id="sraKhoiCuaToi"></category>' +
       '</xml>';
     let toolbox = (new DOMParser()).parseFromString(xml, 'text/xml').getElementById('toolbox');
     let loc = self.locCoBan || {};
@@ -1194,7 +1194,7 @@ var sanRobotAo = new function() {
       let $body = $(
         '<div class="about">' +
           '<h3>' + self.TEN_SAN_PHAM + '</h3>' +
-          '<p>Giả lập robot lập trình bằng khối lệnh và Python, chạy trên trình duyệt, dành cho học sinh THCS.</p>' +
+          sraT('<p>Giả lập robot lập trình bằng khối lệnh và Python, chạy trên trình duyệt, dành cho học sinh THCS.</p>' +
           '<p>Tên "Sân Robot Ảo" là tên tạm. Dự án không liên kết với VEX Robotics, Innovation First hay LEGO.</p>' +
           '<h3>Dựa trên GEARS (GearsBot)</h3>' +
           '<p>Sân Robot Ảo là bản phái sinh của <a href="https://github.com/QuirkyCort/gears" target="_blank">GEARS</a>, ' +
@@ -1208,11 +1208,26 @@ var sanRobotAo = new function() {
           '<h3>Giấy phép</h3>' +
           '<p>GNU General Public License phiên bản 3 (GPL v3). Phần mềm tự do, mã nguồn mở: ' +
           'bạn được dùng, sửa và chia sẻ lại, miễn là giữ cùng giấy phép và công khai mã nguồn.</p>' +
-          '<p>Copyright (C) 2020 Cort Wee. Phần chỉnh sửa: Copyright (C) 2026 những người đóng góp cho Sân Robot Ảo.</p>' +
+          '<p>Copyright (C) 2020 Cort Wee. Phần chỉnh sửa: Copyright (C) 2026 những người đóng góp cho Sân Robot Ảo.</p>',
+          '<p>A robot simulator programmed with blocks and Python, running in the browser, made for lower secondary students.</p>' +
+          '<p>"Sân Robot Ảo" (Virtual Robot Field) is a working name. The project is not affiliated with VEX Robotics, Innovation First or LEGO.</p>' +
+          '<h3>Based on GEARS (GearsBot)</h3>' +
+          '<p>Sân Robot Ảo is a derivative of <a href="https://github.com/QuirkyCort/gears" target="_blank">GEARS</a>, ' +
+          'created by Cort Wee @ <a href="https://aposteriori.com.sg" target="_blank">A Posteriori</a>.</p>' +
+          '<p>GEARS contributors: Steven Murray, humbug99, Yuvix25 and many others.</p>' +
+          '<p>GEARS is built on <a href="https://www.babylonjs.com/" target="_blank">Babylon.js</a>, ' +
+          '<a href="https://developers.google.com/blockly" target="_blank">Blockly</a>, ' +
+          '<a href="https://ace.c9.io/" target="_blank">Ace Editor</a>, ' +
+          '<a href="https://skulpt.org/" target="_blank">Skulpt</a> and ' +
+          '<a href="https://github.com/kripken/ammo.js/" target="_blank">Ammo.js</a>.</p>' +
+          '<h3>License</h3>' +
+          '<p>GNU General Public License version 3 (GPL v3). Free and open-source software: ' +
+          'you may use, modify and share it, as long as you keep the same license and publish the source code.</p>' +
+          '<p>Copyright (C) 2020 Cort Wee. Modifications: Copyright (C) 2026 Sân Robot Ảo contributors.</p>') +
         '</div>'
       );
-      let $buttons = $('<button type="button" class="confirm btn-success">Đồng ý</button>');
-      let $dialog = dialog('Giới thiệu', $body, $buttons);
+      let $buttons = $('<button type="button" class="confirm btn-success">' + sraT('Đồng ý', 'OK') + '</button>');
+      let $dialog = dialog(sraT('Giới thiệu', 'About'), $body, $buttons);
       $buttons.click(function() { $dialog.close(); });
     };
 
@@ -1249,6 +1264,15 @@ var sanRobotAo = new function() {
       self.datCheDo($(this).data('che-do'));
     });
     $cong.insertBefore('header .language');
+
+    // Lối vào trang chọn bài (cùng tên với nút "← Danh sách bài" trong khung đề bài)
+    $('<div class="menuItem sraMenuBai" role="link" tabindex="0"></div>')
+      .text(sraT('Danh sách bài', 'Lesson list'))
+      .on('click keydown', function(e) {
+        if (e.type == 'keydown' && e.key != 'Enter') return;
+        location.href = 'san-robot-ao/index.html';
+      })
+      .prependTo('.menuBar');
 
     let css =
       '.sraCheDo{display:inline-flex;margin:0 12px;border:1px solid rgba(255,255,255,.6);border-radius:16px;overflow:hidden;vertical-align:middle}' +

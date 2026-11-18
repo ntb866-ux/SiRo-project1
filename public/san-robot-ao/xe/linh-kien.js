@@ -26,6 +26,7 @@
   'use strict';
   const V = H.V, Q = H.Q;
   const PI = Math.PI;
+  const T = typeof sraT == 'function' ? sraT : (vi) => vi;     // chữ theo ngôn ngữ (ngon-ngu.js); chạy bằng node thì tiếng Việt
 
   // ---------- Thông số chung ----------
   const TS = {
@@ -187,9 +188,9 @@
   //   sau    tấm bắt vào vách sau, nhìn ra sau
   //   trai, phai  tấm bắt vào vách bên, nâng cao hơn bánh xe, nhìn sang ngang
   const GIA = {
-    truoc: { ten: 'trước', n: [0, 0, 1], mat: 11.4, y: 5.6, truc: 'x', gocN: 0, cao: [5.6, 10.6] },
-    trai: { ten: 'trái', n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 8.0], cao: [3.0, 13.0], caoTrenBanh: 7.5 },
-    phai: { ten: 'phải', n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 8.0], cao: [3.0, 13.0], caoTrenBanh: 7.5 },
+    truoc: { ten: T('trước', 'front'), n: [0, 0, 1], mat: 11.4, y: 5.6, truc: 'x', gocN: 0, cao: [5.6, 10.6] },
+    trai: { ten: T('trái', 'left'), n: [-1, 0, 0], mat: -4.7, y: 8.0, truc: 'z', gocN: -90, u: [-2.5, 8.0], cao: [3.0, 13.0], caoTrenBanh: 7.5 },
+    phai: { ten: T('phải', 'right'), n: [1, 0, 0], mat: 4.7, y: 8.0, truc: 'z', gocN: 90, u: [-2.5, 8.0], cao: [3.0, 13.0], caoTrenBanh: 7.5 },
     sau: { ten: 'sau', n: [0, 0, -1], mat: -4.2, y: 5.6, truc: 'x', gocN: 180, cao: [3.0, 10.6] }
   };
   // y: độ cao mặc định của tâm cảm biến so với mặt sân (cm); cao: khoảng chỉnh độ cao (giá có dãy lỗ bắt vít).
@@ -226,10 +227,10 @@
   };
   // Tay quay: các điểm gắn cảm biến, mỗi điểm ở góc phi so với tay chính, cách trục r cm; cảm biến quay mặt ra ngoài
   const TAY = {
-    don: { ten: 'Tay đơn', diem: [{ phi: 0, r: 1.9 }] },
-    doi: { ten: 'Tay đôi', diem: [{ phi: 0, r: 1.6 }, { phi: 180, r: 1.6 }] },
-    chuThap: { ten: 'Tay chữ thập', diem: [{ phi: 0, r: 1.0 }, { phi: 90, r: 1.0 }, { phi: 180, r: 1.0 }, { phi: 270, r: 1.0 }] },
-    dia: { ten: 'Đĩa tròn', diem: [{ phi: 0, r: 0 }] }
+    don: { ten: T('Tay đơn', 'Single arm'), diem: [{ phi: 0, r: 1.9 }] },
+    doi: { ten: T('Tay đôi', 'Double arm'), diem: [{ phi: 0, r: 1.6 }, { phi: 180, r: 1.6 }] },
+    chuThap: { ten: T('Tay chữ thập', 'Cross arm'), diem: [{ phi: 0, r: 1.0 }, { phi: 90, r: 1.0 }, { phi: 180, r: 1.0 }, { phi: 270, r: 1.0 }] },
+    dia: { ten: T('Đĩa tròn', 'Round disc'), diem: [{ phi: 0, r: 0 }] }
   };
   const DS_TAY = ['don', 'doi', 'chuThap', 'dia'];
   const GAN_SERVO = ['sieuAm', 'doLine'];
@@ -257,12 +258,12 @@
   // Lỗi khi gắn cảm biến loai vào điểm i của tay quay (gan: các điểm khác đã gắn)
   function loiGanServo(tay, gan, i, loai) {
     let ds = TAY[tay].diem;
-    if (!ds[i]) return 'Tay quay này không có điểm gắn đó.';
-    if (GAN_SERVO.indexOf(loai) < 0) return 'Tay quay chỉ gắn được cảm biến siêu âm hoặc mắt dò line.';
+    if (!ds[i]) return T('Tay quay này không có điểm gắn đó.', 'This arm has no such mount point.');
+    if (GAN_SERVO.indexOf(loai) < 0) return T('Tay quay chỉ gắn được cảm biến siêu âm hoặc mắt dò line.', 'Only ultrasonic or line sensors mount on the arm.');
     let moi = { phi: ds[i].phi, k: khuonGan(loai, ds[i].r) };
     for (let j = 0; j < ds.length; j++) {
       if (j == i || !gan[j]) continue;
-      if (chongGan(moi, { phi: ds[j].phi, k: khuonGan(gan[j], ds[j].r) })) return 'Hai cảm biến trên tay quay chồng lên nhau. Chọn tay quay dài hơn hoặc gắn ở hai đầu đối nhau.';
+      if (chongGan(moi, { phi: ds[j].phi, k: khuonGan(gan[j], ds[j].r) })) return T('Hai cảm biến trên tay quay chồng lên nhau. Chọn tay quay dài hơn hoặc gắn ở hai đầu đối nhau.', 'Two sensors on the arm overlap. Choose a longer arm or mount them at opposite ends.');
     }
     return null;
   }
@@ -324,23 +325,23 @@
   // Kiểm tra một vị trí: trả về null nếu đặt được, hoặc câu giải thích vì sao không.
   // ds: các mô-đun khác cùng chỗ gắn (không kể mô-đun đang đặt).
   function loiDuoi(loai, x, ds) {
-    if (Math.abs(x) > X_DUOI[loai] + 1e-6) return 'Mô-đun dưới mũi chỉ đặt được cách giữa tối đa ' + so1(X_DUOI[loai]) + ' cm, xa hơn thì đụng chân giá.';
+    if (Math.abs(x) > X_DUOI[loai] + 1e-6) return T('Mô-đun dưới mũi chỉ đặt được cách giữa tối đa ' + so1(X_DUOI[loai]) + ' cm, xa hơn thì đụng chân giá.', 'Modules under the nose can sit at most ' + so1(X_DUOI[loai]) + ' cm from the middle; further out they hit the bracket leg.');
     let gan = ds.find((m) => Math.abs(m.x - x) < KC_DUOI - 1e-6);
-    if (gan) return 'Hai mô-đun dưới mũi phải cách nhau ít nhất ' + so1(KC_DUOI) + ' cm vì mỗi mô-đun rộng 1,5 cm.';
+    if (gan) return T('Hai mô-đun dưới mũi phải cách nhau ít nhất ' + so1(KC_DUOI) + ' cm vì mỗi mô-đun rộng 1,5 cm.', 'Two modules under the nose must be at least ' + so1(KC_DUOI) + ' cm apart because each is 1.5 cm wide.');
     return null;
   }
   function loiGam(x, z, ds) {
-    if (Math.abs(x) > GAM.x + 1e-6) return 'Mắt dò line dưới gầm chỉ đặt được cách giữa tối đa ' + so1(GAM.x) + ' cm, xa hơn thì mạch lòi ra ngoài tấm đáy.';
-    if (z < GAM.z0 - 1e-6) return 'Mắt dò line dưới gầm phải đặt từ z = ' + so1(GAM.z0) + ' cm trở lên: phía sau mạch còn ổ cắm và đầu dây.';
-    if (z > GAM.z1 + 1e-6) return 'Mắt dò line dưới gầm chỉ đặt tới z = ' + so1(GAM.z1) + ' cm, trước đó là thanh dưới mũi xe.';
-    if (Math.abs(x) < GAM.xBi + GAM.nuaRong - 1e-6 && z + GAM.nuaDai > GAM.zBi + 1e-6) return 'Chỗ này đụng vỏ bi tự do. Dời mắt dò line ra sau hoặc sang bên.';
-    if (ds.some((m) => Math.abs(m.x - x) < KC_GAM - 1e-6)) return 'Hai mắt dò line dưới gầm phải lệch nhau ít nhất ' + so1(KC_GAM) + ' cm theo bề ngang, vì dây của mỗi mắt chạy thẳng dọc gầm ra phía đuôi.';
+    if (Math.abs(x) > GAM.x + 1e-6) return T('Mắt dò line dưới gầm chỉ đặt được cách giữa tối đa ' + so1(GAM.x) + ' cm, xa hơn thì mạch lòi ra ngoài tấm đáy.', 'Underside line sensors can sit at most ' + so1(GAM.x) + ' cm from the middle; further out the board sticks out past the base plate.');
+    if (z < GAM.z0 - 1e-6) return T('Mắt dò line dưới gầm phải đặt từ z = ' + so1(GAM.z0) + ' cm trở lên: phía sau mạch còn ổ cắm và đầu dây.', 'Underside line sensors must sit at z = ' + so1(GAM.z0) + ' cm or more: behind the board are its socket and cable.');
+    if (z > GAM.z1 + 1e-6) return T('Mắt dò line dưới gầm chỉ đặt tới z = ' + so1(GAM.z1) + ' cm, trước đó là thanh dưới mũi xe.', 'Underside line sensors can sit up to z = ' + so1(GAM.z1) + ' cm; beyond that is the front bar.');
+    if (Math.abs(x) < GAM.xBi + GAM.nuaRong - 1e-6 && z + GAM.nuaDai > GAM.zBi + 1e-6) return T('Chỗ này đụng vỏ bi tự do. Dời mắt dò line ra sau hoặc sang bên.', 'This spot hits the caster ball housing. Move the line sensor back or to the side.');
+    if (ds.some((m) => Math.abs(m.x - x) < KC_GAM - 1e-6)) return T('Hai mắt dò line dưới gầm phải lệch nhau ít nhất ' + so1(KC_GAM) + ' cm theo bề ngang, vì dây của mỗi mắt chạy thẳng dọc gầm ra phía đuôi.', 'Two underside line sensors must be at least ' + so1(KC_GAM) + ' cm apart sideways, because each cable runs straight back along the underside to the tail.');
     return null;
   }
   function loiNap(m, ds) {
     let mi = mienNap(m.loai);
-    if (m.x < mi.x0 - 1e-6 || m.x > mi.x1 + 1e-6 || m.z < mi.z0 - 1e-6 || m.z > mi.z1 + 1e-6) return 'Mô-đun và ổ cắm của nó phải nằm gọn trên nắp mạch chủ.';
-    if (ds.some((n) => chongNap(m, n))) return 'Hai mô-đun trên nắp không được chồng lên nhau.';
+    if (m.x < mi.x0 - 1e-6 || m.x > mi.x1 + 1e-6 || m.z < mi.z0 - 1e-6 || m.z > mi.z1 + 1e-6) return T('Mô-đun và ổ cắm của nó phải nằm gọn trên nắp mạch chủ.', 'The module and its socket must fit on the main board cover.');
+    if (ds.some((n) => chongNap(m, n))) return T('Hai mô-đun trên nắp không được chồng lên nhau.', 'Two modules on the cover cannot overlap.');
     return null;
   }
   const so1 = (x) => String(tron2(x)).replace('.', ',');
@@ -644,7 +645,7 @@
         ] };
     }
     xMat.forEach(function(x, i) {
-      let ten = c.doLine == 1 ? 'giữa' : (i == 0 ? 'trái' : (i == c.doLine - 1 ? 'phải' : 'giữa'));
+      let ten = c.doLine == 1 ? T('giữa', 'middle') : (i == 0 ? T('trái', 'left') : (i == c.doLine - 1 ? T('phải', 'right') : T('giữa', 'middle')));
       let o = oRJ25([x, y1 + KT_O[1] / 2, 12.05], 'sau');
       // thân TCRT5000 xoay dọc theo thân xe: đầu phát hồng ngoại phía mũi, đầu thu phía sau, cùng nằm trên một đường dọc
       let dd = dauDo(x, zMat);
@@ -659,7 +660,7 @@
 
     // --- Mắt dò line dưới gầm: mạch đầu đo treo dưới tấm đáy, ổ RJ25 ngay sau mạch, dây chạy dọc gầm ra đuôi ---
     c.gam.forEach(function(m, i) {
-      let x = m.x, z = m.z, ten = 'gầm ' + (i + 1);
+      let x = m.x, z = m.z, ten = T('gầm ', 'underside ') + (i + 1);
       let o = oRJ25([x, y0 - KT_O[1] / 2, z - GAM.nuaDai - KT_O[2] / 2], 'sau');
       let dd = dauDo(x, z);
       let ct = them({ id: 'doLineGam' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [o.khoi].concat(dd.khoi),
@@ -961,18 +962,25 @@
 
   // Phần mô tả (HTML) và các trường tương thích của tệp robot, tính từ bản lắp.
   // Dùng chung cho scripts/robot/tao-xe.js và bảng lắp ráp trong trình duyệt.
-  const TEN_CB = { doLine: 'Cảm biến dò line TCRT5000', sieuAm: 'Cảm biến siêu âm HC-SR04', cham: 'Cảm biến chạm', gyro: 'Gyro (con quay)', gps: 'GPS' };
+  const TEN_CB = T({ doLine: 'Cảm biến dò line TCRT5000', sieuAm: 'Cảm biến siêu âm HC-SR04', cham: 'Cảm biến chạm', gyro: 'Gyro (con quay)', gps: 'GPS' },
+    { doLine: 'TCRT5000 line sensor', sieuAm: 'HC-SR04 ultrasonic sensor', cham: 'Touch sensor', gyro: 'Gyro', gps: 'GPS' });
   function moTaRobot(banLap, kl) {
-    const so = (x, n) => x.toFixed(n == null ? 1 : n).replace('.', ',');
-    let cb = banLap.camBien.map((c) => '<li>Cổng ' + c.cong.slice(2) + ' (ổ ' + c.oMach + ' trên mạch chủ): ' + TEN_CB[c.loai] + (c.ten ? ' ' + c.ten : '') + '</li>');
+    const so = (x, n) => x.toFixed(n == null ? 1 : n).replace('.', T(',', '.'));
+    let cb = banLap.camBien.map((c) => '<li>' + T('Cổng ' + c.cong.slice(2) + ' (ổ ' + c.oMach + ' trên mạch chủ): ', 'Port ' + c.cong.slice(2) + ' (socket ' + c.oMach + ' on the main board): ') + TEN_CB[c.loai] + (c.ten ? ' ' + c.ten : '') + '</li>');
     return Object.assign({
-      longerDescription:
+      longerDescription: T(
         '<h3>Kích thước</h3><ul>' +
         '<li>Đường kính bánh: ' + so(banLap.thongSo.dBanh, 2) + ' cm (chu vi ' + banLap.thongSo.chuViBanh + ' cm)</li>' +
         '<li>Khoảng cách hai bánh (tâm đến tâm): ' + so(2 * banLap.thongSo.xBanh) + ' cm</li>' +
         '<li>Khối lượng: ' + Math.round(kl.tong) + ' g, ' + Math.round(kl.taiBanh * 100) + ' % đè lên hai bánh chủ động</li></ul>' +
         '<h3>Động cơ</h3><ul><li>Cổng A: Bánh trái</li><li>Cổng B: Bánh phải</li></ul>' +
         '<h3>Cảm biến</h3><ul>' + (cb.length ? cb.join('') : '<li>Chưa lắp cảm biến nào</li>') + '</ul>',
+        '<h3>Dimensions</h3><ul>' +
+        '<li>Wheel diameter: ' + so(banLap.thongSo.dBanh, 2) + ' cm (circumference ' + banLap.thongSo.chuViBanh + ' cm)</li>' +
+        '<li>Wheel spacing (center to center): ' + so(2 * banLap.thongSo.xBanh) + ' cm</li>' +
+        '<li>Mass: ' + Math.round(kl.tong) + ' g, ' + Math.round(kl.taiBanh * 100) + ' % on the two drive wheels</li></ul>' +
+        '<h3>Motors</h3><ul><li>Port A: Left wheel</li><li>Port B: Right wheel</li></ul>' +
+        '<h3>Sensors</h3><ul>' + (cb.length ? cb.join('') : '<li>No sensors fitted</li>') + '</ul>'),
       sraXe: banLap.cauHinh
     }, truongTuongThich(banLap, kl));
   }
