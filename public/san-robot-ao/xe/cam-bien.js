@@ -7,8 +7,10 @@
 //   HC-SR04   Phát chùm siêu âm 40 kHz hình nón 15°, đo thời gian sóng đi và về; khoảng cách =
 //             thời gian × tốc độ âm ÷ 2. Tầm 2–400 cm, mỗi lần đo cách nhau 50 ms. Mặt phẳng nghiêng
 //             quá 30° hắt sóng đi hướng khác nên không có tiếng vọng.
-//   TCRT5000  LED hồng ngoại 950 nm chiếu xuống sân, phototransistor đo phần phản xạ. Tín hiệu
-//             phụ thuộc hệ số phản xạ hồng ngoại của mặt sân và khoảng cách tới mặt sân.
+//   TCRT5000  LED hồng ngoại 950 nm chiếu xuống sân, phototransistor đặt cạnh đèn đo phần phản xạ.
+//             Mặt sân phản xạ khuếch tán theo định luật Lambert: tín hiệu phụ thuộc hệ số phản xạ hồng
+//             ngoại, khoảng cách từ đèn và bộ thu tới mặt sân, góc tới và góc thu (cảm biến nghiêng,
+//             xe chúi, mặt dốc).
 //   Chạm      Tấm cản là vật thể có bản lề và lò xo; công tắc đóng khi tấm bị ép quá một góc.
 //   Gyro      Đo vận tốc góc quanh trục đứng của xe rồi cộng dồn thành góc (có thể bật trôi, nhiễu).
 //   GPS       Toạ độ ăng-ten trên sân, cập nhật theo nhịp (mặc định 10 lần/giây), có thể bật sai số.
@@ -138,14 +140,74 @@ var SRAXeCamBien = (function() {
     return 0;
   }
   const DL_MAC_DINH = {
+    moHinh: 'lambert',      // 'lambert': đèn và bộ thu tách rời, phản xạ khuếch tán; 'cu': mô hình cũ (đường đáp ứng nhập tay)
     khoangCachChuan: 0.6,   // cm từ mặt đầu đo tới sân khi xe đứng trên sân phẳng
-    nuaGocNhin: 16,         // độ
-    banKinhMat: 0.15,       // cm, bán kính cửa sổ quang
+    khoangCachDenThu: 0.3,  // cm giữa tâm đèn phát và tâm bộ thu
+    nuaGocPhat: 85,         // độ: lệch khỏi trục bấy nhiêu thì cường độ đèn còn một nửa
+    nuaGocThu: 20,          // độ: lệch khỏi trục bấy nhiêu thì độ nhạy bộ thu còn một nửa
+    nuaGocNhin: 16,         // độ (mô hình cũ)
+    banKinhMat: 0.15,       // cm, bán kính cửa sổ quang (mô hình cũ)
     trangChuan: 0.92,       // tín hiệu (0–1) khi soi nền trắng ở khoảng cách chuẩn: do biến trở trên mô-đun đặt
     nguong: 0.5,            // ngưỡng của mạch so sánh cho ngõ ra số
     doTre: 0.03,
     nhieu: 0
   };
+
+  // ---------- Mô hình Lambert ----------
+  // Đèn E và bộ thu D đặt cạnh nhau, cùng nhìn theo hướng n̂ (trục quang). Bộ thu "nhìn" ra theo nhiều tia;
+  // mỗi tia chạm mặt sân tại P, pháp tuyến N. Phần công suất bộ thu nhận từ mảnh sân dA quanh P:
+  //   độ rọi tại P:       Ev = I(α) · cos θᵢ / r_E²        (θᵢ: góc tới, giữa N và PE; α: lệch khỏi trục đèn)
+  //   độ chói phản xạ:    L  = ρ · Ev / π                  (mặt khuếch tán Lambert: sáng như nhau từ mọi hướng)
+  //   bộ thu nhận:        dΦ = L · cos θᵣ · dA · S(β) · cos β / r_D²   (θᵣ: góc thu, giữa N và PD; β: lệch khỏi trục thu)
+  // Tia của bộ thu chiếm góc khối dΩ thì quét được mảnh sân dA = r_D² · dΩ / cos θᵣ. Nghiêng mặt sân đi,
+  // mảnh sân rộng ra đúng bằng phần cos θᵣ làm tối đi, nên mặt Lambert trông sáng như nhau từ mọi góc nhìn;
+  // còn cos θᵢ thì ở lại: đèn chiếu xiên thì mỗi cm² sân nhận ít ánh sáng hơn.
+  // Giản đồ phát I(α) và độ nhạy S(β) dạng chuông: bằng 1/2 khi lệch nửa góc. Đường tín hiệu theo khoảng cách
+  // (đỉnh ở 2,5 mm, rồi giảm như 1/d²) không nhập tay mà tự sinh ra từ hình học: quá gần thì vùng đèn rọi và
+  // vùng bộ thu nhìn chưa chồng lên nhau, xa thì ánh sáng loãng theo bình phương khoảng cách.
+  const LN2 = Math.log(2);
+  const chuong = (goc, nua) => Math.exp(-LN2 * (goc / nua) * (goc / nua));
+  // Các tia của bộ thu: 1 tia giữa và 3 vòng, mỗi tia mang trọng số S(β)·cos β·dΩ
+  function taoTiaThu(nuaGoc) {
+    const VONG = [1, 6, 10, 14];
+    let bMax = Math.min(80 * RAD, 2.2 * nuaGoc), buoc = bMax / (VONG.length - 0.5), ds = [];
+    VONG.forEach(function(so, j) {
+      let b = j * buoc, tren = Math.max(0, b - buoc / 2), duoi = b + buoc / 2;
+      let dOm = 2 * Math.PI * (Math.cos(tren) - Math.cos(duoi)) / so;
+      for (let k = 0; k < so; k++) {
+        let p = 2 * Math.PI * k / so + (j % 2) * Math.PI / so;
+        ds.push({ b: b, u: Math.sin(b) * Math.cos(p), w: Math.sin(b) * Math.sin(p), c: Math.cos(b), trong: chuong(b, nuaGoc) * Math.cos(b) * dOm });
+      }
+    });
+    return ds;
+  }
+  // Phần đóng góp của một điểm chạm. E, P, N, h (hướng tia thu), truc: mảng 3 số; rD: chiều dài tia.
+  function dongGopLambert(o, E, P, N, h, rD, truc, trong) {
+    let cosR = -V.cham(N, h);
+    if (cosR < 0) { N = V.nhan(N, -1); cosR = -cosR; }   // mặt hai phía: lấy phía quay về bộ thu
+    if (cosR < 1e-3) return 0;
+    let PE = V.tru(E, P), rE2 = V.cham(PE, PE), rE = Math.sqrt(rE2);
+    let cosI = V.cham(N, PE) / rE;                         // cos góc tới
+    let cosA = -V.cham(truc, PE) / rE;                     // cos góc lệch khỏi trục đèn
+    if (cosI <= 0 || cosA <= 0) return 0;                  // đèn ở sau mặt, hoặc sau lưng đèn
+    let I = chuong(Math.acos(Math.min(1, cosA)), o.nuaGocPhat * RAD);
+    let Ev = I * cosI / rE2;
+    let L = Ev / Math.PI;                                   // nhân ρ ở ngoài
+    // trong = S(β)·cos β·dΩ của tia; mảnh sân tia quét được dA = r_D²·dΩ/cos θᵣ
+    let dA_chia_dOm = rD * rD / cosR;
+    return L * cosR * dA_chia_dOm * trong / (rD * rD);
+  }
+  // Tín hiệu (chưa nhân hệ số khuếch đại) khi đầu đo nhìn thẳng xuống một mặt phẳng phản xạ ρ ở độ cao d.
+  // Dùng để đặt hệ số khuếch đại và để vẽ đường đáp ứng theo khoảng cách.
+  function tinHieuMatPhang(o, d, rho) {
+    let s = o.khoangCachDenThu, tia = taoTiaThu(o.nuaGocThu * RAD), t = 0;
+    let E = [s / 2, 0, 0], D = [-s / 2, 0, 0], truc = [0, -1, 0], N = [0, 1, 0];
+    for (let q of tia) {
+      let h = [q.u, -q.c, q.w], rD = d / q.c;
+      t += dongGopLambert(o, E, V.cong(D, V.nhan(h, rD)), N, h, rD, truc, q.trong);
+    }
+    return (rho == null ? 1 : rho) * t;
+  }
 
   // Hệ số phản xạ hồng ngoại của một màu sân. Mực màu (lục lam, đỏ tươi, vàng) gần như trong suốt
   // với hồng ngoại 950 nm; chỉ thành phần đen (muội than) hấp thụ. Thành phần đen của một màu là
@@ -221,47 +283,85 @@ var SRAXeCamBien = (function() {
     this.tinHieu = 0;                     // 0–1, tỉ lệ với dòng qua phototransistor
     this.so = false;                      // ngõ ra số: true = nền sáng (phản xạ mạnh)
     let khungDo = -1;
+    let lambert = o.moHinh != 'cu';
     // Hệ số khuếch đại: nền trắng (phản xạ 0,9) ở khoảng cách chuẩn cho tín hiệu trangChuan
-    let K = o.trangChuan / (0.9 * dapUng(o.khoangCachChuan));
-    // Các điểm mẫu trong vùng nhìn: tâm, vòng giữa, vòng ngoài (trọng số giảm dần ra mép)
+    let K = lambert ? o.trangChuan / tinHieuMatPhang(o, o.khoangCachChuan, 0.9) : o.trangChuan / (0.9 * dapUng(o.khoangCachChuan));
+    // Mô hình cũ: các điểm mẫu trong vùng nhìn: tâm, vòng giữa, vòng ngoài (trọng số giảm dần ra mép)
     let mau = [[0, 0, 1]];
     for (let i = 0; i < 6; i++) mau.push([0.5 * Math.cos(Math.PI / 3 * i), 0.5 * Math.sin(Math.PI / 3 * i), 0.8]);
     for (let i = 0; i < 8; i++) mau.push([0.92 * Math.cos(Math.PI / 4 * i + 0.3), 0.92 * Math.sin(Math.PI / 4 * i + 0.3), 0.4]);
     let tongTrong = mau.reduce((s, m) => s + m[2], 0);
+    let tiaThu = taoTiaThu(o.nuaGocThu * RAD);
+    // Hướng từ bộ thu sang đèn (hệ trục xe): cho sẵn trong cấu hình, không thì lấy hướng về mũi xe
+    let denThu = cb.den || (function() {
+      let t = V.tru([0, 0, 1], V.nhan(cb.huong, V.cham([0, 0, 1], cb.huong)));
+      return V.cham(t, t) < 1e-6 ? [1, 0, 0] : V.donVi(t);
+    })();
     // Nạp sẵn ảnh của các mặt có hoạ tiết (thảm sân) để lần đo đầu tiên đã đọc được màu thật
     scene.meshes.forEach(function(m) {
       let vl = m.origMaterial || m.material;
       if (!vl || m.sraXe) return;
       (vl.subMaterials || [vl]).forEach((x) => { if (x) anhCuaTexture(x.diffuseTexture || x.albedoTexture || x.emissiveTexture); });
     });
+    const phanXaCua = (c) => c.phanXa != null ? c.phanXa : phanXaHongNgoai(c.mau[0], c.mau[1], c.mau[2]);
+    // Đi từ lớp trên cùng xuống: lớp trong mờ (vùng tô màu) chỉ che một phần lớp dưới
+    function quaCacLop(ds, gop) {
+      ds.sort((a, b) => a.distance - b.distance);
+      let conLai = 1, s = 0;
+      for (let hit of ds) {
+        let c = mauTaiDiem(hit);
+        s += conLai * c.duc * phanXaCua(c) * gop(hit);
+        conLai *= 1 - c.duc;
+        if (conLai < 0.02) break;
+      }
+      return s;
+    }
+    // Lần đo gần nhất, để vẽ và giải thích: điểm chạm, góc tới, góc thu (độ) và phần đóng góp của từng tia
+    this.chiTiet = [];
 
-    this.do = function() {
-      let goc = kh.diem(cb.vt), xuong = kh.huong(cb.huong);
-      // hai hướng vuông góc với hướng nhìn để trải các tia trong cửa sổ quang (mắt dưới mũi: ngang và dọc xe)
-      let ngang = kh.huong(Math.abs(cb.huong[0]) > 0.9 ? [0, 0, 1] : [1, 0, 0]);
-      ngang = V.donVi(V.tru(ngang, V.nhan(xuong, V.cham(ngang, xuong))));
-      let doc = V.co(xuong, ngang);
+    function doLambert(goc, xuong, ngang, doc) {
+      let dh = kh.huong(denThu), s2 = o.khoangCachDenThu / 2;
+      let E = V.cong(goc, V.nhan(dh, s2)), D = V.tru(goc, V.nhan(dh, s2));
+      let tong = 0, ct = [];
+      for (let q of tiaThu) {
+        let h = V.donVi(V.cong(V.nhan(xuong, q.c), V.cong(V.nhan(ngang, q.u), V.nhan(doc, q.w))));
+        let ds = scene.multiPickWithRay(new BABYLON.Ray(bVec(D), bVec(h), 8), khongPhaiXe) || [];
+        let dau = null;
+        tong += quaCacLop(ds, function(hit) {
+          let p = hit.pickedPoint, n = hit.getNormal(true, true);
+          let P = [p.x, p.y, p.z], N = n ? [n.x, n.y, n.z] : [0, 1, 0];
+          let g = dongGopLambert(o, E, P, N, h, hit.distance, xuong, q.trong);
+          if (!dau) {
+            let PE = V.donVi(V.tru(E, P)), Nm = V.cham(N, h) > 0 ? V.nhan(N, -1) : N;
+            dau = { P: P, gocToi: Math.acos(Math.max(-1, Math.min(1, V.cham(Nm, PE)))) / RAD, gocThu: Math.acos(Math.min(1, -V.cham(Nm, h))) / RAD, r: hit.distance, gop: g };
+          }
+          return g;
+        });
+        if (dau) ct.push(dau);
+      }
+      self.chiTiet = ct;
+      return tong;
+    }
+    function doCu(goc, xuong, ngang, doc) {
       let tanG = Math.tan(o.nuaGocNhin * RAD), tong = 0;
       for (let m of mau) {
         // tia xuất phát trong cửa sổ quang, toả ra theo góc nhìn
         let lech = V.cong(V.nhan(ngang, m[0]), V.nhan(doc, m[1]));
         let p = V.cong(goc, V.nhan(lech, o.banKinhMat));
         let h = V.donVi(V.cong(xuong, V.nhan(lech, tanG)));
-        let ray = new BABYLON.Ray(bVec(p), bVec(h), 8);
-        let ds = scene.multiPickWithRay(ray, khongPhaiXe) || [];
-        ds.sort((a, b) => a.distance - b.distance);
-        // Đi từ lớp trên cùng xuống: lớp trong mờ (vùng tô màu) chỉ che một phần lớp dưới
-        let conLai = 1, s = 0;
-        for (let hit of ds) {
-          let c = mauTaiDiem(hit);
-          let px = c.phanXa != null ? c.phanXa : phanXaHongNgoai(c.mau[0], c.mau[1], c.mau[2]);
-          s += conLai * c.duc * px * dapUng(hit.distance);
-          conLai *= 1 - c.duc;
-          if (conLai < 0.02) break;
-        }
-        tong += s * m[2];
+        let ds = scene.multiPickWithRay(new BABYLON.Ray(bVec(p), bVec(h), 8), khongPhaiXe) || [];
+        tong += quaCacLop(ds, (hit) => dapUng(hit.distance)) * m[2];
       }
-      let t = K * tong / tongTrong;
+      return tong / tongTrong;
+    }
+
+    this.do = function() {
+      let goc = kh.diem(cb.vt), xuong = kh.huong(cb.huong);
+      // hai hướng vuông góc với hướng nhìn để trải các tia (mắt dưới mũi: ngang và dọc xe)
+      let ngang = kh.huong(Math.abs(cb.huong[0]) > 0.9 ? [0, 0, 1] : [1, 0, 0]);
+      ngang = V.donVi(V.tru(ngang, V.nhan(xuong, V.cham(ngang, xuong))));
+      let doc = V.co(xuong, ngang);
+      let t = K * (lambert ? doLambert(goc, xuong, ngang, doc) : doCu(goc, xuong, ngang, doc));
       if (o.nhieu > 0) t += nhieuChuan() * o.nhieu;
       self.tinHieu = Math.max(0, Math.min(1, t));
       if (self.so && self.tinHieu < o.nguong - o.doTre) self.so = false;
@@ -422,6 +522,6 @@ var SRAXeCamBien = (function() {
     return null;
   }
 
-  return { tao: tao, dapUng: dapUng, phanXaHongNgoai: phanXaHongNgoai,
+  return { tao: tao, dapUng: dapUng, phanXaHongNgoai: phanXaHongNgoai, tinHieuMatPhang: tinHieuMatPhang,
     MAC_DINH: { sieuAm: SA_MAC_DINH, doLine: DL_MAC_DINH, gyro: GYRO_MAC_DINH, gps: GPS_MAC_DINH } };
 })();

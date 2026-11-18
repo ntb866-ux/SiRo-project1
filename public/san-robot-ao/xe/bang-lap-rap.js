@@ -99,7 +99,7 @@ var SRABangLapRap = new function() {
 
   // ---------- Cấu hình: mô-đun và vị trí ----------
   // Mỗi mô-đun đang gắn có một khoá: 'duoi:i', 'tren:i', 'gam:i' (i: thứ tự trái sang phải trong vùng), 'sa:<giá>'
-  const tho = (c) => ({ banh: c.banh, ir: c.ir, sa: c.sa.map((m) => Object.assign({}, m)), son: Object.assign({}, c.son),
+  const tho = (c) => ({ banh: c.banh, ir: c.ir, nghiengIR: c.nghiengIR, caoIR: c.caoIR, sa: c.sa.map((m) => Object.assign({}, m)), son: Object.assign({}, c.son),
     duoi: c.duoi.map((m) => Object.assign({}, m)), tren: c.tren.map((m) => Object.assign({}, m, m.gan ? { gan: m.gan.slice() } : {})), gam: c.gam.map((m) => Object.assign({}, m)) });
   // servo trên nắp và các cảm biến gắn trên tay quay của nó (khoá 'servo:i', i là điểm gắn)
   const servoCua = (c) => c.tren.find((m) => m.loai == 'servo') || null;
@@ -939,7 +939,31 @@ var SRABangLapRap = new function() {
     });
     $s.append($h);
     $s.append($('<p class="sra-lr-servo-mo-ta"></p>').text(CHE_IR.find((k) => k.ma == (self.cauHinh.ir || 'tuongTu')).moTa));
+    // Tư thế đầu đo (mắt dưới mũi và dưới gầm): nghiêng trước/sau và độ cao mặt đo so với sân
+    let c = self.cauHinh, gh = L.gioiHanIR(c.nghiengIR);
+    let nut = (thuoc, chu, tat) => $('<button type="button" class="sra-lr-nut-servo"></button>').attr(thuoc).text(chu).prop('disabled', !!tat);
+    [['nghiengIR', 'Nghiêng', L.IR.buocNghieng, -L.IR.nghiengMax, L.IR.nghiengMax, (v) => soViet(v) + '°'],
+     ['caoIR', 'Độ cao', 0.1, gh.caoMin, L.IR.caoMax, (v) => soViet(Math.round(v * 10)) + ' mm']].forEach(function(t) {
+      let v = c[t[0]];
+      $s.append($('<div class="sra-lr-hang-servo" role="group"></div>').attr('aria-label', t[1] + ' đầu đo dò line')
+        .append($('<span class="sra-lr-ten-servo"></span>').text(t[1]))
+        .append(nut({ 'data-ir-tu-the': t[0], 'data-buoc': -t[2], 'aria-label': 'Giảm ' + t[1].toLowerCase() }, '−', v <= t[3] + 1e-6))
+        .append($('<output class="sra-lr-gia-tri-cao"></output>').text(t[5](v)))
+        .append(nut({ 'data-ir-tu-the': t[0], 'data-buoc': t[2], 'aria-label': 'Tăng ' + t[1].toLowerCase() }, '+', v >= t[4] - 1e-6)));
+    });
+    $s.append($('<p class="sra-lr-servo-mo-ta"></p>').text(moTaTuTheIR(c)));
     return $s;
+  }
+  function moTaTuTheIR(c) {
+    let g = c.nghiengIR, cao = soViet(Math.round(c.caoIR * 10)) + ' mm';
+    return 'Mặt đầu đo cách sân ' + cao + (g == 0 ? ', nhìn thẳng xuống.' : ', chúc ' + soViet(Math.abs(g)) + '° về phía ' + (g > 0 ? 'mũi' : 'đuôi') + ' xe.')
+      + ' Cảm biến đọc mạnh nhất khi cách sân 2,5 mm; nghiêng đi thì ánh sáng tới sân xiên hơn nên tín hiệu yếu đi.';
+  }
+  function datTuTheIR(ten, buoc) {
+    let c = tho(self.cauHinh);
+    c[ten] = tron2(c[ten] + buoc);
+    let cc = L.chuanHoaCauHinh(c);
+    return { c: cc, tb: moTaTuTheIR(cc) };
   }
   function datIR(che) {
     let k = CHE_IR.find((x) => x.ma == che);
@@ -969,9 +993,17 @@ var SRABangLapRap = new function() {
     return $s;
   }
   function bamThongTin(ev) {
-    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao], [data-servo-truc], [data-servo-goc], [data-servo-tay], [data-servo-gan], [data-ir]')[0];
+    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao], [data-servo-truc], [data-servo-goc], [data-servo-tay], [data-servo-gan], [data-ir], [data-ir-tu-the]')[0];
     if (!e) return;
     if (bamServo(e)) return;
+    if (e.getAttribute('data-ir-tu-the')) {
+      let ten = e.getAttribute('data-ir-tu-the'), buoc = Number(e.getAttribute('data-buoc'));
+      if (apDung(datTuTheIR(ten, buoc))) {
+        let n = $bang.find('[data-ir-tu-the="' + ten + '"][data-buoc="' + buoc + '"]')[0];
+        if (n && !n.disabled) n.focus();
+      }
+      return;
+    }
     if (e.getAttribute('data-ir')) {
       let che = e.getAttribute('data-ir');
       if (apDung(datIR(che))) { let n = $bang.find('[data-ir="' + che + '"]')[0]; if (n) n.focus(); }
@@ -1435,7 +1467,7 @@ var SRABangLapRap = new function() {
         veLai('Đã đưa xe về bản lắp mặc định.'); henDungLai();
       });
       $bang.find('.sra-lr-thao-het').on('click', function() {
-        self.cauHinh = L.chuanHoaCauHinh({ sa: [], duoi: [], tren: [], gam: [], son: self.cauHinh.son, ir: self.cauHinh.ir }); dangCam = null; luu(self.cauHinh);
+        self.cauHinh = L.chuanHoaCauHinh({ sa: [], duoi: [], tren: [], gam: [], son: self.cauHinh.son, ir: self.cauHinh.ir, nghiengIR: self.cauHinh.nghiengIR, caoIR: self.cauHinh.caoIR }); dangCam = null; luu(self.cauHinh);
         veLai('Đã tháo hết cảm biến.'); henDungLai();
       });
       veLai('');

@@ -176,10 +176,10 @@ function phanTuDo(bc) {
   let cb = L.chuanHoaCauHinh({ sa: [{ gia: 'trai', u: 1.5, cao: 3 }, { gia: 'phai', u: 6.5, cao: 3 }] });
   bc.dong(cb.sa.map((m) => m.cao).join() == '7.5,3', 'Giá bên: ngang bánh xe (z = 1,5 cm) thì thấp nhất 7,5 cm; dời lên trước qua bánh (z = 6,5 cm) thì hạ được tới 3 cm', cb.sa.map((m) => m.gia + ' ' + m.cao).join(' | '));
   bc.dong(cc.sa.map((m) => m.cao).join() == '5.6,13,5.6', 'Độ cao ngoài khoảng cho phép bị kẹp lại (giá mũi thấp nhất 5,6 cm, giá bên cao nhất 13 cm), giá trị hỏng về mặc định', cc.sa.map((m) => m.cao).join(' | '));
-  // TCRT5000: đầu phát và đầu thu nằm dọc thân xe (cùng x, khác z), đầu phát phía mũi
+  // TCRT5000: đầu phát và đầu thu nằm dọc thân xe (cùng x, khác z), đầu phát phía mũi, tâm cách nhau 3 mm
   let tt = L.lapXe({}).than.find((x) => x.id == 'doLine1').trangTri.filter((t) => t.k == 'dia');
   let phat = tt.find((t) => t.vl == 'led_hong_ngoai'), thu2 = tt.find((t) => t.vl == 'kinh_den');
-  bc.dong(phat && thu2 && Math.abs(phat.vt[0] - thu2.vt[0]) < 1e-6 && phat.vt[2] - thu2.vt[2] > 0.4, 'Mắt dò line: đầu phát và đầu thu hồng ngoại xếp dọc theo thân xe, đầu phát phía mũi', phat && 'phát z = ' + phat.vt[2] + ', thu z = ' + thu2.vt[2]);
+  bc.dong(phat && thu2 && Math.abs(phat.vt[0] - thu2.vt[0]) < 1e-6 && phat.vt[2] - thu2.vt[2] > 0.25, 'Mắt dò line: đầu phát và đầu thu hồng ngoại xếp dọc theo thân xe, đầu phát phía mũi', phat && 'phát z = ' + phat.vt[2] + ', thu z = ' + thu2.vt[2]);
   let c9 = L.chuanHoaCauHinh({ sa: L.DS_GIA.map((g) => ({ gia: g })) });
   bc.dong(c9.sa.length == 3 && c9.sa.length + c9.duoi.length + c9.tren.length == 8, 'Bản mặc định thêm 4 siêu âm (9 cảm biến): bỏ bớt siêu âm sau cho vừa 8 ổ', c9.sa.map((m) => m.gia).join());
   let cg = L.chuanHoaCauHinh({ gam: [{ loai: 'doLine', x: 0, z: 2 }, { loai: 'doLine', x: 1, z: 6 }, { loai: 'doLine', x: 4, z: 2 }, { loai: 'doLine', x: -2, z: -1 }, { loai: 'doLine', x: 0.5 * 0 - 3, z: 4 }, { loai: 'cham', x: 3, z: 3 }] });
