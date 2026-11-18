@@ -14,6 +14,10 @@ header h1 { margin: 0; font-size: 28px; }
 header p { margin: 4px 0 0; opacity: .9; }
 .tong-ket { font-size: 18px; background: rgba(255,255,255,.15); padding: 8px 14px; border-radius: 10px; }
 .tong-ket .to { font-size: 28px; font-weight: bold; }
+.phai-dau { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ngon-ngu { display: inline-flex; border: 1px solid rgba(255,255,255,.6); border-radius: 16px; overflow: hidden; }
+.ngon-ngu button { background: transparent; color: inherit; border: 0; padding: 5px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+.ngon-ngu button.dang-chon { background: #fff; color: #1d4ed8; font-weight: 600; }
 main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 24px; }
 .chang { margin-top: 20px; }
 .dau-chang { display: flex; align-items: baseline; gap: 12px; }

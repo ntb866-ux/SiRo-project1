@@ -63,7 +63,8 @@ SRA.giaoDien = new function() {
 
   this.dung = function(bai, san, danhSach) {
     document.body.classList.add('sra-che-do');
-    document.title = bai.tieuDe + ' · Sân Robot Ảo';
+    let tieuDe = sraT(bai.tieuDe, bai.tieuDeEn || bai.tieuDe);
+    document.title = tieuDe + ' · Sân Robot Ảo';
 
     let chang = changCuaBai();
     let sao = bai.sao || [{}, {}, {}];
@@ -73,7 +74,7 @@ SRA.giaoDien = new function() {
       let moTa = s.moTa;
       if (!moTa) {
         let phan = (s.dieuKien || []).map(dk => SRA.moTaDieuKien(dk, bai));
-        moTa = i == 0 && phan.length == 0 ? 'Hoàn thành nhiệm vụ' : phan.join(', ');
+        moTa = i == 0 && phan.length == 0 ? sraT('Hoàn thành nhiệm vụ', 'Complete the task') : phan.join(', ');
       }
       tieuChi += '<li><span class="so">' + '★'.repeat(i + 1) + '</span> ' + vanBan(moTa).replace(/^<p>|<\/p>$/g, '') + '</li>';
     }
@@ -82,25 +83,25 @@ SRA.giaoDien = new function() {
     let html =
       '<aside id="sraKhung">' +
         '<div class="sra-dau">' +
-          '<a class="sra-ve" href="san-robot-ao/index.html">← Danh sách bài</a>' +
-          (chang ? '<div class="sra-chang">' + chang.ten + '</div>' : '') +
-          '<h1>' + bai.tieuDe + '</h1>' +
+          '<a class="sra-ve" href="san-robot-ao/index.html">← ' + sraT('Danh sách bài', 'Lesson list') + '</a>' +
+          (chang ? '<div class="sra-chang">' + sraT(chang.ten, chang.tenEn || chang.ten) + '</div>' : '') +
+          '<h1>' + tieuDe + '</h1>' +
           '<div class="sra-sao-dau"></div>' +
         '</div>' +
         '<div class="sra-than">' +
           '<section class="sra-de">' + vanBan(bai.deBai || bai.moTa) + '</section>' +
-          (mucTieu ? '<section><h2>Nhiệm vụ</h2><ul class="sra-muc-tieu">' + mucTieu + '</ul></section>' : '') +
-          '<section><h2>Cách nhận sao</h2><p class="sra-nho">Sao 1 cần hoàn thành nhiệm vụ. Sao 2 và sao 3 chỉ tính khi đã hoàn thành.</p><ol class="sra-tieu-chi">' + tieuChi + '</ol></section>' +
-          (bai.nguyenLi ? '<details class="sra-nguyen-li"><summary>Vì sao robot làm được vậy?</summary>' + vanBan(bai.nguyenLi) + '</details>' : '') +
-          ((bai.goiY || []).length ? '<section><h2>Gợi ý</h2><div class="sra-goi-y"></div><button class="sra-nut phu sra-nut-goi-y"></button></section>' : '') +
-          (bai.phieu ? '<p><a href="' + SRA.GOC + bai.phieu + '" target="_blank">Phiếu học tập của bài</a></p>' : '') +
-          (san && san.tenSan ? '<p class="sra-nho">Sân: ' + san.tenSan + (san.moTaSan ? '. ' + san.moTaSan : '') + '</p>' : '') +
+          (mucTieu ? '<section><h2>' + sraT('Nhiệm vụ', 'Task') + '</h2><ul class="sra-muc-tieu">' + mucTieu + '</ul></section>' : '') +
+          '<section><h2>' + sraT('Cách nhận sao', 'How to earn stars') + '</h2><p class="sra-nho">' + sraT('Sao 1 cần hoàn thành nhiệm vụ. Sao 2 và sao 3 chỉ tính khi đã hoàn thành.', 'Star 1 needs the task completed. Stars 2 and 3 only count once the task is completed.') + '</p><ol class="sra-tieu-chi">' + tieuChi + '</ol></section>' +
+          (bai.nguyenLi ? '<details class="sra-nguyen-li"><summary>' + sraT('Vì sao robot làm được vậy?', 'Why does the robot work this way?') + '</summary>' + vanBan(bai.nguyenLi) + '</details>' : '') +
+          ((bai.goiY || []).length ? '<section><h2>' + sraT('Gợi ý', 'Hints') + '</h2><div class="sra-goi-y"></div><button class="sra-nut phu sra-nut-goi-y"></button></section>' : '') +
+          (bai.phieu ? '<p><a href="' + SRA.GOC + bai.phieu + '" target="_blank">' + sraT('Phiếu học tập của bài', 'Worksheet for this lesson') + '</a></p>' : '') +
+          (san && san.tenSan ? '<p class="sra-nho">' + sraT('Sân', 'Field') + ': ' + san.tenSan + (san.moTaSan ? '. ' + san.moTaSan : '') + '</p>' : '') +
         '</div>' +
         '<div class="sra-chan">' +
-          '<div class="sra-trang-thai">Đang tải sân…</div>' +
+          '<div class="sra-trang-thai">' + sraT('Đang tải sân…', 'Loading field…') + '</div>' +
           '<div class="sra-nut-hang">' +
-            '<button class="sra-nut chinh sra-nut-chay">▶ Chạy</button>' +
-            '<button class="sra-nut phu sra-nut-dat-lai">↺ Đặt lại</button>' +
+            '<button class="sra-nut chinh sra-nut-chay">▶ ' + sraT('Chạy', 'Run') + '</button>' +
+            '<button class="sra-nut phu sra-nut-dat-lai">↺ ' + sraT('Đặt lại', 'Reset') + '</button>' +
           '</div>' +
         '</div>' +
       '</aside>';
@@ -141,7 +142,7 @@ SRA.giaoDien = new function() {
     let html = '';
     for (let i = 0; i < Math.min(soGoiYDaMo, ds.length); i++) {
       let g = typeof ds[i] == 'string' ? { noiDung: ds[i] } : ds[i];
-      html += '<div class="sra-mot-goi-y"><b>Gợi ý ' + (i + 1) + '.</b> ' + vanBan(g.noiDung).replace(/^<p>|<\/p>$/g, '') + '</div>';
+      html += '<div class="sra-mot-goi-y"><b>' + sraT('Gợi ý', 'Hint') + ' ' + (i + 1) + '.</b> ' + vanBan(g.noiDung).replace(/^<p>|<\/p>$/g, '') + '</div>';
     }
     $goiY.html(html);
     if (soGoiYDaMo >= ds.length) {
@@ -151,9 +152,9 @@ SRA.giaoDien = new function() {
     let ke = typeof ds[soGoiYDaMo] == 'string' ? {} : ds[soGoiYDaMo];
     let canThem = (ke.moSauLanThu || 0) - soLan;
     if (canThem > 0) {
-      $nutGoiY.prop('disabled', true).text('Gợi ý ' + (soGoiYDaMo + 1) + ' mở sau ' + canThem + ' lần chạy nữa');
+      $nutGoiY.prop('disabled', true).text(sraT('Gợi ý ' + (soGoiYDaMo + 1) + ' mở sau ' + canThem + ' lần chạy nữa', 'Hint ' + (soGoiYDaMo + 1) + ' unlocks after ' + canThem + ' more run' + (canThem > 1 ? 's' : '')));
     } else {
-      $nutGoiY.prop('disabled', false).text('Xem gợi ý ' + (soGoiYDaMo + 1) + ' / ' + ds.length);
+      $nutGoiY.prop('disabled', false).text(sraT('Xem gợi ý ', 'Show hint ') + (soGoiYDaMo + 1) + ' / ' + ds.length);
     }
   }
 
@@ -185,7 +186,7 @@ SRA.giaoDien = new function() {
   this.hienTrangThai = function(chu, loai) {
     if (!$trangThai) return;
     $trangThai.attr('class', 'sra-trang-thai ' + (loai || '')).text(chu);
-    $khung.find('.sra-nut-chay').text(loai == 'dang-chay' ? '■ Dừng' : '▶ Chạy');
+    $khung.find('.sra-nut-chay').text(loai == 'dang-chay' ? '■ ' + sraT('Dừng', 'Stop') : '▶ ' + sraT('Chạy', 'Run'));
     if (loai != 'dang-chay') veGoiY();
   };
 
@@ -194,19 +195,19 @@ SRA.giaoDien = new function() {
     veGoiY();
     let dong = [];
     for (let c of kq.mucTieu.chiTiet) dong.push('<li class="' + (c.dat ? 'dat' : 'chua') + '">' + c.lyDo + '</li>');
-    if (kq.hetGio) dong.push('<li class="chua">Hết thời gian ' + (SRA.bai.thoiGianToiDa || SRA.THOI_GIAN_TOI_DA) + ' giây cho một lượt chạy.</li>');
+    if (kq.hetGio) dong.push('<li class="chua">' + sraT('Hết thời gian ' + (SRA.bai.thoiGianToiDa || SRA.THOI_GIAN_TOI_DA) + ' giây cho một lượt chạy.', 'Ran out of the ' + (SRA.bai.thoiGianToiDa || SRA.THOI_GIAN_TOI_DA) + ' s time limit for one run.') + '</li>');
     let dongSao = '';
     if (kq.hoanThanh) {
       for (let i = 0; i < 3; i++) {
         let chiTiet = kq.chiTietSao[i].chiTiet;
-        let lyDo = chiTiet.length ? chiTiet.map(c => c.lyDo).join(' ') : 'Hoàn thành nhiệm vụ.';
+        let lyDo = chiTiet.length ? chiTiet.map(c => c.lyDo).join(' ') : sraT('Hoàn thành nhiệm vụ.', 'Task completed.');
         dongSao += '<li class="' + (kq.saoDat[i] ? 'dat' : 'chua') + '"><span class="so">' + '★'.repeat(i + 1) + '</span> ' + lyDo + '</li>';
       }
     }
     let ke = baiKeTiep();
     let tieuDe = kq.hoanThanh
-      ? (kq.sao == 3 ? 'Xuất sắc!' : 'Đạt rồi!')
-      : 'Chưa đạt, thử lại nhé!';
+      ? (kq.sao == 3 ? sraT('Xuất sắc!', 'Excellent!') : sraT('Đạt rồi!', 'Passed!'))
+      : sraT('Chưa đạt, thử lại nhé!', 'Not yet, try again!');
     let html =
       '<div class="sra-phu">' +
         '<div class="sra-hop ' + (kq.hoanThanh ? 'dat' : 'chua') + '">' +
@@ -214,13 +215,13 @@ SRA.giaoDien = new function() {
           veSao(kq.sao, 'rat-lon') +
           '<ul class="sra-ly-do">' + dong.join('') + '</ul>' +
           (dongSao ? '<ol class="sra-ly-do sao">' + dongSao + '</ol>' : '') +
-          '<p class="sra-nho">Thời gian ' + kq.thoiGian.toFixed(1) + ' giây' +
-            (kq.soKhoi !== null ? ' · ' + kq.soKhoi + ' khối' : ' · chương trình Python') +
-            ' · chạm tường ' + kq.soLanCham + ' lần' +
-            (banGhi.sao ? '<br>Tốt nhất của bạn: ' + banGhi.sao + ' sao' : '') + '</p>' +
+          '<p class="sra-nho">' + sraT('Thời gian ' + kq.thoiGian.toFixed(1) + ' giây', 'Time ' + kq.thoiGian.toFixed(1) + ' s') +
+            (kq.soKhoi !== null ? ' · ' + kq.soKhoi + sraT(' khối', ' blocks') : sraT(' · chương trình Python', ' · Python program')) +
+            sraT(' · chạm tường ' + kq.soLanCham + ' lần', ' · hit the wall ' + kq.soLanCham + ' times') +
+            (banGhi.sao ? '<br>' + sraT('Tốt nhất của bạn: ' + banGhi.sao + ' sao', 'Your best: ' + banGhi.sao + ' stars') : '') + '</p>' +
           '<div class="sra-nut-hang">' +
-            '<button class="sra-nut phu sra-dong">Sửa chương trình</button>' +
-            (kq.hoanThanh && ke ? '<button class="sra-nut chinh sra-ke">Bài tiếp theo →</button>' : '') +
+            '<button class="sra-nut phu sra-dong">' + sraT('Sửa chương trình', 'Edit program') + '</button>' +
+            (kq.hoanThanh && ke ? '<button class="sra-nut chinh sra-ke">' + sraT('Bài tiếp theo', 'Next lesson') + ' →</button>' : '') +
           '</div>' +
         '</div>' +
       '</div>';
@@ -231,7 +232,7 @@ SRA.giaoDien = new function() {
     $phu.find('.sra-ke').on('click', function() { moBai(ke); });
     $phu.on('click', function(e) { if (e.target === $phu[0]) { $phu.remove(); $phu = null; } });
 
-    let tom = kq.hoanThanh ? 'Đạt ' + kq.sao + ' sao.' : 'Chưa đạt.';
-    self.hienTrangThai(tom + ' Sửa chương trình rồi bấm ▶ Chạy để thử lại.', kq.hoanThanh ? 'dat' : 'chua');
+    let tom = kq.hoanThanh ? sraT('Đạt ' + kq.sao + ' sao.', kq.sao + (kq.sao == 1 ? ' star.' : ' stars.')) : sraT('Chưa đạt.', 'Not passed.');
+    self.hienTrangThai(tom + sraT(' Sửa chương trình rồi bấm ▶ Chạy để thử lại.', ' Edit the program, then press ▶ Run to try again.'), kq.hoanThanh ? 'dat' : 'chua');
   };
 };

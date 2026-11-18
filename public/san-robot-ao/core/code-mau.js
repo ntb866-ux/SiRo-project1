@@ -221,23 +221,23 @@
       $('body').addClass('sra-xe-mau');
       html =
         '<section class="sra-code-mau dang-dung">' +
-          '<h2>Xe lắp ráp và code mẫu</h2>' +
+          '<h2>' + sraT('Xe lắp ráp và code mẫu', 'Built car and sample code') + '</h2>' +
           '<p><b>' + an(mau.tenXe) + '.</b> ' + SRA.giaoDien.vanBan(mau.giaiThichXe).replace(/^<p>|<\/p>$/g, '') + '</p>' +
-          (mau.giaiThichCode ? '<details><summary>Chương trình mẫu làm gì?</summary>' + SRA.giaoDien.vanBan(mau.giaiThichCode) + '</details>' : '') +
+          (mau.giaiThichCode ? '<details><summary>' + sraT('Chương trình mẫu làm gì?', 'What does the sample program do?') + '</summary>' + SRA.giaoDien.vanBan(mau.giaiThichCode) + '</details>' : '') +
           (mau.ghiChu ? '<p class="sra-nho">' + SRA.giaoDien.vanBan(mau.ghiChu).replace(/^<p>|<\/p>$/g, '') + '</p>' : '') +
-          '<p class="sra-nho">Sửa xe: menu Robot → Lắp ráp xe (kéo thả cảm biến). Kết quả ở đây lưu riêng, không tính vào số sao làm bằng robot của bài.</p>' +
+          '<p class="sra-nho">' + sraT('Sửa xe: menu Robot → Lắp ráp xe (kéo thả cảm biến). Kết quả ở đây lưu riêng, không tính vào số sao làm bằng robot của bài.', 'To change the car: Robot menu → Build car (drag and drop sensors). Results here are saved separately and do not count toward the stars earned with the lesson robot.') + '</p>' +
           '<div class="sra-nut-hang">' +
-            '<button type="button" class="sra-nut phu sra-nap-lai-mau">↺ Nạp lại xe và code mẫu</button>' +
-            '<button type="button" class="sra-nut phu sra-bo-xe-mau">← Về robot của bài</button>' +
+            '<button type="button" class="sra-nut phu sra-nap-lai-mau">↺ ' + sraT('Nạp lại xe và code mẫu', 'Reload car and sample code') + '</button>' +
+            '<button type="button" class="sra-nut phu sra-bo-xe-mau">← ' + sraT('Về robot của bài', 'Back to lesson robot') + '</button>' +
           '</div>' +
         '</section>';
     } else {
       html =
         '<section class="sra-code-mau">' +
-          '<h2>Xe lắp ráp và code mẫu</h2>' +
-          '<p>Có sẵn cách lắp xe kéo thả cảm biến cho sân này: <b>' + an(mau.tenXe) + '</b>, kèm chương trình mẫu.</p>' +
-          '<div class="sra-nut-hang"><button type="button" class="sra-nut phu sra-dung-xe-mau">Dùng xe và code mẫu</button></div>' +
-          '<p class="sra-nho">Bài làm của bạn với robot của bài vẫn được giữ nguyên.</p>' +
+          '<h2>' + sraT('Xe lắp ráp và code mẫu', 'Built car and sample code') + '</h2>' +
+          '<p>' + sraT('Có sẵn cách lắp xe kéo thả cảm biến cho sân này: ', 'A ready-made drag-and-drop sensor car for this field: ') + '<b>' + an(mau.tenXe) + '</b>' + sraT(', kèm chương trình mẫu.', ', with a sample program.') + '</p>' +
+          '<div class="sra-nut-hang"><button type="button" class="sra-nut phu sra-dung-xe-mau">' + sraT('Dùng xe và code mẫu', 'Use car and sample code') + '</button></div>' +
+          '<p class="sra-nho">' + sraT('Bài làm của bạn với robot của bài vẫn được giữ nguyên.', 'Your work with the lesson robot is kept as it is.') + '</p>' +
         '</section>';
     }
     let $s = $(html);

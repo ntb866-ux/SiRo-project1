@@ -83,7 +83,7 @@ SRA.soDo = new function() {
     if (!khung) khung = taoKhung();
     if (!khung) return;
     khung.style.display = '';
-    let html = '<div style="font-weight:600;margin-bottom:2px">Bảng số đo</div><table style="border-collapse:collapse;width:100%">';
+    let html = '<div style="font-weight:600;margin-bottom:2px">' + sraT('Bảng số đo', 'Measurements') + '</div><table style="border-collapse:collapse;width:100%">';
     let nhomTruoc = null;
     ds.forEach(function(d, i) {
       if (d.nhom && d.nhom != nhomTruoc && ds.some(x => x.nhom && x.nhom != d.nhom)) {

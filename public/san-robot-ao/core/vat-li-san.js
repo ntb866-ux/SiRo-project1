@@ -59,7 +59,7 @@ SRA.XUNG_LUC_DAY = 40000;   // xung lực ứng với manh = 1 (đơn vị của
     // Hướng sang phải của robot là (cos g, −sin g) trong mặt phẳng x–z của Babylon
     b.physicsImpostor.applyImpulse(new BABYLON.Vector3(Math.cos(g) * J, 0, -Math.sin(g) * J), mui);
     if (SRA.giaoDien) {
-      SRA.giaoDien.hienTrangThai(cd.thongBao || 'Ối! Robot bị đẩy lệch sang ' + (dau > 0 ? 'phải' : 'trái') + '.', 'dang-chay');
+      SRA.giaoDien.hienTrangThai(cd.thongBao || sraT('Ối! Robot bị đẩy lệch sang ' + (dau > 0 ? 'phải' : 'trái') + '.', 'Whoa! The robot was pushed to the ' + (dau > 0 ? 'right' : 'left') + '.'), 'dang-chay');
     }
   }
 

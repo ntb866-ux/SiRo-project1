@@ -42,7 +42,7 @@ SRA.world = new function() {
   this.reset = function() {
     self.trangThai = 'san-sang';     // san-sang | dang-chay | xong | huy
     self.vatCan = null;
-    if (SRA.giaoDien) SRA.giaoDien.hienTrangThai('Sẵn sàng. Bấm ▶ Chạy để bắt đầu.', '');
+    if (SRA.giaoDien) SRA.giaoDien.hienTrangThai(sraT('Sẵn sàng. Bấm ▶ Chạy để bắt đầu.', 'Ready. Press ▶ Run to start.'), '');
   };
 
   this.startSim = function() {
@@ -51,7 +51,7 @@ SRA.world = new function() {
       // Robot chưa về chỗ xuất phát: lượt này không chấm
       self.trangThai = 'huy';
       SRA.giaoDien && SRA.giaoDien.hienTrangThai(
-        'Robot chưa về vị trí xuất phát nên lượt này không được chấm. Hãy dùng nút ▶ Chạy ở khung đề bài, nút này tự đặt lại sân trước khi chạy.',
+        sraT('Robot chưa về vị trí xuất phát nên lượt này không được chấm. Hãy dùng nút ▶ Chạy ở khung đề bài, nút này tự đặt lại sân trước khi chạy.', 'The robot was not at the start position, so this run is not scored. Use the ▶ Run button in the lesson panel: it resets the field before running.'),
         'canh-bao');
       return;
     }
@@ -64,20 +64,20 @@ SRA.world = new function() {
       dangCham: false
     };
     self.trangThai = 'dang-chay';
-    SRA.giaoDien && SRA.giaoDien.hienTrangThai('Robot đang chạy…', 'dang-chay');
+    SRA.giaoDien && SRA.giaoDien.hienTrangThai(sraT('Robot đang chạy…', 'Robot is running…'), 'dang-chay');
   };
 
   this.stopSim = function() {
     if (self.trangThai == 'dang-chay') {
       self.trangThai = 'huy';
-      SRA.giaoDien && SRA.giaoDien.hienTrangThai('Bạn đã dừng chương trình. Bấm ▶ Chạy để thử lại.', 'canh-bao');
+      SRA.giaoDien && SRA.giaoDien.hienTrangThai(sraT('Bạn đã dừng chương trình. Bấm ▶ Chạy để thử lại.', 'You stopped the program. Press ▶ Run to try again.'), 'canh-bao');
     }
   };
 
   this.manualMoved = function() {
     if (self.trangThai == 'dang-chay' || self.trangThai == 'san-sang') {
       self.trangThai = 'huy';
-      SRA.giaoDien && SRA.giaoDien.hienTrangThai('Robot đã được điều khiển bằng tay nên lượt này không chấm. Bấm ▶ Chạy để thử lại.', 'canh-bao');
+      SRA.giaoDien && SRA.giaoDien.hienTrangThai(sraT('Robot đã được điều khiển bằng tay nên lượt này không chấm. Bấm ▶ Chạy để thử lại.', 'The robot was moved by hand, so this run is not scored. Press ▶ Run to try again.'), 'canh-bao');
     }
   };
 
@@ -270,7 +270,7 @@ SRA.chamDiem = function(ctx, hetGio) {
 // ---------------------------------------------------------------------------
 SRA.docJSON = function(url) {
   return fetch(url, { cache: 'no-cache' }).then(function(r) {
-    if (!r.ok) throw new Error('Không tải được ' + url + ' (' + r.status + ')');
+    if (!r.ok) throw new Error(sraT('Không tải được ', 'Could not load ') + url + ' (' + r.status + ')');
     return r.json();
   });
 };

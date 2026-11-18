@@ -108,7 +108,7 @@
 
 /* Cổng và khối lượng */
 .sra-lr-tieu-de-nho { font-size: 12px; font-weight: 700; color: var(--lr-phu); margin-bottom: 3px; }
-.sra-lr-ds-cong { list-style: none; margin: 0 0 6px; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 13px; }
+.sra-lr-ds-cong { list-style: none; margin: 0 0 6px; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 13px; }
 .sra-lr-huy-hieu {
   display: inline-block; min-width: 1.5em; height: 1.5em; line-height: 1.5em; text-align: center;
   border-radius: 50%; background: var(--lr-chinh); color: #fff; font-weight: 700; font-size: 12px;
@@ -150,8 +150,8 @@
 
 /* Danh sách cổng: nút Tháo ở cuối mỗi dòng */
 .sra-lr-ds-cong li { display: flex; align-items: center; gap: 6px; }
-.sra-lr-ten-cong { flex: 1; min-width: 0; }
-.sra-lr-nut-thao { font: inherit; font-size: 12px; padding: 1px 7px; border: 1px solid #fca5a5; border-radius: 4px; background: #fff; color: #b91c1c; cursor: pointer; }
+.sra-lr-ten-cong { flex: 1; min-width: 0; overflow: hidden; }
+.sra-lr-nut-thao { font: inherit; font-size: 12px; padding: 1px 7px; border: 1px solid #fca5a5; border-radius: 4px; background: #fff; color: #b91c1c; cursor: pointer; flex-shrink: 0; }
 .sra-lr-nut-thao:hover, .sra-lr-nut-thao:focus-visible { background: #fee2e2; }
 
 /* Sơn xe */
@@ -162,7 +162,7 @@
 .sra-lr-o-son.goc { border-style: dashed; }
 .sra-lr-o-son.chon { outline: 2px solid var(--lr-chinh); outline-offset: 1px; }
 .sra-lr-o-son:focus-visible { outline: 2px solid #0f172a; outline-offset: 1px; }
-.sra-lr-ten-cong small { color: var(--lr-phu); font-size: 11px; white-space: nowrap; }
+.sra-lr-ten-cong small { color: var(--lr-phu); font-size: 11px; }
 
 /* Độ cao siêu âm */
 .sra-lr-do-cao { margin-top: 8px; }

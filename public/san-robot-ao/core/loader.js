@@ -71,7 +71,7 @@
       console.error('[Sân Robot Ảo]', e);
       let p = document.createElement('div');
       p.className = 'sra-loi';
-      p.textContent = 'Không mở được bài "' + id + '". ' + (e && e.message ? e.message : '');
+      p.textContent = sraT('Không mở được bài "' + id + '". ', 'Could not open lesson "' + id + '". ') + (e && e.message ? e.message : '');
       document.body.appendChild(p);
     });
 })();

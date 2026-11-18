@@ -14,9 +14,9 @@ window.SRA = SRA;
 
 SRA.camBienMau = new function() {
   let self = this;
-  const VI_TRI = [['Giua', 'GIUA', 'giữa'], ['Trai', 'TRAI', 'trái'], ['Phai', 'PHAI', 'phải']];
+  const VI_TRI = [['Giua', 'GIUA', sraT('giữa', 'middle')], ['Trai', 'TRAI', sraT('trái', 'left')], ['Phai', 'PHAI', sraT('phải', 'right')]];
   const MAU_NET = { GIUA: '#111827', TRAI: '#2563eb', PHAI: '#ea580c' };
-  const TEN_MAU = ['không rõ', 'đen', 'xanh dương', 'xanh lá', 'vàng', 'đỏ', 'trắng', 'nâu'];
+  const TEN_MAU = sraT(['không rõ', 'đen', 'xanh dương', 'xanh lá', 'vàng', 'đỏ', 'trắng', 'nâu'], ['unknown', 'black', 'blue', 'green', 'yellow', 'red', 'white', 'brown']);
   const GIAY = 10;              // độ dài biểu đồ (giây)
   const CHU_KI = 50;            // lấy mẫu mỗi 50 ms
 
@@ -38,14 +38,14 @@ SRA.camBienMau = new function() {
   this.mau = function(viTri) {
     let c = self.camBien(viTri);
     if (!c) return null;
-    return TEN_MAU[Colors.toColor(Colors.toHSV(c.getRGB()))] || 'không rõ';
+    return TEN_MAU[Colors.toColor(Colors.toHSV(c.getRGB()))] || TEN_MAU[0];
   };
 
   function dangKiDong() {
     if (!SRA.soDo) return;
     VI_TRI.forEach(function(v) {
-      SRA.soDo.them({ id: 'doSang' + v[0], ten: 'Độ sáng (' + v[2] + ')', doc: () => self.doSang(v[1]), soLe: 0, nhom: 'Cảm biến màu' });
-      SRA.soDo.them({ id: 'mau' + v[0], ten: 'Màu (' + v[2] + ')', doc: () => self.mau(v[1]), nhom: 'Cảm biến màu' });
+      SRA.soDo.them({ id: 'doSang' + v[0], ten: sraT('Độ sáng', 'Reflected light') + ' (' + v[2] + ')', doc: () => self.doSang(v[1]), soLe: 0, nhom: sraT('Cảm biến màu', 'Color sensor') });
+      SRA.soDo.them({ id: 'mau' + v[0], ten: sraT('Màu', 'Color') + ' (' + v[2] + ')', doc: () => self.mau(v[1]), nhom: sraT('Cảm biến màu', 'Color sensor') });
     });
   }
 
@@ -62,14 +62,14 @@ SRA.camBienMau = new function() {
       'border:1px solid #d1d5db;border-radius:8px;padding:6px 8px;font:12px/1.4 system-ui,sans-serif;' +
       'box-shadow:0 1px 4px rgba(0,0,0,0.15);';
     h.innerHTML =
-      '<div style="font-weight:600;font-size:13px;cursor:pointer" title="Bấm để thu gọn hoặc mở">Độ sáng phản xạ theo thời gian ▾</div>' +
+      '<div style="font-weight:600;font-size:13px;cursor:pointer" title="' + sraT('Bấm để thu gọn hoặc mở', 'Click to collapse or expand') + '">' + sraT('Độ sáng phản xạ theo thời gian', 'Reflected light over time') + ' ▾</div>' +
       '<canvas width="488" height="200" style="width:244px;height:100px;display:block;margin-top:4px"></canvas>' +
       '<div class="sra-chu-giai" style="color:#4b5563"></div>';
     h.firstChild.addEventListener('click', function() {
       let an = canvas.style.display != 'none';
       canvas.style.display = an ? 'none' : 'block';
       h.querySelector('.sra-chu-giai').style.display = an ? 'none' : '';
-      h.firstChild.textContent = 'Độ sáng phản xạ theo thời gian ' + (an ? '▸' : '▾');
+      h.firstChild.textContent = sraT('Độ sáng phản xạ theo thời gian', 'Reflected light over time') + ' ' + (an ? '▸' : '▾');
     });
     cha.appendChild(h);
     canvas = h.querySelector('canvas');
@@ -130,7 +130,7 @@ SRA.camBienMau = new function() {
     g.textBaseline = 'top';
     for (let s = 0; s <= GIAY; s += 2) {
       g.textAlign = s == 0 ? 'right' : 'center';
-      g.fillText(s == 0 ? 'bây giờ' : '-' + s + ' s', xCua(tNay - s), H - duoi + 2 * k);
+      g.fillText(s == 0 ? sraT('bây giờ', 'now') : '-' + s + ' s', xCua(tNay - s), H - duoi + 2 * k);
     }
     // Ngưỡng
     let n = nguong();
@@ -156,9 +156,9 @@ SRA.camBienMau = new function() {
   }
 
   function chuGiai() {
-    let ten = { GIUA: 'giữa', TRAI: 'trái', PHAI: 'phải' };
+    let ten = { GIUA: sraT('giữa', 'middle'), TRAI: sraT('trái', 'left'), PHAI: sraT('phải', 'right') };
     let s = cacDuong.map(v => '<span style="color:' + MAU_NET[v] + ';font-weight:600">━ ' + ten[v] + '</span>').join('  ');
-    s += '  <span style="color:#dc2626;font-weight:600">┅ ngưỡng ' + nguong() + '</span>';
+    s += '  <span style="color:#dc2626;font-weight:600">┅ ' + sraT('ngưỡng', 'threshold') + ' ' + nguong() + '</span>';
     hop.querySelector('.sra-chu-giai').innerHTML = s;
   }
 
@@ -211,19 +211,19 @@ SRA.camBienMau.gan();
 
 SRA.luat.dungCamBien = {
   moTa: function(dk) {
-    return 'Dùng ít nhất ' + (dk.toiThieu || 1) + ' cảm biến màu khác nhau';
+    return sraT('Dùng ít nhất ' + (dk.toiThieu || 1) + ' cảm biến màu khác nhau', 'Use at least ' + (dk.toiThieu || 1) + ' different color sensors');
   },
   kiemTra: function(dk, ctx) {
     let ds = SRA.camBienMau.camBienDangDung();
-    if (!ds) return { dat: false, lyDo: 'Điều kiện này chỉ tính khi lập trình bằng khối.' };
+    if (!ds) return { dat: false, lyDo: sraT('Điều kiện này chỉ tính khi lập trình bằng khối.', 'This condition only applies to block programs.') };
     let can = dk.toiThieu || 1;
-    let ten = { GIUA: 'giữa', TRAI: 'trái', PHAI: 'phải' };
+    let ten = { GIUA: sraT('giữa', 'middle'), TRAI: sraT('trái', 'left'), PHAI: sraT('phải', 'right') };
     let dat = ds.size >= can;
     return {
       dat: dat,
-      lyDo: 'Chương trình dùng ' + ds.size + ' cảm biến màu' +
+      lyDo: sraT('Chương trình dùng ' + ds.size + ' cảm biến màu', 'The program uses ' + ds.size + ' color sensors') +
         (ds.size ? ' (' + Array.from(ds).map(v => ten[v]).join(', ') + ')' : '') +
-        (dat ? '.' : ', cần ít nhất ' + can + '.')
+        (dat ? '.' : sraT(', cần ít nhất ' + can + '.', ', needs at least ' + can + '.'))
     };
   }
 };

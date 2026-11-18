@@ -85,20 +85,20 @@ window.SRA = SRA;
   // -------------------------------------------------------------------------
   SRA.luat.khoangCachCuoi = {
     moTa: function(dk) {
-      return 'Lúc dừng, cảm biến khoảng cách đo được từ ' + soDep(dk.tu) + ' đến ' + soDep(dk.den) + ' cm';
+      return sraT('Lúc dừng, cảm biến khoảng cách đo được từ ' + soDep(dk.tu) + ' đến ' + soDep(dk.den) + ' cm', 'When stopped, the distance sensor reads ' + soDep(dk.tu) + ' to ' + soDep(dk.den) + ' cm');
     },
     kiemTra: function(dk, ctx) {
-      if (ctx.khoangCach == null) return { dat: false, lyDo: 'Robot không có cảm biến khoảng cách.' };
+      if (ctx.khoangCach == null) return { dat: false, lyDo: sraT('Robot không có cảm biến khoảng cách.', 'The robot has no distance sensor.') };
       let d = ctx.khoangCach;
       let dat = d >= dk.tu && d <= dk.den;
-      let lyDo = 'Lúc dừng, cảm biến đo được ' + soDep(d) + ' cm';
-      if (!dat) lyDo += ' (cần từ ' + soDep(dk.tu) + ' đến ' + soDep(dk.den) + ' cm)';
+      let lyDo = sraT('Lúc dừng, cảm biến đo được ', 'When stopped, the sensor read ') + soDep(d) + ' cm';
+      if (!dat) lyDo += sraT(' (cần từ ' + soDep(dk.tu) + ' đến ' + soDep(dk.den) + ' cm)', ' (needs ' + soDep(dk.tu) + ' to ' + soDep(dk.den) + ' cm)');
       return { dat: dat, lyDo: lyDo + '.' };
     }
   };
-  SRA.TEN_KHOI.sra_khoang_cach = '"khoảng cách phía trước (cm)"';
-  SRA.TEN_KHOI.sra_dang_cham = '"cảm biến chạm đang bị nhấn?"';
-  SRA.TEN_KHOI.wait_until = '"chờ đến khi"';
+  SRA.TEN_KHOI.sra_khoang_cach = sraT('"khoảng cách phía trước (cm)"', '"distance ahead (cm)"');
+  SRA.TEN_KHOI.sra_dang_cham = sraT('"cảm biến chạm đang bị nhấn?"', '"touch sensor pressed?"');
+  SRA.TEN_KHOI.wait_until = sraT('"chờ đến khi"', '"wait until"');
 
   // Bổ sung số đo cảm biến vào bản ghi lượt chạy trước khi chấm
   let chamDiemGoc = SRA.chamDiem;
@@ -270,19 +270,19 @@ window.SRA = SRA;
 
   if (SRA.soDo) {
     SRA.soDo.them({
-      id: 'khoangCach', ten: 'Khoảng cách phía trước', nhom: 'Cảm biến', donVi: 'cm', soLe: 1,
+      id: 'khoangCach', ten: sraT('Khoảng cách phía trước', 'Distance ahead'), nhom: sraT('Cảm biến', 'Sensors'), donVi: 'cm', soLe: 1,
       doc: function() {
         let cb = SRA.timCamBien('UltrasonicSensor');
         if (!cb || !SRA.tiaDo.kq) return null;
         let kc = SRA.tiaDo.kq.khoangCach;
-        return kc >= cb.options.rayLength ? 'không thấy vật' : kc;
+        return kc >= cb.options.rayLength ? sraT('không thấy vật', 'nothing seen') : kc;
       }
     });
     SRA.soDo.them({
-      id: 'camBienCham', ten: 'Cảm biến chạm', nhom: 'Cảm biến',
+      id: 'camBienCham', ten: sraT('Cảm biến chạm', 'Touch sensor'), nhom: sraT('Cảm biến', 'Sensors'),
       doc: function() {
         if (!SRA.timCamBien('TouchSensor')) return null;
-        return dangChamHien ? 'đang bị nhấn' : 'không';
+        return dangChamHien ? sraT('đang bị nhấn', 'pressed') : sraT('không', 'no');
       }
     });
   }
@@ -294,8 +294,8 @@ window.SRA = SRA;
     let $t = $bang.find('.sra-bien-the');
     let i = SRA.soBienThe;
     if (!ds || ds.length < 2 || i == null) { $t.hide(); return; }
-    let ten = (ds[i] && ds[i].ten) || ('sân số ' + (i + 1));
-    $t.show().text('Lượt này: ' + ten + '. Mỗi lần bấm ▶ Chạy, sân có thể đổi khác.');
+    let ten = (ds[i] && ds[i].ten) || (sraT('sân số ', 'field ') + (i + 1));
+    $t.show().text(sraT('Lượt này: ', 'This run: ') + ten + sraT('. Mỗi lần bấm ▶ Chạy, sân có thể đổi khác.', '. Each time you press ▶ Run, the field may change.'));
   }
 
   let dungGoc = SRA.giaoDien.dung;
@@ -307,7 +307,7 @@ window.SRA = SRA;
     let bat = luu == null ? !!bai.hienTiaDo : luu == '1';
     $bang = $(
       '<div class="sra-bang-cam-bien">' +
-        '<label class="sra-bat-tia"><input type="checkbox"' + (bat ? ' checked' : '') + '> Hiện tia đo của cảm biến</label>' +
+        '<label class="sra-bat-tia"><input type="checkbox"' + (bat ? ' checked' : '') + '> ' + sraT('Hiện tia đo của cảm biến', 'Show sensor beams') + '</label>' +
         '<div class="sra-bien-the sra-nho"></div>' +
       '</div>'
     );
