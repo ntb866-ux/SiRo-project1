@@ -96,7 +96,9 @@ const RAD = Math.PI / 180;
   let mep = null;
   for (let i = 1; i < quet.length; i++) if ((quet[i - 1][1] - nua) * (quet[i][1] - nua) <= 0) { const [a, b] = [quet[i - 1], quet[i]]; mep = a[0] + (nua - a[1]) / (b[1] - a[1]) * (b[0] - a[0]); }
   const rong = quet.filter((q) => q[1] > den + 0.1 * (trang - den) && q[1] < trang - 0.1 * (trang - den)).length * 0.1;
-  bc.dong(mep != null && Math.abs(mep) < 0.08, 'tín hiệu qua mức giữa đúng lúc mép vạch nằm ngay dưới mắt', 'lệch ' + (mep * 10).toFixed(2) + ' mm');
+  // Mô hình Lambert: đèn phía mũi, bộ thu phía sau, cách nhau 3 mm. Vùng nhạy nhất nằm giữa hai đầu nhưng lệch về
+  // phía bộ thu (bộ thu nhìn hẹp, đèn chiếu rộng), nên mép vạch qua mức giữa khi còn ở sau tâm mắt, trong vòng 1,5 mm.
+  bc.dong(mep != null && mep < 0 && mep > -0.15, 'tín hiệu qua mức giữa khi mép vạch ở giữa đèn và bộ thu (lệch về phía bộ thu)', 'lệch ' + (mep * 10).toFixed(2) + ' mm');
   bc.dong(rong >= 0.3 && rong <= 1.0, 'vùng chuyển tiếp rộng cỡ đường kính vùng nhìn', rong.toFixed(1) + ' cm (10 % → 90 %)');
   // đổi khoảng cách tới mặt phản xạ (nền xám để tín hiệu không chạm trần 1023): đỉnh ở 2,5 mm, yếu dần khi xa
   const theoCao = [];

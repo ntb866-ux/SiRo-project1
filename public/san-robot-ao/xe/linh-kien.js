@@ -278,6 +278,17 @@
   const tron2 = (x) => Math.round(x * 100) / 100;
   const kep = (x, a, b) => Math.max(a, Math.min(b, x));
 
+  // Đầu đo TCRT5000 của mắt dò line: nghiêng quanh trục ngang của xe (dương: chúc về phía mũi) và độ cao
+  // của mặt đầu đo so với sân. Thân đầu đo xoay quanh mép trên (chỗ gắn vào mạch), nên nghiêng thì mép
+  // trước/sau của mặt đo hạ thấp hơn tâm: giữ mép thấp nhất cách sân ít nhất 2 mm.
+  const IR = { caoChuan: 0.6, caoMax: 1.2, nghiengMax: 30, buocNghieng: 5, dai: 0.7, nuaMat: 0.51, hoTia: 0.15 };
+  function gioiHanIR(nghieng) {
+    let g = Math.round((Number(nghieng) || 0) / IR.buocNghieng) * IR.buocNghieng;
+    g = kep(g, -IR.nghiengMax, IR.nghiengMax);
+    let caoMin = Math.max(0.3, Math.ceil((0.2 + IR.nuaMat * Math.sin(Math.abs(g) * PI / 180)) * 10 - 1e-9) / 10);
+    return { nghieng: g, caoMin: tron2(caoMin) };
+  }
+
   // Nửa bề ngang (theo x) của cảm biến siêu âm khi xoay một góc (độ): vỏ 4,7 × 1,0 cm và hai đầu tròn
   function nuaRongSieuAm(goc) {
     let a = Math.abs(goc) * PI / 180, c = Math.cos(a), s = Math.sin(a);
@@ -437,6 +448,10 @@
 
     // --- Chế độ đọc của mắt dò line: 'tuongTu' (chân A0, mức 0–100) hoặc 'so' (chân D0, chỉ bật/tắt) ---
     c.ir = vao.ir == 'so' ? 'so' : 'tuongTu';
+    // --- Tư thế đầu đo TCRT5000 (chung cho mắt dưới mũi và dưới gầm) ---
+    let gioi = gioiHanIR(vao.nghiengIR);
+    c.nghiengIR = gioi.nghieng;
+    c.caoIR = vao.caoIR == null || !isFinite(Number(vao.caoIR)) ? IR.caoChuan : tron2(kep(Math.round(Number(vao.caoIR) * 10) / 10, gioi.caoMin, IR.caoMax));
 
     // --- Sơn ---
     let sonVao = vao.son || {};
@@ -609,21 +624,34 @@
     let cong = () => 'in' + (++soCong);
 
     // --- Cảm biến dò line TCRT5000: mỗi mắt một mô-đun (đầu đo dưới gầm, ổ RJ25 phía trên tấm đáy) ---
-    let zMat = 12.35, yMatDo = 0.6;             // mặt đầu đo cách sân 6 mm
+    let zMat = 12.35;                           // mặt đầu đo cách sân c.caoIR (mặc định 6 mm)
+    // Mạch có vỏ treo dưới tấm đáy (cột đệm nếu hạ thấp), thân TCRT5000 dưới mạch, xoay quanh mép trên theo
+    // c.nghiengIR; tâm mặt đầu đo cách sân c.caoIR. Đèn phát phía mũi, bộ thu phía sau, tâm cách nhau 3 mm.
+    function dauDo(x, z) {
+      let g = c.nghiengIR * PI / 180, cao = c.caoIR;
+      let huong = [0, -Math.cos(g), Math.sin(g)], len = [0, Math.cos(g), -Math.sin(g)], toi = [0, Math.sin(g), Math.cos(g)];
+      let yTruc = cao + IR.dai * Math.cos(g);                 // mép trên của thân đầu đo
+      let mat = [x, cao, z + IR.dai * Math.sin(g)];            // tâm mặt đầu đo
+      let khoi = [hop([1.4, 0.5, 1.5], [x, yTruc + 0.25, z], 'mach_den', { vat: 0.04 })];
+      let dem = y0 - (yTruc + 0.5);
+      if (dem > 0.01) khoi.push(tru(0.5, dem, 'y', [x, y0 - dem / 2, z], 'nhua_den'));
+      khoi.push(hop([0.58, IR.dai, 1.02], V.cong(mat, V.nhan(len, IR.dai / 2)), 'nhua_den', { xoay: [-c.nghiengIR, 0, 0] }));
+      let mat2 = V.cong(mat, V.nhan(huong, 0.005));
+      return { khoi: khoi, vt: mat, huong: huong, den: toi,
+        trangTri: [
+          { k: 'dia', d: 0.26, vt: V.cong(mat2, V.nhan(toi, IR.hoTia)), phap: huong, vl: 'led_hong_ngoai' },
+          { k: 'dia', d: 0.26, vt: V.cong(mat2, V.nhan(toi, -IR.hoTia)), phap: huong, vl: 'kinh_den' }
+        ] };
+    }
     xMat.forEach(function(x, i) {
       let ten = c.doLine == 1 ? 'giữa' : (i == 0 ? 'trái' : (i == c.doLine - 1 ? 'phải' : 'giữa'));
       let o = oRJ25([x, y1 + KT_O[1] / 2, 12.05], 'sau');
-      let ct = them({ id: 'doLine' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [
-        o.khoi,
-        hop([1.4, 0.5, 1.5], [x, y0 - 0.25, zMat], 'mach_den', { vat: 0.04 }),                    // mạch có vỏ dưới gầm
-        // thân TCRT5000 xoay dọc theo thân xe: đầu phát hồng ngoại phía mũi, đầu thu phía sau, cùng nằm trên một đường dọc
-        hop([0.58, 0.7, 1.02], [x, y0 - 0.5 - 0.35, zMat], 'nhua_den')
-      ], trangTri: o.trangTri.concat([
-        { k: 'dia', d: 0.3, vt: [x, yMatDo, zMat + 0.25], phap: [0, -1, 0], vl: 'led_hong_ngoai' },
-        { k: 'dia', d: 0.3, vt: [x, yMatDo, zMat - 0.25], phap: [0, -1, 0], vl: 'kinh_den' }
-      ]) });
+      // thân TCRT5000 xoay dọc theo thân xe: đầu phát hồng ngoại phía mũi, đầu thu phía sau, cùng nằm trên một đường dọc
+      let dd = dauDo(x, zMat);
+      let ct = them({ id: 'doLine' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [o.khoi].concat(dd.khoi),
+        trangTri: o.trangTri.concat(dd.trangTri) });
       let cg = cong();
-      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, lo: c.lo ? X_LO.indexOf(x) : null, duoi: iMat[i], vt: [x, yMatDo, zMat], huong: [0, -1, 0], oMach: oMat[i], ten: ten, che: c.ir });
+      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, lo: c.lo ? X_LO.indexOf(x) : null, duoi: iMat[i], vt: dd.vt, huong: dd.huong, den: dd.den, oMach: oMat[i], ten: ten, che: c.ir });
       let xo = oMach[oMat[i]].mieng[0];
       day.push(dayRJ25('day_' + ct.id, 'Dây RJ25 dò line ' + ten, o, oMach[oMat[i]],
         [[x + (xo - x) * 0.15, 2.9, 9.7], [x + (xo - x) * 0.6, 5.2, 9.25], [xo, 7.9, 9.15], [xo, 9.35, 8.45]], [1, 0, 0]));
@@ -633,16 +661,11 @@
     c.gam.forEach(function(m, i) {
       let x = m.x, z = m.z, ten = 'gầm ' + (i + 1);
       let o = oRJ25([x, y0 - KT_O[1] / 2, z - GAM.nuaDai - KT_O[2] / 2], 'sau');
-      let ct = them({ id: 'doLineGam' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [
-        o.khoi,
-        hop([1.4, 0.5, 1.5], [x, y0 - 0.25, z], 'mach_den', { vat: 0.04 }),
-        hop([0.58, 0.7, 1.02], [x, y0 - 0.5 - 0.35, z], 'nhua_den')
-      ], trangTri: o.trangTri.concat([
-        { k: 'dia', d: 0.3, vt: [x, yMatDo, z + 0.25], phap: [0, -1, 0], vl: 'led_hong_ngoai' },
-        { k: 'dia', d: 0.3, vt: [x, yMatDo, z - 0.25], phap: [0, -1, 0], vl: 'kinh_den' }
-      ]) });
+      let dd = dauDo(x, z);
+      let ct = them({ id: 'doLineGam' + (i + 1), ten: 'Cảm biến dò line TCRT5000 (' + ten + ')', nhom: 'doLine', khoiLuong: 7.5, khoi: [o.khoi].concat(dd.khoi),
+        trangTri: o.trangTri.concat(dd.trangTri) });
       let cg = cong(), so = oGam[i], om = oMach[so];
-      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, z: z, gam: i, vt: [x, yMatDo, z], huong: [0, -1, 0], oMach: so, ten: ten, che: c.ir });
+      camBien.push({ loai: 'doLine', cong: cg, chiTiet: ct.id, x: x, z: z, gam: i, vt: dd.vt, huong: dd.huong, den: dd.den, oMach: so, ten: ten, che: c.ir });
       // dây: dọc gầm (sát tấm đáy) ra quá vách đuôi, vòng lên sát mặt ngoài vách đuôi, qua mép trên vách rồi tới ổ
       let zRa = o.mieng[2] - DAY.dauCam[2] - 0.5, xo = om.mieng[0];
       let moc = [];
@@ -976,5 +999,5 @@
   }
 
   return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, gioiHanCao: gioiHanCao, nganBanh: nganBanh, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
-    gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, loiGam: loiGam, GAM: GAM, SERVO: SERVO, TAY: TAY, DS_TAY: DS_TAY, GAN_SERVO: GAN_SERVO, loiGanServo: loiGanServo, quayServo: quayServo, huongTay: huongTay, KC_GAM: KC_GAM, TOI_DA_DUOI: TOI_DA_DUOI, chongNap: chongNap, mienNap: mienNap, ganO: ganO, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
+    gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, loiGam: loiGam, GAM: GAM, SERVO: SERVO, TAY: TAY, DS_TAY: DS_TAY, GAN_SERVO: GAN_SERVO, loiGanServo: loiGanServo, quayServo: quayServo, huongTay: huongTay, KC_GAM: KC_GAM, TOI_DA_DUOI: TOI_DA_DUOI, chongNap: chongNap, mienNap: mienNap, ganO: ganO, IR: IR, gioiHanIR: gioiHanIR, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
 });
