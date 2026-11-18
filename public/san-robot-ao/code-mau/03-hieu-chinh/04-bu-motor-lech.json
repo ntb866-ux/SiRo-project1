@@ -1,0 +1,36 @@
+{
+  "bai": "03-hieu-chinh/04-bu-motor-lech",
+  "tenXe": "Xe trần, motor phải yếu 8 %",
+  "giaiThichXe": "Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó. Motor bên phải được cho yếu đi 8 % giống robot của bài.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [],
+    "son": {
+      "khung": "#9e9e9e"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "banh",
+      50,
+      54.3
+    ],
+    [
+      "nghi",
+      3.5
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Motor phải yếu 8 % nên cho bánh phải nhiều điện hơn: 50 ÷ 0,92 ≈ 54,3 %. Hai bánh quay đều thì xe đi thẳng.",
+  "sao": 3,
+  "robotThem": {
+    "sraMotorYeu": {
+      "banh": "phai",
+      "phanTram": 8
+    }
+  }
+}

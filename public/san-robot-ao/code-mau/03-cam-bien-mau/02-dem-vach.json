@@ -1,0 +1,81 @@
+{
+  "bai": "03-cam-bien-mau/02-dem-vach",
+  "tenXe": "Xe một mắt dưới gầm",
+  "giaiThichXe": "Một mắt dò line dưới gầm, giữa hai bánh: đếm tới vạch 4 thì tâm xe đang trên vạch 4.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [
+      {
+        "loai": "doLine",
+        "x": 0,
+        "z": 0
+      }
+    ],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#6a1b9a"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "datBien",
+      "số vạch",
+      0
+    ],
+    [
+      "chay"
+    ],
+    [
+      "lapDen",
+      [
+        "=",
+        [
+          "bien",
+          "số vạch"
+        ],
+        4
+      ],
+      [
+        [
+          "cho",
+          [
+            ">",
+            [
+              "sang",
+              "GIUA"
+            ],
+            50
+          ]
+        ],
+        [
+          "cho",
+          [
+            "<",
+            [
+              "sang",
+              "GIUA"
+            ],
+            50
+          ]
+        ],
+        [
+          "tangBien",
+          "số vạch",
+          1
+        ]
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Biến đếm số vạch. Mỗi vạch: chờ ra nền trắng rồi chờ gặp đen, cộng 1. Đủ 4 thì dừng.",
+  "sao": 3
+}

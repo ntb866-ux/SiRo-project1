@@ -1,0 +1,36 @@
+{
+  "bai": "01-di-chuyen/02-re-toi-o-dich",
+  "tenXe": "Xe gọn chỉ có con quay",
+  "giaiThichXe": "Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối \"đi … cm\" và \"quay … độ\" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#1565c0"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "di",
+      100
+    ],
+    [
+      "phai",
+      90
+    ],
+    [
+      "di",
+      100
+    ]
+  ],
+  "giaiThichCode": "Đi lên 100 cm, quay phải 90°, đi tiếp 100 cm. Đi lên trước để tránh hồ nước.",
+  "sao": 3
+}

@@ -1,0 +1,74 @@
+{
+  "bai": "06-gyro/02-giu-huong-khi-bi-day",
+  "tenXe": "Xe siêu âm mũi và con quay",
+  "giaiThichXe": "Con quay để biết xe bị đẩy lệch bao nhiêu, siêu âm phía mũi để dừng trước tường đích.",
+  "xe": {
+    "sa": [
+      {
+        "gia": "truoc",
+        "u": 0,
+        "goc": 0,
+        "cao": 5.6
+      }
+    ],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#2e7d32"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "goc0"
+    ],
+    [
+      "lapDen",
+      [
+        "<",
+        [
+          "kc"
+        ],
+        20
+      ],
+      [
+        [
+          "banh",
+          [
+            "-",
+            40,
+            [
+              "*",
+              2,
+              [
+                "goc"
+              ]
+            ]
+          ],
+          [
+            "+",
+            40,
+            [
+              "*",
+              2,
+              [
+                "goc"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Lái tỉ lệ: lặp đến khi tường còn dưới 20 cm, mỗi vòng cho bánh trái chạy 40 − 2 × góc %, bánh phải 40 + 2 × góc %. Xe lệch phải (góc dương) thì bánh phải nhanh hơn, xe lái về trái; lệch càng nhiều lái càng mạnh, về đúng hướng thì hai bánh bằng nhau.",
+  "sao": 3
+}

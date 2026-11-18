@@ -1,0 +1,60 @@
+{
+  "bai": "03-cam-bien-cham-khoang-cach/05-thoat-me-cung-nho",
+  "tenXe": "Xe siêu âm mũi",
+  "giaiThichXe": "Một siêu âm trên giá phía mũi. Quay xe để \"nhìn\" sang phải, sang trái: một cảm biến dùng cho cả ba hướng.",
+  "xe": {
+    "sa": [
+      {
+        "gia": "truoc",
+        "u": 0,
+        "goc": 0,
+        "cao": 5.6
+      }
+    ],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#2e7d32"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lapMai",
+      [
+        [
+          "phai",
+          90
+        ],
+        [
+          "lapDen",
+          [
+            ">",
+            [
+              "kc"
+            ],
+            30
+          ],
+          [
+            [
+              "trai",
+              90
+            ]
+          ]
+        ],
+        [
+          "di",
+          50
+        ]
+      ]
+    ]
+  ],
+  "giaiThichCode": "Quy tắc bàn tay phải: mỗi ô, quay phải trước; còn tường trước mặt thì quay trái cho tới khi trống; đi 50 cm sang ô kế.",
+  "sao": 3
+}

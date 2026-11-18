@@ -1,0 +1,24 @@
+{
+  "bai": "03-hieu-chinh/01-chu-vi-banh",
+  "tenXe": "Xe trần (không cảm biến)",
+  "giaiThichXe": "Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [],
+    "son": {
+      "khung": "#9e9e9e"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "quayBanh",
+      4.5,
+      4.5,
+      "VONG"
+    ]
+  ],
+  "giaiThichCode": "Bánh xe đường kính 6,37 cm nên chu vi 20 cm. 90 cm ÷ 20 cm = 4,5 vòng.",
+  "sao": 3
+}

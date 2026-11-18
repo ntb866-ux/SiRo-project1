@@ -1,0 +1,66 @@
+{
+  "bai": "06-gyro/01-quay-90-do-tren-san-bang",
+  "tenXe": "Xe gọn chỉ có con quay",
+  "giaiThichXe": "Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối \"đi … cm\" và \"quay … độ\" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#1565c0"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "goc0"
+    ],
+    [
+      "toc",
+      40
+    ],
+    [
+      "xoay",
+      "PHAI"
+    ],
+    [
+      "cho",
+      [
+        ">",
+        [
+          "goc"
+        ],
+        45
+      ]
+    ],
+    [
+      "toc",
+      10
+    ],
+    [
+      "xoay",
+      "PHAI"
+    ],
+    [
+      "cho",
+      [
+        ">",
+        [
+          "goc"
+        ],
+        88
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Đặt góc về 0, quay nhanh tới 45°, rồi quay chậm tới 88° và dừng: quay chậm thì quán tính nhỏ, xe dừng gần đúng 90° trên sân trơn.",
+  "sao": 3
+}

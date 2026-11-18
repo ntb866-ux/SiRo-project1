@@ -1,0 +1,57 @@
+{
+  "bai": "03-cam-bien-cham-khoang-cach/04-men-theo-tuong",
+  "tenXe": "Xe siêu âm mũi",
+  "giaiThichXe": "Một siêu âm trên giá phía mũi. Mỗi cạnh phòng, xe chạy tới khi gần tường phía trước rồi quay phải.",
+  "xe": {
+    "sa": [
+      {
+        "gia": "truoc",
+        "u": 0,
+        "goc": 0,
+        "cao": 5.6
+      }
+    ],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#2e7d32"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lap",
+      4,
+      [
+        [
+          "chay"
+        ],
+        [
+          "cho",
+          [
+            "<",
+            [
+              "kc"
+            ],
+            20
+          ]
+        ],
+        [
+          "dung"
+        ],
+        [
+          "phai",
+          90
+        ]
+      ]
+    ]
+  ],
+  "giaiThichCode": "Lặp 4 lần: chạy, chờ khoảng cách nhỏ hơn 20 cm, dừng, quay phải 90°.",
+  "sao": 3
+}

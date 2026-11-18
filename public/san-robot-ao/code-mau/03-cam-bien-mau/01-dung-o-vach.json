@@ -1,0 +1,47 @@
+{
+  "bai": "03-cam-bien-mau/01-dung-o-vach",
+  "tenXe": "Xe một mắt dưới gầm",
+  "giaiThichXe": "Một mắt dò line TCRT5000 dưới gầm, nằm đúng giữa hai bánh. Mắt thấy vạch là tâm xe đang ở trên vạch, nên dừng ngay là đúng chỗ (mắt dưới mũi thì xe dừng sớm 12 cm).",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [
+      {
+        "loai": "doLine",
+        "x": 0,
+        "z": 0
+      }
+    ],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#6a1b9a"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "chay"
+    ],
+    [
+      "cho",
+      [
+        "<",
+        [
+          "sang",
+          "GIUA"
+        ],
+        50
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Chạy mãi, chờ đến khi độ sáng phản xạ nhỏ hơn 50 (vạch đen), dừng.",
+  "sao": 3
+}

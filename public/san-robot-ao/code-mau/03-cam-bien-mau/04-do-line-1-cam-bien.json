@@ -1,0 +1,76 @@
+{
+  "bai": "03-cam-bien-mau/04-do-line-1-cam-bien",
+  "tenXe": "Xe một mắt dưới mũi và con quay",
+  "giaiThichXe": "Một mắt dò line giữa thanh dưới mũi: mắt nằm trước trục bánh 12 cm nên xe \"nhìn trước\" đường và rẽ kịp. TCRT5000 không nhận ra màu xanh của ô đích, nên dùng thêm con quay: đường này chỉ có khúc cua cuối cùng làm xe quay về hướng trái (góc âm).",
+  "xe": {
+    "sa": [],
+    "duoi": [
+      {
+        "loai": "doLine",
+        "x": 0
+      }
+    ],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#ef6c00"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "goc0"
+    ],
+    [
+      "lapDen",
+      [
+        "<",
+        [
+          "goc"
+        ],
+        -80
+      ],
+      [
+        [
+          "neu",
+          [
+            "<",
+            [
+              "sang",
+              "GIUA"
+            ],
+            50
+          ],
+          [
+            [
+              "banh",
+              30,
+              60
+            ]
+          ],
+          [
+            [
+              "banh",
+              60,
+              30
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "di",
+      30
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Bám mép trái của đường: mắt thấy đen thì bánh phải nhanh hơn (lái sang trái), thấy trắng thì bánh trái nhanh hơn (lái sang phải). Lặp đến khi con quay báo xe đã quay trái quá 80° (khúc cua cuối), rồi đi thẳng 30 cm vào ô đích. Chênh lệch 30/60 % đủ để bám các khúc cua mà vẫn nhanh: lái gắt hơn (15/60) thì mắt đặt xa trục bánh văng khỏi đường.",
+  "sao": 3
+}

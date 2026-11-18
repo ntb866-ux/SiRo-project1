@@ -1,0 +1,53 @@
+{
+  "bai": "03-cam-bien-cham-khoang-cach/01-cham-tuong-thi-dung",
+  "tenXe": "Xe có tấm cản trước",
+  "giaiThichXe": "Công tắc chạm gắn giữa thanh dưới mũi, ngay sau tấm cản: tường ép tấm cản thì công tắc đóng. Thêm con quay để xe chạy thẳng tới tường.",
+  "xe": {
+    "sa": [],
+    "duoi": [
+      {
+        "loai": "cham",
+        "x": 0
+      }
+    ],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#c62828"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "chay"
+    ],
+    [
+      "cho",
+      [
+        "cham"
+      ]
+    ],
+    [
+      "dung"
+    ],
+    [
+      "bip"
+    ]
+  ],
+  "giaiThichCode": "Chạy mãi, chờ đến khi cảm biến chạm bị nhấn, dừng lại rồi kêu bíp.",
+  "sao": 3,
+  "lechBai": {
+    "vung": {
+      "satTuong": [
+        0,
+        -7.5
+      ]
+    }
+  },
+  "ghiChu": "Vùng \"sát tường\" của bài đo theo tâm quay của robot của bài, mũi robot đó cách trục bánh khoảng 8 cm. Tấm cản của xe lắp mô-đun cách trục bánh 15,5 cm, nên khi chạy bằng xe này vùng chấm được dời lùi 7,5 cm: vẫn là \"mũi xe chạm tường\"."
+}

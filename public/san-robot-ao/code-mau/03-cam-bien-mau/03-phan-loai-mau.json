@@ -1,0 +1,97 @@
+{
+  "bai": "03-cam-bien-mau/03-phan-loai-mau",
+  "tenXe": "Xe một mắt dưới gầm",
+  "giaiThichXe": "Một mắt dò line dưới gầm, giữa hai bánh, để khi đọc biển màu thì tâm xe đang ở giữa ô. TCRT5000 không phân biệt được màu, chỉ đo ánh sáng hồng ngoại hắt lại. Đo trên sân này: nền trắng khoảng 88, ô đỏ khoảng 98 (mực đỏ gần như trong suốt với hồng ngoại, tấm màu lại gần mắt hơn 1 mm), ô xanh lá khoảng 69. Vì vậy phân biệt đỏ và xanh bằng độ sáng phản xạ chứ không bằng khối \"thấy màu\".",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [
+      {
+        "loai": "doLine",
+        "x": 0,
+        "z": 0
+      }
+    ],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#6a1b9a"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lap",
+      2,
+      [
+        [
+          "chay"
+        ],
+        [
+          "cho",
+          [
+            "hoac",
+            [
+              ">",
+              [
+                "sang",
+                "GIUA"
+              ],
+              93
+            ],
+            [
+              "<",
+              [
+                "sang",
+                "GIUA"
+              ],
+              80
+            ]
+          ]
+        ],
+        [
+          "di",
+          7
+        ],
+        [
+          "neu",
+          [
+            ">",
+            [
+              "sang",
+              "GIUA"
+            ],
+            93
+          ],
+          [
+            [
+              "trai",
+              90
+            ]
+          ],
+          [
+            [
+              "phai",
+              90
+            ]
+          ]
+        ],
+        [
+          "di",
+          15
+        ]
+      ]
+    ],
+    [
+      "di",
+      35
+    ]
+  ],
+  "giaiThichCode": "Lặp 2 lần: chạy tới khi độ sáng trên 93 hoặc dưới 80 (gặp ô màu), đi thêm 7 cm vào giữa ô (xe còn trôi thêm vài cm sau lệnh \"đi mãi\"); sáng trên 93 là ô đỏ thì quay trái, không thì (ô xanh) quay phải; đi 15 cm ra khỏi ô. Ô vàng luôn cách ô thứ hai 50 cm nên đi thêm 35 cm.",
+  "sao": 3,
+  "ghiChu": "Khác robot của bài: ô vàng hắt hồng ngoại gần bằng ô đỏ nên khó tách, đoạn cuối đi theo quãng đường đo sẵn."
+}

@@ -1,0 +1,39 @@
+{
+  "bai": "01-di-chuyen/05-ve-hinh-vuong",
+  "tenXe": "Xe gọn chỉ có con quay",
+  "giaiThichXe": "Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối \"đi … cm\" và \"quay … độ\" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#1565c0"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lap",
+      4,
+      [
+        [
+          "di",
+          75
+        ],
+        [
+          "phai",
+          90
+        ]
+      ]
+    ]
+  ],
+  "giaiThichCode": "Lặp 4 lần: đi 75 cm, quay phải 90°. Xe đi đúng hình vuông và về ô xuất phát.",
+  "sao": 2,
+  "ghiChu": "Xe lắp mô-đun chưa có bút vẽ, nên không lấy được sao 3 (cần khối hạ bút). Muốn đủ 3 sao, dùng robot của bài."
+}
