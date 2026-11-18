@@ -80,13 +80,14 @@ console.log('1. Cấu hình');
   await napXe(page);
   await page.evaluate(() => SRABangLapRap.mo());
   await page.waitForSelector('.sra-lr-bang');
+  await page.evaluate(() => SRABangLapRap.chon('duoi:0'));     // chế độ đọc nằm trong bảng thuộc tính của mắt dò line
   await page.click('[data-ir="so"]'); await page.evaluate(() => SRABangLapRap.choDungXong());
   let b = await page.evaluate(() => ({ ir: SRABangLapRap.cauHinh.ir, che: robot.components.filter((c) => c.sraLoai == 'doLine').map((c) => c.che).join(), tb: $('.sra-lr-thong-bao').text(),
     chon: $('[data-ir].chon').attr('data-ir'), luu: JSON.parse(localStorage.getItem('sanRobotAo.xeLapRap') || '{}').ir }));
   bc.dong(b.ir == 'so' && /^(so,?)+$/.test(b.che) && b.chon == 'so' && b.luu == 'so', 'Bảng lắp ráp: bấm "Số (D0)" thì mọi mắt chuyển sang số, nút sáng lên, lưu lại', JSON.stringify(b));
   await page.click('.sra-lr-thao-het'); await page.evaluate(() => SRABangLapRap.choDungXong());
   bc.dong(await page.evaluate(() => SRABangLapRap.cauHinh.ir) == 'so', '"Tháo hết cảm biến" giữ chế độ đọc');
-  if (anh) { await page.click('.sra-lr-mac-dinh'); await page.evaluate(() => SRABangLapRap.choDungXong()); await page.click('[data-ir="tuongTu"]'); await page.evaluate(() => SRABangLapRap.choDungXong()); await page.screenshot({ path: path.join(anh, 'ir-bang.png') }); }
+  if (anh) { await page.click('.sra-lr-mac-dinh'); await page.evaluate(() => SRABangLapRap.choDungXong()); await page.evaluate(() => SRABangLapRap.chon('duoi:0')); await page.click('[data-ir="tuongTu"]'); await page.evaluate(() => SRABangLapRap.choDungXong()); await page.screenshot({ path: path.join(anh, 'ir-bang.png') }); }
   await page.click('.sra-lr-mac-dinh'); await page.evaluate(() => SRABangLapRap.choDungXong());
   bc.dong(await page.evaluate(() => SRABangLapRap.cauHinh.ir) == 'tuongTu', '"Về mặc định" trả về tương tự');
   await browser.close();

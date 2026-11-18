@@ -368,7 +368,7 @@ function phanMot(bc) {
     let v = new BABYLON.Vector3(0, 0, 1); v.rotateByQuaternionToRef(q, v); return cb.gia + ' ' + v.x.toFixed(2) + ' ' + v.z.toFixed(2);
   }));
   let hsa = await huongSa();
-  let khay = await page.evaluate(() => ({ tat: $('.sra-lr-the:not([disabled])').length, chu: $('.sra-lr-the[data-loai=sieuAm] .sra-lr-con').text(), de: $('.sra-lr-vung-thong-tin .sra-lr-tieu-de-nho').first().text() }));
+  let khay = await page.evaluate(() => ({ tat: $('.sra-lr-the:not([disabled])').length, chu: $('.sra-lr-the[data-loai=sieuAm] .sra-lr-con').text(), de: $('.sra-lr-so-o').text() }));
   bc.dong(t.c.sa.map((m) => m.gia + m.u).join() == 'truoc-1,trai1.5' && (t.cb.match(/Ultrasonic/g) || []).length == 2 && /^trai -1\.00 0\.00$/.test(hsa[1]),
     'Kéo siêu âm thứ hai vào giá bên trái ở z = 1,6 cm: bám về 1,5 cm, xe có 2 siêu âm, cái bên trái nhìn sang trái (−x)', hsa.join(' | '));
   bc.dong(khay.tat == 0 && khay.chu == 'hết ổ' && /8\/8/.test(khay.de), 'Đủ 8 ổ cắm: mọi thẻ trong khay bị khoá, ghi "hết ổ"', khay.de);
@@ -380,6 +380,11 @@ function phanMot(bc) {
   bc.dong(t.c.sa[1].goc == 15 && /^trai -0\.97 -0\.26$/.test(hsa[1]), 'Núm xoay của giá trái: phím mũi tên trái xoay 15° sang trái (chếch về đuôi xe)', hsa[1]);
   // độ cao: bấm + hai lần trên giá trái, PageDown một lần trên siêu âm mũi
   let yTruoc = await page.evaluate(() => robot.components.filter((x) => x.type == 'UltrasonicSensor').map((x) => BABYLON.Vector3.TransformCoordinates(x.body.getAbsolutePosition(), robot.body.getWorldMatrix().clone().invert()).y));
+  // bảng thuộc tính: chỉ hiện độ cao của siêu âm đang chọn
+  await page.evaluate(() => SRABangLapRap.chon(null));
+  await page.click('[data-cho="sa:trai"] .sra-lr-khung', { force: true });
+  let tt = await page.evaluate(() => ({ chon: SRABangLapRap.dangChon(), hang: $('.sra-lr-hang-cao').map((i, e) => e.getAttribute('data-khoa')).get().join(), son: $('.sra-lr-o-son').length, h3: $('.sra-lr-thuoc-tinh h3').text(), cam: !!$('.sra-lr-bang.dang-cam').length }));
+  bc.dong(tt.chon == 'sa:trai' && tt.hang == 'sa:trai' && tt.son == 0 && /Siêu âm/.test(tt.h3) && !tt.cam, 'Bấm siêu âm trái trên sơ đồ: được chọn (chưa cầm lên), bảng thuộc tính chỉ hiện độ cao của nó, ẩn phần sơn', JSON.stringify(tt));
   await page.click('.sra-lr-nut-cao[data-cao="sa:trai"][data-buoc="0.5"]');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   await page.click('.sra-lr-nut-cao[data-cao="sa:trai"][data-buoc="0.5"]');
@@ -397,6 +402,7 @@ function phanMot(bc) {
   // giá bên: ngang bánh thì không hạ dưới 7,5 cm; dời lên trước qua bánh thì hạ được; dời lùi lại thì tự nâng
   await page.evaluate(() => SRABangLapRap.xoay(0, 'sa:trai'));
   await page.evaluate(() => SRABangLapRap.cao(7.5, 'sa:trai'));
+  await page.evaluate(() => SRABangLapRap.chon('sa:trai'));
   await page.click('.sra-lr-nut-cao[data-cao="sa:trai"][data-buoc="-0.5"]');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await trangThai();
@@ -428,7 +434,41 @@ function phanMot(bc) {
   t = await trangThai();
   bc.dong(!t.c.cham && t.cb.indexOf('Touch') < 0 && xDuoi(t.c) == 'd-1.5 d1.5 d3', 'Nút "Tháo" cạnh cảm biến chạm trong danh sách cổng: tháo cảm biến chạm', xDuoi(t.c));
   await page.evaluate(() => SRABangLapRap.dat('cham', 'khay', { vung: 'duoi', x: -3 }));
-  // sơn
+  // ô "Bám lưới" 1 cm: phím mũi tên dời 1 cm; nút thùng rác trên thanh công cụ tháo mô-đun đang chọn
+  await page.selectOption('.sra-lr-chon-buoc', '1');
+  let gpsX = await page.evaluate(() => SRABangLapRap.cauHinh.tren[1].x);
+  await page.focus('[data-cho="tren:1"]'); await page.keyboard.press('ArrowLeft');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  let gpsX2 = await page.evaluate(() => SRABangLapRap.cauHinh.tren[1].x);
+  await page.selectOption('.sra-lr-chon-buoc', '0.5');
+  await page.keyboard.press('ArrowRight');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  bc.dong(Math.abs(gpsX - gpsX2 - 1) < 1e-6 && await page.evaluate(() => SRABangLapRap.cauHinh.tren[1].x) == gpsX2 + 0.5, 'Ô "Bám lưới" 1 cm: mũi tên trái dời GPS 1 cm; đổi về 0,5 cm thì dời 0,5 cm', gpsX + ' → ' + gpsX2);
+  await page.evaluate(() => SRABangLapRap.chon('tren:0'));
+  await page.click('.sra-lr-xoa-chon');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  let sauXoa = await page.evaluate(() => ({ cb: robot.sraBanLap.camBien.map((c) => c.loai).join(), tat: $('.sra-lr-xoa-chon').prop('disabled') }));
+  await page.click('.sra-lr-hoan-tac'); await page.evaluate(() => SRABangLapRap.choDungXong());
+  bc.dong(!/gyro/.test(sauXoa.cb) && sauXoa.tat && await page.evaluate(() => robot.sraBanLap.camBien.some((c) => c.loai == 'gyro')), 'Chọn gyro, bấm nút thùng rác trên thanh công cụ: tháo gyro, nút tắt vì không còn gì được chọn; ↶ lắp lại', sauXoa.cb);
+  await page.evaluate(() => SRABangLapRap.dat('gps', 'tren:1', { vung: 'nap', x: 0.5, z: 5 }));
+  // hoàn tác, làm lại
+  let truocHT = await page.evaluate(() => JSON.stringify(SRABangLapRap.cauHinh));
+  await page.evaluate(() => SRABangLapRap.dat('gps', 'tren:1', 'khay'));
+  await page.focus('.sra-lr-hoan-tac');
+  await page.keyboard.press('Control+z');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  let sauHT = await page.evaluate(() => ({ c: JSON.stringify(SRABangLapRap.cauHinh), cb: robot.sraBanLap.camBien.map((c) => c.loai).join(), lamLai: !$('.sra-lr-lam-lai').prop('disabled') }));
+  await page.click('.sra-lr-lam-lai');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  let sauLL = await page.evaluate(() => robot.sraBanLap.camBien.map((c) => c.loai).join());
+  bc.dong(sauHT.c == truocHT && /gps/.test(sauHT.cb) && sauHT.lamLai && !/gps/.test(sauLL), 'Tháo GPS rồi Ctrl+Z: GPS về chỗ cũ trên xe 3D; nút ↷ làm lại tháo lại', sauHT.cb + ' → ' + sauLL);
+  await page.click('.sra-lr-hoan-tac');
+  await page.evaluate(() => SRABangLapRap.choDungXong());
+  // sơn: bấm chỗ trống trên sơ đồ để bỏ chọn, bảng thuộc tính về thông số cả xe
+  await page.evaluate(() => $('.sra-lr-so-do')[0].scrollIntoView({ block: 'nearest' }));
+  let nen = await diem({ vung: 'tho', x: 8.5, z: -8 });
+  await page.mouse.click(nen[0], nen[1]);
+  bc.dong(await page.evaluate(() => SRABangLapRap.dangChon() == null && $('.sra-lr-o-son').length > 0 && $('.sra-lr-ds-cong li').length > 0), 'Bấm chỗ trống trên sơ đồ: bỏ chọn, bảng thuộc tính hiện cổng, khối lượng, sơn xe');
   await page.click('.sra-lr-o-son[data-son-phan=khung][data-son-mau="#1565c0"]');
   await page.evaluate(() => SRABangLapRap.choDungXong());
   await page.click('.sra-lr-o-son[data-son-phan=vanh][data-son-mau="#263238"]');
