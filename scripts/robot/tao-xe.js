@@ -32,6 +32,12 @@ const xe = [
 
 const outDir = path.join(__dirname, '..', '..', 'public', 'san-robot-ao', 'robots');
 xe.forEach(function (o) {
-  fs.writeFileSync(path.join(outDir, o.file + '.json'), JSON.stringify(taoXe(o), null, 2) + '\n');
+  const r = taoXe(o);
+  fs.writeFileSync(path.join(outDir, o.file + '.json'), JSON.stringify(r, null, 2) + '\n');
+  // Bản .js nạp ngay sau js/robotTemplates.js: xe đứng đầu danh sách robot nên là robot mặc định
+  // của mọi sân ngay từ lúc trang mở (robot cũ của GEARS không còn là mặc định).
+  fs.writeFileSync(path.join(outDir, o.file + '.js'),
+    '// Sinh bằng scripts/robot/tao-xe.js, đừng sửa tay. Xe lắp mô-đun là robot mặc định của mọi sân.\n' +
+    'robotTemplates.unshift(' + JSON.stringify(r) + ');\n');
   console.log(o.file);
 });

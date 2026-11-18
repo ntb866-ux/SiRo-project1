@@ -40,7 +40,10 @@ var SRAXeDungHinh = (function() {
     den_xanh: { mau: '#3ddc84', bong: [0.2, 16], phat: '#1f9d55' },
     led_hong_ngoai: { mau: '#7fb6ff', bong: [0.9, 96], trong: 0.85 },
     kinh_den: { mau: '#0c0c0e', bong: [1.0, 128] },
-    lo: { mau: '#3a3f46', bong: [0.05, 8] }
+    lo: { mau: '#3a3f46', bong: [0.05, 8] },
+    mach_xanh_la: { mau: '#1c7a4a', bong: [0.3, 24] },
+    led_trang: { mau: '#fbfbf2', bong: [0.9, 96], phat: '#d8d8c8' },
+    ni_muc: { mau: '#15171a', bong: [0.05, 8] }
   };
 
   function mau3(hex) { return BABYLON.Color3.FromHexString(hex); }

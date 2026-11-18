@@ -22,7 +22,7 @@ var SRAXeCamBien = (function() {
     let u = 1 - Math.random(), v = Math.random();
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
   }
-  function tuyChon(macDinh, rieng) { return Object.assign({}, macDinh, rieng || {}); }
+  function tuyChon(macDinh, rieng, rieng2) { return Object.assign({}, macDinh, rieng || {}, rieng2 || {}); }
 
   // Điểm và hướng trong hệ trục xe → toạ độ sân, theo vị trí hiện tại của thân.
   // Cảm biến trên tay quay servo (cb.servo != null): theo vật thể tay quay; điểm và hướng cho theo lúc lắp (servo ở 90°).
@@ -165,6 +165,8 @@ var SRAXeCamBien = (function() {
   // Giản đồ phát I(α) và độ nhạy S(β) dạng chuông: bằng 1/2 khi lệch nửa góc. Đường tín hiệu theo khoảng cách
   // (đỉnh ở 2,5 mm, rồi giảm như 1/d²) không nhập tay mà tự sinh ra từ hình học: quá gần thì vùng đèn rọi và
   // vùng bộ thu nhìn chưa chồng lên nhau, xa thì ánh sáng loãng theo bình phương khoảng cách.
+  // Cảm biến màu TCS34725: đèn LED trắng góc phát rộng, chip có thấu kính nhỏ, đặt cạnh nhau như TCRT5000
+  const MAU_MAC_DINH = { nuaGocPhat: 60, nuaGocThu: 20, trangChuan: 1 };
   const LN2 = Math.log(2);
   const chuong = (goc, nua) => Math.exp(-LN2 * (goc / nua) * (goc / nua));
   // Các tia của bộ thu: 1 tia giữa và 3 vòng, mỗi tia mang trọng số S(β)·cos β·dΩ
@@ -270,12 +272,14 @@ var SRAXeCamBien = (function() {
     return { mau: c ? [c.r * 255, c.g * 255, c.b * 255] : [128, 128, 128], duc: duc };
   }
 
-  function DoLine(cb, r, scene) {
+  // rgb: cảm biến màu TCS34725 (đèn trắng, chip đo riêng ba kênh đỏ, lục, lam qua kính lọc màu).
+  // Cùng hình học Lambert với TCRT5000, chỉ khác hệ số phản xạ: mỗi kênh lấy đúng thành phần màu đó của mặt sân.
+  function DoLine(cb, r, scene, rgb) {
     let self = this, kh = new Khung(r, cb);
     this.type = 'ColorSensor';            // để thư viện Python và khối "độ sáng phản xạ" có sẵn đọc được
-    this.sraLoai = 'doLine';
+    this.sraLoai = rgb ? 'mau' : 'doLine';
     this.sraGam = cb.gam != null || cb.servo != null;    // mắt không ở thanh dưới mũi (dưới gầm hoặc trên tay quay servo)
-    this.tuyChon = tuyChon(DL_MAC_DINH, (r.options.sraCamBien || {}).doLine);
+    this.tuyChon = tuyChon(DL_MAC_DINH, rgb ? MAU_MAC_DINH : null, (r.options.sraCamBien || {})[rgb ? 'mau' : 'doLine']);
     let o = this.tuyChon;
     this.position = bVec(cb.vt);          // x < 0 là mắt trái (khối "cảm biến trái/giữa/phải" dựa vào đây)
     this.renderTarget = { sraGia: true }; // mã số đo của G7 chỉ nhận cảm biến có trường này
@@ -286,6 +290,8 @@ var SRAXeCamBien = (function() {
     let lambert = o.moHinh != 'cu';
     // Hệ số khuếch đại: nền trắng (phản xạ 0,9) ở khoảng cách chuẩn cho tín hiệu trangChuan
     let K = lambert ? o.trangChuan / tinHieuMatPhang(o, o.khoangCachChuan, 0.9) : o.trangChuan / (0.9 * dapUng(o.khoangCachChuan));
+    let KRGB = lambert ? 1 / tinHieuMatPhang(o, o.khoangCachChuan, 1) : 1 / dapUng(o.khoangCachChuan);
+    this.kenh = [0, 0, 0];                // cảm biến màu: ba kênh đỏ, lục, lam (0–1)
     // Mô hình cũ: các điểm mẫu trong vùng nhìn: tâm, vòng giữa, vòng ngoài (trọng số giảm dần ra mép)
     let mau = [[0, 0, 1]];
     for (let i = 0; i < 6; i++) mau.push([0.5 * Math.cos(Math.PI / 3 * i), 0.5 * Math.sin(Math.PI / 3 * i), 0.8]);
@@ -303,14 +309,18 @@ var SRAXeCamBien = (function() {
       if (!vl || m.sraXe) return;
       (vl.subMaterials || [vl]).forEach((x) => { if (x) anhCuaTexture(x.diffuseTexture || x.albedoTexture || x.emissiveTexture); });
     });
-    const phanXaCua = (c) => c.phanXa != null ? c.phanXa : phanXaHongNgoai(c.mau[0], c.mau[1], c.mau[2]);
+    // Hệ số phản xạ của mặt sân theo từng kênh đo: TCRT5000 chỉ có một kênh hồng ngoại (ba số bằng nhau),
+    // cảm biến màu đo ba kênh đỏ, lục, lam.
+    const phanXaCua = rgb
+      ? (c) => c.phanXa != null ? [c.phanXa, c.phanXa, c.phanXa] : [c.mau[0] / 255, c.mau[1] / 255, c.mau[2] / 255]
+      : (c) => { let p = c.phanXa != null ? c.phanXa : phanXaHongNgoai(c.mau[0], c.mau[1], c.mau[2]); return [p, p, p]; };
     // Đi từ lớp trên cùng xuống: lớp trong mờ (vùng tô màu) chỉ che một phần lớp dưới
     function quaCacLop(ds, gop) {
       ds.sort((a, b) => a.distance - b.distance);
-      let conLai = 1, s = 0;
+      let conLai = 1, s = [0, 0, 0];
       for (let hit of ds) {
-        let c = mauTaiDiem(hit);
-        s += conLai * c.duc * phanXaCua(c) * gop(hit);
+        let c = mauTaiDiem(hit), p = phanXaCua(c), w = conLai * c.duc * gop(hit);
+        s[0] += w * p[0]; s[1] += w * p[1]; s[2] += w * p[2];
         conLai *= 1 - c.duc;
         if (conLai < 0.02) break;
       }
@@ -322,12 +332,12 @@ var SRAXeCamBien = (function() {
     function doLambert(goc, xuong, ngang, doc) {
       let dh = kh.huong(denThu), s2 = o.khoangCachDenThu / 2;
       let E = V.cong(goc, V.nhan(dh, s2)), D = V.tru(goc, V.nhan(dh, s2));
-      let tong = 0, ct = [];
+      let tong = [0, 0, 0], ct = [];
       for (let q of tiaThu) {
         let h = V.donVi(V.cong(V.nhan(xuong, q.c), V.cong(V.nhan(ngang, q.u), V.nhan(doc, q.w))));
         let ds = scene.multiPickWithRay(new BABYLON.Ray(bVec(D), bVec(h), 8), khongPhaiXe) || [];
         let dau = null;
-        tong += quaCacLop(ds, function(hit) {
+        let them = quaCacLop(ds, function(hit) {
           let p = hit.pickedPoint, n = hit.getNormal(true, true);
           let P = [p.x, p.y, p.z], N = n ? [n.x, n.y, n.z] : [0, 1, 0];
           let g = dongGopLambert(o, E, P, N, h, hit.distance, xuong, q.trong);
@@ -337,22 +347,23 @@ var SRAXeCamBien = (function() {
           }
           return g;
         });
+        tong = V.cong(tong, them);
         if (dau) ct.push(dau);
       }
       self.chiTiet = ct;
       return tong;
     }
     function doCu(goc, xuong, ngang, doc) {
-      let tanG = Math.tan(o.nuaGocNhin * RAD), tong = 0;
+      let tanG = Math.tan(o.nuaGocNhin * RAD), tong = [0, 0, 0];
       for (let m of mau) {
         // tia xuất phát trong cửa sổ quang, toả ra theo góc nhìn
         let lech = V.cong(V.nhan(ngang, m[0]), V.nhan(doc, m[1]));
         let p = V.cong(goc, V.nhan(lech, o.banKinhMat));
         let h = V.donVi(V.cong(xuong, V.nhan(lech, tanG)));
         let ds = scene.multiPickWithRay(new BABYLON.Ray(bVec(p), bVec(h), 8), khongPhaiXe) || [];
-        tong += quaCacLop(ds, (hit) => dapUng(hit.distance)) * m[2];
+        tong = V.cong(tong, V.nhan(quaCacLop(ds, (hit) => dapUng(hit.distance)), m[2]));
       }
-      return tong / tongTrong;
+      return V.nhan(tong, 1 / tongTrong);
     }
 
     this.do = function() {
@@ -361,8 +372,13 @@ var SRAXeCamBien = (function() {
       let ngang = kh.huong(Math.abs(cb.huong[0]) > 0.9 ? [0, 0, 1] : [1, 0, 0]);
       ngang = V.donVi(V.tru(ngang, V.nhan(xuong, V.cham(ngang, xuong))));
       let doc = V.co(xuong, ngang);
-      let t = K * (lambert ? doLambert(goc, xuong, ngang, doc) : doCu(goc, xuong, ngang, doc));
-      if (o.nhieu > 0) t += nhieuChuan() * o.nhieu;
+      let v = lambert ? doLambert(goc, xuong, ngang, doc) : doCu(goc, xuong, ngang, doc);
+      if (rgb) {
+        // Mỗi kênh chia cho tín hiệu của mặt trắng tuyệt đối ở độ cao chuẩn (cân bằng trắng lúc xuất xưởng)
+        self.kenh = v.map((x) => Math.max(0, Math.min(1, KRGB * x + (o.nhieu > 0 ? nhieuChuan() * o.nhieu : 0))));
+      }
+      let t = rgb ? (self.kenh[0] + self.kenh[1] + self.kenh[2]) / 3 : K * v[0];
+      if (o.nhieu > 0 && !rgb) t += nhieuChuan() * o.nhieu;
       self.tinHieu = Math.max(0, Math.min(1, t));
       if (self.so && self.tinHieu < o.nguong - o.doTre) self.so = false;
       else if (!self.so && self.tinHieu > o.nguong + o.doTre) self.so = true;
@@ -379,14 +395,26 @@ var SRAXeCamBien = (function() {
     // ngõ ra của mạch so sánh, chỉ có 0 (vạch tối) hoặc 1 (nền sáng).
     this.che = cb.che == 'so' ? 'so' : 'tuongTu';
     const mucDoc = () => self.che == 'so' ? (self.so ? 1 : 0) : self.tinHieu;
-    // TCRT5000 không phân biệt được màu: ba kênh bằng nhau, tỉ lệ với hồng ngoại phản xạ
-    this.getRGB = function() { capNhat(); let v = mucDoc() * 255; return [v, v, v]; };
-    this.getHSV = function() { capNhat(); return [0, 0, mucDoc() * 100]; };
+    // TCRT5000 không phân biệt được màu: ba kênh bằng nhau, tỉ lệ với hồng ngoại phản xạ.
+    // Cảm biến màu trả về đúng ba kênh đo được.
+    this.getRGB = function() {
+      capNhat();
+      if (rgb) return self.kenh.map((x) => x * 255);
+      let v = mucDoc() * 255; return [v, v, v];
+    };
+    this.getHSV = function() {
+      capNhat();
+      if (!rgb) return [0, 0, mucDoc() * 100];
+      let [R, G, B] = self.kenh, mx = Math.max(R, G, B), mn = Math.min(R, G, B), d = mx - mn, h = 0;
+      if (d > 0) h = mx == R ? 60 * (((G - B) / d) % 6) : mx == G ? 60 * ((B - R) / d + 2) : 60 * ((R - G) / d + 4);
+      return [(h + 360) % 360, mx > 0 ? d / mx * 100 : 0, mx * 100];
+    };
 
     // ---------- Đèn báo phía trước mắt đo ----------
     // Chế độ số: đèn xanh lá sáng khi ngõ ra số bật (nền sáng), tắt (xám) khi gặp vạch tối, như đèn báo D0
     // trên mô-đun thật. Chế độ tương tự: đèn cam, càng đậm khi tín hiệu càng mạnh.
     // Đèn chỉ để nhìn (không bắt tia, không có khối lượng) và luôn vẽ đè lên xe để thấy được từ mọi góc.
+    if (rgb) { this.render = function() {}; return; }     // cảm biến màu không có đèn báo D0
     let lechDen = cb.servo != null ? V.nhan(cb.huong, 0.6) : [0, 0.35, 0.95];
     let viTriDen = bVec(V.tru(V.cong(cb.vt, lechDen), kh.tam));
     function taoDen(ten, hinh, cao) {
@@ -513,9 +541,96 @@ var SRAXeCamBien = (function() {
     this.reset = function() { lanCuoi = -1; };
   }
 
+  // ======================================================================
+  // Bút vẽ (bút dạ trong ống giữ ở tâm quay, cuộn nâng nhấc bút)
+  // ======================================================================
+  // Giữ tên hàm của bút GEARS (down, up, isDown, setTraceColor, setWidth, tip) để thư viện Python, khối
+  // "hạ bút"/"nhấc bút" và phần chấm nét vẽ (core/net-ve.js) dùng được. Nét mực là dải phẳng sát mặt sân
+  // vẽ theo đường ngòi bút đi qua; chỉ để nhìn, cảm biến không thấy nó.
+  const BUT_MAC_DINH = { thoiGianNang: 0.06, buocNet: 0.15 };
+  function But(cb, r, scene, banLap) {
+    let self = this, mb = banLap.but, tam = r.sraKhoiLuong.than.tam;
+    this.type = 'Pen';
+    this.sraLoai = 'but';
+    this.tuyChon = tuyChon(BUT_MAC_DINH, (r.options.sraCamBien || {}).but);
+    let o = this.tuyChon;
+    this.options = { doubleSided: false, traceVisibleToSensors: false };
+    this.isDown = false;
+    this.traceColor = '000000';
+    this.traceWidth = mb.rongNet / 2;     // nửa bề rộng nét (cm), như GEARS
+    this.traceMeshes = [];
+    let doNang = mb.nang;                 // ngòi đang cách sân bao nhiêu (cm), 0 = chạm sân
+    // Cây bút: lưới riêng gắn vào thân, dời lên xuống theo cuộn nâng
+    this.luoi = SRAXeDungHinh.dungVat(scene, 'sraBut', [{ khoi: mb.khoi.map((k) => k.q ? k : H.chuanHoa(k)), trangTri: [] }], tam, r.body);
+    this.tip = new BABYLON.TransformNode('sraNgoiBut', scene);
+    this.tip.parent = r.body;
+    let goc = V.tru(mb.ngoi, tam);
+    function datCao() {
+      self.luoi.forEach((m) => { m.position.y = doNang; });
+      self.tip.position = bVec(V.cong(goc, [0, doNang, 0]));
+    }
+    datCao();
+
+    let vlNet = null, net = null, duong = null, cuoi = null, ban = false, lanDung = 0;
+    function vatLieuNet() {
+      vlNet = new BABYLON.StandardMaterial('sraNetBut' + self.traceColor, scene);
+      vlNet.emissiveColor = BABYLON.Color3.FromHexString('#' + self.traceColor);
+      vlNet.disableLighting = true;
+      vlNet.zOffset = -2;
+    }
+    function ketThucNet() {
+      if (ban) dungNet();
+      if (net) self.traceMeshes.push(net);
+      net = null; duong = null; cuoi = null; ban = false;
+    }
+    this.down = function() { if (!self.isDown) { ketThucNet(); self.isDown = true; } };
+    this.up = function() { self.isDown = false; ketThucNet(); };
+    this.setTraceColor = function(R, G, B) {
+      let hex = (x) => ('0' + Math.round(Math.max(0, Math.min(1, x)) * 255).toString(16)).slice(-2);
+      self.traceColor = hex(R) + hex(G) + hex(B);
+      vlNet = null;
+      if (self.isDown) ketThucNet();      // đổi màu: bắt đầu nét mới
+    };
+    this.setWidth = function(w) { self.traceWidth = Math.max(0.05, Number(w) || 0) / 2; if (self.isDown) ketThucNet(); };
+
+    function dungNet() {
+      if (!duong || duong[0].length < 2) return;
+      if (!vlNet) vatLieuNet();
+      if (net) net.dispose();
+      net = BABYLON.MeshBuilder.CreateRibbon('sraNetBut', { pathArray: duong }, scene);
+      net.material = vlNet;
+      net.isPickable = false; net.sraNetBut = true;
+      ban = false;
+    }
+    this.render = function(delta) {
+      // cuộn nâng: ngòi đi tới vị trí lệnh trong thoiGianNang giây
+      let dich = self.isDown ? 0 : mb.nang, buoc = mb.nang * (delta || 0) / 1000 / o.thoiGianNang;
+      if (doNang != dich) {
+        doNang = doNang < dich ? Math.min(dich, doNang + buoc) : Math.max(dich, doNang - buoc);
+        datCao();
+      }
+      if (!self.isDown || doNang > 0.02) return;
+      let p = self.tip.getAbsolutePosition().clone();
+      p.y += 0.03;                        // dải mực sát trên mặt sân
+      if (!cuoi) { cuoi = p; duong = [[], []]; return; }
+      let d = p.subtract(cuoi);
+      if (d.lengthSquared() < o.buocNet * o.buocNet) return;
+      let ngang = BABYLON.Vector3.Cross(d.normalize(), BABYLON.Axis.Y).scale(self.traceWidth);
+      if (!duong[0].length) { duong[0].push(cuoi.add(ngang)); duong[1].push(cuoi.subtract(ngang)); }
+      duong[0].push(p.add(ngang)); duong[1].push(p.subtract(ngang));
+      cuoi = p; ban = true;
+      let bay = performance.now();
+      if (bay - lanDung > 80) { dungNet(); lanDung = bay; }
+    };
+    // nét đang vẽ dở được dựng nốt trước khi chấm (net-ve đọc vị trí ngòi, không đọc lưới)
+    this.dungNot = function() { if (ban) dungNet(); };
+  }
+
   function tao(cb, r, scene, banLap) {
     if (cb.loai == 'sieuAm') return new SieuAm(cb, r, scene);
     if (cb.loai == 'doLine') return new DoLine(cb, r, scene);
+    if (cb.loai == 'mau') return new DoLine(cb, r, scene, true);
+    if (cb.loai == 'but') return new But(cb, r, scene, banLap);
     if (cb.loai == 'cham') return new Cham(cb, r, scene, banLap);
     if (cb.loai == 'gyro') return new Gyro(cb, r, scene);
     if (cb.loai == 'gps') return new GPS(cb, r, scene);
@@ -523,5 +638,5 @@ var SRAXeCamBien = (function() {
   }
 
   return { tao: tao, dapUng: dapUng, phanXaHongNgoai: phanXaHongNgoai, tinHieuMatPhang: tinHieuMatPhang,
-    MAC_DINH: { sieuAm: SA_MAC_DINH, doLine: DL_MAC_DINH, gyro: GYRO_MAC_DINH, gps: GPS_MAC_DINH } };
+    MAC_DINH: { sieuAm: SA_MAC_DINH, doLine: DL_MAC_DINH, mau: MAU_MAC_DINH, gyro: GYRO_MAC_DINH, gps: GPS_MAC_DINH, but: BUT_MAC_DINH } };
 })();
