@@ -50,6 +50,9 @@
         "z": 4.25
       }
     ],
+    "co": null,
+    "namCham": 0,
+    "kep": false,
     "ir": "tuongTu",
     "nghiengIR": 0,
     "caoIR": 0.6,

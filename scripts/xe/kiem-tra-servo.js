@@ -112,7 +112,7 @@ console.log('1. Cấu hình và hình học');
   const tt = () => page.evaluate(() => ({ sv: SRABangLapRap.cauHinh.tren.find((m) => m.loai == 'servo'), cb: robot.components.map((c) => c.port + ':' + c.type).join(' '), tb: $('.sra-lr-thong-bao').text(),
     ds: $('.sra-lr-ds-cong li').map((i, e) => $(e).find('.sra-lr-huy-hieu').text()).get().join(',') }));
   let t = await tt();
-  bc.dong(t.sv && t.sv.x == 2.5 && t.sv.z == 4.5 && /^outC:SwivelActuator/.test(t.cb) && /C$/.test(t.ds) && await page.locator('.sra-lr-servo').count() == 1,
+  bc.dong(t.sv && t.sv.x == 2.5 && t.sv.z == 4.5 && /^outC:SwivelActuator/.test(t.cb) && /C$/.test(t.ds) && await page.locator('.sra-lr-servo:not(.sra-lr-co-cau)').count() == 1,
     'Kéo servo từ khay lên nắp: bám lưới, xe có động cơ C, danh sách cổng có dòng "C", hiện mục Servo', JSON.stringify(t.sv) + ' ' + t.ds);
   await page.click('[data-servo-tay="doi"]'); await page.evaluate(() => SRABangLapRap.choDungXong());
   await page.click('[data-servo-gan="0"][data-loai-gan="sieuAm"]'); await page.evaluate(() => SRABangLapRap.choDungXong());
@@ -138,7 +138,7 @@ console.log('1. Cấu hình và hình học');
   await chup('servo-bang-lap-rap');
   await page.click('.sra-lr-cong-servo .sra-lr-nut-thao'); await page.evaluate(() => SRABangLapRap.choDungXong());
   t = await tt();
-  bc.dong(!t.sv && !/outC/.test(t.cb) && await page.locator('.sra-lr-servo').count() == 0, 'Nút "Tháo" ở dòng servo: tháo servo cùng các cảm biến trên tay quay', t.cb);
+  bc.dong(!t.sv && !/outC/.test(t.cb) && await page.locator('.sra-lr-servo:not(.sra-lr-co-cau)').count() == 0, 'Nút "Tháo" ở dòng servo: tháo servo cùng các cảm biến trên tay quay', t.cb);
   await browser.close();
   process.exit(bc.ket());
 })();

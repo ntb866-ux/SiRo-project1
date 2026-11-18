@@ -28,8 +28,9 @@ var SRAXeCamBien = (function() {
   // Cảm biến trên tay quay servo (cb.servo != null): theo vật thể tay quay; điểm và hướng cho theo lúc lắp (servo ở 90°).
   function Khung(r, cb) {
     let trenServo = cb && cb.servo != null && r.sraServoNut;
-    let nut = trenServo ? r.sraServoNut : r.body;
-    let tam = trenServo ? V.cong(r.sraBanLap.servo.tam, r.sraKhoiLuong.servo.tam) : r.sraKhoiLuong.than.tam;
+    let trenVat = cb && cb.vat && cb.vat != 'than' && r.sraVatNut && r.sraVatNut[cb.vat];     // trên cơ cấu công tác
+    let nut = trenServo ? r.sraServoNut : trenVat ? trenVat.nut : r.body;
+    let tam = trenServo ? V.cong(r.sraBanLap.servo.tam, r.sraKhoiLuong.servo.tam) : trenVat ? trenVat.tam : r.sraKhoiLuong.than.tam;
     this.docQ = function() { let q = nut.rotationQuaternion; return [q.x, q.y, q.z, q.w]; };
     this.diem = function(p) {
       let b = nut.position;
@@ -278,7 +279,7 @@ var SRAXeCamBien = (function() {
     let self = this, kh = new Khung(r, cb);
     this.type = 'ColorSensor';            // để thư viện Python và khối "độ sáng phản xạ" có sẵn đọc được
     this.sraLoai = rgb ? 'mau' : 'doLine';
-    this.sraGam = cb.gam != null || cb.servo != null;    // mắt không ở thanh dưới mũi (dưới gầm hoặc trên tay quay servo)
+    this.sraGam = cb.gam != null || cb.servo != null || !!cb.vat;    // mắt không ở thanh dưới mũi (dưới gầm, trên tay quay servo hoặc trên cơ cấu công tác)
     this.tuyChon = tuyChon(DL_MAC_DINH, rgb ? MAU_MAC_DINH : null, (r.options.sraCamBien || {})[rgb ? 'mau' : 'doLine']);
     let o = this.tuyChon;
     this.position = bVec(cb.vt);          // x < 0 là mắt trái (khối "cảm biến trái/giữa/phải" dựa vào đây)

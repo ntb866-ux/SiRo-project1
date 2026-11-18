@@ -171,7 +171,7 @@
   // siêu âm lấy ổ trước còn trống gần nó nhất; gyro, GPS cắm ổ sau (6…8) cũng theo thứ tự trái sang phải.
   const X_LO = [-3, -1.5, 0, 1.5, 3];
   const X_NAP = [-3, 3], O_NAP = [6, 8];
-  const TOI_DA = { doLine: 7, mau: 2, cham: 1, sieuAm: 4, gyro: 1, gps: 1, servo: 1, but: 1 };   // số có trong khay (mắt dò line: 3 dưới mũi + 4 dưới gầm)
+  const TOI_DA = { doLine: 7, mau: 3, cham: 1, sieuAm: 4, gyro: 1, gps: 1, servo: 1, but: 1, namCham: 2, coCau: 1, kep: 1 };   // số có trong khay (mắt dò line: 3 dưới mũi + 4 dưới gầm)
   const TOI_DA_DUOI = { doLine: 3, mau: 2, cham: 1 };      // thanh dưới mũi (mắt dò line, cảm biến màu, chạm)
   // Gầm xe (dưới tấm đáy): mắt dò line TCRT5000 đặt ở (x, z) bất kì. Mạch đầu đo 1,4 × 1,5 cm treo dưới tấm đáy,
   // ổ RJ25 nằm ngay sau mạch (cũng treo dưới tấm đáy, cách sân 5 mm), dây chạy dọc gầm ra phía đuôi rồi vòng lên.
@@ -180,6 +180,8 @@
   //   vỏ bi tự do chiếm |x| < 1,6, z 9,4…11,6: mạch không được lấn vào
   //   dây của mô-đun chạy thẳng ra sau, nên hai mô-đun gầm phải lệch nhau ít nhất KC_GAM theo bề ngang
   const GAM = { x: 3.75, z0: -0.5, z1: 10.5, toiDa: 4, nuaRong: 0.75, nuaDai: 0.75, xBi: 1.6, zBi: 9.4 };
+  // Nửa bề ngang, nửa bề dài của mô-đun dưới gầm theo loại (nam châm điện Ø 2 cm to hơn mạch đầu đo)
+  const nuaGam = (loai) => loai == 'namCham' ? 1.0 : GAM.nuaRong;
   const KC_GAM = 1.5;
   const SO_O = 8;                                  // mạch chủ có 8 ổ RJ25: tổng số cảm biến không quá 8
   // Bốn giá siêu âm, mỗi giá một cảm biến. Mỗi giá có: mặt bắt mô-đun (mat, theo trục pháp tuyến n), độ cao
@@ -306,9 +308,11 @@
   // Cảm biến trên giá bên ở vị trí u, góc goc có nằm ngang bánh xe không (theo chiều dọc thân xe)
   const nganBanh = (gia, u, goc) => !!GIA[gia].caoTrenBanh && u - nuaRongSieuAm(goc) < TS.rBanh + 0.45;      // 0,45 cm: khi xoay, vỏ còn bị đẩy ra và lệch về phía bánh
   // Khoảng độ cao (tâm cảm biến so với mặt sân, cm) cho phép tại vị trí u, góc goc
-  function gioiHanCao(gia, u, goc) {
-    let g = GIA[gia];
-    return [nganBanh(gia, u, goc) ? g.caoTrenBanh : g.cao[0], g.cao[1]];
+  // c (tuỳ chọn): cấu hình đã chuẩn hoá; có cơ cấu công tác ở mũi thì siêu âm mũi phải cao hơn cơ cấu
+  function gioiHanCao(gia, u, goc, c) {
+    let g = GIA[gia], min = nganBanh(gia, u, goc) ? g.caoTrenBanh : g.cao[0];
+    if (c && c.co && gia == 'truoc') min = Math.max(min, CO.caoSa[c.co.loai]);
+    return [min, g.cao[1]];
   }
 
   // Hai mô-đun trên nắp có chồng lên nhau không
@@ -333,18 +337,76 @@
   // Bút vẽ cắm thẳng đứng qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục bánh (tâm quay của xe):
   // ống giữ bút Ø BUT.dOng chiếm chỗ dưới gầm, mắt dò line dưới gầm không đặt chồng lên được.
   const BUT = { dOng: 1.5, dBut: 1.1, dauBut: 0.06, nang: 0.35, nuaGam: 0.75, zPinCo: 0.25, zPinBut: 4.85, beRong: 0.5 };
-  function loiGam(x, z, ds, coBut) {
-    // mô-đun gầm chiếm |x − x₀| < 0,75 và z₀ − 0,75 − (ổ cắm 1,9) … z₀ + 0,75; ống bút chiếm |x|, |z| < 0,75
-    let rB = BUT.dOng / 2;
-    if (coBut && Math.abs(x) < GAM.nuaRong + rB - 1e-6 && z + GAM.nuaDai > -rB + 1e-6 && z - GAM.nuaDai - KT_O[2] < rB - 1e-6)
-      return T('Chỗ này đụng ống giữ bút vẽ ở giữa gầm xe. Dời mắt dò line sang bên hoặc ra trước.', 'This spot hits the pen holder in the middle of the underside. Move the line sensor to the side or forward.');
-    if (Math.abs(x) > GAM.x + 1e-6) return T('Mắt dò line dưới gầm chỉ đặt được cách giữa tối đa ' + so1(GAM.x) + ' cm, xa hơn thì mạch lòi ra ngoài tấm đáy.', 'Underside line sensors can sit at most ' + so1(GAM.x) + ' cm from the middle; further out the board sticks out past the base plate.');
-    if (z < GAM.z0 - 1e-6) return T('Mắt dò line dưới gầm phải đặt từ z = ' + so1(GAM.z0) + ' cm trở lên: phía sau mạch còn ổ cắm và đầu dây.', 'Underside line sensors must sit at z = ' + so1(GAM.z0) + ' cm or more: behind the board are its socket and cable.');
-    if (z > GAM.z1 + 1e-6) return T('Mắt dò line dưới gầm chỉ đặt tới z = ' + so1(GAM.z1) + ' cm, trước đó là thanh dưới mũi xe.', 'Underside line sensors can sit up to z = ' + so1(GAM.z1) + ' cm; beyond that is the front bar.');
-    if (Math.abs(x) < GAM.xBi + GAM.nuaRong - 1e-6 && z + GAM.nuaDai > GAM.zBi + 1e-6) return T('Chỗ này đụng vỏ bi tự do. Dời mắt dò line ra sau hoặc sang bên.', 'This spot hits the caster ball housing. Move the line sensor back or to the side.');
-    if (ds.some((m) => Math.abs(m.x - x) < KC_GAM - 1e-6)) return T('Hai mắt dò line dưới gầm phải lệch nhau ít nhất ' + so1(KC_GAM) + ' cm theo bề ngang, vì dây của mỗi mắt chạy thẳng dọc gầm ra phía đuôi.', 'Two underside line sensors must be at least ' + so1(KC_GAM) + ' cm apart sideways, because each cable runs straight back along the underside to the tail.');
+  function loiGam(x, z, ds, coBut, loai) {
+    // mô-đun gầm chiếm |x − x₀| < w và z₀ − w − (ổ cắm 1,9) … z₀ + w (w: nửa bề rộng theo loại); ống bút chiếm |x|, |z| < 0,75
+    let w = nuaGam(loai), rB = BUT.dOng / 2, ten = loai == 'namCham' ? T('Nam châm điện', 'The electromagnet') : T('Mắt dò line', 'The line sensor');
+    let tenD = loai == 'namCham' ? T('nam châm', 'magnet') : T('mắt dò line', 'line sensor');
+    if (coBut && Math.abs(x) < w + rB - 1e-6 && z + w > -rB + 1e-6 && z - w - KT_O[2] < rB - 1e-6)
+      return T('Chỗ này đụng ống giữ bút vẽ ở giữa gầm xe. Dời ' + tenD + ' sang bên hoặc ra trước.', 'This spot hits the pen holder in the middle of the underside. Move the ' + tenD + ' to the side or forward.');
+    let xMax = GAM.x + GAM.nuaRong - w, z0 = GAM.z0 + w - GAM.nuaDai, z1 = GAM.z1 + GAM.nuaDai - w;
+    if (Math.abs(x) > xMax + 1e-6) return T(ten + ' dưới gầm chỉ đặt được cách giữa tối đa ' + so1(xMax) + ' cm, xa hơn thì lòi ra ngoài tấm đáy.', ten + ' under the car can sit at most ' + so1(xMax) + ' cm from the middle; further out it sticks out past the base plate.');
+    if (z < z0 - 1e-6) return T(ten + ' dưới gầm phải đặt từ z = ' + so1(z0) + ' cm trở lên: phía sau còn ổ cắm và đầu dây.', ten + ' under the car must sit at z = ' + so1(z0) + ' cm or more: behind it are its socket and cable.');
+    if (z > z1 + 1e-6) return T(ten + ' dưới gầm chỉ đặt tới z = ' + so1(z1) + ' cm, trước đó là thanh dưới mũi xe.', ten + ' under the car can sit up to z = ' + so1(z1) + ' cm; beyond that is the front bar.');
+    if (Math.abs(x) < GAM.xBi + w - 1e-6 && z + w > GAM.zBi + 1e-6) return T('Chỗ này đụng vỏ bi tự do. Dời ' + tenD + ' ra sau hoặc sang bên.', 'This spot hits the caster ball housing. Move the ' + tenD + ' back or to the side.');
+    if (ds.some((m) => Math.abs(m.x - x) < w + nuaGam(m.loai) - 1e-6)) return T('Hai mô-đun dưới gầm phải lệch nhau đủ xa theo bề ngang (hai mắt dò line: ' + so1(KC_GAM) + ' cm), vì dây của mỗi mô-đun chạy thẳng dọc gầm ra phía đuôi.', 'Two underside modules must be far enough apart sideways (two line sensors: ' + so1(KC_GAM) + ' cm), because each cable runs straight back along the underside to the tail.');
     return null;
   }
+  // ---------- Nam châm điện, cơ cấu công tác phía mũi, kẹp gắp ----------
+  // Nam châm điện kiểu KK-P20/15: lõi thép Ø 20 × 15 mm có cuộn dây, 5 V, lực giữ khoảng 2,5 kgf khi mặt hút
+  // áp sát tấm thép dày. Lực hút giảm rất nhanh theo khe hở d giữa mặt hút và vật (từ thông qua khe không khí):
+  // F = u² · lucGiu · (a / (a + d))⁴, u ∈ [−1, 1] là độ rộng xung (lực tỉ lệ bình phương dòng điện, nên đảo chiều
+  // dòng điện vẫn hút sắt non như cũ). a = 0,5 cm: cách 1 cm còn khoảng 30 gf, cách 2 cm khoảng 4 gf.
+  const NAM_CHAM = { ten: 'KK-P20/15', d: 2.0, h: 1.5, lucGiu: 2.5 * 1000 * 981, a: 0.5, tamXa: 3, khoiLuong: 30 };
+  // Motor giảm tốc N20 có encoder (thông số tại trục ra, 6 V)
+  const N20_298 = { ten: 'Motor N20 1:298', dienAp: 6, tocDoKhongTai: 100 / 60 * 360, momenKet: 2.6 * 0.0980665 * 1e7,
+    momenMaSat: 0.4 * 0.0980665 * 1e7, tiSoTruyen: 298, quanTinhRoto: 0.1, tocDoLenhToiDa: 600 };
+  const N20_100 = { ten: 'Motor N20 1:100', dienAp: 6, tocDoKhongTai: 300 / 60 * 360, momenKet: 0.9 * 0.0980665 * 1e7,
+    momenMaSat: 0.15 * 0.0980665 * 1e7, tiSoTruyen: 100, quanTinhRoto: 0.1, tocDoLenhToiDa: 1050 };
+  // Cơ cấu công tác bắt vào tấm công tác: tấm nhôm 8,9 × 2,4 cm trên hai chân giá phía mũi (mặt trước z = 11,4,
+  // y 3,6…6,0, cao hơn ổ cắm của mô-đun dưới mũi). Tấm cản của cảm biến chạm chiếm mũi xe nên không lắp cùng được;
+  // siêu âm trên giá mũi phải nâng lên cao hơn cơ cấu (caoSa: độ cao tối thiểu của tâm siêu âm).
+  //   coDinh  giá chữ Z: đầu công tác bắt cố định trước mũi
+  //   tay     cánh tay nâng 1 hoặc 2 đoạn, mỗi khớp một motor N20 1:298 (khớp 1 ở P, đoạn dài dai[i])
+  //   truot   thanh trượt nâng hạ: ray nhôm dựng đứng, xe trượt mang motor N20 1:100 và bánh răng Ø 0,8 cm ăn
+  //           vào thanh răng trên ray, hành trình tối đa hanhTrinh (ngắn lại nếu siêu âm mũi thấp)
+  const CO = {
+    LOAI: { coDinh: 1, tay: 1, truot: 1 }, DAU: { namCham: 1, kep: 1 },
+    zMat: 11.4, yDuoi: 3.6, yTren: 6.0,
+    caoSa: { coDinh: 7.3, tay: 7.3, truot: 9.4 },
+    coDinh: { M: [0, 2.7, 13.4] },
+    tay: { P: [0, 4.8, 12.2], dai: [7.0, 6.0], gocMin: -35, gocMax: 90, gocMin2: -150, gocMax2: 150 },
+    truot: { zRay: 12.4, yRay: 3.4, y0: 3.45, nuaCao: 1.75, hanhTrinh: 6, dBanhRang: 0.8 },
+    kep: { trucX: 0.9, zTruc: 3.2, moMax: 55, moDau: 30 }
+  };
+  // Kẹp gắp: servo SG90 quay hàm trái, cặp bánh răng bằng nhau truyền sang hàm phải (hai hàm quay ngược chiều,
+  // cùng góc). Mô-men servo chia đều cho hai hàm.
+  const SERVO_KEP = Object.assign({}, { ten: 'Servo SG90 (kẹp)', dienAp: 5, tocDoKhongTai: 600, momenKet: 1.8 * 0.0980665 * 1e7 / 2,
+    momenMaSat: 0.3 * 0.0980665 * 1e7 / 2, tocDoLenhToiDa: 600, tiSoTruyen: 300, quanTinhRoto: 0.05 / 2 });
+  function chuanHoaCo(v, c) {
+    if (!v || !CO.LOAI[v.loai]) return null;
+    if (c.duoi.some((m) => m.loai == 'cham')) return null;            // tấm cản chiếm mũi xe
+    let co = { loai: v.loai, dau: CO.DAU[v.dau] ? v.dau : null };
+    if (co.loai == 'tay') co.doan = Number(v.doan) == 2 ? 2 : 1;
+    if (co.loai == 'coDinh' && !co.dau) return null;
+    let soMau = c.duoi.concat(c.gam).filter((m) => m.loai == 'mau').length;
+    co.mau = !!v.mau && co.dau == 'namCham' && soMau < TOI_DA.mau;     // cảm biến màu nhìn xuống, cạnh nam châm
+    return co;
+  }
+  // Số ổ RJ25 cơ cấu dùng: mỗi motor khớp một ổ, đầu công tác một ổ, cảm biến màu trên đầu một ổ
+  const soOCo = (co) => co ? (co.loai == 'tay' ? co.doan : co.loai == 'truot' ? 1 : 0) + (co.dau ? 1 : 0) + (co.mau ? 1 : 0) : 0;
+  // Hành trình thanh trượt (cm) theo độ cao siêu âm mũi (null: không có siêu âm mũi)
+  function hanhTrinhTruot(caoSa) {
+    let t = CO.truot, S = t.hanhTrinh;
+    if (caoSa != null) S = Math.min(S, caoSa - 1.1 - 0.1 - (t.y0 + t.nuaCao));
+    return Math.max(0, Math.floor(S * 10 + 1e-6) / 10);
+  }
+  // Góc khép của hàm kẹp (độ, âm: hàm chụm vào): má cao su của hai hàm vừa chạm nhau ở giữa
+  const GOC_KHEP = (function() {
+    let f = (g) => CO.kep.trucX - 0.4 * Math.cos(g) + 3.6 * Math.sin(g), a = -0.5, b = 0;
+    for (let i = 0; i < 60; i++) { let m = (a + b) / 2; if (f(m) < 0) a = m; else b = m; }
+    return (a + b) / 2 / (PI / 180);
+  })();
+
   function loiNap(m, ds) {
     let mi = mienNap(m.loai);
     if (m.x < mi.x0 - 1e-6 || m.x > mi.x1 + 1e-6 || m.z < mi.z0 - 1e-6 || m.z > mi.z1 + 1e-6) return T('Mô-đun và ổ cắm của nó phải nằm gọn trên nắp mạch chủ.', 'The module and its socket must fit on the main board cover.');
@@ -406,10 +468,11 @@
     // --- Dưới gầm ---
     c.gam = [];
     (Array.isArray(vao.gam) ? vao.gam : []).forEach(function(m) {
-      if (!m || (m.loai != 'doLine' && m.loai != 'mau') || c.gam.length >= GAM.toiDa) return;
+      if (!m || (m.loai != 'doLine' && m.loai != 'mau' && m.loai != 'namCham') || c.gam.length >= GAM.toiDa) return;
       if (m.loai == 'mau' && c.duoi.concat(c.gam).filter((n) => n.loai == 'mau').length >= TOI_DA.mau) return;
+      if (m.loai == 'namCham' && c.gam.some((n) => n.loai == 'namCham')) return;      // dưới gầm một nam châm
       let x = tron2(Number(m.x) || 0), z = tron2(Number(m.z) || 0);
-      if (loiGam(x, z, c.gam, c.but)) return;
+      if (loiGam(x, z, c.gam, c.but, m.loai)) return;
       c.gam.push({ loai: m.loai, x: x, z: z });
     });
     c.gam.sort((a, b) => a.x - b.x);
@@ -444,6 +507,12 @@
     });
     c.tren.sort((a, b) => a.x - b.x);
 
+    // --- Cơ cấu công tác phía mũi (giá cố định, cánh tay nâng hoặc thanh trượt nâng hạ) và đầu công tác ---
+    c.co = chuanHoaCo(vao.co, c);
+    // siêu âm trên giá mũi phải nằm cao hơn tấm công tác và cơ cấu
+    let saTruoc = c.sa.find((m) => m.gia == 'truoc');
+    if (c.co && saTruoc) saTruoc.cao = tron2(Math.max(saTruoc.cao, CO.caoSa[c.co.loai]));
+
     // --- Mạch chủ chỉ có 8 ổ: bớt siêu âm (từ giá cuối danh sách), rồi mô-đun trên nắp, rồi dưới mũi ---
     let sv = c.tren.find((m) => m.loai == 'servo');
     let soGan = () => sv ? sv.gan.filter(Boolean).length : 0;
@@ -453,9 +522,12 @@
       while (c.sa.length + sv.gan.filter((x) => x == 'sieuAm').length > TOI_DA.sieuAm) sv.gan[sv.gan.lastIndexOf('sieuAm')] = null;
       while (c.duoi.concat(c.gam).filter((m) => m.loai == 'doLine').length + sv.gan.filter((x) => x == 'doLine').length > TOI_DA.doLine) sv.gan[sv.gan.lastIndexOf('doLine')] = null;
     }
-    while (c.sa.length + c.duoi.length + c.tren.length + c.gam.length + soGan() + (c.but ? 1 : 0) > SO_O) {
-      if (c.sa.length > 1) c.sa.pop(); else if (c.gam.length) c.gam.pop(); else if (soGan()) boGan(); else if (c.tren.length) { c.tren.pop(); sv = c.tren.find((m) => m.loai == 'servo'); } else c.duoi.pop();
+    while (c.sa.length + c.duoi.length + c.tren.length + c.gam.length + soGan() + (c.but ? 1 : 0) + soOCo(c.co) > SO_O) {
+      if (c.sa.length > 1) c.sa.pop(); else if (c.gam.length) c.gam.pop(); else if (c.co && c.co.mau) c.co.mau = false; else if (c.co) c.co = null;
+      else if (soGan()) boGan(); else if (c.tren.length) { c.tren.pop(); sv = c.tren.find((m) => m.loai == 'servo'); } else c.duoi.pop();
     }
+    c.namCham = c.gam.filter((m) => m.loai == 'namCham').length + (c.co && c.co.dau == 'namCham' ? 1 : 0);
+    c.kep = !!(c.co && c.co.dau == 'kep');
 
     // --- Chế độ đọc của mắt dò line: 'tuongTu' (chân A0, mức 0–100) hoặc 'so' (chân D0, chỉ bật/tắt) ---
     c.ir = vao.ir == 'so' ? 'so' : 'tuongTu';
@@ -489,7 +561,7 @@
     c.doLine = mat.length;
     c.doLineGam = c.gam.filter((m) => m.loai == 'doLine').length;
     c.cham = c.duoi.some((m) => m.loai == 'cham');
-    c.mau = c.duoi.concat(c.gam).filter((m) => m.loai == 'mau').length;
+    c.mau = c.duoi.concat(c.gam).filter((m) => m.loai == 'mau').length + (c.co && c.co.mau ? 1 : 0);
     if (mat.length == 2) c.cachMat = tron2(mat[1].x - mat[0].x);
     c.gyro = c.tren.some((m) => m.loai == 'gyro');
     let truoc = c.sa.find((m) => m.gia == 'truoc');
@@ -512,6 +584,202 @@
     })(0, 0, [], 0);
     return tot ? tot.chon : [];
   }
+
+  // ---------- Cơ cấu công tác phía mũi ----------
+  // Khối lượng của một nhóm khối theo khối lượng riêng (g/cm³)
+  const klKhoi = (ds, matDo) => ds.reduce((s, k) => s + H.hinhHoc(k.q ? k : H.chuanHoa(k)).V, 0) * matDo;
+  // Khối viết trong hệ riêng (gốc o, quay q) → khối trong hệ ngoài
+  const datKhoi = (ds, o, q) => ds.map((k) => H.dat(k.q ? k : H.chuanHoa(k), o, q || [0, 0, 0, 1]));
+
+  // Đầu công tác trong "hệ đầu": gốc ở mép trên mặt bắt (mặt sau của tai bắt), x sang phải, y lên, z hướng ra trước.
+  // Trả về phần gắn cứng (khoi, trangTri, khoiLuong), mặt hút nam châm, cảm biến màu và hai hàm kẹp (trong hệ đầu).
+  function dauCongTac(loai, coMau) {
+    let kq = { khoi: [], trangTri: [], khoiLuong: 0, ham: [] };
+    if (loai == 'namCham') {
+      let dai = coMau ? 4.4 : 2.6, o = oRJ25([0, 0.16 + KT_O[2] / 2, 1.5], 'len');
+      let khung = [hop([2.4, 1.0, 0.2], [0, -0.5, 0.1], 'nhom'), hop([2.6, 0.2, dai], [0, -0.1, 0.2 + dai / 2], 'nhom', { vat: 0.03 })];
+      kq.khoi = khung.concat([
+        tru(NAM_CHAM.d, NAM_CHAM.h, 'y', [0, -0.2 - NAM_CHAM.h / 2, 1.5], 'thep_ma', { vat: 0.04 }),
+        hop([1.8, 0.16, 2.0], [0, 0.08, 1.5], 'mach_den', { vat: 0.03 }), o.khoi
+      ]);
+      kq.trangTri = o.trangTri.concat([{ k: 'dia', d: 1.1, vt: [0, -0.2 - NAM_CHAM.h - 0.005, 1.5], phap: [0, -1, 0], vl: 'dong' }]);
+      kq.khoiLuong = klKhoi(khung, TS.nhom) + NAM_CHAM.khoiLuong + 6;
+      kq.mat = { vt: [0, -0.2 - NAM_CHAM.h, 1.5], huong: [0, -1, 0] };
+      if (coMau) {
+        // TCS34725 dưới tấm đỡ, trước lõi nam châm, nhìn thẳng xuống; ổ cắm phía trên tấm đỡ
+        let om = oRJ25([0, KT_O[2] / 2, 3.6], 'len');
+        kq.khoi.push(hop([1.4, 0.16, 1.5], [0, -0.28, 3.5], 'mach_xanh_la', { vat: 0.03 }),
+          tru(1.05, 0.8, 'y', [0, -0.76, 3.5], 'nhua_den', { dTrong: 0.85 }), om.khoi);
+        kq.trangTri = kq.trangTri.concat(om.trangTri, [{ k: 'dia', d: 0.3, vt: [0, -1.165, 3.65], phap: [0, -1, 0], vl: 'led_trang' },
+          { k: 'dia', d: 0.22, vt: [0, -1.165, 3.35], phap: [0, -1, 0], vl: 'kinh_den' }]);
+        kq.khoiLuong += 6;
+        kq.mau = { vt: [0, -1.16, 3.5], huong: [0, -1, 0], den: [0, 0, 1] };
+      }
+    } else if (loai == 'kep') {
+      // đế nhựa, servo SG90 đứng trên đế (trục ra xuyên đế, quay hàm trái), hai hàm dưới đế quay quanh trục đứng
+      let k = CO.kep;
+      let khung = [hop([3.0, 1.0, 0.2], [0, -0.5, 0.1], 'nhom')];
+      kq.khoi = khung.concat([
+        hop([4.0, 0.3, 3.6], [0, -0.15, 2.0], 'nhua_den', { vat: 0.04 }),
+        hop([2.27, 2.25, 1.22], [-k.trucX + 0.55, 1.125, k.zTruc - 0.3], 'nhua_xanh_duong', { vat: 0.08 }),
+        hop([3.2, 0.25, 1.22], [-k.trucX + 0.55, 1.6, k.zTruc - 0.3], 'nhua_xanh_duong')
+      ]);
+      kq.trangTri = [{ k: 'nhan', kt: [1.0, 0.6], vt: [-k.trucX + 0.55, 1.0, k.zTruc + 0.315], phap: [0, 0, 1], len: [0, 1, 0], ve: 'chu', chu: 'SG90' }];
+      kq.khoiLuong = klKhoi(khung, TS.nhom) + 6 + 9;
+      for (let s of [-1, 1]) {
+        // hàm trong hệ riêng: gốc ở trục quay (mặt dưới đế), z dọc hàm lúc hàm thẳng; má cao su ở mặt trong
+        let ham = [
+          tru(1.6, 0.3, 'y', [0, -0.15, 0], 'nhua_trang'),
+          hop([0.3, 1.6, 4.0], [0, -1.1, 2.3], 'nhua_trang', { vat: 0.04 }),
+          hop([0.25, 1.4, 1.4], [-s * 0.275, -1.1, 3.6], 'cao_su', { vat: 0.04 })
+        ];
+        kq.ham.push({ s: s, tam: [s * k.trucX, -0.3, k.zTruc], khoi: ham, khoiLuong: 3 });
+      }
+    }
+    return kq;
+  }
+
+  // Va chạm giữa vật quay và phần cố định với nó (Bullet không xét va chạm giữa hai vật nối khớp với nhau,
+  // nên giới hạn góc của khớp phải tính từ hình dạng): điểm trên mặt các khối của vật, quay quanh trục qua tam,
+  // có lọt vào khối nào của phần cố định không.
+  function gioiHanQuay(dsQuay, tam, truc, dsCo, tu, den) {
+    let co = dsCo.map((k) => k.q ? k : H.chuanHoa(k));
+    let diem = [];
+    dsQuay.forEach(function(k) { if (!k.truQuay) diem = diem.concat(H.diemTrenMat(k.q ? k : H.chuanHoa(k), 0.35)); });
+    // chỉ giữ khối cố định ở gần vùng vật quét qua
+    let R = diem.reduce((m, p) => Math.max(m, V.dai(V.tru(p, tam))), 0) + 0.5;
+    co = co.filter((k) => H.kcKhoi(k, tam) < R);
+    const cham = function(goc) {
+      let q = Q.truc(truc, goc);
+      for (let p of diem) if (H.kcNhom(co, V.cong(tam, Q.quay(q, V.tru(p, tam)))) < -0.03) return true;
+      return false;
+    };
+    let lo = 0, hi = 0;
+    while (hi < den && !cham(hi + 1)) hi++;
+    while (lo > tu && !cham(lo - 1)) lo--;
+    return [lo, hi];
+  }
+
+  function dungCoCau(c, ctx) {
+    let co = c.co, e = ctx.e, them = ctx.them, oCo = ctx.oCo.slice();
+    const tieu = T({ coDinh: 'Giá công tác cố định', tay: 'Cánh tay nâng', truot: 'Thanh trượt nâng hạ' }, { coDinh: 'Fixed tool bracket', tay: 'Lift arm', truot: 'Linear lift' });
+    let saTruoc = c.sa.find((m) => m.gia == 'truoc');
+    // tấm công tác; không có siêu âm mũi thì tự có hai chân giá
+    let khoiTam = [hop([8.9, CO.yTren - CO.yDuoi, e], [0, (CO.yDuoi + CO.yTren) / 2, CO.zMat - e / 2], ctx.vlKhung, { vat: 0.04 })];
+    if (!saTruoc) {
+      let hc = CO.yTren - ctx.y1;
+      khoiTam.push(hop([0.6, hc, e], [-4.15, ctx.y1 + hc / 2, CO.zMat - e / 2], ctx.vlKhung), hop([0.6, hc, e], [4.15, ctx.y1 + hc / 2, CO.zMat - e / 2], ctx.vlKhung));
+    }
+    them({ id: 'tamCongTac', ten: T('Tấm công tác phía mũi', 'Front tool plate'), nhom: 'coCau', matDo: TS.nhom, khoi: khoiTam, trangTri: [] });
+
+    let me = 'than', goc = [0, 0, 0], M;      // vật mang đầu công tác, gốc của nó (hệ xe) và chỗ bắt đầu (so với gốc)
+    let ra = (p) => V.cong(goc, p);
+    if (co.loai == 'coDinh') {
+      M = CO.coDinh.M;
+      them({ id: 'giaCoDinh', ten: tieu.coDinh, nhom: 'coCau', matDo: TS.nhom, khoi: [
+        hop([2.4, 1.2, e], [0, CO.yDuoi + 0.6, CO.zMat + e / 2], 'nhom'),
+        hop([2.4, e, M[2] - e - CO.zMat], [0, CO.yDuoi - e / 2, (CO.zMat + M[2] - e) / 2], 'nhom'),
+        hop([2.4, CO.yDuoi - (M[1] - 0.8), e], [0, (CO.yDuoi + M[1] - 0.8) / 2, M[2] - e / 2], 'nhom')
+      ], trangTri: [] });
+    } else if (co.loai == 'tay') {
+      let t = CO.tay, P = t.P;
+      // motor khớp 1 bắt vào tấm công tác, trục ra nằm ngang (theo x)
+      let o1 = oRJ25([3.2, P[1], CO.zMat + KT_O[1] / 2], 'len');
+      them({ id: 'motorTay1', ten: T('Motor N20 1:298 khớp vai', 'N20 1:298 shoulder motor'), nhom: 'coCau', khoiLuong: 12, khoi: [
+        hop([3.6, 2.2, e], [-1.0, P[1], CO.zMat + e / 2], 'nhom'),
+        hop([1.0, 1.2, 1.2], [-1.0, P[1], P[2]], 'thep', { vat: 0.04 }),
+        tru(1.2, 1.5, 'x', [-2.25, P[1], P[2]], 'thep_ma'),
+        tru(1.0, 0.3, 'x', [-3.15, P[1], P[2]], 'mach_den'),
+        o1.khoi
+      ], trangTri: o1.trangTri });
+      // đoạn tay: trong hệ riêng (gốc ở trục khớp, tay nằm ngang chĩa ra trước)
+      const doanTay = function(dai, coKhop2) {
+        let ds = [tru(1.2, 1.0, 'x', [0, 0, 0], 'nhom', { truQuay: true }), hop([0.8, 0.5, coKhop2 ? dai - 0.7 : dai], [0, 0, (coKhop2 ? dai - 0.7 : dai) / 2], 'nhom', { vat: 0.03 })];
+        let kl = klKhoi(ds, TS.nhom);
+        if (coKhop2) {
+          ds.push(hop([1.4, 0.5, 1.0], [-0.6, 0, dai - 0.9], 'nhom'), hop([1.0, 1.2, 1.2], [-1.0, 0, dai], 'thep', { vat: 0.04 }),
+            tru(1.2, 1.5, 'x', [-2.25, 0, dai], 'thep_ma'), tru(1.0, 0.3, 'x', [-3.15, 0, dai], 'mach_den'));
+          kl += 12;
+        }
+        return { khoi: ds, khoiLuong: kl };
+      };
+      let dsCo = ctx.than.reduce((a, ct) => a.concat(ct.khoi), []);
+      let d1 = doanTay(t.dai[0], co.doan == 2);
+      let tay1 = { id: 'tay1', ten: T('Cánh tay (đoạn 1)', 'Arm (segment 1)'), me: 'than', kieu: 'banLe', tam: P.slice(), truc: [-1, 0, 0],
+        khoi: d1.khoi, trangTri: [], khoiLuong: d1.khoiLuong, dongCo: N20_298 };
+      ctx.vatPhu.push(tay1);
+      ctx.tacDong.push({ loai: 'tay', vat: 'tay1', khop: 1, cong: ctx.congDC(), oMach: oCo.shift(), ten: co.doan == 2 ? T('khớp 1, vai', 'joint 1, shoulder') : '' });
+      me = 'tay1'; goc = P;
+      if (co.doan == 2) {
+        let P2 = V.cong(P, [0, 0, t.dai[0]]), d2 = doanTay(t.dai[1], false);
+        let tay2 = { id: 'tay2', ten: T('Cánh tay (đoạn 2)', 'Arm (segment 2)'), me: 'tay1', kieu: 'banLe', tam: P2, truc: [-1, 0, 0],
+          khoi: d2.khoi, trangTri: [], khoiLuong: d2.khoiLuong, dongCo: N20_298 };
+        ctx.vatPhu.push(tay2);
+        ctx.tacDong.push({ loai: 'tay', vat: 'tay2', khop: 2, cong: ctx.congDC(), oMach: oCo.shift(), ten: T('khớp 2, khuỷu', 'joint 2, elbow') });
+        me = 'tay2'; goc = P2; M = [0, 0.5, t.dai[1]];
+      } else M = [0, 0.5, t.dai[0]];
+    } else {
+      // thanh trượt: ray nhôm trên hai cột đệm, thanh răng dọc mặt trước ray; xe trượt ôm ray, mang motor và bánh răng
+      let t = CO.truot, S = hanhTrinhTruot(saTruoc ? saTruoc.cao : null);
+      let yDinh = t.y0 + t.nuaCao + S, dai = yDinh - t.yRay, zR = t.zRay + 0.4;
+      them({ id: 'rayTruot', ten: T('Ray thanh trượt', 'Linear lift rail'), nhom: 'coCau', matDo: TS.nhom, khoi: [
+        hop([1.6, dai, 0.8], [0, t.yRay + dai / 2, zR], 'nhom', { vat: 0.04 }),
+        hop([1.6, 0.6, CO_DEM()], [0, CO.yDuoi + 0.4, (CO.zMat + t.zRay) / 2], 'nhom'),
+        hop([1.6, 0.6, CO_DEM()], [0, CO.yTren - 0.4, (CO.zMat + t.zRay) / 2], 'nhom'),
+        hop([0.5, dai, 0.15], [0.45, t.yRay + dai / 2, t.zRay + 0.875], 'nhua_trang')
+      ], trangTri: [] });
+      let R0 = [0, t.y0, t.zRay + 0.8];        // tâm mặt sau tấm xe trượt ở vị trí thấp nhất
+      let dsXe = [
+        hop([3.0, 2 * t.nuaCao, 0.3], [0, 0, 0.15], 'nhom', { vat: 0.03 }),
+        hop([0.3, 2 * t.nuaCao, 1.0], [-0.95, 0, -0.4], 'nhom'), hop([0.3, 2 * t.nuaCao, 1.0], [0.95, 0, -0.4], 'nhom'),
+        hop([0.9, 1.0, 1.2], [1.95, 0.9, 0.9], 'thep', { vat: 0.04 }), tru(1.2, 1.5, 'y', [1.95, 2.15, 0.9], 'thep_ma')
+      ];
+      let xeTruot = { id: 'truot', ten: T('Xe trượt', 'Lift carriage'), me: 'than', kieu: 'truot', tam: R0, truc: [0, 1, 0],
+        khoi: dsXe, trangTri: [], khoiLuong: klKhoi(dsXe.slice(0, 3), TS.nhom) + 10, dongCo: N20_100,
+        gioiHan: [0, S], banKinh: CO.truot.dBanhRang / 2 };
+      ctx.vatPhu.push(xeTruot);
+      ctx.tacDong.push({ loai: 'truot', vat: 'truot', cong: ctx.congDC(), oMach: oCo.shift(), hanhTrinh: S, doMoiCm: 360 / (PI * CO.truot.dBanhRang) });
+      me = 'truot'; goc = R0; M = [0, -0.75, 0.3];
+    }
+
+    // --- đầu công tác ---
+    let dau = co.dau ? dauCongTac(co.dau, co.mau) : null;
+    let vatMe = me == 'than' ? null : ctx.vatPhu.find((v) => v.id == me);
+    let raDau = (p) => V.cong(M, p);                       // hệ đầu → so với gốc vật mang
+    if (dau) {
+      let khoi = dau.khoi.map((k) => Object.assign({}, k, { vt: raDau(k.vt) }));
+      let tt = dau.trangTri.map((x) => Object.assign({}, x, { vt: raDau(x.vt) }));
+      if (vatMe) { vatMe.khoi = vatMe.khoi.concat(khoi); vatMe.trangTri = vatMe.trangTri.concat(tt); vatMe.khoiLuong += dau.khoiLuong; }
+      else them({ id: 'dauCongTac', ten: co.dau == 'kep' ? T('Kẹp gắp', 'Gripper') : T('Nam châm điện ' + NAM_CHAM.ten, NAM_CHAM.ten + ' electromagnet'), nhom: 'coCau',
+        khoiLuong: dau.khoiLuong, khoi: khoi.map((k) => Object.assign({}, k, { vt: V.cong(goc, k.vt) })), trangTri: tt.map((x) => Object.assign({}, x, { vt: V.cong(goc, x.vt) })) });
+      let tuyet = (p) => V.cong(goc, raDau(p));             // hệ đầu → hệ xe (lúc lắp)
+      if (co.dau == 'namCham') {
+        ctx.tacDong.push({ loai: 'namCham', vat: me, vt: tuyet(dau.mat.vt), huong: dau.mat.huong, cong: ctx.congDC(), oMach: oCo.shift(), ten: T('đầu công tác', 'tool') });
+      } else {
+        let qKhep = (s) => Q.truc([0, 1, 0], s * (GOC_KHEP + CO.kep.moDau));
+        let ham = dau.ham.map(function(h) {
+          return { id: h.s < 0 ? 'hamTrai' : 'hamPhai', ten: h.s < 0 ? T('Hàm kẹp trái', 'Left gripper jaw') : T('Hàm kẹp phải', 'Right gripper jaw'), me: me, kieu: 'banLe',
+            tam: tuyet(h.tam), truc: [0, h.s, 0], khoi: datKhoi(h.khoi, [0, 0, 0], qKhep(h.s)), trangTri: [], khoiLuong: h.khoiLuong,
+            dongCo: SERVO_KEP, gioiHan: [-CO.kep.moDau, CO.kep.moMax - CO.kep.moDau], kep: true };
+        });
+        ham.forEach((h) => ctx.vatPhu.push(h));
+        ctx.tacDong.push({ loai: 'kep', vat: ham.map((h) => h.id), cong: ctx.congDC(), oMach: oCo.shift(), moDau: CO.kep.moDau, moMax: CO.kep.moMax });
+      }
+      if (dau.mau) {
+        ctx.camBien.push({ loai: 'mau', cong: ctx.cong(), chiTiet: 'dauCongTac', vat: me, vt: tuyet(dau.mau.vt), huong: dau.mau.huong, den: dau.mau.den, oMach: oCo.shift(), ten: T('đầu cần', 'arm tip') });
+      }
+    }
+
+    // --- giới hạn góc của các khớp cánh tay (tính sau khi đã gắn đầu công tác) ---
+    if (co.loai == 'tay') {
+      let t = CO.tay, tay1 = ctx.vatPhu.find((v) => v.id == 'tay1'), tay2 = ctx.vatPhu.find((v) => v.id == 'tay2');
+      let tuyetKhoi = (v) => v.khoi.map((k) => Object.assign({}, k, { vt: V.cong(v.tam, k.vt) }));
+      let coDinh = ctx.than.reduce((a, ct) => a.concat(ct.khoi), []);
+      tay1.gioiHan = gioiHanQuay(tuyetKhoi(tay1), tay1.tam, [-1, 0, 0], coDinh, t.gocMin, t.gocMax);
+      if (tay2) tay2.gioiHan = gioiHanQuay(tuyetKhoi(tay2), tay2.tam, [-1, 0, 0], tuyetKhoi(tay1), t.gocMin2, t.gocMax2);
+    }
+  }
+  const CO_DEM = () => CO.truot.zRay - CO.zMat;
 
   // ---------- Lắp xe ----------
   function lapXe(cauHinhVao) {
@@ -559,9 +827,20 @@
       ung.sort((a, b) => Math.hypot(viTriO(a)[0], viTriO(a)[1] + 2.4) - Math.hypot(viTriO(b)[0], viTriO(b)[1] + 2.4) || a - b);
       oBut = ung[0]; daDung.push(oBut);
     }
+    // Cơ cấu công tác phía mũi: motor khớp, đầu công tác, cảm biến màu trên đầu lấy các ổ còn trống gần mũi nhất
+    let oCo = [];
+    for (let i = 0; i < soOCo(c.co); i++) {
+      let ung = [1, 2, 3, 4, 5, 6, 7, 8].filter((o) => daDung.indexOf(o) < 0);
+      ung.sort((a, b) => Math.hypot(viTriO(a)[0], viTriO(a)[1] - 11) - Math.hypot(viTriO(b)[0], viTriO(b)[1] - 11) || a - b);
+      oCo.push(ung[0]); daDung.push(ung[0]);
+    }
     let R = TS.rBanh, e = TS.dayKhung, y0 = TS.yDay, y1 = y0 + e;   // y1: mặt trên tấm đáy
-    let than = [], day = [], camBien = [];
+    let than = [], day = [], camBien = [], vatPhu = [], tacDong = [];
     let them = (ct) => { than.push(ct); return ct; };
+    // Cổng động cơ: A, B là hai bánh; sau đó servo trên nắp, motor của cơ cấu công tác, đầu công tác, nam châm dưới gầm
+    let soCongDC = 2;
+    const congDC = () => 'out' + 'ABCDEFGHIJ'[soCongDC++];
+    let namChamGam = null;
 
     // --- Khung nhôm chữ U ---
     let yVach = 5.0;   // mép trên vách bên
@@ -713,6 +992,22 @@
 
     // --- Mắt dò line dưới gầm: mạch đầu đo treo dưới tấm đáy, ổ RJ25 ngay sau mạch, dây chạy dọc gầm ra đuôi ---
     c.gam.forEach(function(m, i) {
+      if (m.loai == 'namCham') {
+        // Nam châm điện bắt qua tấm đáy bằng vít M4 ở đỉnh lõi; lõi thép thòng xuống, mặt hút cách sân 3 mm.
+        // Mạch MOSFET đóng ngắt cuộn dây nằm trong hộp ổ RJ25 ngay sau lõi.
+        let x = m.x, z = m.z, so = oGam[i], om = oMach[so];
+        let o = oRJ25([x, y0 - KT_O[1] / 2, z - 1.0 - KT_O[2] / 2], 'sau');
+        let ct = them({ id: 'namChamGam', ten: T('Nam châm điện ' + NAM_CHAM.ten + ' (dưới gầm)', NAM_CHAM.ten + ' electromagnet (under the car)'), nhom: 'namCham', khoiLuong: NAM_CHAM.khoiLuong + 4, khoi: [
+          o.khoi, tru(NAM_CHAM.d, NAM_CHAM.h, 'y', [x, y0 - NAM_CHAM.h / 2, z], 'thep_ma', { vat: 0.04 })
+        ], trangTri: o.trangTri.concat([{ k: 'dia', d: 1.1, vt: [x, y0 - NAM_CHAM.h - 0.005, z], phap: [0, -1, 0], vl: 'dong' }]) });
+        namChamGam = { loai: 'namCham', vat: 'than', vt: [x, y0 - NAM_CHAM.h, z], huong: [0, -1, 0], oMach: so, chiTiet: ct.id, gam: i, ten: T('dưới gầm', 'under the car') };
+        let zRa = o.mieng[2] - DAY.dauCam[2] - 0.5, xo = om.mieng[0], moc = [];
+        if (zRa - 1.0 > -3.4) moc.push([x, y0 - 0.25, zRa - 1.0]);
+        moc.push([x, y0 - 0.3, -3.9], [x, y0 + 0.4, -4.35], [x, 4.4, -4.3], [x + (xo - x) * 0.3, 5.75, -4.1]);
+        if (so <= 5) moc.push([x + (xo - x) * 0.7, 9.8, -1.0], [xo, 10.2, 4.5]);
+        day.push(dayRJ25('day_namChamGam', 'Dây RJ25 nam châm dưới gầm', o, om, moc, [1, 0, 0]));
+        return;
+      }
       let x = m.x, z = m.z, ten = T('gầm ', 'underside ') + (i + 1), laMau = m.loai == 'mau';
       let o = oRJ25([x, y0 - KT_O[1] / 2, z - GAM.nuaDai - KT_O[2] / 2], 'sau');
       let dd = laMau ? dauMau(x, z, true) : dauDo(x, z);
@@ -966,7 +1261,7 @@
         }
       });
       servo = { id: 'servo', ten: SERVO.ten + ' (tay quay)', tam: truc, truc: Q.quay(q, [0, -1, 0]), khoi: khoiTay, trangTri: tt,
-        khoiLuong: 1 + camServo.reduce((s, x) => s + x.khoiLuong, 0), dongCo: SERVO, oMach: so, cauHinh: sv };
+        khoiLuong: 1 + camServo.reduce((s, x) => s + x.khoiLuong, 0), dongCo: SERVO, oMach: so, cauHinh: sv, cong: congDC() };
       // cảm biến trên tay quay nhận số cổng sau cùng
       camServo.forEach(function(x) {
         let cb = { loai: x.loai, cong: cong(), chiTiet: 'servo', servo: x.i, vtTay: x.vtTay, vt: V.cong(truc, x.vtTay), huong: x.huong, oMach: oGanServo[x.i], ten: 'servo' + (camServo.length > 1 ? ' ' + (x.i + 1) : '') };
@@ -975,6 +1270,10 @@
         camBien.push(cb);
       });
     }
+
+    // --- Cơ cấu công tác phía mũi và đầu công tác; nam châm dưới gầm nhận cổng động cơ sau cùng ---
+    if (c.co) dungCoCau(c, { than: than, them: them, camBien: camBien, vatPhu: vatPhu, tacDong: tacDong, cong: cong, congDC: congDC, oCo: oCo, e: e, y1: y1, vlKhung: vlKhung0 });
+    if (namChamGam) { namChamGam.cong = congDC(); tacDong.push(namChamGam); }
 
     // --- Bánh xe (vật thể riêng, nối với khung bằng khớp bản lề có motor) ---
     let banh = [];
@@ -999,7 +1298,7 @@
     let bi = { id: 'bi', ten: 'Bi tự do', tam: [0, TS.dBi / 2, TS.zBi], d: TS.dBi, matDo: TS.thep, vl: 'thep', maSat: 0.25 };
 
     than = than.concat(day);
-    return { cauHinh: c, than: than, banh: banh, bi: bi, canGat: canGat, servo: servo, but: but, camBien: camBien, thongSo: TS, dongCo: DONG_CO };
+    return { cauHinh: c, than: than, banh: banh, bi: bi, canGat: canGat, servo: servo, but: but, camBien: camBien, vatPhu: vatPhu, tacDong: tacDong, thongSo: TS, dongCo: DONG_CO };
   }
 
   // Chuẩn hoá mọi khối của một chi tiết và tính khối lượng nếu cho theo khối lượng riêng
@@ -1040,14 +1339,21 @@
       chuanBi(banLap.servo);
       servo = H.khoiLuongTong([{ khoi: banLap.servo.khoi, khoiLuong: banLap.servo.khoiLuong }]);
     }
+    // Vật chuyển động của cơ cấu công tác (đoạn tay, xe trượt, hàm kẹp)
+    let vatPhu = {};
+    (banLap.vatPhu || []).forEach(function(v) {
+      chuanBi(v);
+      vatPhu[v.id] = H.khoiLuongTong([{ khoi: v.khoi, khoiLuong: v.khoiLuong }]);
+    });
     // Trọng tâm cả xe (để báo cáo và chia tải lên bánh)
     let tong = than.m, tam = V.nhan(than.tam, than.m);
     banLap.banh.forEach(function(b, i) { tong += banh[i].m; tam = V.cong(tam, V.nhan(V.cong(b.tam, banh[i].tam), banh[i].m)); });
     tong += bi.m; tam = V.cong(tam, V.nhan(banLap.bi.tam, bi.m));
     if (canGat) { tong += canGat.m; tam = V.cong(tam, V.nhan(V.cong(banLap.canGat.tam, canGat.tam), canGat.m)); }
     if (servo) { tong += servo.m; tam = V.cong(tam, V.nhan(V.cong(banLap.servo.tam, servo.tam), servo.m)); }
+    (banLap.vatPhu || []).forEach(function(v) { let k = vatPhu[v.id]; tong += k.m; tam = V.cong(tam, V.nhan(V.cong(v.tam, k.tam), k.m)); });
     tam = V.nhan(tam, 1 / tong);
-    return { than: than, banh: banh, bi: bi, canGat: canGat, servo: servo, tong: tong, tam: tam,
+    return { than: than, banh: banh, bi: bi, canGat: canGat, servo: servo, vatPhu: vatPhu, tong: tong, tam: tam,
       taiBanh: 1 - tam[2] / banLap.thongSo.zBi };   // phần trọng lượng đè lên hai bánh chủ động
   }
 
@@ -1055,22 +1361,32 @@
   // Dùng chung cho scripts/robot/tao-xe.js và bảng lắp ráp trong trình duyệt.
   const TEN_CB = T({ doLine: 'Cảm biến dò line TCRT5000', mau: 'Cảm biến màu TCS34725', sieuAm: 'Cảm biến siêu âm HC-SR04', cham: 'Cảm biến chạm', gyro: 'Gyro (con quay)', gps: 'GPS', but: 'Bút vẽ' },
     { doLine: 'TCRT5000 line sensor', mau: 'TCS34725 color sensor', sieuAm: 'HC-SR04 ultrasonic sensor', cham: 'Touch sensor', gyro: 'Gyro', gps: 'GPS', but: 'Pen' });
+  const TEN_DC = T({ servo: 'Servo SG90 trên nắp (góc 0–180°)', tay: 'Cánh tay nâng, motor N20 1:298', truot: 'Thanh trượt nâng hạ, motor N20 1:100', kep: 'Kẹp gắp, servo SG90 (độ mở 0–55°)', namCham: 'Nam châm điện ' + NAM_CHAM.ten },
+    { servo: 'SG90 servo on the cover (0–180°)', tay: 'Lift arm, N20 1:298 motor', truot: 'Linear lift, N20 1:100 motor', kep: 'Gripper, SG90 servo (opening 0–55°)', namCham: NAM_CHAM.ten + ' electromagnet' });
+  // Danh sách động cơ ngoài hai bánh (servo trên nắp, cơ cấu công tác, nam châm), theo thứ tự cổng
+  function dongCoPhu(banLap) {
+    let ds = [];
+    if (banLap.servo) ds.push({ loai: 'servo', cong: banLap.servo.cong, oMach: banLap.servo.oMach });
+    return ds.concat(banLap.tacDong || []);
+  }
   function moTaRobot(banLap, kl) {
     const so = (x, n) => x.toFixed(n == null ? 1 : n).replace('.', T(',', '.'));
     let cb = banLap.camBien.map((c) => '<li>' + T('Cổng ' + c.cong.slice(2) + ' (ổ ' + c.oMach + ' trên mạch chủ): ', 'Port ' + c.cong.slice(2) + ' (socket ' + c.oMach + ' on the main board): ') + TEN_CB[c.loai] + (c.ten ? ' ' + c.ten : '') + '</li>');
+    let dc = dongCoPhu(banLap).map((d) => '<li>' + T('Cổng ' + d.cong.slice(3) + ' (ổ ' + d.oMach + ' trên mạch chủ): ', 'Port ' + d.cong.slice(3) + ' (socket ' + d.oMach + ' on the main board): ') + TEN_DC[d.loai] +
+      (d.ten ? ' (' + d.ten + ')' : '') + (d.loai == 'truot' ? T(', hành trình ' + so(d.hanhTrinh) + ' cm', ', stroke ' + so(d.hanhTrinh) + ' cm') : '') + '</li>').join('');
     return Object.assign({
       longerDescription: T(
         '<h3>Kích thước</h3><ul>' +
         '<li>Đường kính bánh: ' + so(banLap.thongSo.dBanh, 2) + ' cm (chu vi ' + banLap.thongSo.chuViBanh + ' cm)</li>' +
         '<li>Khoảng cách hai bánh (tâm đến tâm): ' + so(2 * banLap.thongSo.xBanh) + ' cm</li>' +
         '<li>Khối lượng: ' + Math.round(kl.tong) + ' g, ' + Math.round(kl.taiBanh * 100) + ' % đè lên hai bánh chủ động</li></ul>' +
-        '<h3>Động cơ</h3><ul><li>Cổng A: Bánh trái</li><li>Cổng B: Bánh phải</li></ul>' +
+        '<h3>Động cơ</h3><ul><li>Cổng A: Bánh trái</li><li>Cổng B: Bánh phải</li>' + dc + '</ul>' +
         '<h3>Cảm biến</h3><ul>' + (cb.length ? cb.join('') : '<li>Chưa lắp cảm biến nào</li>') + '</ul>',
         '<h3>Dimensions</h3><ul>' +
         '<li>Wheel diameter: ' + so(banLap.thongSo.dBanh, 2) + ' cm (circumference ' + banLap.thongSo.chuViBanh + ' cm)</li>' +
         '<li>Wheel spacing (center to center): ' + so(2 * banLap.thongSo.xBanh) + ' cm</li>' +
         '<li>Mass: ' + Math.round(kl.tong) + ' g, ' + Math.round(kl.taiBanh * 100) + ' % on the two drive wheels</li></ul>' +
-        '<h3>Motors</h3><ul><li>Port A: Left wheel</li><li>Port B: Right wheel</li></ul>' +
+        '<h3>Motors</h3><ul><li>Port A: Left wheel</li><li>Port B: Right wheel</li>' + dc + '</ul>' +
         '<h3>Sensors</h3><ul>' + (cb.length ? cb.join('') : '<li>No sensors fitted</li>') + '</ul>'),
       sraXe: banLap.cauHinh
     }, truongTuongThich(banLap, kl));
@@ -1097,6 +1413,7 @@
     };
   }
 
-  return { TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, BUT: BUT, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, gioiHanCao: gioiHanCao, nganBanh: nganBanh, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
+  return { NAM_CHAM: NAM_CHAM, CO: CO, N20_298: N20_298, N20_100: N20_100, SERVO_KEP: SERVO_KEP, GOC_KHEP: GOC_KHEP, chuanHoaCo: chuanHoaCo, soOCo: soOCo, hanhTrinhTruot: hanhTrinhTruot, dongCoPhu: dongCoPhu, nuaGam: nuaGam,
+    TS: TS, DONG_CO: DONG_CO, DAY: DAY, MAC_DINH: MAC_DINH, X_LO: X_LO, X_NAP: X_NAP, TOI_DA: TOI_DA, SO_O: SO_O, BUT: BUT, GIA: GIA, DS_GIA: DS_GIA, SON: SON, gioiHanU: gioiHanU, gioiHanCao: gioiHanCao, nganBanh: nganBanh, X_DUOI: X_DUOI, KC_DUOI: KC_DUOI, GOC_SA: GOC_SA, KHUON_NAP: KHUON_NAP, NAP: NAP,
     gioiHanSieuAmX: gioiHanSieuAmX, nuaRongSieuAm: nuaRongSieuAm, loiDuoi: loiDuoi, loiNap: loiNap, loiGam: loiGam, GAM: GAM, SERVO: SERVO, TAY: TAY, DS_TAY: DS_TAY, GAN_SERVO: GAN_SERVO, loiGanServo: loiGanServo, quayServo: quayServo, huongTay: huongTay, KC_GAM: KC_GAM, TOI_DA_DUOI: TOI_DA_DUOI, chongNap: chongNap, mienNap: mienNap, ganO: ganO, IR: IR, gioiHanIR: gioiHanIR, chuanHoaCauHinh: chuanHoaCauHinh, moTaRobot: moTaRobot, lapXe: lapXe, tinhXe: tinhXe, chuanBi: chuanBi, truongTuongThich: truongTuongThich };
 });
