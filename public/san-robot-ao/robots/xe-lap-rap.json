@@ -14,7 +14,50 @@
   "options": {},
   "sraXe": {
     "banh": "thuong",
-    "sieuAm": true,
+    "sa": [
+      {
+        "gia": "truoc",
+        "u": 0,
+        "goc": 0,
+        "cao": 5.6
+      }
+    ],
+    "duoi": [
+      {
+        "loai": "doLine",
+        "x": -1.5
+      },
+      {
+        "loai": "doLine",
+        "x": 1.5
+      },
+      {
+        "loai": "cham",
+        "x": 3
+      }
+    ],
+    "but": false,
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      },
+      {
+        "loai": "gps",
+        "x": 3,
+        "z": 4.25
+      }
+    ],
+    "ir": "tuongTu",
+    "nghiengIR": 0,
+    "caoIR": 0.6,
+    "son": {
+      "khung": null,
+      "canGat": null,
+      "vanh": null
+    },
     "lo": [
       null,
       "doLine",
@@ -22,15 +65,22 @@
       "doLine",
       "cham"
     ],
-    "doLine": 2,
-    "cham": true,
-    "cachMat": 3,
     "nap": [
       "gyro",
       "gps"
     ],
+    "doLine": 2,
+    "doLineGam": 0,
+    "cham": true,
+    "mau": 0,
+    "cachMat": 3,
     "gyro": true,
-    "gps": true
+    "sieuAm": true,
+    "sieuAmX": 0,
+    "sieuAmGoc": 0,
+    "soSieuAm": 1,
+    "gps": true,
+    "servo": false
   },
   "wheels": true,
   "caster": true,

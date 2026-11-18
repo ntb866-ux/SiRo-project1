@@ -71,11 +71,10 @@ const dm = JSON.parse(fs.readFileSync(path.join(GOC, 'thu-thach/danh-sach.json')
 let md = '# Kho code mẫu cho xe lắp mô-đun\n\n' +
   'Tệp này sinh tự động bằng `node scripts/code-mau/tao-tai-lieu.js` từ các tệp `public/san-robot-ao/code-mau/<mã-bài>.json`. Sửa tệp JSON rồi chạy lại lệnh, đừng sửa tay tệp này.\n\n' +
   '## Dùng trong lớp\n\n' +
-  'Mở một bài. Bài nào có code mẫu thì dưới đề bài có mục **Xe lắp ráp và code mẫu** với nút **Dùng xe và code mẫu**. Bấm nút thì trang mở lại bài với `&xe=mau` trong địa chỉ: robot của bài được thay bằng xe lắp mô-đun lắp sẵn cảm biến theo đề xuất bên dưới, chương trình mẫu được nạp vào vùng khối.\n\n' +
-  '- Bài làm và số sao ở chế độ này lưu riêng, không ghi đè bài làm và số sao của học sinh với robot của bài.\n' +
-  '- Muốn đổi chỗ cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**. Nút **Nạp lại xe và code mẫu** trả xe và chương trình về đúng mẫu.\n' +
-  '- **Về robot của bài** quay lại robot gốc của bài.\n\n' +
-  'Gửi thẳng cho học sinh: thêm `&xe=mau` vào địa chỉ bài, ví dụ `index.html?baiTap=03-cam-bien-mau/01-dung-o-vach&xe=mau`.\n\n' +
+  'Mọi bài chạy bằng xe lắp mô-đun (kiểu mBot); robot cũ của GEARS đã bỏ. Mỗi bài lắp xe theo cách lắp ghi bên dưới. Dưới đề bài có mục **Xe của bài** giải thích vì sao lắp như vậy.\n\n' +
+  '- Nút **Mở code mẫu** nạp chương trình mẫu vào vùng khối (thay chương trình đang có).\n' +
+  '- Muốn đổi chỗ cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**. Nút **Lắp lại xe của bài** trả xe về đúng cách lắp của bài.\n\n' +
+  'Gửi thẳng cho học sinh bài kèm chương trình mẫu: thêm `&xe=mau` vào địa chỉ bài, ví dụ `index.html?baiTap=03-cam-bien-mau/01-dung-o-vach&xe=mau`.\n\n' +
   '## Kiểm tra\n\n' +
   '```bash\ncd public && python3 -m http.server 1337 &\nnode scripts/code-mau/kiem-tra-code-mau.js            # mọi bài\nnode scripts/code-mau/kiem-tra-code-mau.js cam-bien-mau   # một nhóm bài\n```\n\n' +
   'Mỗi tệp ghi số sao mong đợi (`sao`); lệnh chạy code mẫu trên mọi phiên bản sân và báo sai nếu số sao khác.\n\n' +

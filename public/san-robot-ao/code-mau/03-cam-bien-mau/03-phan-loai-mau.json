@@ -1,13 +1,13 @@
 {
   "bai": "03-cam-bien-mau/03-phan-loai-mau",
-  "tenXe": "Xe một mắt dưới gầm",
-  "giaiThichXe": "Một mắt dò line dưới gầm, giữa hai bánh, để khi đọc biển màu thì tâm xe đang ở giữa ô. TCRT5000 không phân biệt được màu, chỉ đo ánh sáng hồng ngoại hắt lại. Đo trên sân này: nền trắng khoảng 88, ô đỏ khoảng 98 (mực đỏ gần như trong suốt với hồng ngoại, tấm màu lại gần mắt hơn 1 mm), ô xanh lá khoảng 69. Vì vậy phân biệt đỏ và xanh bằng độ sáng phản xạ chứ không bằng khối \"thấy màu\".",
+  "tenXe": "Xe một cảm biến màu dưới gầm",
+  "giaiThichXe": "Một cảm biến màu TCS34725 dưới gầm, giữa hai bánh, để khi đọc biển màu thì tâm xe đang ở giữa ô. Cảm biến có đèn LED trắng chiếu xuống sân và chip đo riêng ba kênh đỏ, lục, lam qua kính lọc màu, nên nhận ra được màu thật của ô (khác mắt dò line TCRT5000 chỉ đo ánh sáng hồng ngoại hắt lại). Con quay trên nắp giúp quay đúng 90°.",
   "xe": {
     "sa": [],
     "duoi": [],
     "gam": [
       {
-        "loai": "doLine",
+        "loai": "mau",
         "x": 0,
         "z": 0
       }
@@ -36,20 +36,14 @@
           [
             "hoac",
             [
-              ">",
-              [
-                "sang",
-                "GIUA"
-              ],
-              93
+              "mau",
+              "GIUA",
+              "RED"
             ],
             [
-              "<",
-              [
-                "sang",
-                "GIUA"
-              ],
-              80
+              "mau",
+              "GIUA",
+              "GREEN"
             ]
           ]
         ],
@@ -60,12 +54,9 @@
         [
           "neu",
           [
-            ">",
-            [
-              "sang",
-              "GIUA"
-            ],
-            93
+            "mau",
+            "GIUA",
+            "RED"
           ],
           [
             [
@@ -87,11 +78,21 @@
       ]
     ],
     [
+      "chay"
+    ],
+    [
+      "cho",
+      [
+        "mau",
+        "GIUA",
+        "YELLOW"
+      ]
+    ],
+    [
       "di",
-      35
+      7
     ]
   ],
-  "giaiThichCode": "Lặp 2 lần: chạy tới khi độ sáng trên 93 hoặc dưới 80 (gặp ô màu), đi thêm 7 cm vào giữa ô (xe còn trôi thêm vài cm sau lệnh \"đi mãi\"); sáng trên 93 là ô đỏ thì quay trái, không thì (ô xanh) quay phải; đi 15 cm ra khỏi ô. Ô vàng luôn cách ô thứ hai 50 cm nên đi thêm 35 cm.",
-  "sao": 3,
-  "ghiChu": "Khác robot của bài: ô vàng hắt hồng ngoại gần bằng ô đỏ nên khó tách, đoạn cuối đi theo quãng đường đo sẵn."
+  "giaiThichCode": "Lặp 2 lần: chạy tới khi cảm biến thấy màu đỏ hoặc xanh lá (gặp ô màu), đi thêm 7 cm vào giữa ô (xe còn trôi thêm vài cm sau lệnh \"đi mãi\"); thấy đỏ thì quay trái, không thì (ô xanh) quay phải; đi 15 cm ra khỏi ô. Sau hai biển báo: chạy tới khi thấy vàng, đi thêm 7 cm vào giữa ô vàng.",
+  "sao": 3
 }

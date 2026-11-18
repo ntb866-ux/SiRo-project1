@@ -2,18 +2,20 @@
 
 Xe 2 bánh kiểu xe kit bán lẻ (khung nhôm, motor giảm tốc TT, mạch chủ có nắp, cảm biến dạng mô-đun nối bằng dây RJ25). Toàn bộ hình 3D, hitbox, khối lượng và mô phỏng cảm biến trong thư mục này là mã viết riêng cho Sân Robot Ảo, không dùng thân hộp, bánh và cảm biến có sẵn của GEARS.
 
-Đã có: khung, bánh thường, cảm biến và bảng lắp ráp kéo thả cảm biến. Chưa có: bánh omni, mecanum, tài liệu cho giáo viên.
+Đã có: khung, bánh thường, cảm biến (dò line, màu, siêu âm, chạm, gyro, GPS), servo, bút vẽ và bảng lắp ráp kéo thả. Chưa có: nam châm, kẹp gắp, cánh tay, súng bắn bóng, laze, lidar, camera, bánh omni, mecanum, bánh to và bánh nhỏ.
+
+Xe này là robot của mọi sân: robot cũ của GEARS (robot chuẩn `co-ban` và các robot bài học) đã bỏ khỏi các bài. Mỗi bài lắp xe theo tệp code mẫu của bài (`code-mau/<mã-bài>.json`, trường `xe`).
 
 ![Xe nhìn từ trước](../../../docs/anh/xe-lap-rap/xe-truoc-trai.jpg)
 
 ## Dùng thử
 
 - Menu **Robot → Chọn robot → Xe lắp mô-đun (2 bánh)**.
-- Thử một bài có sẵn bằng xe này: thêm `&robot=xe-lap-rap` vào địa chỉ, ví dụ `index.html?baiTap=01-di-chuyen/01-tien-toi-o-dich&robot=xe-lap-rap`.
+- Mở một bài: `index.html?baiTap=01-di-chuyen/01-tien-toi-o-dich`. Thêm `&xe=mau` thì vùng khối mở sẵn chương trình mẫu của bài.
 - Tháo lắp cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**.
 - Xem hitbox: menu **Robot → Hiện hitbox của xe** (khung dây xanh lá).
 
-Robot nào có trường `sraXe` trong tệp JSON thì được dựng bằng mã ở đây; robot không có trường đó (robot chuẩn `co-ban` của các bài cũ) vẫn do GEARS dựng như trước.
+Robot nào có trường `sraXe` trong tệp JSON thì được dựng bằng mã ở đây. `robots/xe-lap-rap.js` (sinh cùng tệp .json bằng `node scripts/robot/tao-xe.js`) đưa xe lên đầu danh sách robot, nên xe là robot mặc định ngay khi trang mở, ở mọi sân.
 
 ## Các tệp
 
@@ -106,7 +108,7 @@ Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
 
 Kéo ra ngoài bảng để tháo. Không kéo được thì bấm cảm biến rồi bấm vào vùng gắn. Mỗi lần đổi, xe 3D được dựng lại ngay: hình, hitbox, khối lượng và mô phỏng cảm biến đều tính lại từ danh mục linh kiện. Sơ đồ vẽ thân xe, nắp mạch và giá siêu âm đúng tỉ lệ; thanh dưới mũi vẽ tách ra phía trước và phóng to 1,9 lần theo chiều ngang cho dễ kéo.
 
-Số cổng trong chương trình đánh liền nhau theo thứ tự: các mắt dò line dưới mũi từ trái sang phải, các mắt dò line dưới gầm từ trái sang phải, các siêu âm (mũi, trái, phải, đuôi), chạm, gyro, GPS. Thêm bớt cảm biến thì số cổng của các cảm biến đứng sau đổi theo; bảng ghi số cổng trên từng cảm biến. Số ổ in trên mạch chủ (1 đến 8) là chỗ cắm dây, không phải số cổng trong chương trình.
+Số cổng trong chương trình đánh liền nhau theo thứ tự: các mắt dò line dưới mũi từ trái sang phải, các mắt dò line dưới gầm từ trái sang phải, các siêu âm (mũi, trái, phải, đuôi), chạm, gyro, GPS, bút vẽ, rồi cảm biến trên tay quay servo. Cảm biến màu dưới mũi xếp chung thứ tự trái sang phải với mắt dò line dưới mũi; cảm biến màu dưới gầm xếp chung với mắt dò line dưới gầm. Thêm bớt cảm biến thì số cổng của các cảm biến đứng sau đổi theo; bảng ghi số cổng trên từng cảm biến. Số ổ in trên mạch chủ (1 đến 8) là chỗ cắm dây, không phải số cổng trong chương trình.
 
 Bản lắp của người dùng lưu trên máy đang dùng (`localStorage`, khoá `sanRobotAo.xeLapRap`) và được dùng lại mỗi khi chọn "Xe lắp mô-đun". Nút **Về mặc định** xoá bản đã lưu. Bài học nào chỉ định robot thì dùng đúng tệp robot của bài, không dùng bản đã lưu.
 
@@ -144,7 +146,19 @@ Cấu hình lắp là trường `sraXe` trong tệp robot:
 
 Nhiễu, trôi, sai số mặc định tắt. Bật trong tệp robot, ví dụ `"sraCamBien": { "sieuAm": { "nhieu": 0.3 }, "gyro": { "troi": 0.5 }, "gps": { "saiSo": 2 } }`.
 
-Các khối lệnh và thư viện Python có sẵn đọc được cả 5 cảm biến. TCRT5000 đứng ở chỗ của cảm biến màu, nên khối "độ sáng phản xạ" trả về 0 đến 100 %. Khối chọn cảm biến "trái / giữa / phải" chỉ dùng các mắt dưới mũi; mắt dưới gầm đọc bằng khối chọn theo số cổng (ví dụ cảm biến màu cổng 3).
+### Cảm biến màu TCS34725
+
+Mô-đun 1,4 × 1,5 cm gắn ở thanh dưới mũi (như mắt dò line, tính chung giới hạn 1,5 cm giữa hai mô-đun) hoặc dưới gầm; khay có 2 cái. Mạch bắt sát dưới tấm đáy bằng hai cột đệm, mặt dưới có đèn LED trắng (phía mũi) và chip đo màu (phía sau), ống che sáng đen chạy xuống tới cách sân bằng độ cao đầu đo của mắt dò line (mặc định 6 mm), để chỉ ánh sáng của đèn hắt lại từ sân lọt vào chip.
+
+Mô phỏng dùng cùng hình học phản xạ khuếch tán Lambert với TCRT5000, chỉ khác hệ số phản xạ: chip có ba kính lọc nên mỗi kênh lấy đúng thành phần đỏ, lục, lam của mặt sân. Mỗi kênh chia cho tín hiệu của mặt trắng tuyệt đối ở độ cao chuẩn (cân bằng trắng lúc xuất xưởng), nên ở độ cao chuẩn cảm biến đọc đúng màu in trên sân; xa sân hơn thì cả ba kênh tối đi. `getRGB` trả về ba kênh 0 đến 255, khối "thấy màu" và "độ sáng phản xạ" đọc được như cảm biến màu của robot cũ. Cảm biến màu không có đèn báo D0 và không theo chế độ tương tự/số của mắt dò line.
+
+### Bút vẽ
+
+Bút dạ ngắn cắm thẳng đứng qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh, tức là tâm quay của xe: quay tại chỗ thì ngòi đứng yên nên góc của hình vẽ sắc, không thành cung tròn. Ống giữ bút bằng nhôm bắt vào tấm đáy bằng vành kẹp; cuộn nâng (nam châm điện) quanh ống hút bút lên 3,5 mm khi nhấc, lò xo đẩy ngòi xuống chạm sân khi hạ (0,06 s mỗi lần). Mạch điều khiển cuộn và ổ RJ25 nằm trên tấm đáy, sau ống giữ bút. Có bút thì hộp pin dời lên phía mũi 4,6 cm để nhường chỗ giữa hai motor; xe nặng thêm 22 g, phần trọng lượng đè lên hai bánh chủ động giảm từ 66 % xuống 60 %. Mắt dưới gầm không đặt chồng lên ống giữ bút được.
+
+Cây bút là lưới riêng, nâng hạ theo cuộn. Hitbox của nó gắn vào thân ở vị trí nhấc (ngòi cách sân 3,5 mm): khi hạ, ngòi nỉ mềm chỉ lướt trên sân, coi như không có ma sát. Nét mực là dải phẳng rộng 4 mm sát mặt sân, vẽ theo đường ngòi đi qua; cảm biến không thấy nét mực. Thư viện Python (`Pen`), khối "hạ bút", "nhấc bút", đổi màu, đổi bề rộng nét và phần chấm nét vẽ của các bài bút vẽ dùng được như bút của robot cũ. Cấu hình ghi `"but": true`.
+
+Các khối lệnh và thư viện Python có sẵn đọc được mọi cảm biến. TCRT5000 đứng ở chỗ của cảm biến màu, nên khối "độ sáng phản xạ" trả về 0 đến 100 %. Khối chọn cảm biến "trái / giữa / phải" chỉ dùng các mắt dưới mũi; mắt dưới gầm đọc bằng khối chọn theo số cổng (ví dụ cảm biến màu cổng 3).
 
 ## Số đo
 

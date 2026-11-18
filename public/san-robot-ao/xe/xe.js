@@ -282,13 +282,15 @@ var SRAXe = new function() {
   }
   if (typeof robots != 'undefined') robots.forEach(boc);
 
-  // Thêm xe vào danh sách chọn robot (menu Robot → Chọn robot)
-  this.TEP = ['san-robot-ao/robots/xe-lap-rap.json'];
-  this.TEP.forEach(function(url) {
-    fetch(url, { cache: 'no-cache' }).then((x) => x.ok ? x.json() : null).then(function(data) {
-      if (!data || typeof robotTemplates == 'undefined') return;
-      if (typeof SRABangLapRap != 'undefined') SRABangLapRap.apVaoMau(data);     // bản lắp người dùng đã lưu
-      if (!robotTemplates.some((t) => t.name == data.name)) robotTemplates.push(data);
-    }).catch(function() {});
-  });
+  // Xe đứng đầu danh sách chọn robot (menu Robot → Chọn robot) và là robot mặc định của mọi sân:
+  // robots/xe-lap-rap.js đã đưa nó lên đầu robotTemplates trước khi trang tạo robot. Ở đây chỉ áp bản
+  // lắp người dùng đã lưu (bảng lắp ráp) vào mẫu và vào robot đang dùng, trước khi sân được dựng.
+  this.TEN = 'siro_xeLapRap';
+  if (typeof robotTemplates != 'undefined') {
+    let mau = robotTemplates.find((t) => t.name == self.TEN);
+    if (mau && typeof SRABangLapRap != 'undefined') {
+      SRABangLapRap.apVaoMau(mau);
+      if (typeof robot != 'undefined' && robot.options && robot.options.name == self.TEN && !robot.body) robot.options = JSON.parse(JSON.stringify(mau));
+    }
+  }
 };

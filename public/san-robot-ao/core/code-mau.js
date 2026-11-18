@@ -122,16 +122,20 @@
 });
 
 // ---------- Trong trang bài ----------
+// Mọi bài chạy bằng xe lắp mô-đun (xe kiểu mBot): robot ghi trong tệp bài được thay bằng xe lắp theo
+// cấu hình của tệp code mẫu. Thêm ?xe=mau vào địa chỉ thì vùng khối mở sẵn chương trình mẫu.
 (function() {
   if (typeof window == 'undefined' || typeof SRA == 'undefined' || !SRA.napBai) return;
   const C = window.SRACodeMau;
   const thamSo = new URLSearchParams(location.search);
-  const DUOI = '@xe';                      // hậu tố khoá lưu bài làm và kết quả ở chế độ xe mẫu
   const TEP_XE = 'robots/xe-lap-rap.json';
+  // Bài chưa có tệp code mẫu: xe mặc định lắp thêm bút vẽ (giống robot chuẩn cũ có đủ cảm biến và bút)
+  const XE_MAC_DINH = { but: true };
 
   SRA.codeMau = {
     mau: null,                             // nội dung tệp code mẫu của bài (null: bài chưa có)
-    dangDung: thamSo.get('xe') == 'mau',   // đang chạy bài bằng xe và code mẫu
+    dangDung: true,                        // bài chạy bằng xe lắp mô-đun (luôn đúng: robot cũ đã bỏ)
+    moCodeMau: thamSo.get('xe') == 'mau',  // mở bài với chương trình mẫu trong vùng khối
     xml: function() { return SRA.codeMau.mau ? C.xml(SRA.codeMau.mau.chuongTrinh || []) : null; },
   };
   const CM = SRA.codeMau;
@@ -139,52 +143,36 @@
   function an(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-  function diaChi(xe) {
-    let p = new URLSearchParams(location.search);
-    if (xe) p.set('xe', 'mau'); else p.delete('xe');
-    p.delete('robot');
-    return 'index.html?' + p.toString().replace(/%2F/g, '/');
-  }
-  function roiTrang(url) {
-    if (typeof blockly != 'undefined') blockly.unsaved = false;
-    if (typeof filesManager != 'undefined') filesManager.unsaved = false;
-    location.href = url;
-  }
 
-  // Bài làm và kết quả ở chế độ xe mẫu lưu dưới khoá riêng
-  if (CM.dangDung) {
-    const td = SRA.tienDo;
-    const docMaGoc = td.docMa, luuMaGoc = td.luuMa, ghiLuotGoc = td.ghiLuotChay, baiGoc = td.bai;
-    td.docMa = (id) => docMaGoc.call(td, id + DUOI) || CM.xml();
-    td.luuMa = (id, x) => luuMaGoc.call(td, id + DUOI, x);
-    td.ghiLuotChay = (id, kq) => ghiLuotGoc.call(td, id + DUOI, kq);
-    td.bai = (id) => baiGoc.call(td, id + DUOI);
+  if (CM.moCodeMau) {
+    const td = SRA.tienDo, docMaGoc = td.docMa;
+    td.docMa = (id) => CM.xml() || docMaGoc.call(td, id);
   }
 
   // Robot của bài → xe lắp mô-đun lắp theo cấu hình của mẫu
-  function datXeMau(data) {
-    let mau = CM.mau;
+  function datXe(data) {
+    let mau = CM.mau || {};
     Object.assign(data, JSON.parse(JSON.stringify(mau.robotThem || {})));
-    data.sraXe = JSON.parse(JSON.stringify(mau.xe || {}));
+    data.sraXe = JSON.parse(JSON.stringify(mau.xe || XE_MAC_DINH));
+    if (typeof SRALinhKien != 'undefined') {
+      let banLap = SRALinhKien.lapXe(data.sraXe);
+      Object.assign(data, SRALinhKien.moTaRobot(banLap, SRALinhKien.tinhXe(banLap)));
+    }
     data.shortDescription = mau.tenXe || data.shortDescription;
     robot.options = data;
     let i = robotTemplates.findIndex((r) => r.name == data.name);
     if (i == -1) robotTemplates.push(JSON.parse(JSON.stringify(data))); else robotTemplates[i] = JSON.parse(JSON.stringify(data));
   }
-  let napRobotGoc = SRA.napRobot;
-  SRA.napRobot = function(ten) {
-    if (!CM.dangDung || !CM.mau) return napRobotGoc.apply(this, arguments);
-    return SRA.docJSON(SRA.GOC + TEP_XE).then(datXeMau);
-  };
+  SRA.napRobot = function() { return SRA.docJSON(SRA.GOC + TEP_XE).then(datXe); };
 
-  // Chỗ xuất phát và các vùng chấm của bài đo theo tâm quay của robot của bài. Xe lắp mô-đun
-  // có mũi dài hơn và đuôi ngắn hơn, nên mẫu có thể dời chúng (trường "lechBai", đơn vị cm):
+  // Chỗ xuất phát và các vùng chấm của bài trước đây đo theo tâm quay của robot chuẩn cũ. Xe lắp
+  // mô-đun có mũi dài hơn và đuôi ngắn hơn, nên mẫu có thể dời chúng (trường "lechBai", đơn vị cm):
   //   { "viTriBatDau": [dx, dy], "vung": { "tên vùng": [dx, dy] } }
   // để "mũi chạm tường", "đuôi cách xe sau 3 cm"… vẫn đúng nghĩa với xe này.
   let baiHienTaiGoc = SRA.baiHienTai;
   SRA.baiHienTai = function() {
     let bai = baiHienTaiGoc.apply(this, arguments);
-    let lech = CM.dangDung && CM.mau && CM.mau.lechBai;
+    let lech = CM.mau && CM.mau.lechBai;
     if (!bai || !lech) return bai;
     let kq = Object.assign({}, bai);
     let doi = (p, d) => Object.assign({}, p, { x: (p.x || 0) + (d[0] || 0), y: (p.y || 0) + (d[1] || 0) });
@@ -196,63 +184,54 @@
     return kq;
   };
 
-  // Nạp lại xe và chương trình mẫu ngay trong trang (bỏ mọi chỗ đã sửa)
-  CM.napLai = function() {
-    if (!CM.mau || (typeof skulpt != 'undefined' && skulpt.running)) return Promise.resolve();
+  function dungLai() {
+    simPanel.worldOptionsSetting = SRA.dungOptionsSan(SRA.san, SRA.baiHienTai());
+    return simPanel.resetSim().then(function() { SRA.datCamera(SRA.kieuCamera || 'toanSan'); });
+  }
+  // Lắp lại xe theo cấu hình của bài (bỏ chỗ đã sửa trên bảng lắp ráp)
+  CM.napLaiXe = function() {
+    if (typeof skulpt != 'undefined' && skulpt.running) return Promise.resolve();
     if (typeof SRABangLapRap != 'undefined' && SRABangLapRap.dangMo) SRABangLapRap.dong();
+    return SRA.docJSON(SRA.GOC + TEP_XE).then(datXe).then(dungLai);
+  };
+  // Nạp chương trình mẫu vào vùng khối (thay chương trình đang có)
+  CM.napCodeMau = function() {
+    if (!CM.mau || (typeof skulpt != 'undefined' && skulpt.running)) return;
     blockly.workspace.clear();
     blockly.loadXmlText(CM.xml());
     if (typeof filesManager != 'undefined') filesManager.modified = false;
-    return SRA.docJSON(SRA.GOC + TEP_XE).then(datXeMau).then(function() {
-      simPanel.worldOptionsSetting = SRA.dungOptionsSan(SRA.san, SRA.baiHienTai());
-      return simPanel.resetSim();
-    }).then(function() {
-      SRA.datCamera(SRA.kieuCamera || 'toanSan');
-      SRA.tienDo.luuMa(SRA.bai.id, blockly.getXmlText());
-    });
+    SRA.tienDo.luuMa(SRA.bai.id, blockly.getXmlText());
   };
+  CM.napLai = function() { CM.napCodeMau(); return CM.napLaiXe(); };
 
   function veMuc() {
     let mau = CM.mau;
-    if (!mau) return;
-    let $de = $('#sraKhung .sra-de');
-    let html;
-    if (CM.dangDung) {
-      $('body').addClass('sra-xe-mau');
-      html =
-        '<section class="sra-code-mau dang-dung">' +
-          '<h2>' + sraT('Xe lắp ráp và code mẫu', 'Built car and sample code') + '</h2>' +
-          '<p><b>' + an(mau.tenXe) + '.</b> ' + SRA.giaoDien.vanBan(mau.giaiThichXe).replace(/^<p>|<\/p>$/g, '') + '</p>' +
-          (mau.giaiThichCode ? '<details><summary>' + sraT('Chương trình mẫu làm gì?', 'What does the sample program do?') + '</summary>' + SRA.giaoDien.vanBan(mau.giaiThichCode) + '</details>' : '') +
-          (mau.ghiChu ? '<p class="sra-nho">' + SRA.giaoDien.vanBan(mau.ghiChu).replace(/^<p>|<\/p>$/g, '') + '</p>' : '') +
-          '<p class="sra-nho">' + sraT('Sửa xe: menu Robot → Lắp ráp xe (kéo thả cảm biến). Kết quả ở đây lưu riêng, không tính vào số sao làm bằng robot của bài.', 'To change the car: Robot menu → Build car (drag and drop sensors). Results here are saved separately and do not count toward the stars earned with the lesson robot.') + '</p>' +
-          '<div class="sra-nut-hang">' +
-            '<button type="button" class="sra-nut phu sra-nap-lai-mau">↺ ' + sraT('Nạp lại xe và code mẫu', 'Reload car and sample code') + '</button>' +
-            '<button type="button" class="sra-nut phu sra-bo-xe-mau">← ' + sraT('Về robot của bài', 'Back to lesson robot') + '</button>' +
-          '</div>' +
-        '</section>';
+    $('body').addClass('sra-xe-mau');
+    let html = '<section class="sra-code-mau dang-dung"><h2>' + sraT('Xe của bài', 'Lesson car') + '</h2>';
+    if (mau) {
+      html +=
+        '<p><b>' + an(mau.tenXe) + '.</b> ' + SRA.giaoDien.vanBan(mau.giaiThichXe).replace(/^<p>|<\/p>$/g, '') + '</p>' +
+        (mau.giaiThichCode ? '<details><summary>' + sraT('Chương trình mẫu làm gì?', 'What does the sample program do?') + '</summary>' + SRA.giaoDien.vanBan(mau.giaiThichCode) + '</details>' : '') +
+        (mau.ghiChu ? '<p class="sra-nho">' + SRA.giaoDien.vanBan(mau.ghiChu).replace(/^<p>|<\/p>$/g, '') + '</p>' : '');
     } else {
-      html =
-        '<section class="sra-code-mau">' +
-          '<h2>' + sraT('Xe lắp ráp và code mẫu', 'Built car and sample code') + '</h2>' +
-          '<p>' + sraT('Có sẵn cách lắp xe kéo thả cảm biến cho sân này: ', 'A ready-made drag-and-drop sensor car for this field: ') + '<b>' + an(mau.tenXe) + '</b>' + sraT(', kèm chương trình mẫu.', ', with a sample program.') + '</p>' +
-          '<div class="sra-nut-hang"><button type="button" class="sra-nut phu sra-dung-xe-mau">' + sraT('Dùng xe và code mẫu', 'Use car and sample code') + '</button></div>' +
-          '<p class="sra-nho">' + sraT('Bài làm của bạn với robot của bài vẫn được giữ nguyên.', 'Your work with the lesson robot is kept as it is.') + '</p>' +
-        '</section>';
+      html += '<p>' + sraT('Xe lắp mô-đun kiểu mBot với cảm biến mặc định và bút vẽ.', 'mBot-style modular car with the default sensors and a pen.') + '</p>';
     }
+    html +=
+        '<p class="sra-nho">' + sraT('Sửa xe: menu Robot → Lắp ráp xe (kéo thả cảm biến).', 'To change the car: Robot menu → Build car (drag and drop sensors).') + '</p>' +
+        '<div class="sra-nut-hang">' +
+          (mau ? '<button type="button" class="sra-nut phu sra-nap-code-mau">' + sraT('Mở code mẫu', 'Open sample code') + '</button>' : '') +
+          '<button type="button" class="sra-nut phu sra-nap-lai-mau">↺ ' + sraT('Lắp lại xe của bài', 'Rebuild lesson car') + '</button>' +
+        '</div>' +
+      '</section>';
     let $s = $(html);
-    // Đặt sau đề bài (và sau mục chọn robot nếu có)
-    let $sau = $('#sraKhung .sra-chon-robot');
-    ($sau.length ? $sau : $de).after($s);
-    $s.on('click', '.sra-dung-xe-mau', function() { roiTrang(diaChi(true)); });
-    $s.on('click', '.sra-bo-xe-mau', function() { roiTrang(diaChi(false)); });
-    $s.on('click', '.sra-nap-lai-mau', function() { CM.napLai(); });
+    $('#sraKhung .sra-de').after($s);
+    $s.on('click', '.sra-nap-code-mau', function() { CM.napCodeMau(); });
+    $s.on('click', '.sra-nap-lai-mau', function() { CM.napLaiXe(); });
   }
 
   let napBaiGoc = SRA.napBai;
   SRA.napBai = async function(id) {
     try { CM.mau = await SRA.docJSON(SRA.GOC + 'code-mau/' + id + '.json'); } catch (e) { CM.mau = null; }
-    if (!CM.mau) CM.dangDung = false;
     await napBaiGoc.apply(this, arguments);
     veMuc();
   };

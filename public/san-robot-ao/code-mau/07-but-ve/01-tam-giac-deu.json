@@ -1,0 +1,42 @@
+{
+  "bai": "07-but-ve/01-tam-giac-deu",
+  "tenXe": "Xe vẽ: bút ở tâm quay và con quay",
+  "giaiThichXe": "Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối \"đi … cm\" và \"quay … độ\" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.",
+  "xe": {
+    "but": true,
+    "sa": [],
+    "duoi": [],
+    "gam": [],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#6a1b9a"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "but"
+    ],
+    [
+      "lap",
+      3,
+      [
+        [
+          "di",
+          100
+        ],
+        [
+          "phai",
+          120
+        ]
+      ]
+    ]
+  ],
+  "giaiThichCode": "Hạ bút rồi lặp 3 lần: đi 100 cm, quay phải 120°. Xe phải quay góc ngoài 120° (180° − 60°), không phải góc trong 60° của tam giác đều.",
+  "sao": 3
+}

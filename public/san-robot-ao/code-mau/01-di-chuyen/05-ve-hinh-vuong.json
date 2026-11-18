@@ -1,8 +1,9 @@
 {
   "bai": "01-di-chuyen/05-ve-hinh-vuong",
-  "tenXe": "Xe gọn chỉ có con quay",
-  "giaiThichXe": "Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối \"đi … cm\" và \"quay … độ\" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.",
+  "tenXe": "Xe vẽ: bút ở tâm quay và con quay",
+  "giaiThichXe": "Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối \"đi … cm\" và \"quay … độ\" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.",
   "xe": {
+    "but": true,
     "sa": [],
     "duoi": [],
     "gam": [],
@@ -19,6 +20,9 @@
   },
   "chuongTrinh": [
     [
+      "but"
+    ],
+    [
       "lap",
       4,
       [
@@ -33,7 +37,6 @@
       ]
     ]
   ],
-  "giaiThichCode": "Lặp 4 lần: đi 75 cm, quay phải 90°. Xe đi đúng hình vuông và về ô xuất phát.",
-  "sao": 2,
-  "ghiChu": "Xe lắp mô-đun chưa có bút vẽ, nên không lấy được sao 3 (cần khối hạ bút). Muốn đủ 3 sao, dùng robot của bài."
+  "giaiThichCode": "Hạ bút rồi lặp 4 lần: đi 75 cm, quay phải 90°. Xe vẽ đúng hình vuông và về ô xuất phát.",
+  "sao": 3
 }

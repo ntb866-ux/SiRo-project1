@@ -61,6 +61,7 @@
 .sra-lr-thanh { fill: rgba(185, 192, 199, 0.55); stroke: #9aa3ad; stroke-width: 0.06; stroke-dasharray: none; }
 .sra-lr-vung-gia { fill: rgba(255, 255, 255, 0.35); }
 .sra-lr-vung-nap { fill: rgba(255, 255, 255, 0.08); }
+.sra-lr-vung-tam { fill: rgba(255, 255, 255, 0.1); stroke-dasharray: 0.25 0.2; }
 .sra-lr-thanh-gia { fill: #b9c0c7; stroke: #8b949e; stroke-width: 0.05; pointer-events: none; }
 .sra-lr-vung.nhan-duoc { fill: rgba(220, 252, 231, 0.75); stroke: var(--lr-nhan); stroke-width: 0.16; stroke-dasharray: none; }
 .sra-lr-vung.nhan-duoc.dang-tren { fill: rgba(134, 239, 172, 0.7); stroke-width: 0.24; }

@@ -161,6 +161,7 @@ SRA.chuyenDong = new function() {
   function veChonRobot(bai) {
     let ds = bai.robotChon;
     if (!Array.isArray(ds) || !ds.length) return;
+    if (SRA.codeMau && SRA.codeMau.dangDung) return;      // bài chạy bằng xe lắp mô-đun: không còn robot cũ để chọn
     self.robotDangDung = bai.robot;
     let html = '<section class="sra-chon-robot"><h2>' + sraT('Chọn robot', 'Choose robot') + '</h2><div class="sra-nut-hang" style="flex-wrap:wrap">';
     ds.forEach(function(r) {
