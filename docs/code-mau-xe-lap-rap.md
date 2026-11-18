@@ -4,13 +4,12 @@ Tệp này sinh tự động bằng `node scripts/code-mau/tao-tai-lieu.js` từ
 
 ## Dùng trong lớp
 
-Mở một bài. Bài nào có code mẫu thì dưới đề bài có mục **Xe lắp ráp và code mẫu** với nút **Dùng xe và code mẫu**. Bấm nút thì trang mở lại bài với `&xe=mau` trong địa chỉ: robot của bài được thay bằng xe lắp mô-đun lắp sẵn cảm biến theo đề xuất bên dưới, chương trình mẫu được nạp vào vùng khối.
+Mọi bài chạy bằng xe lắp mô-đun (kiểu mBot); robot cũ của GEARS đã bỏ. Mỗi bài lắp xe theo cách lắp ghi bên dưới. Dưới đề bài có mục **Xe của bài** giải thích vì sao lắp như vậy.
 
-- Bài làm và số sao ở chế độ này lưu riêng, không ghi đè bài làm và số sao của học sinh với robot của bài.
-- Muốn đổi chỗ cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**. Nút **Nạp lại xe và code mẫu** trả xe và chương trình về đúng mẫu.
-- **Về robot của bài** quay lại robot gốc của bài.
+- Nút **Mở code mẫu** nạp chương trình mẫu vào vùng khối (thay chương trình đang có).
+- Muốn đổi chỗ cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**. Nút **Lắp lại xe của bài** trả xe về đúng cách lắp của bài.
 
-Gửi thẳng cho học sinh: thêm `&xe=mau` vào địa chỉ bài, ví dụ `index.html?baiTap=03-cam-bien-mau/01-dung-o-vach&xe=mau`.
+Gửi thẳng cho học sinh bài kèm chương trình mẫu: thêm `&xe=mau` vào địa chỉ bài, ví dụ `index.html?baiTap=03-cam-bien-mau/01-dung-o-vach&xe=mau`.
 
 ## Kiểm tra
 
@@ -106,22 +105,21 @@ Tiến tới điểm 1, rẽ phải tới điểm 2, rồi lùi thẳng về đi
 
 ### Vẽ hình vuông
 
-`01-di-chuyen/05-ve-hinh-vuong` · sân `luoi-toa-do` · code mẫu đạt **2 sao** · 3 khối
+`01-di-chuyen/05-ve-hinh-vuong` · sân `luoi-toa-do` · code mẫu đạt **3 sao** · 4 khối
 
-**Xe: Xe gọn chỉ có con quay.** con quay trên nắp.
+**Xe: Xe vẽ: bút ở tâm quay và con quay.** con quay trên nắp.
 
-Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
+Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối "đi … cm" và "quay … độ" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.
 
 ```
 khi bắt đầu
+    but
     lặp lại 4 lần
         đi tới 75 cm
         quay phải 90 độ
 ```
 
-Lặp 4 lần: đi 75 cm, quay phải 90°. Xe đi đúng hình vuông và về ô xuất phát.
-
-> Xe lắp mô-đun chưa có bút vẽ, nên không lấy được sao 3 (cần khối hạ bút). Muốn đủ 3 sao, dùng robot của bài.
+Hạ bút rồi lặp 4 lần: đi 75 cm, quay phải 90°. Xe vẽ đúng hình vuông và về ô xuất phát.
 
 ## Chặng 2 · Vòng lặp và biến
 
@@ -227,6 +225,87 @@ khi bắt đầu
 Cần 25 cm/s. Chạy thử đo tốc độ rồi chỉnh phần trăm và thời gian: bánh còn quay thêm chừng 0,3 giây sau lệnh dừng, nên chờ khoảng 3,7 giây thì tổng thời gian bánh chạy gần 4 giây, và tăng tốc độ lên khoảng 45,5 % cho đủ 100 cm.
 
 > Sao 2 và sao 3 đòi thời gian chạy đúng tới 0,05 giây, mà lệnh "chờ" đếm theo đồng hồ máy tính: máy chậm hay bận thì mỗi lượt lệch vài phần trăm giây. Code mẫu luôn hoàn thành nhiệm vụ, còn số sao thay đổi giữa các lượt (đo được từ 1 đến 3 sao). Đây cũng là một bài học: hẹn giờ không chính xác bằng đếm vòng bánh.
+
+## Chặng 2 · Bút vẽ và đa giác
+
+### Vẽ tam giác đều
+
+`07-but-ve/01-tam-giac-deu` · sân `luoi-toa-do` · code mẫu đạt **3 sao** · 4 khối
+
+**Xe: Xe vẽ: bút ở tâm quay và con quay.** con quay trên nắp.
+
+Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối "đi … cm" và "quay … độ" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.
+
+```
+khi bắt đầu
+    but
+    lặp lại 3 lần
+        đi tới 100 cm
+        quay phải 120 độ
+```
+
+Hạ bút rồi lặp 3 lần: đi 100 cm, quay phải 120°. Xe phải quay góc ngoài 120° (180° − 60°), không phải góc trong 60° của tam giác đều.
+
+### Vẽ lục giác đều (tổ ong)
+
+`07-but-ve/02-luc-giac-deu` · sân `luoi-toa-do` · code mẫu đạt **3 sao** · 4 khối
+
+**Xe: Xe vẽ: bút ở tâm quay và con quay.** con quay trên nắp.
+
+Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối "đi … cm" và "quay … độ" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.
+
+```
+khi bắt đầu
+    but
+    lặp lại 6 lần
+        đi tới 50 cm
+        quay phải 60 độ
+```
+
+Hạ bút rồi lặp 6 lần: đi 50 cm, quay phải 60°. Tổng các góc quay là 6 × 60° = 360°: xe quay đúng một vòng là khép hình.
+
+### Vẽ ngôi sao năm cánh
+
+`07-but-ve/03-ngoi-sao-5-canh` · sân `luoi-toa-do` · code mẫu đạt **3 sao** · 4 khối
+
+**Xe: Xe vẽ: bút ở tâm quay và con quay.** con quay trên nắp.
+
+Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối "đi … cm" và "quay … độ" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.
+
+```
+khi bắt đầu
+    but
+    lặp lại 5 lần
+        đi tới 100 cm
+        quay phải 144 độ
+```
+
+Hạ bút rồi lặp 5 lần: đi 100 cm, quay phải 144°. Tổng góc quay 5 × 144° = 720°: xe quay hai vòng mới khép được ngôi sao.
+
+### Vẽ ngôi nhà theo hình mẫu
+
+`07-but-ve/04-ve-ngoi-nha-theo-mau` · sân `luoi-toa-do` · code mẫu đạt **3 sao** · 11 khối
+
+**Xe: Xe vẽ: bút ở tâm quay và con quay.** con quay trên nắp.
+
+Bút vẽ cắm qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục hai bánh. Đó là tâm quay của xe: khi xe quay tại chỗ, ngòi bút đứng yên nên các góc của hình vẽ nhọn, không bị vẽ thành cung tròn. Con quay (gyro) trên nắp mạch chủ giúp khối "đi … cm" và "quay … độ" đi thẳng, quay đúng góc. Tháo hết cảm biến khác cho xe nhẹ.
+
+```
+khi bắt đầu
+    but
+    đi tới 75 cm
+    quay phải 30 độ
+    đi tới 75 cm
+    quay phải 120 độ
+    đi tới 75 cm
+    quay phải 30 độ
+    đi tới 75 cm
+    quay phải 90 độ
+    đi tới 75 cm
+    quay phải 90 độ
+```
+
+Hạ bút, đi lên tường trái, quay 30° vẽ mái trái, quay 120° vẽ mái phải, quay 30° đi xuống tường phải, quay 90° vẽ nền, quay 90° về hướng xuất phát.
 
 ## Chặng 3 · Cảm biến chạm và khoảng cách
 
@@ -367,27 +446,27 @@ Biến đếm số vạch. Mỗi vạch: chờ ra nền trắng rồi chờ gặ
 
 `03-cam-bien-mau/03-phan-loai-mau` · sân `o-mau` · code mẫu đạt **3 sao** · 16 khối
 
-**Xe: Xe một mắt dưới gầm.** mắt dò line dưới gầm (x = 0, z = 0 cm); con quay trên nắp.
+**Xe: Xe một cảm biến màu dưới gầm.** mắt dò line dưới gầm (x = 0, z = 0 cm); con quay trên nắp.
 
-Một mắt dò line dưới gầm, giữa hai bánh, để khi đọc biển màu thì tâm xe đang ở giữa ô. TCRT5000 không phân biệt được màu, chỉ đo ánh sáng hồng ngoại hắt lại. Đo trên sân này: nền trắng khoảng 88, ô đỏ khoảng 98 (mực đỏ gần như trong suốt với hồng ngoại, tấm màu lại gần mắt hơn 1 mm), ô xanh lá khoảng 69. Vì vậy phân biệt đỏ và xanh bằng độ sáng phản xạ chứ không bằng khối "thấy màu".
+Một cảm biến màu TCS34725 dưới gầm, giữa hai bánh, để khi đọc biển màu thì tâm xe đang ở giữa ô. Cảm biến có đèn LED trắng chiếu xuống sân và chip đo riêng ba kênh đỏ, lục, lam qua kính lọc màu, nên nhận ra được màu thật của ô (khác mắt dò line TCRT5000 chỉ đo ánh sáng hồng ngoại hắt lại). Con quay trên nắp giúp quay đúng 90°.
 
 ```
 khi bắt đầu
     lặp lại 2 lần
         đi tới mãi
-        chờ đến khi ((độ sáng giữa > 93) hoặc (độ sáng giữa < 80))
+        chờ đến khi (mắt giữa thấy RED hoặc mắt giữa thấy GREEN)
         đi tới 7 cm
-        nếu (độ sáng giữa > 93) thì
+        nếu mắt giữa thấy RED thì
             quay trái 90 độ
         không thì
             quay phải 90 độ
         đi tới 15 cm
-    đi tới 35 cm
+    đi tới mãi
+    chờ đến khi mắt giữa thấy YELLOW
+    đi tới 7 cm
 ```
 
-Lặp 2 lần: chạy tới khi độ sáng trên 93 hoặc dưới 80 (gặp ô màu), đi thêm 7 cm vào giữa ô (xe còn trôi thêm vài cm sau lệnh "đi mãi"); sáng trên 93 là ô đỏ thì quay trái, không thì (ô xanh) quay phải; đi 15 cm ra khỏi ô. Ô vàng luôn cách ô thứ hai 50 cm nên đi thêm 35 cm.
-
-> Khác robot của bài: ô vàng hắt hồng ngoại gần bằng ô đỏ nên khó tách, đoạn cuối đi theo quãng đường đo sẵn.
+Lặp 2 lần: chạy tới khi cảm biến thấy màu đỏ hoặc xanh lá (gặp ô màu), đi thêm 7 cm vào giữa ô (xe còn trôi thêm vài cm sau lệnh "đi mãi"); thấy đỏ thì quay trái, không thì (ô xanh) quay phải; đi 15 cm ra khỏi ô. Sau hai biển báo: chạy tới khi thấy vàng, đi thêm 7 cm vào giữa ô vàng.
 
 ### Dò đường bằng 1 cảm biến
 
@@ -478,11 +557,3 @@ khi bắt đầu
 
 Lái tỉ lệ: lặp đến khi tường còn dưới 20 cm, mỗi vòng cho bánh trái chạy 40 − 2 × góc %, bánh phải 40 + 2 × góc %. Xe lệch phải (góc dương) thì bánh phải nhanh hơn, xe lái về trái; lệch càng nhiều lái càng mạnh, về đúng hướng thì hai bánh bằng nhau.
 
-## Bài chưa có code mẫu
-
-Xe lắp mô-đun chưa có bút vẽ, nên các bài vẽ hình theo mẫu (chấm điểm bằng nét bút) chưa làm được bằng xe này:
-
-- Vẽ tam giác đều (`07-but-ve/01-tam-giac-deu`)
-- Vẽ lục giác đều (tổ ong) (`07-but-ve/02-luc-giac-deu`)
-- Vẽ ngôi sao năm cánh (`07-but-ve/03-ngoi-sao-5-canh`)
-- Vẽ ngôi nhà theo hình mẫu (`07-but-ve/04-ve-ngoi-nha-theo-mau`)
