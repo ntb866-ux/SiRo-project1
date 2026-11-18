@@ -132,6 +132,7 @@ console.log('2. Cấu hình tư thế đầu đo');
   // 4. Bảng lắp ráp
   await page.evaluate(() => SRABangLapRap.mo());
   await page.waitForSelector('.sra-lr-bang');
+  await page.evaluate(() => SRABangLapRap.chon('duoi:0'));       // tư thế đầu đo nằm trong bảng thuộc tính của mắt dò line
   for (let i = 0; i < 2; i++) { await page.click('[data-ir-tu-the="nghiengIR"][data-buoc="5"]'); await page.evaluate(() => SRABangLapRap.choDungXong()); }
   await page.click('[data-ir-tu-the="caoIR"][data-buoc="0.1"]'); await page.evaluate(() => SRABangLapRap.choDungXong());
   let b = await page.evaluate(() => ({ g: SRABangLapRap.cauHinh.nghiengIR, h: SRABangLapRap.cauHinh.caoIR, tb: $('.sra-lr-thong-bao').text(),
