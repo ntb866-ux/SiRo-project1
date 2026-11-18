@@ -122,6 +122,18 @@ var SRAXeVatLi = (function() {
     let r = body.getWorldTransform().getRotation();
     return [r.x(), r.y(), r.z(), r.w()];
   }
+  function viTriVat(body) {
+    let o = body.getWorldTransform().getOrigin();
+    return [o.x(), o.y(), o.z()];
+  }
+  function docVanToc(body) {
+    let v = body.getLinearVelocity();
+    return [v.x(), v.y(), v.z()];
+  }
+  // Vận tốc của điểm p (toạ độ sân) gắn với vật thể
+  function vanTocDiem(body, com, p) {
+    return V.cong(docVanToc(body), V.co(docVanTocGoc(body), V.tru(p, viTriVat(body))));
+  }
   function docVanTocGoc(body) {
     let w = body.getAngularVelocity();
     return [w.x(), w.y(), w.z()];
@@ -289,6 +301,154 @@ var SRAXeVatLi = (function() {
       });
     }
 
+    // Cơ cấu công tác: đoạn tay (bản lề có motor N20), xe trượt (khớp trượt, motor N20 qua bánh răng – thanh răng),
+    // hai hàm kẹp (bản lề, servo SG90 chia mô-men cho hai hàm qua cặp bánh răng). Mỗi vật nối với vật mang nó.
+    this.vatPhu = {};
+    (banLap.vatPhu || []).forEach(function(v) {
+      let k = kl.vatPhu[v.id], I = k.I, a = v.truc;
+      let me = v.me == 'than' ? { body: thanBody, com: kl.than.tam } : self.vatPhu[v.me];
+      let com = V.cong(v.tam, k.tam);
+      // quán tính rôto quy về trục khớp (bản lề): như servo, rôto quyết định khớp tăng tốc nhanh chậm
+      let J = v.kieu == 'banLe' && v.dongCo ? v.dongCo.quanTinhRoto * v.dongCo.tiSoTruyen * v.dongCo.tiSoTruyen : 0;
+      let imp = taoVat(scene, nut.vatPhu[v.id], hinhGhep(v.khoi, k.tam), k.m,
+        [I[0][0] + J * a[0] * a[0], I[1][1] + J * a[1] * a[1], I[2][2] + J * a[2] * a[2]], v.kep ? 0.9 : 0.4, 0.05);
+      let body = imp.physicsBody;
+      let ghi = { id: v.id, imp: imp, body: body, com: com, moTa: v, me: me };
+      self.vatPhu[v.id] = ghi;
+      if (v.kieu == 'banLe') {
+        let pA = bv(V.tru(v.tam, me.com)), pB = bv(V.nhan(k.tam, -1)), aA = bv(a), aB = bv(a);
+        let khop = themKhop(new Ammo.btHingeConstraint(me.body, body, pA, pB, aA, aB, true));
+        [pA, pB, aA, aB].forEach((x) => Ammo.destroy(x));
+        ghi.khop = khop;
+        if (v.gioiHan) {
+          let lo = v.gioiHan[0] * RAD, hi = v.gioiHan[1] * RAD;
+          // góc bản lề của Bullet cùng chiều quay dương quanh trục khớp (xem tấm cản bên dưới)
+          khop.setLimit(lo, hi, 0.9, 0.3, 1.0);
+        }
+        if (v.dongCo) {
+          let dc = new DongCo(v.dongCo, khop, 1);
+          ghi.dongCo = dc;
+          self.truocBuoc.push(function(h) {
+            let truc = Q.quay(docQuay(me.body), a);
+            dc.buoc(h, V.cham(V.tru(docVanTocGoc(body), docVanTocGoc(me.body)), truc));
+          });
+        }
+      } else {
+        // khớp trượt dọc trục a (trục x của hai khung khớp), không xoay
+        let qK = Q.tuTruc(a, Math.abs(a[1]) > 0.9 ? [-1, 0, 0] : [0, 1, 0], V.co(a, Math.abs(a[1]) > 0.9 ? [-1, 0, 0] : [0, 1, 0]));
+        let khung = function(p) {
+          let t = new Ammo.btTransform(); t.setIdentity();
+          let o = bv(p); t.setOrigin(o); Ammo.destroy(o);
+          let r = new Ammo.btQuaternion(qK[0], qK[1], qK[2], qK[3]); t.setRotation(r); Ammo.destroy(r);
+          return t;
+        };
+        let fA = khung(V.tru(v.tam, me.com)), fB = khung(V.nhan(k.tam, -1));
+        let khop = themKhop(new Ammo.btSliderConstraint(me.body, body, fA, fB, true));
+        Ammo.destroy(fA); Ammo.destroy(fB);
+        // Ray chỉ giữ xe trượt đi thẳng; hai đầu hành trình do khối dưới tự chặn (giới hạn của Bullet đặt rộng)
+        khop.setLowerLinLimit(-100); khop.setUpperLinLimit(100);
+        khop.setLowerAngLimit(0); khop.setUpperAngLimit(0);
+        ghi.khop = khop;
+        // Motor qua bánh răng bán kính r: DongCo làm việc với góc bánh răng (θ = x / r); "motor của khớp" ở đây là
+        // xung lực đặt trực tiếp lên hai vật theo trục trượt, tối đa bằng mô-men × thời gian bước ÷ r.
+        // Bánh răng ảo mang quán tính rôto quy về trục ra (Ip). Mỗi bước: motor tác dụng lên bánh răng ảo như motor
+        // khớp của Bullet (tốc độ đích, xung lực tối đa), rồi nối bánh răng với xe trượt bằng xung lực ràng buộc v = r·ω
+        // (khối lượng hiệu dụng 1/(1/m + r²/Ip)); phản lực lên vật mang ray. Trọng lượng xe trượt truyền ngược về motor.
+        let r = v.banKinh, m = k.m, Ip = v.dongCo.quanTinhRoto * v.dongCo.tiSoTruyen * v.dongCo.tiSoTruyen;
+        let mHd = 1 / (1 / m + r * r / Ip), dA = V.tru(v.tam, me.com), dB = V.nhan(k.tam, -1);
+        let wP = 0, xP = 0, S0 = v.gioiHan[0], S1 = v.gioiHan[1], hBuoc = 1 / 240;
+        const vTruot = (truc) => V.cham(V.tru(docVanToc(body), vanTocDiem(me.body, me.com, viTriVat(body))), truc);
+        const doDoi = (qA, truc) => V.cham(V.tru(V.cong(viTriVat(body), Q.quay(docQuay(body), dB)), V.cong(viTriVat(me.body), Q.quay(qA, dA))), truc);
+        let khopGia = {
+          enableAngularMotor: function(bat, wDich, xungMax) {
+            let xm = Math.max(-xungMax, Math.min(xungMax, Ip * (wDich - wP)));
+            wP += xm / Ip;
+            let qA = docQuay(me.body), truc = Q.quay(qA, a);
+            let vt = vTruot(truc), x = doDoi(qA, truc), P;
+            // vị trí bánh răng (quy ra cm) kéo xe trượt theo: bù trọng lực trong bước tới và phần lệch còn lại
+            let vd = r * wP + Math.max(-5, Math.min(5, 0.3 * (xP - x) / hBuoc)), chan = false;
+            let bu = m * 981 * hBuoc * truc[1];
+            // hai đầu ray: chặn cứng (va chạm không nảy), kéo xe trượt về nếu lỡ vượt
+            if (x <= S0 && vd <= 0) { vd = Math.min(0.5 * (S0 - x) / hBuoc, 20); chan = true; }
+            else if (x >= S1 && vd >= 0) { vd = Math.max(0.5 * (S1 - x) / hBuoc, -20); chan = true; }
+            if (chan) { wP = 0; xP = x; P = m * (vd - vt) + bu; }
+            else { let Pr = mHd * (vd - vt); wP -= Pr * r / Ip; P = Pr + bu; wP -= bu * r / Ip; }
+            if (Math.abs(P) < 1e-9) return;
+            body.activate();
+            let xung = bv(V.nhan(truc, P)); body.applyCentralImpulse(xung); Ammo.destroy(xung);
+            let nguoc = bv(V.nhan(truc, -P)), rel = bv(V.tru(viTriVat(body), viTriVat(me.body)));
+            me.body.applyImpulse(nguoc, rel); Ammo.destroy(nguoc); Ammo.destroy(rel);
+          }
+        };
+        let dc = new DongCo(v.dongCo, khopGia, 1);
+        ghi.dongCo = dc;
+        self.truocBuoc.push(function(h) {
+          let qA = docQuay(me.body), truc = Q.quay(qA, a);
+          hBuoc = h;
+          // encoder đọc theo vị trí thật của xe trượt
+          let x = doDoi(qA, truc);
+          dc.goc = x / r - wP * h;
+          xP = Math.max(S0, Math.min(S1, xP + r * wP * h));
+          dc.buoc(h, wP);
+        });
+      }
+    });
+
+    // Kẹp gắp: hàm phải chạy theo lệnh của hàm trái (cặp bánh răng), mỗi hàm tự đo góc của mình
+    (banLap.tacDong || []).forEach(function(td) {
+      if (td.loai != 'kep') return;
+      let trai = self.vatPhu[td.vat[0]].dongCo, phai = self.vatPhu[td.vat[1]].dongCo;
+      self.truocBuoc.unshift(function() {
+        phai.cheDo = trai.cheDo; phai.dich = trai.dich; phai.gocDung = trai.gocDung; phai.heSo = trai.heSo;
+      });
+      td.dongCo = trai;
+    });
+
+    // Nam châm điện: lực hút lên vật nhiễm từ (mesh.isMagnetic), phản lực lên vật mang nam châm
+    this.namCham = [];
+    (banLap.tacDong || []).forEach(function(td) {
+      if (td.loai != 'namCham') return;
+      let me = td.vat == 'than' ? { body: thanBody, com: kl.than.tam } : self.vatPhu[td.vat];
+      self.namCham.push({ moTa: td, me: me, u: 0, vatHut: [] });
+    });
+    let NC = SRALinhKien.NAM_CHAM, vatTu = [], lanQuet = -1;
+    function quetVatTu() {
+      vatTu = scene.meshes.filter((m) => m.isMagnetic && m.physicsImpostor && m.physicsImpostor.physicsBody && m.physicsImpostor.mass > 0);
+    }
+    if (this.namCham.length) this.truocBuoc.push(function(h) {
+      if (self.thoiGian - lanQuet > 0.25) { quetVatTu(); lanQuet = self.thoiGian; }
+      for (let nc of self.namCham) {
+        nc.vatHut = [];
+        if (!nc.u) continue;
+        let qMe = docQuay(nc.me.body), pMe = viTriVat(nc.me.body);
+        let mat = V.cong(pMe, Q.quay(qMe, V.tru(nc.moTa.vt, nc.me.com))), n = Q.quay(qMe, nc.moTa.huong);
+        let F0 = nc.u * nc.u * NC.lucGiu;
+        for (let m of vatTu) {
+          let b = m.physicsImpostor.physicsBody;
+          let pB = viTriVat(b), qB = docQuay(b);
+          // điểm gần mặt hút nhất trên hộp bao của vật (trong hệ riêng của vật)
+          let e = m.getBoundingInfo().boundingBox.extendSize, sc = m.scaling || { x: 1, y: 1, z: 1 };
+          let he = [e.x * Math.abs(sc.x), e.y * Math.abs(sc.y), e.z * Math.abs(sc.z)];
+          let l = Q.quay(Q.lienHop(qB), V.tru(mat, pB));
+          let gan = [0, 1, 2].map((i) => Math.max(-he[i], Math.min(he[i], l[i])));
+          let q = V.cong(pB, Q.quay(qB, gan));
+          let dv = V.tru(mat, q), d = V.dai(dv);
+          if (d > NC.tamXa || V.cham(V.nhan(dv, -1), n) < -0.3) continue;      // xa quá, hoặc vật ở sau mặt hút
+          let F = F0 * Math.pow(NC.a / (NC.a + d), 4);
+          let huong = d > 0.05 ? V.nhan(dv, 1 / d) : V.nhan(n, -1);
+          // Lực từ tăng rất nhanh khi khe hở nhỏ: trong một bước con không cho vật lao quá nửa khe hở còn lại
+          // (không thì vật đâm vào mặt nam châm rồi bị bật ra). Áp sát thì lực chỉ vừa đủ giữ, tối đa bằng lực giữ thật.
+          let vDen = V.cham(V.tru(docVanToc(b), vanTocDiem(nc.me.body, nc.me.com, q)), huong);
+          F = Math.max(0, Math.min(F, m.physicsImpostor.mass * (0.5 * d / h - vDen) / h + m.physicsImpostor.mass * 981));
+          let f = bv(V.nhan(huong, F)), rel = bv(V.tru(q, pB));
+          b.activate(); b.applyForce(f, rel); Ammo.destroy(f); Ammo.destroy(rel);
+          let fn = bv(V.nhan(huong, -F)), reln = bv(V.tru(mat, pMe));
+          nc.me.body.applyForce(fn, reln); Ammo.destroy(fn); Ammo.destroy(reln);
+          nc.vatHut.push({ mesh: m, d: d, F: F });
+        }
+      }
+    });
+
     // Chiều dương của góc bản lề theo quy ước của Bullet (đã đo: tấm cản bung ra là góc âm)
     this.dauCanGat = -1;
 
@@ -309,7 +469,15 @@ var SRAXeVatLi = (function() {
     let buocGoc = pl.executeStep.bind(pl);
     pl.executeStep = function(delta, impostors) {
       if (self.daHuy) return buocGoc(delta, impostors);
-      for (let imp of impostors) if (!imp.soft) imp.beforeStep();
+      for (let imp of impostors) {
+        if (imp.soft) continue;
+        imp.beforeStep();
+        // Vật động của sân (khối, bóng, vật nhiễm từ) rơi với trọng lực thật như xe: GEARS đặt 98,1 cho cả sân
+        if (!imp._sraG && imp.physicsBody && !imp.object.sraXe) {
+          imp._sraG = true;
+          if (imp.mass > 0) { let g = bv([0, -G, 0]); imp.physicsBody.setGravity(g); Ammo.destroy(g); }
+        }
+      }
       let n = Math.max(1, Math.min(BUOC_TOI_DA, Math.round(delta / BUOC)));
       let h = Math.min(delta / n, 1.5 * BUOC);
       for (let i = 0; i < n; i++) buocNho(h);
@@ -341,7 +509,7 @@ var SRAXeVatLi = (function() {
       try { for (let k of self.khop) { world.removeConstraint(k); Ammo.destroy(k); } } catch (e) {}
       self.khop = [];
     };
-    [this.than, this.bi, this.canGat, this.servo].concat(this.banh.map((b) => b.imp)).forEach(function(imp) {
+    [this.than, this.bi, this.canGat, this.servo].concat(this.banh.map((b) => b.imp), Object.keys(this.vatPhu).map((k) => self.vatPhu[k].imp)).forEach(function(imp) {
       if (!imp) return;
       let huyGoc = imp.dispose.bind(imp);
       imp.dispose = function() { self.huy(); return huyGoc(); };

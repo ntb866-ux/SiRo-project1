@@ -2,7 +2,7 @@
 
 Xe 2 bánh kiểu xe kit bán lẻ (khung nhôm, motor giảm tốc TT, mạch chủ có nắp, cảm biến dạng mô-đun nối bằng dây RJ25). Toàn bộ hình 3D, hitbox, khối lượng và mô phỏng cảm biến trong thư mục này là mã viết riêng cho Sân Robot Ảo, không dùng thân hộp, bánh và cảm biến có sẵn của GEARS.
 
-Đã có: khung, bánh thường, cảm biến (dò line, màu, siêu âm, chạm, gyro, GPS), servo, bút vẽ và bảng lắp ráp kéo thả. Chưa có: nam châm, kẹp gắp, cánh tay, súng bắn bóng, laze, lidar, camera, bánh omni, mecanum, bánh to và bánh nhỏ.
+Đã có: khung, bánh thường, cảm biến (dò line, màu, siêu âm, chạm, gyro, GPS), servo, bút vẽ, nam châm điện, cơ cấu công tác ở mũi (giá cố định, cánh tay 1 hoặc 2 đoạn, thanh trượt; đầu nam châm hoặc kẹp gắp) và bảng lắp ráp kéo thả. Chưa có: súng bắn bóng, laze, lidar, camera, bánh omni, mecanum, bánh to và bánh nhỏ.
 
 Xe này là robot của mọi sân: robot cũ của GEARS (robot chuẩn `co-ban` và các robot bài học) đã bỏ khỏi các bài. Mỗi bài lắp xe theo tệp code mẫu của bài (`code-mau/<mã-bài>.json`, trường `xe`).
 
@@ -158,6 +158,27 @@ Bút dạ ngắn cắm thẳng đứng qua lỗ giữa tấm đáy, ngay dưới
 
 Cây bút là lưới riêng, nâng hạ theo cuộn. Hitbox của nó gắn vào thân ở vị trí nhấc (ngòi cách sân 3,5 mm): khi hạ, ngòi nỉ mềm chỉ lướt trên sân, coi như không có ma sát. Nét mực là dải phẳng rộng 4 mm sát mặt sân, vẽ theo đường ngòi đi qua; cảm biến không thấy nét mực. Thư viện Python (`Pen`), khối "hạ bút", "nhấc bút", đổi màu, đổi bề rộng nét và phần chấm nét vẽ của các bài bút vẽ dùng được như bút của robot cũ. Cấu hình ghi `"but": true`.
 
+### Nam châm điện
+
+Nam châm điện kiểu KK-P20/15 (đường kính 2 cm, cao 1,5 cm, 30 g, giữ 2,5 kgf khi áp sát vật sắt). Lực hút theo khe hở d từ mặt nam châm tới điểm gần nhất của vật: F = u² · 2,5 kgf · (0,5 / (0,5 + d))⁴, u là mức điện cấp (−100…100 % của lệnh motor, dấu không đổi chiều hút). Khe 1 cm chỉ còn 1,2 % lực giữ, quá 3 cm coi như không hút: muốn nhấc vật phải đưa nam châm sát vào. Lực đặt lên điểm gần nhất của vật, phản lực lên chi tiết mang nam châm; khi khe gần bằng 0, lực chỉ vừa đủ giữ vật (tối đa bằng lực giữ thật) để vật không đâm vào mặt nam châm rồi bật ra. Vật bị hút là vật có `magnetic` trong sân (như GEARS). Lắp được một nam châm dưới gầm (kéo từ khay vào gầm xe, không chồng lên bút) và một nam châm ở đầu cơ cấu công tác. Mỗi nam châm chiếm một cổng động cơ (C, D… nối tiếp sau servo và các motor của cơ cấu) và một ổ trên mạch chủ; chương trình bật bằng lệnh motor như nam châm của robot cũ (`MagnetActuator`).
+
+### Cơ cấu công tác ở mũi
+
+Chỉ gắn ở mũi: đuôi khung là chỗ dây của các mô-đun dưới gầm đi lên mạch chủ. Tấm công tác bắt trên hai chân giá phía mũi, cao hơn ổ cắm của mô-đun dưới mũi; tấm cản của cảm biến chạm chiếm cùng chỗ nên không lắp cùng được, và siêu âm mũi tự nâng lên cho cơ cấu đi bên dưới (7,3 cm với giá cố định và cánh tay, 9,4 cm với thanh trượt). Chọn trong mục "Cơ cấu công tác ở mũi xe" của bảng lắp ráp:
+
+- **Giá cố định**: đầu công tác bắt cứng trước mũi, sát sân.
+- **Cánh tay 1 đoạn**: motor N20 1:298 quay tay quanh trục ngang (`ArmActuator`). 0° là nằm ngang, dương là nâng. Giới hạn góc tính từ hình học (tới đó thì đụng phần khác của xe), ví dụ −35°…76° khi có siêu âm mũi, −35°…90° khi không.
+- **Cánh tay 2 đoạn**: thêm khớp khuỷu, mỗi khớp một motor; góc khuỷu tính so với đoạn 1 (−141°…141°).
+- **Thanh trượt**: xe trượt chạy lên xuống ray đứng nhờ motor N20 1:100 và bánh răng bán kính 0,4 cm (`LinearActuator`); vị trí đọc bằng độ của bánh răng, 143° mỗi cm. Hành trình tới 6 cm, ngắn lại nếu siêu âm mũi thấp.
+
+Đầu công tác là nam châm điện (thêm được một cảm biến màu nhìn xuống cạnh nam châm) hoặc kẹp gắp: hai hàm chạy chung một servo SG90 qua cặp bánh răng (`SwivelActuator`), 0° là khép, mở tới 55°, lúc lắp mở 30°. Hàm có má cao su (ma sát 0,9) nên giữ được khối và kéo theo khi xe chạy.
+
+Motor của khớp bản lề chạy bằng motor khớp của Bullet như bánh xe. Khớp trượt dùng ràng buộc trượt của Bullet để giữ hướng; motor đẩy xe trượt qua một bánh răng ảo mang quán tính rôto quy về trục ra, hai đầu ray tự chặn, encoder đọc theo vị trí thật của xe trượt.
+
+### Robot mẫu
+
+Năm robot mẫu cũ trong menu Robot → Chọn robot đã dựng lại bằng xe khung mBot (`robots/xe-mau.js`, sinh bằng `scripts/robot/tao-xe.js`): Dò đường 1 cảm biến, Dò đường 2 cảm biến, Chạy mê cung, Xe kéo, Xe cần cẩu. Giữ tên, số cảm biến, số cổng (chương trình cũ vẫn chạy) và bộ phận gắn kèm; chỗ nào khung mBot không có vị trí y hệt thì lấy chỗ gần nhất, ghi trong mô tả robot (ví dụ tay của Xe kéo chuyển từ đuôi lên mũi). Chạy mê cung đời 2 và Bắn bóng sơn đổi ở PR sau, khi có laze và súng bắn.
+
 Các khối lệnh và thư viện Python có sẵn đọc được mọi cảm biến. TCRT5000 đứng ở chỗ của cảm biến màu, nên khối "độ sáng phản xạ" trả về 0 đến 100 %. Khối chọn cảm biến "trái / giữa / phải" chỉ dùng các mắt dưới mũi; mắt dưới gầm đọc bằng khối chọn theo số cổng (ví dụ cảm biến màu cổng 3).
 
 ## Số đo
@@ -193,7 +214,7 @@ Những chỗ mô hình chưa đúng hẳn với xe thật, kèm mức sai đã 
 - **HC-SR04.** Mô hình tia hình học: không có phản xạ nhiều lần, không có nhiễu chéo. Ngưỡng 30° là cắt đứt, cảm biến thật yếu dần.
 - **TCRT5000.** Đường đáp ứng theo khoảng cách đọc từ đồ thị trong tài liệu kĩ thuật. Hệ số phản xạ hồng ngoại suy ra từ màu nhìn thấy; vật liệu thật có thể khác (nhựa đen bóng vẫn phản xạ hồng ngoại mạnh).
 - **Dây cảm biến trên tay quay.** Không vẽ dây từ cảm biến trên tay quay về mạch chủ (dây thật xoắn theo tay quay); sơ đồ bảng lắp ráp vẽ dây đó từ servo.
-- **Chưa có bút vẽ.** Các bài vẽ hình cần robot chuẩn cũ.
+- **Cơ cấu công tác.** Không vẽ dây từ motor và đầu công tác về mạch chủ. Nam châm hút theo hộp bao của vật, không theo hình thật; không có từ dư, không hút nhau giữa hai vật sắt.
 - **Không nhận màu.** TCRT5000 chỉ phân biệt sáng và tối, nên bài phân loại ô màu không làm được bằng xe này.
 - **Bài cũ căn theo robot cũ.** Vùng chấm điểm sát tường và quãng trôi khi phanh trong các bài cảm biến chạm, khoảng cách được đo theo kích thước và quán tính của robot `co-ban`. Xe mới dài hơn và dừng gấp hơn nên nhiều lời giải mẫu không đạt đủ sao.
 
@@ -206,6 +227,7 @@ node scripts/xe/kiem-tra-chuyen-dong.js     # 15 phép đo chuyển động so v
 node scripts/xe/kiem-tra-cam-bien.js        # 27 phép đo cảm biến với đáp số biết trước
 node scripts/xe/kiem-tra-ir.js              # chế độ tương tự và số của mắt dò line, đèn báo, Python, bảng lắp ráp
 node scripts/xe/kiem-tra-servo.js           # hướng lắp, tay quay, chương trình Python điều khiển servo, bảng lắp ráp
+node scripts/xe/kiem-tra-co-cau.js          # nam châm, cánh tay, cần cẩu, thanh trượt, kẹp gắp, bảng lắp ráp, 5 robot mẫu
 node scripts/xe/kiem-tra-lap-rap.js         # 1414 bản lắp đều dựng được; kéo thả, bấm chọn, bàn phím, lưu lại
 SIRO_LAP='{"lo":["doLine","cham","doLine","doLine",null]}' node scripts/xe/kiem-tra-hitbox.js   # hitbox của một bản lắp khác
 node scripts/xe/do-fps.js                   # tốc độ khung hình, so với robot chuẩn
