@@ -12,11 +12,11 @@ const so = (x) => String(x).replace('.', ',');
 function gt(v) {
   if (typeof v == 'number') return so(v);
   switch (v[0]) {
-    case 'kc': return 'khoảng cách';
-    case 'cham': return 'đang chạm';
-    case 'goc': return 'góc quay';
-    case 'sang': return 'độ sáng ' + VT[v[1]];
-    case 'mau': return 'mắt ' + VT[v[1]] + ' thấy ' + v[2];
+    case 'kc': return 'khoảng cách phía trước (cm)';
+    case 'cham': return 'cảm biến chạm đang bị nhấn?';
+    case 'goc': return 'góc quay (độ)';
+    case 'sang': return 'độ sáng phản xạ cảm biến ' + VT[v[1]];
+    case 'mau': return 'cảm biến ' + VT[v[1]] + ' thấy màu ' + v[2];
     case 'bien': return v[1];
     case 'va': return gt(v[1]) + ' và ' + gt(v[2]);
     case 'hoac': return '(' + gt(v[1]) + ' hoặc ' + gt(v[2]) + ')';
@@ -31,27 +31,27 @@ function dong(ds, lui) {
     switch (l[0]) {
       case 'di': r.push(t + 'đi tới ' + gt(l[1]) + ' cm'); break;
       case 'lui': r.push(t + 'đi lùi ' + gt(l[1]) + ' cm'); break;
-      case 'phai': r.push(t + 'quay phải ' + gt(l[1]) + ' độ'); break;
-      case 'trai': r.push(t + 'quay trái ' + gt(l[1]) + ' độ'); break;
+      case 'phai': r.push(t + 'quay phải ↻ ' + gt(l[1]) + ' độ'); break;
+      case 'trai': r.push(t + 'quay trái ↺ ' + gt(l[1]) + ' độ'); break;
       case 'chay': r.push(t + 'đi tới mãi'); break;
       case 'chayLui': r.push(t + 'đi lùi mãi'); break;
-      case 'xoay': r.push(t + 'quay ' + (l[1] == 'TRAI' ? 'trái' : 'phải') + ' mãi'); break;
+      case 'xoay': r.push(t + 'quay ' + (l[1] == 'TRAI' ? 'trái ↺' : 'phải ↻') + ' mãi'); break;
       case 'dung': r.push(t + 'dừng lại'); break;
       case 'toc': r.push(t + 'đặt tốc độ ' + gt(l[1]) + ' %'); break;
       case 'banh': r.push(t + 'chạy bánh trái ' + gt(l[1]) + ' % bánh phải ' + gt(l[2]) + ' %'); break;
       case 'quayBanh': r.push(t + 'quay bánh trái ' + gt(l[1]) + ' bánh phải ' + gt(l[2]) + ' ' + (l[3] == 'DO' ? 'độ' : 'vòng')); break;
-      case 'nghi': r.push(t + 'chờ ' + gt(l[1]) + ' giây'); break;
-      case 'cho': r.push(t + 'chờ đến khi ' + gt(l[1])); break;
-      case 'bip': r.push(t + 'bíp'); break;
-      case 'goc0': r.push(t + 'đặt lại góc quay'); break;
-      case 'datBien': r.push(t + 'đặt ' + l[1] + ' = ' + gt(l[2])); break;
-      case 'tangBien': r.push(t + 'thay đổi ' + l[1] + ' thêm ' + gt(l[2])); break;
+      case 'nghi': r.push(t + 'đợi ' + gt(l[1]) + ' giây'); break;
+      case 'cho': r.push(t + 'đợi đến khi ' + gt(l[1])); break;
+      case 'bip': r.push(t + 'phát tiếng bíp và đợi xong'); break;
+      case 'goc0': r.push(t + 'đặt lại góc quay về 0'); break;
+      case 'datBien': r.push(t + 'đặt ' + l[1] + ' bằng ' + gt(l[2])); break;
+      case 'tangBien': r.push(t + 'tăng ' + l[1] + ' thêm ' + gt(l[2])); break;
       case 'lap': r.push(t + 'lặp lại ' + gt(l[1]) + ' lần'); r.push(...dong(l[2], lui + 1)); break;
       case 'lapMai': r.push(t + 'lặp mãi'); r.push(...dong(l[1], lui + 1)); break;
-      case 'lapDen': r.push(t + 'lặp đến khi ' + gt(l[1])); r.push(...dong(l[2], lui + 1)); break;
+      case 'lapDen': r.push(t + 'lặp lại cho đến khi ' + gt(l[1])); r.push(...dong(l[2], lui + 1)); break;
       case 'neu':
         r.push(t + 'nếu ' + gt(l[1]) + ' thì'); r.push(...dong(l[2], lui + 1));
-        if (l[3]) { r.push(t + 'không thì'); r.push(...dong(l[3], lui + 1)); }
+        if (l[3]) { r.push(t + 'nếu không thì'); r.push(...dong(l[3], lui + 1)); }
         break;
       default: r.push(t + l[0]);
     }
@@ -71,6 +71,7 @@ const dm = JSON.parse(fs.readFileSync(path.join(GOC, 'thu-thach/danh-sach.json')
 let md = '# Kho code mẫu cho xe lắp mô-đun\n\n' +
   'Tệp này sinh tự động bằng `node scripts/code-mau/tao-tai-lieu.js` từ các tệp `public/san-robot-ao/code-mau/<mã-bài>.json`. Sửa tệp JSON rồi chạy lại lệnh, đừng sửa tay tệp này.\n\n' +
   '## Dùng trong lớp\n\n' +
+  'Hướng dẫn cho giáo viên và học sinh (có ảnh, đúng tên nút và menu): trang `public/san-robot-ao/huong-dan/xe-va-code-mau.html`, mở từ menu **Trợ giúp → Hướng dẫn xe và code mẫu** hoặc nút cùng tên ở cuối trang **Danh sách bài**.\n\n' +
   'Mở một bài. Bài nào có code mẫu thì dưới đề bài có mục **Xe lắp ráp và code mẫu** với nút **Dùng xe và code mẫu**. Bấm nút thì trang mở lại bài với `&xe=mau` trong địa chỉ: robot của bài được thay bằng xe lắp mô-đun lắp sẵn cảm biến theo đề xuất bên dưới, chương trình mẫu được nạp vào vùng khối.\n\n' +
   '- Bài làm và số sao ở chế độ này lưu riêng, không ghi đè bài làm và số sao của học sinh với robot của bài.\n' +
   '- Muốn đổi chỗ cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**. Nút **Nạp lại xe và code mẫu** trả xe và chương trình về đúng mẫu.\n' +
@@ -98,7 +99,7 @@ for (const c of dm.chang) {
     phan += '### ' + bai.tieuDe + '\n\n' +
       '`' + id + '` · sân `' + bai.san + '` · code mẫu đạt **' + (Array.isArray(m.sao) ? Math.min(...m.sao) + ' đến ' + Math.max(...m.sao) : m.sao) + ' sao** · ' + C.demKhoi(m.chuongTrinh) + ' khối\n\n' +
       '**Xe: ' + m.tenXe + '.** ' + camBien(m.xe) + '.\n\n' + m.giaiThichXe + '\n\n' +
-      '```\nkhi bắt đầu\n' + dong(m.chuongTrinh, 1).join('\n') + '\n```\n\n' + m.giaiThichCode + '\n\n' +
+      '```\nkhi bấm ▶ chạy\n' + dong(m.chuongTrinh, 1).join('\n') + '\n```\n\n' + m.giaiThichCode + '\n\n' +
       (m.ghiChu ? '> ' + m.ghiChu + '\n\n' : '');
   }
   if (phan) md += '## ' + c.ten + '\n\n' + phan;

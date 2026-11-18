@@ -12,7 +12,7 @@
   }
 
   const GOC = 'san-robot-ao/core/';
-  const PB = '?v=1';
+  const PB = '?v=2';
 
   let css = document.createElement('link');
   css.rel = 'stylesheet';

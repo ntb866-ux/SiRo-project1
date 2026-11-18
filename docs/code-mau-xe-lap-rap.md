@@ -4,6 +4,8 @@ Tệp này sinh tự động bằng `node scripts/code-mau/tao-tai-lieu.js` từ
 
 ## Dùng trong lớp
 
+Hướng dẫn cho giáo viên và học sinh (có ảnh, đúng tên nút và menu): trang `public/san-robot-ao/huong-dan/xe-va-code-mau.html`, mở từ menu **Trợ giúp → Hướng dẫn xe và code mẫu** hoặc nút cùng tên ở cuối trang **Danh sách bài**.
+
 Mở một bài. Bài nào có code mẫu thì dưới đề bài có mục **Xe lắp ráp và code mẫu** với nút **Dùng xe và code mẫu**. Bấm nút thì trang mở lại bài với `&xe=mau` trong địa chỉ: robot của bài được thay bằng xe lắp mô-đun lắp sẵn cảm biến theo đề xuất bên dưới, chương trình mẫu được nạp vào vùng khối.
 
 - Bài làm và số sao ở chế độ này lưu riêng, không ghi đè bài làm và số sao của học sinh với robot của bài.
@@ -46,7 +48,7 @@ Mỗi tệp ghi số sao mong đợi (`sao`); lệnh chạy code mẫu trên m�
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đi tới 100 cm
 ```
 
@@ -61,9 +63,9 @@ khi bắt đầu
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đi tới 100 cm
-    quay phải 90 độ
+    quay phải ↻ 90 độ
     đi tới 100 cm
 ```
 
@@ -78,9 +80,9 @@ khi bắt đầu
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đi tới 75 cm
-    quay trái 90 độ
+    quay trái ↺ 90 độ
     đi lùi 85 cm
 ```
 
@@ -95,9 +97,9 @@ khi bắt đầu
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đi tới 75 cm
-    quay phải 90 độ
+    quay phải ↻ 90 độ
     đi tới 75 cm
     đi lùi 125 cm
 ```
@@ -113,10 +115,10 @@ Tiến tới điểm 1, rẽ phải tới điểm 2, rồi lùi thẳng về đi
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     lặp lại 4 lần
         đi tới 75 cm
-        quay phải 90 độ
+        quay phải ↻ 90 độ
 ```
 
 Lặp 4 lần: đi 75 cm, quay phải 90°. Xe đi đúng hình vuông và về ô xuất phát.
@@ -134,10 +136,10 @@ Lặp 4 lần: đi 75 cm, quay phải 90°. Xe đi đúng hình vuông và về 
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     lặp lại 4 lần
         đi tới 100 cm
-        quay phải 90 độ
+        quay phải ↻ 90 độ
 ```
 
 Vòng lặp 4 lần, mỗi lần đi 100 cm rồi quay phải 90°: 3 khối thay cho 8 khối.
@@ -153,7 +155,7 @@ Vòng lặp 4 lần, mỗi lần đi 100 cm rồi quay phải 90°: 3 khối tha
 Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     quay bánh trái 4,5 bánh phải 4,5 vòng
 ```
 
@@ -168,7 +170,7 @@ Bánh xe đường kính 6,37 cm nên chu vi 20 cm. 90 cm ÷ 20 cm = 4,5 vòng.
 Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     quay bánh trái 161 bánh phải -161 độ
     quay bánh trái 3 bánh phải 3 vòng
 ```
@@ -184,7 +186,7 @@ Quay tại chỗ: mỗi bánh lăn trên vòng tròn đường kính bằng kho�
 Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     quay bánh trái 3 bánh phải 3 vòng
 ```
 
@@ -201,9 +203,9 @@ Chu vi 20 cm, 60 cm ÷ 20 cm = 3 vòng.
 Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó. Motor bên phải được cho yếu đi 8 % giống robot của bài.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     chạy bánh trái 50 % bánh phải 54,3 %
-    chờ 3,5 giây
+    đợi 3,5 giây
     dừng lại
 ```
 
@@ -218,9 +220,9 @@ Motor phải yếu 8 % nên cho bánh phải nhiều điện hơn: 50 ÷ 0,92 �
 Bài hiệu chỉnh động cơ chỉ cần hai motor và bộ đếm vòng (encoder) trong motor, nên tháo hết cảm biến. Không có con quay thì xe đi đúng như bánh quay, sai ở đâu thấy ngay ở đó.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     chạy bánh trái 45,5 % bánh phải 45,5 %
-    chờ 3,72 giây
+    đợi 3,72 giây
     dừng lại
 ```
 
@@ -239,11 +241,11 @@ Cần 25 cm/s. Chạy thử đo tốc độ rồi chỉnh phần trăm và thờ
 Công tắc chạm gắn giữa thanh dưới mũi, ngay sau tấm cản: tường ép tấm cản thì công tắc đóng. Thêm con quay để xe chạy thẳng tới tường.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đi tới mãi
-    chờ đến khi đang chạm
+    đợi đến khi cảm biến chạm đang bị nhấn?
     dừng lại
-    bíp
+    phát tiếng bíp và đợi xong
 ```
 
 Chạy mãi, chờ đến khi cảm biến chạm bị nhấn, dừng lại rồi kêu bíp.
@@ -259,10 +261,10 @@ Chạy mãi, chờ đến khi cảm biến chạm bị nhấn, dừng lại rồ
 Một siêu âm HC-SR04 trên giá phía mũi, nhìn thẳng ra trước. Không cần công tắc chạm vì xe không được đụng tường.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đặt tốc độ 30 %
     đi tới mãi
-    chờ đến khi (khoảng cách < 20,5)
+    đợi đến khi (khoảng cách phía trước (cm) < 20,5)
     dừng lại
 ```
 
@@ -277,8 +279,8 @@ khi bắt đầu
 Một siêu âm trên giá phía mũi đo khe trống tới xe đỗ phía trước.
 
 ```
-khi bắt đầu
-    đi tới ((khoảng cách - 3) / 2) cm
+khi bấm ▶ chạy
+    đi tới ((khoảng cách phía trước (cm) - 3) / 2) cm
 ```
 
 Khe trước còn kc cm, đi một nửa khe (trừ phần hở phía sau) là xe nằm giữa hai xe.
@@ -294,12 +296,12 @@ Khe trước còn kc cm, đi một nửa khe (trừ phần hở phía sau) là x
 Một siêu âm trên giá phía mũi. Mỗi cạnh phòng, xe chạy tới khi gần tường phía trước rồi quay phải.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     lặp lại 4 lần
         đi tới mãi
-        chờ đến khi (khoảng cách < 20)
+        đợi đến khi (khoảng cách phía trước (cm) < 20)
         dừng lại
-        quay phải 90 độ
+        quay phải ↻ 90 độ
 ```
 
 Lặp 4 lần: chạy, chờ khoảng cách nhỏ hơn 20 cm, dừng, quay phải 90°.
@@ -313,11 +315,11 @@ Lặp 4 lần: chạy, chờ khoảng cách nhỏ hơn 20 cm, dừng, quay phả
 Một siêu âm trên giá phía mũi. Quay xe để "nhìn" sang phải, sang trái: một cảm biến dùng cho cả ba hướng.
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     lặp mãi
-        quay phải 90 độ
-        lặp đến khi (khoảng cách > 30)
-            quay trái 90 độ
+        quay phải ↻ 90 độ
+        lặp lại cho đến khi (khoảng cách phía trước (cm) > 30)
+            quay trái ↺ 90 độ
         đi tới 50 cm
 ```
 
@@ -334,9 +336,9 @@ Quy tắc bàn tay phải: mỗi ô, quay phải trước; còn tường trướ
 Một mắt dò line TCRT5000 dưới gầm, nằm đúng giữa hai bánh. Mắt thấy vạch là tâm xe đang ở trên vạch, nên dừng ngay là đúng chỗ (mắt dưới mũi thì xe dừng sớm 12 cm).
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     đi tới mãi
-    chờ đến khi (độ sáng giữa < 50)
+    đợi đến khi (độ sáng phản xạ cảm biến giữa < 50)
     dừng lại
 ```
 
@@ -351,13 +353,13 @@ Chạy mãi, chờ đến khi độ sáng phản xạ nhỏ hơn 50 (vạch đen
 Một mắt dò line dưới gầm, giữa hai bánh: đếm tới vạch 4 thì tâm xe đang trên vạch 4.
 
 ```
-khi bắt đầu
-    đặt số vạch = 0
+khi bấm ▶ chạy
+    đặt số vạch bằng 0
     đi tới mãi
-    lặp đến khi (số vạch = 4)
-        chờ đến khi (độ sáng giữa > 50)
-        chờ đến khi (độ sáng giữa < 50)
-        thay đổi số vạch thêm 1
+    lặp lại cho đến khi (số vạch = 4)
+        đợi đến khi (độ sáng phản xạ cảm biến giữa > 50)
+        đợi đến khi (độ sáng phản xạ cảm biến giữa < 50)
+        tăng số vạch thêm 1
     dừng lại
 ```
 
@@ -372,15 +374,15 @@ Biến đếm số vạch. Mỗi vạch: chờ ra nền trắng rồi chờ gặ
 Một mắt dò line dưới gầm, giữa hai bánh, để khi đọc biển màu thì tâm xe đang ở giữa ô. TCRT5000 không phân biệt được màu, chỉ đo ánh sáng hồng ngoại hắt lại. Đo trên sân này: nền trắng khoảng 88, ô đỏ khoảng 98 (mực đỏ gần như trong suốt với hồng ngoại, tấm màu lại gần mắt hơn 1 mm), ô xanh lá khoảng 69. Vì vậy phân biệt đỏ và xanh bằng độ sáng phản xạ chứ không bằng khối "thấy màu".
 
 ```
-khi bắt đầu
+khi bấm ▶ chạy
     lặp lại 2 lần
         đi tới mãi
-        chờ đến khi ((độ sáng giữa > 93) hoặc (độ sáng giữa < 80))
+        đợi đến khi ((độ sáng phản xạ cảm biến giữa > 93) hoặc (độ sáng phản xạ cảm biến giữa < 80))
         đi tới 7 cm
-        nếu (độ sáng giữa > 93) thì
-            quay trái 90 độ
-        không thì
-            quay phải 90 độ
+        nếu (độ sáng phản xạ cảm biến giữa > 93) thì
+            quay trái ↺ 90 độ
+        nếu không thì
+            quay phải ↻ 90 độ
         đi tới 15 cm
     đi tới 35 cm
 ```
@@ -398,12 +400,12 @@ Lặp 2 lần: chạy tới khi độ sáng trên 93 hoặc dưới 80 (gặp ô
 Một mắt dò line giữa thanh dưới mũi: mắt nằm trước trục bánh 12 cm nên xe "nhìn trước" đường và rẽ kịp. TCRT5000 không nhận ra màu xanh của ô đích, nên dùng thêm con quay: đường này chỉ có khúc cua cuối cùng làm xe quay về hướng trái (góc âm).
 
 ```
-khi bắt đầu
-    đặt lại góc quay
-    lặp đến khi (góc quay < -80)
-        nếu (độ sáng giữa < 50) thì
+khi bấm ▶ chạy
+    đặt lại góc quay về 0
+    lặp lại cho đến khi (góc quay (độ) < -80)
+        nếu (độ sáng phản xạ cảm biến giữa < 50) thì
             chạy bánh trái 30 % bánh phải 60 %
-        không thì
+        nếu không thì
             chạy bánh trái 60 % bánh phải 30 %
     đi tới 30 cm
     dừng lại
@@ -420,15 +422,15 @@ Bám mép trái của đường: mắt thấy đen thì bánh phải nhanh hơn 
 Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh chỉ 4 cm (không đặt dưới mũi). Ở góc vuông xe phải quay tại chỗ; mắt càng xa trục bánh thì khi quay càng quét ngang nhanh, lướt qua đường rộng 2 cm mà chương trình không kịp đọc. Đặt gần trục, mắt quét chậm và bắt được đường.
 
 ```
-khi bắt đầu
-    lặp đến khi (độ sáng trái < 75) và (độ sáng phải < 75) và (độ sáng giữa > 30)
-        nếu (độ sáng trái < 50) thì
+khi bấm ▶ chạy
+    lặp lại cho đến khi (độ sáng phản xạ cảm biến trái < 75) và (độ sáng phản xạ cảm biến phải < 75) và (độ sáng phản xạ cảm biến giữa > 30)
+        nếu (độ sáng phản xạ cảm biến trái < 50) thì
             chạy bánh trái -15 % bánh phải 30 %
-        không thì
-            nếu (độ sáng phải < 50) thì
+        nếu không thì
+            nếu (độ sáng phản xạ cảm biến phải < 50) thì
                 chạy bánh trái 30 % bánh phải -15 %
-            không thì
-                nếu (độ sáng giữa < 50) thì
+            nếu không thì
+                nếu (độ sáng phản xạ cảm biến giữa < 50) thì
                     chạy bánh trái 30 % bánh phải 30 %
     đi tới 21 cm
     dừng lại
@@ -447,14 +449,14 @@ Mắt trái thấy đen thì quay trái tại chỗ, mắt phải thấy đen th
 Chỉ giữ con quay (gyro) trên nắp mạch chủ, tháo hết cảm biến khác cho xe nhẹ. Khối "đi … cm" và "quay … độ" dùng con quay để tự sửa hướng, nên xe đi thẳng và quay đúng góc.
 
 ```
-khi bắt đầu
-    đặt lại góc quay
+khi bấm ▶ chạy
+    đặt lại góc quay về 0
     đặt tốc độ 40 %
-    quay phải mãi
-    chờ đến khi (góc quay > 45)
+    quay phải ↻ mãi
+    đợi đến khi (góc quay (độ) > 45)
     đặt tốc độ 10 %
-    quay phải mãi
-    chờ đến khi (góc quay > 88)
+    quay phải ↻ mãi
+    đợi đến khi (góc quay (độ) > 88)
     dừng lại
 ```
 
@@ -469,10 +471,10 @@ khi bắt đầu
 Con quay để biết xe bị đẩy lệch bao nhiêu, siêu âm phía mũi để dừng trước tường đích.
 
 ```
-khi bắt đầu
-    đặt lại góc quay
-    lặp đến khi (khoảng cách < 20)
-        chạy bánh trái (40 - (2 * góc quay)) % bánh phải (40 + (2 * góc quay)) %
+khi bấm ▶ chạy
+    đặt lại góc quay về 0
+    lặp lại cho đến khi (khoảng cách phía trước (cm) < 20)
+        chạy bánh trái (40 - (2 * góc quay (độ))) % bánh phải (40 + (2 * góc quay (độ))) %
     dừng lại
 ```
 
