@@ -240,7 +240,16 @@ function phanMot(bc) {
   await page.evaluate(() => localStorage.removeItem('sanRobotAo.xeLapRap'));
   await napXe(page);
   const chup = async (ten) => { if (thuMucAnh) await page.screenshot({ path: path.join(thuMucAnh, ten + '.png') }); };
-  const tam = async (sel) => { const b = await page.locator(sel).first().boundingBox(); return [b.x + b.width / 2, b.y + b.height / 2]; };
+  // khay dài hơn khung nhìn: cuộn cho thẻ hiện ra; nếu sơ đồ bị cuộn theo thì dời điểm đích (tính trước) đi đúng chừng ấy
+  const viTriSoDo = () => page.evaluate(() => { let r = $('.sra-lr-so-do')[0]; return r ? [r.getBoundingClientRect().left, r.getBoundingClientRect().top] : [0, 0]; });
+  let lechCuon = [0, 0];
+  const tam = async (sel) => {
+    let p0 = await viTriSoDo();
+    await page.locator(sel).first().scrollIntoViewIfNeeded();
+    let p1 = await viTriSoDo();
+    lechCuon = [p1[0] - p0[0], p1[1] - p0[1]];
+    const b = await page.locator(sel).first().boundingBox(); return [b.x + b.width / 2, b.y + b.height / 2];
+  };
   const trangThai = () => page.evaluate(() => ({
     c: SRABangLapRap.cauHinh, tb: $('.sra-lr-thong-bao').text(),
     cb: robot.components.map((c) => c.port + ':' + c.type).join(' '),
@@ -249,7 +258,10 @@ function phanMot(bc) {
     luu: localStorage.getItem('sanRobotAo.xeLapRap')
   }));
   const keo = async (tu, den) => {
-    const a = typeof tu == 'string' ? await tam(tu) : tu, b = typeof den == 'string' ? await tam(den) : den;
+    lechCuon = [0, 0];
+    const a = typeof tu == 'string' ? await tam(tu) : tu;
+    let b = typeof den == 'string' ? await tam(den) : den;
+    if (typeof den != 'string') b = [b[0] + lechCuon[0], b[1] + lechCuon[1]];
     await page.mouse.move(a[0], a[1]); await page.mouse.down();
     await page.mouse.move(a[0] + 8, a[1] + 8, { steps: 3 }); await page.mouse.move(b[0], b[1], { steps: 8 });
     await page.mouse.up();

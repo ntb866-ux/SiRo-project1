@@ -41,12 +41,17 @@ var SRABangLapRap = new function() {
     cham: { ten: T('Chạm', 'Touch'), tenDay: T('cảm biến chạm', 'touch sensor'), vung: 'duoi', moTa: T('Báo khi tấm cản ở mũi xe bị ép vào', 'Signals when the front bumper is pressed') },
     gyro: { ten: 'Gyro', tenDay: T('cảm biến gyro', 'gyro sensor'), vung: 'nap', moTa: T('Đo góc xe đã quay', 'Measures how far the car has turned') },
     gps: { ten: 'GPS', tenDay: T('mô-đun GPS', 'GPS module'), vung: 'nap', moTa: T('Cho biết toạ độ của xe trên sân', 'Gives the car position on the field') },
-    servo: { ten: 'Servo', tenDay: T('servo SG90', 'SG90 servo'), vung: 'nap', moTa: T('Quay tay quay tới góc 0–180° (động cơ C); gắn được siêu âm, dò line lên tay quay', 'Turns its arm to 0–180° (motor C); ultrasonic and line sensors can mount on the arm') },
+    servo: { ten: 'Servo', tenDay: T('servo SG90', 'SG90 servo'), vung: 'nap', moTa: T('Quay tay quay tới góc 0–180° (một cổng động cơ); gắn được siêu âm, laze, dò line, cảm biến màu nhìn xa lên tay quay', 'Turns its arm to 0–180° (one motor port); ultrasonic, laser, line and long-range color sensors can mount on the arm') },
+    laze: { ten: 'Laze', tenDay: T('cảm biến laze VL53L1X', 'VL53L1X laser sensor'), vung: 'gia', moTa: T('Đo khoảng cách bằng tia laze tới 4 m, chùm hẹp (gắn lên giá như siêu âm, hoặc lên tay quay servo)', 'Measures distance with a laser beam up to 4 m, narrow beam (mounts on a bracket like the ultrasonic, or on the servo arm)') },
+    camera: { ten: 'Camera', tenDay: T('camera OV2640', 'OV2640 camera'), vung: 'gia', moTa: T('Chụp ảnh 100 × 100 điểm, tìm vùng màu (gắn lên giá)', 'Takes 100 × 100 pixel images and finds color blobs (mounts on a bracket)') },
+    mauXa: { ten: T('Màu nhìn xa', 'Far color'), tenDay: T('cảm biến màu nhìn xa', 'long-range color sensor'), vung: 'servo', moTa: T('Đọc màu vật cách tới 30 cm (chỉ gắn lên tay quay servo)', 'Reads the color of objects up to 30 cm away (servo arm only)') },
+    lidar: { ten: 'Lidar', tenDay: T('lidar LD06', 'LD06 lidar'), vung: 'nap', moTa: T('Quét khoảng cách 360° quanh xe, mỗi độ một số đo, xa tới 12 m', 'Scans distance 360° around the car, one reading per degree, up to 12 m') },
     namCham: { ten: T('Nam châm', 'Magnet'), tenDay: T('nam châm điện KK-P20/15', 'KK-P20/15 electromagnet'), vung: 'gam', moTa: T('Hút vật bằng sắt khi có điện (một cổng động cơ); gắn dưới gầm, hoặc làm đầu công tác ở mục Cơ cấu công tác', 'Attracts iron objects while powered (one motor port); mounts under the car, or as the tool in the Tool mechanism section') }
   };
-  const THU_TU = ['sieuAm', 'doLine', 'mau', 'cham', 'gyro', 'gps', 'servo', 'but', 'namCham'];
-  const TEN_VUNG = T({ gam: 'gầm xe', duoi: 'thanh dưới mũi xe', gia: 'giá siêu âm', 'gia:truoc': 'giá phía mũi', 'gia:trai': 'giá bên trái', 'gia:phai': 'giá bên phải', 'gia:sau': 'giá phía đuôi', nap: 'nắp mạch chủ', tam: 'tâm quay giữa hai bánh' },
-    { gam: 'underside', duoi: 'front bar', gia: 'ultrasonic bracket', 'gia:truoc': 'front bracket', 'gia:trai': 'left bracket', 'gia:phai': 'right bracket', 'gia:sau': 'rear bracket', nap: 'main board cover', tam: 'turning center between the wheels' });
+  const THU_TU = ['sieuAm', 'laze', 'camera', 'doLine', 'mau', 'cham', 'gyro', 'gps', 'lidar', 'servo', 'but', 'namCham'];
+  const laGia = (loai) => !!LOAI[loai] && LOAI[loai].vung == 'gia';
+  const TEN_VUNG = T({ gam: 'gầm xe', duoi: 'thanh dưới mũi xe', gia: 'giá cảm biến', 'gia:truoc': 'giá phía mũi', 'gia:trai': 'giá bên trái', 'gia:phai': 'giá bên phải', 'gia:sau': 'giá phía đuôi', nap: 'nắp mạch chủ', tam: 'tâm quay giữa hai bánh' },
+    { gam: 'underside', duoi: 'front bar', gia: 'sensor bracket', 'gia:truoc': 'front bracket', 'gia:trai': 'left bracket', 'gia:phai': 'right bracket', 'gia:sau': 'rear bracket', nap: 'main board cover', tam: 'turning center between the wheels' });
   // vùng v có nhận được loại cảm biến này không
   const hopVung = (loai, v) => !!v && (LOAI[loai].vung == 'gia' ? v.indexOf('gia:') == 0 : v == LOAI[loai].vung || ((loai == 'doLine' || loai == 'mau') && v == 'gam'));
   // mô-đun m (trong cấu hình hoặc bóng thử) có nằm dưới gầm không: chỉ mô-đun dưới gầm có toạ độ z
@@ -132,7 +137,7 @@ var SRABangLapRap = new function() {
     return ds[Number(p[1])] || null;
   }
   function demLoai(c, loai) {
-    if (loai == 'sieuAm') return c.sa.length + soGanServo(c, 'sieuAm');
+    if (laGia(loai)) return c.sa.filter((m) => (m.loai || 'sieuAm') == loai).length + soGanServo(c, loai);
     if (loai == 'but') return c.but ? 1 : 0;
     let dau = c.co && (c.co.dau == loai || (loai == 'mau' && c.co.mau)) ? 1 : 0;      // trên cơ cấu công tác
     return c.duoi.concat(c.tren, c.gam).filter((m) => m.loai == loai).length + soGanServo(c, loai) + dau;
@@ -145,7 +150,7 @@ var SRABangLapRap = new function() {
   const LOI_HET_O = T('Mạch chủ chỉ có ' + L.SO_O + ' ổ cắm và đã cắm đủ. Tháo bớt một cảm biến trước.', 'The main board has only ' + L.SO_O + ' sockets and they are all in use. Remove a sensor first.');
   // Khoá của mô-đun loai ở vị trí (x, z) trong cấu hình c
   function timKhoa(c, loai, x, z) {
-    if (loai == 'sieuAm') return c.sa.some((m) => m.gia == x) ? 'sa:' + x : null;      // x: tên giá
+    if (laGia(loai)) return c.sa.some((m) => m.gia == x) ? 'sa:' + x : null;      // x: tên giá
     if (loai == 'but') return c.but ? 'but' : null;
     let ten = (loai == 'doLine' || loai == 'mau' || loai == 'namCham') && z != null ? 'gam' : (LOAI[loai].vung == 'duoi' ? 'duoi' : 'tren'), ds = c[ten];
     let i = ds.findIndex((m) => m.loai == loai && Math.abs(m.x - x) < 1e-6 && (z == null || Math.abs(m.z - z) < 1e-6));
@@ -195,18 +200,18 @@ var SRABangLapRap = new function() {
       let gh = L.gioiHanU(gia, gocXoay), u = tron2(kep(lam(diem.u, buoc), gh[0], gh[1]));
       let doi = null;
       if (dangCo) {
-        if (!goc) return { loi: viet(tenGia) + T(' đã có cảm biến siêu âm. Mỗi giá gắn một cái; kéo vào giá khác còn trống.', ' already has an ultrasonic sensor. One per bracket; drag it to a free bracket.') };
+        if (!goc) return { loi: viet(tenGia) + T(' đã có ', ' already has a ') + LOAI[dangCo.loai || 'sieuAm'].tenDay + T('. Mỗi giá gắn một mô-đun; kéo vào giá khác còn trống.', '. One module per bracket; drag it to a free bracket.') };
         // đổi chỗ: cảm biến đang ở giá đích chuyển sang giá của cảm biến đang kéo
         c.sa = c.sa.filter((m) => m.gia != gia);
         let gh2 = L.gioiHanU(goc.gia, goc.goc);
-        doi = { gia: goc.gia, u: tron2(kep(goc.u, gh2[0], gh2[1])), goc: goc.goc, cao: goc.cao };      // độ cao gắn với giá: mỗi giá giữ độ cao của mình
+        doi = { gia: goc.gia, loai: dangCo.loai, u: tron2(kep(goc.u, gh2[0], gh2[1])), goc: goc.goc, cao: goc.cao };      // độ cao gắn với giá: mỗi giá giữ độ cao của mình
         c.sa.push(doi);
       }
-      c.sa.push({ gia: gia, u: u, goc: gocXoay, cao: goc && goc.gia == gia ? goc.cao : (dangCo ? dangCo.cao : null) });
+      c.sa.push({ gia: gia, loai: loai, u: u, goc: gocXoay, cao: goc && goc.gia == gia ? goc.cao : (dangCo ? dangCo.cao : null) });
       let cc = L.chuanHoaCauHinh(c), den = 'sa:' + gia;
       if (JSON.stringify(cc) == JSON.stringify(c0) && tu == den) return { loi: '', khongDoi: true, den: den, c: cc };
       return { c: cc, den: den, doi: doi ? 'sa:' + doi.gia : null,
-        tb: doi ? T('Đã đổi chỗ hai cảm biến siêu âm.', 'Swapped the two ultrasonic sensors.') : T('Đã gắn ', 'Mounted the ') + LOAI[loai].tenDay + T(' lên ', ' on the ') + tenGia + ', ' + (L.GIA[gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(u) + ' cm.' + ghiNang(goc && goc.gia == gia ? goc.cao : null, cc, gia) };
+        tb: doi ? T('Đã đổi chỗ hai mô-đun trên giá.', 'Swapped the two bracket modules.') : T('Đã gắn ', 'Mounted the ') + LOAI[loai].tenDay + T(' lên ', ' on the ') + tenGia + ', ' + (L.GIA[gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(u) + ' cm.' + ghiNang(goc && goc.gia == gia ? goc.cao : null, cc, gia) };
     }
 
     if (diem.vung == 'tam') {
@@ -377,13 +382,13 @@ var SRABangLapRap = new function() {
     if (m.loai == 'but') return { loi: T('Bút vẽ chỉ gắn được ở tâm quay.', 'The pen only mounts at the turning center.') };
     let c = tho(self.cauHinh); boMoDun(c, tu);
     for (let k = 1; k <= 40; k++) {
-      if (m.loai == 'sieuAm') {
+      if (laGia(m.loai)) {
         let doc = L.GIA[m.gia].truc == 'z', d = doc ? dz : dx, gh = L.gioiHanU(m.gia, m.goc), u = tron2(m.u + d);
         if (d == 0) return null;
-        if (u < gh[0] - 1e-6 || u > gh[1] + 1e-6) return { loi: T('Cảm biến siêu âm đã ra tới mép giá.', 'The ultrasonic sensor is at the edge of the bracket.') };
-        c.sa.push({ gia: m.gia, u: u, goc: m.goc, cao: m.cao });
+        if (u < gh[0] - 1e-6 || u > gh[1] + 1e-6) return { loi: viet(LOAI[m.loai].tenDay) + T(' đã ra tới mép giá.', ' is at the edge of the bracket.') };
+        c.sa.push({ gia: m.gia, loai: m.loai, u: u, goc: m.goc, cao: m.cao });
         let cc = L.chuanHoaCauHinh(c);
-        return { c: cc, den: tu, tb: T('Siêu âm ' + L.GIA[m.gia].ten + ' ở ', 'Ultrasonic ' + L.GIA[m.gia].ten + ' at ') + (doc ? 'z' : 'x') + ' = ' + soViet(u) + ' cm.' + ghiNang(m.cao, cc, m.gia) };
+        return { c: cc, den: tu, tb: LOAI[m.loai].ten + ' ' + L.GIA[m.gia].ten + T(' ở ', ' at ') + (doc ? 'z' : 'x') + ' = ' + soViet(u) + ' cm.' + ghiNang(m.cao, cc, m.gia) };
       }
       if (laGam(m)) {
         let x = tron2(m.x + k * dx), z = tron2(m.z + k * dz), G = L.GAM;
@@ -463,7 +468,7 @@ var SRABangLapRap = new function() {
       : T('. Cổng ' + cb.cong.slice(2) + ' trong chương trình, cắm ổ ' + cb.oMach + ' trên mạch chủ.', '. Port ' + cb.cong.slice(2) + ' in the program, plugged into socket ' + cb.oMach + ' on the main board.');
     if (m.loai == 'but') return T('Bút vẽ ở tâm quay, ngay giữa hai bánh: xe quay tại chỗ thì ngòi bút đứng yên', 'Pen at the turning center, right between the wheels: when the car turns on the spot the tip stays still') + congMach;
     if (m.servo != null) return viet(LOAI[m.loai].tenDay) + T(' trên tay quay servo, điểm gắn ', ' on the servo arm, mount point ') + (m.servo + 1) + congMach;
-    let viTri = m.loai == 'sieuAm' ? T('trên ', 'on the ') + TEN_VUNG['gia:' + m.gia] + ', ' + (L.GIA[m.gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(m.u) + T(' cm, cao ', ' cm, height ') + soViet(m.cao) + ' cm, ' + moTaGoc(m.goc)
+    let viTri = laGia(m.loai) && m.gia ? T('trên ', 'on the ') + TEN_VUNG['gia:' + m.gia] + ', ' + (L.GIA[m.gia].truc == 'x' ? 'x' : 'z') + ' = ' + soViet(m.u) + T(' cm, cao ', ' cm, height ') + soViet(m.cao) + ' cm, ' + moTaGoc(m.goc)
       : laGam(m) ? T('dưới gầm xe, x = ', 'under the car, x = ') + soViet(m.x) + ' cm, z = ' + soViet(m.z) + ' cm'
       : (LOAI[m.loai].vung == 'duoi' ? T('dưới mũi xe, ', 'under the nose, ') + moTaX(m.x) : T('trên nắp mạch chủ, x = ', 'on the main board cover, x = ') + soViet(m.x) + ' cm, z = ' + soViet(m.z) + ' cm');
     return viet(ten) + ' ' + viTri + congMach;
@@ -471,11 +476,11 @@ var SRABangLapRap = new function() {
   function lyDoKhongNhan(vung, loai) {
     if (!vung) return '';
     let dung = THU_TU.filter((l) => hopVung(l, vung)).map((l) => LOAI[l].tenDay);
-    let o = LOAI[loai].vung == 'gia' ? T('một trong bốn giá siêu âm (trước, trái, phải, sau)', 'one of the four ultrasonic brackets (front, left, right, back)') : TEN_VUNG[LOAI[loai].vung] + (loai == 'doLine' || loai == 'mau' ? T(' hoặc gầm xe', ' or the underside') : '');
+    let o = LOAI[loai].vung == 'gia' ? T('một trong bốn giá cảm biến (trước, trái, phải, sau)', 'one of the four sensor brackets (front, left, right, back)') : TEN_VUNG[LOAI[loai].vung] + (loai == 'doLine' || loai == 'mau' ? T(' hoặc gầm xe', ' or the underside') : '');
     if (vung == 'gam') return T('Gầm xe chỉ gắn được mắt dò line, cảm biến màu và nam châm điện. ', 'Only line sensors, color sensors and the electromagnet mount under the car. ') + viet(LOAI[loai].tenDay) + T(' gắn ở ', ' mounts on the ') + o + T(': bấm "Nhìn từ trên" để thấy chỗ đó.', ': press "Top view" to see it.');
     return viet(TEN_VUNG[vung]) + T(' chỉ gắn được ', ' only takes ') + dung.join(T(' hoặc ', ' or ')) + '. ' + viet(LOAI[loai].tenDay) + T(' gắn ở ', ' mounts on the ') + o + '.';
   }
-  const khoaCua = (cb) => cb.loai == 'but' ? 'but' : cb.servo != null ? 'servo:' + cb.servo : cb.loai == 'sieuAm' ? 'sa:' + cb.gia : (cb.gam != null ? 'gam:' + cb.gam : (cb.duoi != null ? 'duoi:' + cb.duoi : 'tren:' + cb.tren));
+  const khoaCua = (cb) => cb.loai == 'but' ? 'but' : cb.servo != null ? 'servo:' + cb.servo : laGia(cb.loai) && cb.gia ? 'sa:' + cb.gia : (cb.gam != null ? 'gam:' + cb.gam : (cb.duoi != null ? 'duoi:' + cb.duoi : 'tren:' + cb.tren));
 
   // ---------- Vẽ ----------
   function svg(ten, thuoc, cha) {
@@ -600,6 +605,16 @@ var SRABangLapRap = new function() {
     if (loai == 'sieuAm') {
       hcn(0, 0, 4.7, 1.9, '#1f6fb5', 0.25);
       for (let s of [-1, 1]) { tron(s * 1.3, 0, 0.8, '#d7d9dc'); tron(s * 1.3, 0, 0.55, '#8d9299'); tron(s * 1.3, 0, 0.18, '#d7d9dc'); }
+    } else if (loai == 'laze') {
+      hcn(0, 0, 3.0, 1.0, '#4b2a7a', 0.2);
+      hcn(0, -0.2, 0.9, 0.45, '#1b1d22', 0.08); tron(-0.2, -0.3, 0.12, '#e8505b'); tron(0.2, -0.3, 0.12, '#7fb6ff');
+      for (let s of [-1, 1]) tron(s * 1.15, 0.1, 0.18, '#d7d9dc');
+    } else if (loai == 'camera') {
+      hcn(0, 0, 3.6, 2.1, '#1f6fb5', 0.25);
+      hcn(0, -0.35, 1.6, 1.2, '#1b1d22', 0.12); tron(0, -0.6, 0.55, '#3a3f47'); tron(0, -0.6, 0.3, '#0c0c0e', { stroke: '#7fb6ff', 'stroke-width': 0.06 });
+    } else if (loai == 'lidar') {
+      hcn(0, 0, 3.9, 3.9, '#1b1d22', 0.4);
+      tron(0, 0, 1.75, '#2a2d33'); tron(0, 0, 1.2, '#3a3f47'); hcn(0, -0.9, 0.9, 0.35, '#e8505b', 0.08);
     } else if (loai == 'doLine') {
       hcn(0, 0, 1.3, 2.0, '#1b1d22', 0.18);
       // TCRT5000 dọc theo thân xe: đầu phát (xanh nhạt) phía mũi, đầu thu (đen) phía sau
@@ -651,28 +666,29 @@ var SRABangLapRap = new function() {
   // Siêu âm: điểm đặt là khớp xoay (giữa mặt sau vỏ); goc SVG = hướng của giá (gocN) trừ góc xoay
   const GOC_SVG = { truoc: 0, trai: -90, phai: 90, sau: 180 };
   function hinhMoDun(m) {
-    if (m.loai == 'sieuAm') {
-      let g = L.GIA[m.gia], day0 = 2.35 * Math.sin(Math.abs(m.goc) * Math.PI / 180), p, ra;
+    if (laGia(m.loai) && m.gia) {
+      let w = m.loai == 'laze' ? 3.0 : m.loai == 'camera' ? 3.6 : 4.7, hh = m.loai == 'laze' ? 1.0 : m.loai == 'camera' ? 2.1 : 1.9;
+      let g = L.GIA[m.gia], day0 = w / 2 * Math.sin(Math.abs(m.goc) * Math.PI / 180), p, ra;
       if (m.gia == 'truoc') { p = [m.u, ZG + day0]; ra = [m.u, ZG - 0.3]; }
       else if (m.gia == 'sau') { p = [m.u, g.mat - day0]; ra = [m.u, -5.05]; }
       else { let sg = Math.sign(g.mat); p = [g.mat + sg * day0, m.u]; ra = [sg * 5.55, m.u]; }
-      return { x: p[0], z: p[1], goc: GOC_SVG[m.gia] - m.goc, goc0: GOC_SVG[m.gia], tiLe: 1, w: 4.7, h: 1.9, lech: 0.95, ra: ra };
+      return { x: p[0], z: p[1], goc: GOC_SVG[m.gia] - m.goc, goc0: GOC_SVG[m.gia], tiLe: 1, w: w, h: hh, lech: hh / 2, ra: ra };
     }
     if (m.loai == 'but') return { x: 0, z: 0, goc: 0, tiLe: 1, w: 2.4, h: 2.4, lech: 0, ra: [0, -3.4] };
     if (laGam(m)) { let w = L.nuaGam(m.loai); return { x: m.x, z: m.z, goc: 0, tiLe: 1, w: 2 * w, h: m.loai == 'namCham' ? 2.0 : 2.0, lech: 0, ra: [m.x, m.z - (m.loai == 'namCham' ? 1.0 : L.GAM.nuaDai) - 1.9] }; }
     if (LOAI[m.loai].vung == 'duoi') return { x: KX * m.x, z: ZB, goc: 0, tiLe: TI_LE_DUOI, w: 1.5, h: 2.0, lech: 0, ra: [KX * m.x, ZB - 1.0 * TI_LE_DUOI] };
     let k = L.KHUON_NAP[m.loai];
-    return { x: m.x, z: m.z, goc: 0, tiLe: 1, w: 2 * k.nx, h: m.loai == 'gyro' ? 2.6 : (m.loai == 'servo' ? 2.0 : 2.9), lech: 0, ra: [m.x, m.z + k.z0] };
+    return { x: m.x, z: m.z, goc: 0, tiLe: 1, w: 2 * k.nx, h: m.loai == 'gyro' ? 2.6 : m.loai == 'servo' ? 2.0 : m.loai == 'lidar' ? 3.9 : 2.9, lech: 0, ra: [m.x, m.z + k.z0] };
   }
   function veMoDun(cha, m, khoa, them) {
     let h = hinhMoDun(m);
     let g = svg('g', Object.assign({ 'class': 'sra-lr-mo-dun', 'data-cho': khoa, 'data-loai': m.loai, tabindex: 0, role: 'button',
       transform: 'translate(' + so(h.x) + ' ' + so(Y(h.z)) + ')' + (h.goc ? ' rotate(' + so(h.goc) + ')' : '') }, them || {}), cha);
     let trong = svg('g', { transform: 'translate(0 ' + so(-h.lech * h.tiLe) + ')' }, g);
-    if (m.loai == 'sieuAm') {
-      // chùm sóng 15° phía trước (vẽ ngắn, chỉ để thấy hướng)
-      let nua = 7.5 * Math.PI / 180, dai = 3.6, y0 = -0.95 * h.tiLe;
-      svg('path', { 'class': 'sra-lr-chum', d: 'M 0 ' + so(y0) + ' L ' + so(-dai * Math.tan(nua) - 0.9) + ' ' + so(y0 - dai) + ' L ' + so(dai * Math.tan(nua) + 0.9) + ' ' + so(y0 - dai) + ' Z' }, trong);
+    if (laGia(m.loai) && m.gia) {
+      // chùm sóng 15° phía trước (vẽ ngắn, chỉ để thấy hướng); laze chùm hẹp, camera góc nhìn rộng
+      let nua = (m.loai == 'laze' ? 2 : m.loai == 'camera' ? 25 : 7.5) * Math.PI / 180, dai = 3.6, y0 = -h.h / 2 * h.tiLe, mo = m.loai == 'sieuAm' ? 0.9 : 0.3;
+      svg('path', { 'class': 'sra-lr-chum', d: 'M 0 ' + so(y0) + ' L ' + so(-dai * Math.tan(nua) - mo) + ' ' + so(y0 - dai) + ' L ' + so(dai * Math.tan(nua) + mo) + ' ' + so(y0 - dai) + ' Z' }, trong);
     }
     if (laGam(m)) {
       // ổ RJ25 ngay sau mạch đầu đo (cũng treo dưới tấm đáy)
@@ -791,12 +807,12 @@ var SRABangLapRap = new function() {
       // số cổng ở góc trên bên phải của mô-đun (tính theo góc xoay của mô-đun)
       let h = hinhMoDun(m), t = h.goc * Math.PI / 180;
       let lx = h.w / 2 * h.tiLe - 0.1, ly = -(h.lech + h.h / 2) * h.tiLe + 0.1;
-      if (m.loai == 'sieuAm') { lx = h.w / 2 * h.tiLe + 0.45; ly = -0.4; }     // siêu âm: cạnh sau bên phải (núm xoay ở phía trước)
+      if (laGia(m.loai) && m.gia) { lx = h.w / 2 * h.tiLe + 0.45; ly = -0.4; }     // siêu âm: cạnh sau bên phải (núm xoay ở phía trước)
       let bx = h.x + lx * Math.cos(t) - ly * Math.sin(t), by = Y(h.z) + lx * Math.sin(t) + ly * Math.cos(t);
       let gc = svg('g', { 'class': 'sra-lr-nhan-cong' }, s);
       svg('circle', { 'class': 'sra-lr-cong', cx: so(bx), cy: so(by), r: 0.74 }, gc);
       svg('text', { 'class': 'sra-lr-so-cong', x: so(bx), y: so(by + 0.37) }, gc).textContent = congCua[khoa];
-      if (m.loai == 'sieuAm') veNumXoay(s, m, h, khoa);
+      if (laGia(m.loai) && m.gia) veNumXoay(s, m, h, khoa);
     });
     if (opt.loi) {
       // bóng đỏ ở chỗ không thả được
@@ -839,7 +855,7 @@ var SRABangLapRap = new function() {
       let $the = $('<button type="button" class="sra-lr-the"></button>').attr('data-loai', loai).attr('data-tu', 'khay')
         .attr('title', het && con > 0 ? LOI_HET_O : LOAI[loai].moTa).prop('disabled', con <= 0 || het)
         .attr('aria-label', LOAI[loai].tenDay + T(', còn ' + con + ' trong khay. ', ', ' + con + ' left in the tray. ') + (het ? LOI_HET_O : LOAI[loai].moTa + T('. Enter để tự gắn vào chỗ trống.', '. Enter to mount it in a free spot.')));
-      let kich = { sieuAm: [5.2, 2.4], doLine: [2.2, 2.4], mau: [2.2, 2.6], but: [2.8, 2.8], cham: [2.2, 2.4], gyro: [3.0, 3.0], gps: [3.0, 3.3], servo: [2.6, 3.6], namCham: [2.4, 2.4] }[loai];
+      let kich = { sieuAm: [5.2, 2.4], laze: [3.4, 2.4], camera: [4.0, 2.5], doLine: [2.2, 2.4], mau: [2.2, 2.6], but: [2.8, 2.8], cham: [2.2, 2.4], gyro: [3.0, 3.0], gps: [3.0, 3.3], lidar: [4.3, 4.3], servo: [2.6, 3.6], namCham: [2.4, 2.4] }[loai];
       let s = svg('svg', { viewBox: [-kich[0] / 2, -kich[1] / 2, kich[0], kich[1]].join(' '), width: kich[0] * 12.5, height: kich[1] * 12.5, 'aria-hidden': 'true' });
       veLinhKien(loai, s);
       $the.append(s);
@@ -854,7 +870,7 @@ var SRABangLapRap = new function() {
     let $d = $('<div class="sra-lr-thong-tin"></div>');
     let $ds = $('<ol class="sra-lr-ds-cong"></ol>');
     banLap.camBien.forEach(function(cb) {
-      let ten = LOAI[cb.loai].ten + ((cb.loai == 'doLine' || cb.loai == 'mau' || cb.loai == 'sieuAm') && cb.ten ? ' ' + cb.ten : '');
+      let ten = LOAI[cb.loai].ten + ((cb.loai == 'doLine' || cb.loai == 'mau' || laGia(cb.loai)) && cb.ten ? ' ' + cb.ten : '');
       let khoa = khoaCua(cb);
       $ds.append($('<li></li>').attr('data-khoa', khoa).attr('data-chon-khoa', khoa).attr('title', T('Bấm để chọn cảm biến này', 'Click to select this sensor'))
         .append($('<span class="sra-lr-huy-hieu"></span>').text(cb.cong.slice(2)))
@@ -906,12 +922,13 @@ var SRABangLapRap = new function() {
     { ma: 'gat', ten: T('Trục nằm ngang', 'Crosswise axis'), moTa: T('tay quay gật: từ trước lên đỉnh rồi ra sau', 'the arm nods: from front over the top to back'), nghieng: 90, xoay: 90 }
   ];
   const kieuTruc = (sv) => (KIEU_TRUC.find((k) => k.nghieng == sv.nghieng && (k.nghieng == 0 || k.xoay == sv.xoay)) || { ma: 'tuy' }).ma;
-  const TEN_DIEM = T({ don: ['đầu tay'], doi: ['đầu trước', 'đầu sau'], chuThap: ['nhánh trước', 'nhánh trái', 'nhánh sau', 'nhánh phải'], dia: ['giữa đĩa'] },
-    { don: ['arm tip'], doi: ['front end', 'back end'], chuThap: ['front branch', 'left branch', 'back branch', 'right branch'], dia: ['disc center'] });
+  const TEN_DIEM = T({ don: ['đầu tay'], doi: ['đầu trước', 'đầu sau'], chuThap: ['nhánh trước', 'nhánh trái', 'nhánh sau', 'nhánh phải'], dia: ['giữa đĩa'], ngang: ['bên trái', 'bên phải'] },
+    { don: ['arm tip'], doi: ['front end', 'back end'], chuThap: ['front branch', 'left branch', 'back branch', 'right branch'], dia: ['disc center'], ngang: ['left side', 'right side'] });
   function veServo(banLap) {
     let sv = servoCua(self.cauHinh), c = self.cauHinh;
     let $s = $('<div class="sra-lr-servo"></div>');
-    $s.append($('<div class="sra-lr-tieu-de-nho"></div>').text(T('Servo (động cơ C)', 'Servo (motor C)')));
+    let cDc = banLap && banLap.servo ? banLap.servo.cong.replace('out', '') : 'C';
+    $s.append($('<div class="sra-lr-tieu-de-nho"></div>').text(T('Servo (động cơ ' + cDc + ')', 'Servo (motor ' + cDc + ')')));
     let nut = (thuoc, chu, chon, tat, goiY) => $('<button type="button" class="sra-lr-nut-servo"></button>').attr(thuoc).text(chu)
       .toggleClass('chon', !!chon).prop('disabled', !!tat).attr('aria-pressed', chon ? 'true' : 'false').attr('title', goiY || '');
     // hướng lắp
@@ -936,7 +953,7 @@ var SRABangLapRap = new function() {
     L.TAY[sv.tay].diem.forEach(function(d, i) {
       let $g = $('<div class="sra-lr-hang-servo" role="group"></div>').attr('aria-label', T('Cảm biến ở ', 'Sensor at ') + TEN_DIEM[sv.tay][i]).attr('data-khoa', 'servo:' + i);
       $g.append($('<span class="sra-lr-ten-servo"></span>').text(viet(TEN_DIEM[sv.tay][i])));
-      [[null, T('Trống', 'Empty')], ['sieuAm', LOAI.sieuAm.ten], ['doLine', LOAI.doLine.ten]].forEach(function(l) {
+      [[null, T('Trống', 'Empty')], ['sieuAm', LOAI.sieuAm.ten], ['laze', LOAI.laze.ten], ['doLine', LOAI.doLine.ten], ['mauXa', T('Màu nhìn xa', 'Far color')]].forEach(function(l) {
         let dang = sv.gan[i] == l[0], lyDo = '';
         if (l[0] && !dang) {
           let gan = sv.gan.slice(); gan[i] = null;
@@ -1033,7 +1050,7 @@ var SRABangLapRap = new function() {
     $s.append($h);
     if (co) {
       let $d = $('<div class="sra-lr-hang-servo" role="group"></div>').attr('aria-label', T('Đầu công tác', 'Tool')).append($('<span class="sra-lr-ten-servo"></span>').text(T('Đầu', 'Tool')));
-      [[null, T('Không có', 'None')], ['namCham', T('Nam châm điện', 'Electromagnet')], ['kep', T('Kẹp gắp', 'Gripper')]].forEach(function(d) {
+      [[null, T('Không có', 'None')], ['namCham', T('Nam châm điện', 'Electromagnet')], ['kep', T('Kẹp gắp', 'Gripper')], ['sung', T('Súng bắn bi', 'Ball launcher')]].forEach(function(d) {
         $d.append(nut({ 'data-co-dau': d[0] || '' }, d[1], co.dau == d[0], co.loai == 'coDinh' && !d[0]));
       });
       $s.append($d);
@@ -1048,6 +1065,12 @@ var SRABangLapRap = new function() {
           if (td.sraMoTa.gam != null) return;
           $s.append($('<div class="sra-lr-hang-servo sra-lr-thu-goc"></div>').append($('<span class="sra-lr-ten-servo"></span>').text(T('Thử', 'Try')))
             .append(nut({ 'data-thu-nam-cham': i }, td.power ? T('Tắt nam châm', 'Magnet off') : T('Bật nam châm', 'Magnet on'), !!td.power)));
+          return;
+        }
+        if (td.sraLoai == 'sung') {
+          $s.append($('<div class="sra-lr-hang-servo sra-lr-thu-goc"></div>').append($('<span class="sra-lr-ten-servo"></span>').text(T('Thử', 'Try')))
+            .append(nut({ 'data-thu-sung': i, 'data-viec': 'keo' }, T('Lên dây', 'Draw back')))
+            .append(nut({ 'data-thu-sung': i, 'data-viec': 'ban' }, T('Bắn', 'Fire'))));
           return;
         }
         let ten = td.sraLoai == 'kep' ? T('Độ mở', 'Opening') : td.sraLoai == 'truot' ? T('Độ cao', 'Height') : (td.sraMoTa.khop == 2 ? T('Khuỷu', 'Elbow') : T('Vai', 'Shoulder'));
@@ -1074,6 +1097,13 @@ var SRABangLapRap = new function() {
     if (e.getAttribute('data-co-kieu') != null) { apDung(datCo(coTuMa(e.getAttribute('data-co-kieu') || null, self.cauHinh.co))); return true; }
     if (e.getAttribute('data-co-dau') != null) { let co = Object.assign({}, self.cauHinh.co, { dau: e.getAttribute('data-co-dau') || null }); apDung(datCo(co)); return true; }
     if (e.getAttribute('data-co-mau') != null) { let co = Object.assign({}, self.cauHinh.co, { mau: e.getAttribute('data-co-mau') == '1' }); apDung(datCo(co)); return true; }
+    if (e.getAttribute('data-thu-sung') != null) {
+      let td = robot.sraTacDong[Number(e.getAttribute('data-thu-sung'))], S = L.SUNG;
+      td.speed_sp = S.tocDoMotor;
+      if (e.getAttribute('data-viec') == 'keo') { td.position_target = -S.keoMax; td.runToPosition(); }
+      else { td.time_target = Date.now() + 200; td.runTimed(); }
+      return true;
+    }
     if (e.getAttribute('data-thu-nam-cham') != null) {
       let td = robot.sraTacDong[Number(e.getAttribute('data-thu-nam-cham'))];
       if (td.power) td.tat(); else td.bat();
@@ -1173,8 +1203,8 @@ var SRABangLapRap = new function() {
     $p.append($('<div class="sra-lr-tieu-de-tt"></div>')
       .append($('<button type="button" class="sra-lr-ve-xe"></button>').attr('data-chon-khoa', '').text(T('← Xe', '← Car')).attr('title', T('Bỏ chọn, xem thông số cả xe', 'Deselect and show the whole car')))
       .append($('<h3></h3>').text(ten)));
-    $p.append($('<p class="sra-lr-mo-ta-tt"></p>').text(m.loai == 'servo' && banLap.servo ? T('Servo SG90 trên nắp mạch chủ, động cơ C, cắm ổ ' + banLap.servo.oMach + '.', 'SG90 servo on the main board cover, motor C, plugged into socket ' + banLap.servo.oMach + '.') : tenMoDun(chon, banLap)));
-    if (m.loai == 'sieuAm' && m.servo == null) $p.append(veDoCao(chon));
+    $p.append($('<p class="sra-lr-mo-ta-tt"></p>').text(m.loai == 'servo' && banLap.servo ? T('Servo SG90 trên nắp mạch chủ, động cơ ' + banLap.servo.cong.replace('out', '') + ', cắm ổ ' + banLap.servo.oMach + '.', 'SG90 servo on the main board cover, motor ' + banLap.servo.cong.replace('out', '') + ', plugged into socket ' + banLap.servo.oMach + '.') : tenMoDun(chon, banLap)));
+    if (laGia(m.loai) && m.gia) $p.append(veDoCao(chon));
     if (m.loai == 'doLine') $p.append(veIR());
     if (m.loai == 'servo') $p.append(veServo(banLap));
     $p.append($('<button type="button" class="sra-lr-nut-thao sra-lr-thao-chon"></button>').attr('data-thao', chon)
@@ -1220,7 +1250,7 @@ var SRABangLapRap = new function() {
       if (k) chiTiet(k);
       return;
     }
-    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao], [data-servo-truc], [data-servo-goc], [data-servo-tay], [data-servo-gan], [data-ir], [data-ir-tu-the], [data-co-kieu], [data-co-dau], [data-co-mau], [data-thu-nam-cham]')[0];
+    let e = $(ev.target).closest('[data-thao], [data-son-phan], [data-cao], [data-servo-truc], [data-servo-goc], [data-servo-tay], [data-servo-gan], [data-ir], [data-ir-tu-the], [data-co-kieu], [data-co-dau], [data-co-mau], [data-thu-nam-cham], [data-thu-sung]')[0];
     if (!e) return;
     if (bamServo(e)) return;
     if (bamCoCau(e)) return;
@@ -1288,7 +1318,7 @@ var SRABangLapRap = new function() {
       sd = veSoDo(kq.c, { moi: [kq.den, kq.doi].filter(Boolean), dangKeo: loai, vungTren: diem && diem.vung });
     } else {
       let loi = null;
-      if (diem && kq && kq.loi && hopVung(loai, diem.vung)) loi = loai == 'sieuAm' ? { loai: loai, gia: diem.vung.slice(4), u: diem.u, goc: 0 } : { loai: loai, x: diem.x, z: diem.vung == 'duoi' ? undefined : diem.z, goc: 0 };
+      if (diem && kq && kq.loi && hopVung(loai, diem.vung)) loi = laGia(loai) ? { loai: loai, gia: diem.vung.slice(4), u: diem.u, goc: 0 } : { loai: loai, x: diem.x, z: diem.vung == 'duoi' ? undefined : diem.z, goc: 0 };
       sd = veSoDo(self.cauHinh, { an: tu != 'khay' ? tu : null, dangKeo: loai, loi: loi, vungTren: diem && diem.vung });
     }
     $bang.find('.sra-lr-vung-so-do').empty().append(sd.svg);
@@ -1401,7 +1431,7 @@ var SRABangLapRap = new function() {
       chiTiet(null);
       let b = document.createElement('div');
       b.className = 'sra-lr-bong';
-      let kich = { sieuAm: [5.2, 2.4], doLine: [1.8, 2.4], cham: [1.8, 2.4], gyro: [2.6, 3.0], gps: [3.0, 3.3], servo: [2.6, 3.6] }[keo.loai];
+      let kich = { sieuAm: [5.2, 2.4], laze: [3.4, 2.4], camera: [4.0, 2.5], doLine: [1.8, 2.4], cham: [1.8, 2.4], gyro: [2.6, 3.0], gps: [3.0, 3.3], lidar: [4.3, 4.3], servo: [2.6, 3.6] }[keo.loai] || [3.0, 3.0];
       let s = svg('svg', { viewBox: [-kich[0] / 2, -kich[1] / 2, kich[0], kich[1]].join(' '), width: kich[0] * 24, height: kich[1] * 24 });
       veLinhKien(keo.loai, s);
       b.appendChild(s);
@@ -1560,7 +1590,7 @@ var SRABangLapRap = new function() {
     }
     if (!khoa || !loai || e.getAttribute('data-tu')) return;
     if (ev.key == 'Delete' || ev.key == 'Backspace') { ev.preventDefault(); apDung(thao(khoa)); return; }
-    if ((ev.key == 'PageUp' || ev.key == 'PageDown') && loai == 'sieuAm') {
+    if ((ev.key == 'PageUp' || ev.key == 'PageDown') && laGia(loai) && /^sa:/.test(khoa)) {
       ev.preventDefault();
       let m = layMoDun(self.cauHinh, khoa), kq = datCao(khoa, m.cao + (ev.key == 'PageUp' ? 1 : -1) * buocLuoi(ev));
       if (kq) apDung(kq, true);

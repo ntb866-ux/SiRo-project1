@@ -14,7 +14,7 @@ Các tệp được sinh từ một nguồn duy nhất là `scripts/robot/tao-ro
 | `banh-nho.json` | Robot bánh nhỏ | Bài so sánh: bánh nhỏ chậm hơn, dễ dừng đúng chỗ |
 | `do-line.json` | Robot dò đường (3 cảm biến màu) | Bài dò vạch |
 | `xe-lap-rap.json` | Xe lắp mô-đun (2 bánh) | Xe kiểu xe kit, tự dựng từng linh kiện; xem [`../xe/README.md`](../xe/README.md). Sinh bằng `scripts/robot/tao-xe.js`. Các bài hiện có vẫn dùng robot chuẩn |
-| `xe-mau.js` | Dò đường 1 và 2 cảm biến, Chạy mê cung, Xe kéo, Xe cần cẩu | Năm robot mẫu của GEARS dựng lại bằng xe khung mBot, cùng tên và cùng cổng; thay robot GEARS cùng tên trong menu Chọn robot. Sinh bằng `scripts/robot/tao-xe.js` |
+| `xe-mau.js` | Dò đường 1 và 2 cảm biến, Chạy mê cung, Chạy mê cung đời 2, Xe kéo, Xe cần cẩu, Bắn bóng sơn | Bảy robot mẫu của GEARS dựng lại bằng xe khung mBot, cùng tên và cùng cổng; thay robot GEARS cùng tên trong menu Chọn robot. Sinh bằng `scripts/robot/tao-xe.js` |
 
 ## Bảng thông số
 

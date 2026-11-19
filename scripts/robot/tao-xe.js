@@ -67,6 +67,19 @@ const mau = [
       'nam châm điện và một cảm biến màu ở đầu cần để biết vật đang nhặt; thêm hai cảm biến màu dưới mũi, siêu âm ở mũi và gyro trên nắp. ' +
       'Cổng giống robot cũ cùng tên (màu trái 1, màu phải 2, siêu âm 3, gyro 4, màu đầu cần 5, vai C, khuỷu D, nam châm E). ' +
       'Siêu âm mũi được nâng lên 7,3 cm; vai nâng quá khoảng 76° thì cần chạm siêu âm nên dừng ở đó.' },
+  { name: 'paintball', tenNgan: '#robot-paintballShort#',
+    cauHinh: { sa: [{ gia: 'truoc', u: 0, loai: 'laze' }], duoi: MAU_HAI, tren: [GYRO, GPS], gam: [NAM_CHAM_GAM], co: { loai: 'tay', doan: 1, dau: 'sung' } },
+    moTa: 'Xe khung mBot bắn bóng sơn: súng bắn bi ở đầu cánh tay một đoạn (motor N20 1:298) để ngắm lên xuống; ' +
+      'chạy motor của súng theo chiều âm để lên dây (tối đa 1000°), rồi chạy chiều dương để bắn: lên dây càng nhiều, bi bay càng nhanh (tới 6,3 m/s). ' +
+      'Đo khoảng cách bằng cảm biến laze VL53L1X ở mũi (tới 4 m) thay cho siêu âm; hai cảm biến màu dưới mũi, gyro và GPS trên nắp, nam châm điện dưới gầm. ' +
+      'Cổng giống robot cũ cùng tên (màu trái 1, màu phải 2, laze 3, gyro 4, GPS 5, nam châm C, cánh tay D, súng E). ' +
+      'Khác robot cũ: laze đo tới 4 m (robot cũ 5 m), tay gắn ở mũi.' },
+  { name: 'maze2', tenNgan: '#robot-maze2Short#',
+    cauHinh: { sa: [], duoi: [{ loai: 'mau', x: 0 }], tren: [GYRO, { loai: 'servo', x: 1.5, z: 4.5, tay: 'ngang', gan: ['laze', 'mauXa'] }], gam: [NAM_CHAM_GAM] },
+    moTa: 'Xe khung mBot chạy mê cung đời 2: thay ba siêu âm bằng một servo SG90 trên nắp, tay quay ngang mang cảm biến laze VL53L1X và cảm biến màu nhìn xa (tới 30 cm, chùm 30°) đặt cạnh nhau, cùng nhìn về một hướng. ' +
+      'Quay servo để nhìn trước, trái, phải. Thêm một cảm biến màu RGB dưới mũi để nhận ra đích, gyro trên nắp và nam châm điện dưới gầm. ' +
+      'Cổng giống robot cũ cùng tên (màu dưới mũi 1, gyro 2, laze 3, màu nhìn xa 4, nam châm C, servo D). ' +
+      'Khác robot cũ: servo quay 0–180° (90° là nhìn thẳng) thay cho bàn xoay.' },
 ];
 
 const outDir = path.join(__dirname, '..', '..', 'public', 'san-robot-ao', 'robots');
