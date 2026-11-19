@@ -1035,7 +1035,7 @@ var SRABangLapRap = new function() {
     if (L.soOCo(cc.co) < L.soOCo(co) && co.mau && !cc.co.mau) return { c: cc, tb: T('Không còn cảm biến màu hoặc ổ cắm cho cảm biến màu ở đầu cần.', 'No color sensor or socket left for the arm tip.') };
     let k = KIEU_CO.find((x) => x.ma == maCo(cc.co));
     let sa = cc.sa.find((m) => m.gia == 'truoc');
-    return { c: cc, tb: T('Đã lắp ', 'Fitted ') + k.ten.toLowerCase() + (cc.co.dau ? T(' với ', ' with ') + (cc.co.dau == 'kep' ? T('kẹp gắp', 'a gripper') : T('nam châm điện', 'an electromagnet')) : '') + '. ' + k.moTa +
+    return { c: cc, tb: T('Đã lắp ', 'Fitted ') + k.ten.toLowerCase() + (cc.co.dau ? T(' với ', ' with ') + (cc.co.dau == 'kep' ? T('kẹp gắp', 'a gripper') : cc.co.dau == 'sung' ? T('súng bắn bi', 'a ball launcher') : cc.co.dau == 'long' ? T('lồng giữ khối', 'a block cage') : T('nam châm điện', 'an electromagnet')) : '') + '. ' + k.moTa +
       (sa ? T(' Siêu âm mũi nâng lên ' + soViet(sa.cao) + ' cm để cao hơn cơ cấu.', ' The front ultrasonic was raised to ' + soViet(sa.cao) + ' cm to clear the mechanism.') : '') };
   }
   function veCoCau(banLap) {
@@ -1050,12 +1050,15 @@ var SRABangLapRap = new function() {
     $s.append($h);
     if (co) {
       let $d = $('<div class="sra-lr-hang-servo" role="group"></div>').attr('aria-label', T('Đầu công tác', 'Tool')).append($('<span class="sra-lr-ten-servo"></span>').text(T('Đầu', 'Tool')));
-      [[null, T('Không có', 'None')], ['namCham', T('Nam châm điện', 'Electromagnet')], ['kep', T('Kẹp gắp', 'Gripper')], ['sung', T('Súng bắn bi', 'Ball launcher')]].forEach(function(d) {
-        $d.append(nut({ 'data-co-dau': d[0] || '' }, d[1], co.dau == d[0], co.loai == 'coDinh' && !d[0]));
+      [[null, T('Không có', 'None')], ['namCham', T('Nam châm điện', 'Electromagnet')], ['kep', T('Kẹp gắp', 'Gripper')], ['sung', T('Súng bắn bi', 'Ball launcher')], ['long', T('Lồng', 'Cage')]].forEach(function(d) {
+        $d.append(nut({ 'data-co-dau': d[0] || '' }, d[1], co.dau == d[0], (co.loai == 'coDinh' && !d[0]) || (d[0] == 'long' && co.loai != 'tay'),
+          d[0] == 'long' ? (co.loai != 'tay' ? T('Lồng chỉ treo ở đầu cánh tay.', 'The cage only hangs from the lift arm.') : T('Lồng chữ U hở về phía mũi xe: hạ tay để úp lên khối, nâng tay để mở.', 'U-shaped cage open towards the nose: lower the arm to trap a block, raise it to let go.')) : ''));
       });
       $s.append($d);
       if (co.dau == 'namCham') $s.append($('<div class="sra-lr-hang-servo" role="group"></div>').append($('<span class="sra-lr-ten-servo"></span>').text(T('Màu', 'Color')))
         .append(nut({ 'data-co-mau': co.mau ? '0' : '1' }, co.mau ? T('Có cảm biến màu ở đầu', 'Color sensor on the tool') : T('Thêm cảm biến màu ở đầu', 'Add a color sensor on the tool'), co.mau)));
+      if (co.dau == 'long') $s.append($('<div class="sra-lr-hang-servo" role="group"></div>').append($('<span class="sra-lr-ten-servo"></span>').text(T('Màu', 'Color')))
+        .append(nut({ 'data-co-mau': co.mau ? '0' : '1' }, co.mau ? T('Có cảm biến màu nhìn ra trước', 'Forward-looking color sensor fitted') : T('Thêm cảm biến màu nhìn ra trước', 'Add a forward-looking color sensor'), co.mau)));
       let k = KIEU_CO.find((x) => x.ma == maCo(co));
       $s.append($('<p class="sra-lr-servo-mo-ta"></p>').text(k.moTa + moTaGioiHan(banLap)));
       // thử trên xe 3D

@@ -125,6 +125,40 @@ const mau = [
       'Cổng giống robot cũ cùng tên (màu dưới mũi 1, gyro 2, laze 3, màu nhìn xa 4, nam châm C, servo D). ' +
       'Khác robot cũ: servo quay 0–180° (90° là nhìn thẳng) thay cho bàn xoay.',
     moTaEn: 'An mBot-frame maze runner, generation 2: the three ultrasonic sensors are replaced by one SG90 servo on the cover whose horizontal horn carries a VL53L1X laser sensor and a long-range color sensor (up to 30 cm, 30° beam) side by side, looking the same way. Turn the servo to look forward, left and right. It also has one RGB color sensor under the nose to recognise the goal, a gyro on the cover and an electromagnet under the car. Ports match the old robot of the same name (nose color 1, gyro 2, laser 3, long-range color 4, magnet C, servo D). Unlike the old robot, the servo turns 0–180° (90° looks straight ahead) instead of a turntable.' },
+  { name: 'cage', tenNgan: '#robot-cageShort#',
+    cauHinh: { sa: [SA_MUI], duoi: MAU_HAI, tren: [GYRO, GPS], co: { loai: 'tay', doan: 1, dau: 'long', mau: true }, thuTuCong: [1, 2, 6, 3, 4, 5] },
+    moTa: 'Xe khung mBot có lồng: cánh tay một đoạn ở mũi (motor N20 1:298) mang lồng nhôm chữ U hở về phía mũi xe. ' +
+      'Tay nằm ngang (góc 0) thì lồng úp sát sân, giữ khối trước mũi để đẩy đi; nâng tay (góc dương) để mở lồng. ' +
+      'Cảm biến màu nhìn xa (TCS34725 có thấu kính) trên tấm công tác nhìn ra trước, chúc xuống 15°, cho biết trước mũi có khối không và khối màu gì. ' +
+      'Thêm hai cảm biến màu dưới mũi, siêu âm ở mũi (nâng lên 7,3 cm cho tay đi bên dưới), gyro và GPS trên nắp. ' +
+      'Cổng giống robot cũ cùng tên (màu trái 1, màu phải 2, màu phía trước 3, siêu âm 4, gyro 5, GPS 6, cánh tay C). ' +
+      'Khác robot cũ: tay và lồng ở mũi chứ không ở bên hông, lòng lồng rộng 6 cm; cảm biến màu phía trước là loại nhìn xa, trước mũi không có khối thì nó đọc ra màu mặt sân phía trước.',
+    moTaEn: 'An mBot-frame cage car: a one-segment arm on the nose (N20 1:298 motor) carries a U-shaped aluminium cage that is open towards the nose. ' +
+      'With the arm level (angle 0) the cage sits just above the floor and traps a block in front of the nose so the car can push it; raise the arm (positive angle) to open the cage. ' +
+      'A long-range color sensor (TCS34725 with lens) on the tool plate looks forward and 15° down to tell whether there is a block in front and what color it is. ' +
+      'It also has two color sensors under the nose, an ultrasonic sensor on the nose (raised to 7.3 cm so the arm can pass under it), a gyro and a GPS on the cover. ' +
+      'Ports match the old robot of the same name (left color 1, right color 2, front color 3, ultrasonic 4, gyro 5, GPS 6, arm C). ' +
+      'Unlike the old robot, the arm and cage are on the nose rather than the side and the cage is 6 cm wide inside; the front color sensor is a long-range type, so with no block in front it reads the color of the floor ahead.' },
+  { name: 'football', tenNgan: '#robot-footballShort#',
+    cauHinh: { sa: [{ gia: 'truoc', u: 0, loai: 'namCham' }, { gia: 'sau', u: 0, loai: 'namCham' }], duoi: [], tren: [GYRO, GPS] },
+    moTa: 'Xe khung mBot đá bóng: hai nam châm điện KK-P20/15 nhìn ngang, một trên giá mũi (cổng C) và một trên giá đuôi (cổng D), cao 5,6 cm cho ngang tâm quả bóng, để giữ bóng ở mũi hoặc ở đuôi. ' +
+      'Gyro và GPS trên nắp. Cổng giống robot cũ cùng tên (gyro 1, GPS 2, nam châm trước C, nam châm sau D). ' +
+      'Khác robot cũ: nam châm thật chỉ hút được vật sắt cách mặt hút khoảng 3 cm (robot cũ hút từ 20 cm), và đảo chiều dòng điện vẫn là hút chứ không đẩy; ' +
+      'muốn sút thì cho xe lao tới rồi tắt nam châm để bóng lăn đi.',
+    moTaEn: 'An mBot-frame football car: two KK-P20/15 electromagnets facing outwards, one on the nose bracket (port C) and one on the tail bracket (port D), 5.6 cm high to line up with the middle of the ball, to hold the ball at the front or the back. ' +
+      'A gyro and a GPS on the cover. Ports match the old robot of the same name (gyro 1, GPS 2, front magnet C, back magnet D). ' +
+      'Unlike the old robot, a real magnet only pulls iron within about 3 cm of its face (the old robot pulled from 20 cm), and reversing the current still attracts rather than repels; ' +
+      'to kick, drive at the ball and switch the magnet off so the ball rolls away.' },
+  { name: 'WROSport', tenNgan: '#robot-WROSportShort#',
+    cauHinh: { sa: [{ gia: 'truoc', u: 0, loai: 'namCham' }], duoi: [{ loai: 'mau', x: 0 }], tren: [GYRO, GPS, { loai: 'camera', x: 0, z: 4.6, mauXa: true }], thuTuCong: [1, 2, 4, 5, 3] },
+    moTa: 'Xe khung mBot cho nội dung thể thao robot WRO: nam châm điện KK-P20/15 nhìn ngang trên giá mũi (cao 5,6 cm) để giữ và dắt bóng; cột nhôm giữa nắp mang camera OV2640 nhìn ra trước, chúc xuống 30°, để tìm bóng, ' +
+      'và cảm biến màu nhìn xa chúc xuống 45° để biết bóng đã tới sát mũi chưa. Thêm một cảm biến màu dưới mũi để đọc vạch sân, gyro và GPS trên nắp. ' +
+      'Cổng giống robot cũ cùng tên (màu dưới mũi 1, gyro 2, camera 3, màu nhìn chéo 4, GPS 5, nam châm C). ' +
+      'Khác robot cũ: không có hai tấm chắn hướng bóng; nam châm thật hút trong khoảng 3 cm và không đẩy được bóng, muốn sút thì lao xe tới rồi tắt nam châm.',
+    moTaEn: 'An mBot-frame car for WRO RoboSport: a KK-P20/15 electromagnet facing forward on the nose bracket (5.6 cm high) to hold and dribble the ball; an aluminium mast in the middle of the cover carries an OV2640 camera looking forward and 30° down to find the ball, ' +
+      'and a long-range color sensor looking 45° down to tell when the ball is right at the nose. It also has one color sensor under the nose to read the field lines, a gyro and a GPS on the cover. ' +
+      'Ports match the old robot of the same name (nose color 1, gyro 2, camera 3, angled color 4, GPS 5, magnet C). ' +
+      'Unlike the old robot, there are no ball guide plates; a real magnet pulls within about 3 cm and cannot push the ball, so to kick, drive at the ball and switch the magnet off.' },
 ];
 
 const outDir = path.join(__dirname, '..', '..', 'public', 'san-robot-ao', 'robots');
