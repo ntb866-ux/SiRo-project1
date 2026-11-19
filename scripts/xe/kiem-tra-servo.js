@@ -104,6 +104,7 @@ console.log('1. Cấu hình và hình học');
   await page.evaluate(() => SRABangLapRap.mo());
   await page.waitForSelector('.sra-lr-bang');
   await page.evaluate(() => SRABangLapRap.dat('gps', 'tren:1', 'khay'));
+  await page.locator('.sra-lr-the[data-loai="servo"]').scrollIntoViewIfNeeded();     // khay cuộn dọc: kéo thẻ vào tầm nhìn trước
   const the = await page.locator('.sra-lr-the[data-loai="servo"]').boundingBox();
   const dich = await page.evaluate(() => SRABangLapRap.toaDoManHinh({ vung: 'nap', x: 2.4, z: 4.6 }));
   await page.mouse.move(the.x + the.width / 2, the.y + the.height / 2); await page.mouse.down();

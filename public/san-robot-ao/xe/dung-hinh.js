@@ -42,6 +42,7 @@ var SRAXeDungHinh = (function() {
     kinh_den: { mau: '#0c0c0e', bong: [1.0, 128] },
     lo: { mau: '#3a3f46', bong: [0.05, 8] },
     mach_xanh_la: { mau: '#1c7a4a', bong: [0.3, 24] },
+    mach_tim: { mau: '#4b2a7a', bong: [0.3, 24] },
     led_trang: { mau: '#fbfbf2', bong: [0.9, 96], phat: '#d8d8c8' },
     ni_muc: { mau: '#15171a', bong: [0.05, 8] }
   };

@@ -19,7 +19,7 @@ console.log('1. Cấu hình');
   bc.dong(!k.co, 'Cơ cấu ở mũi không lắp cùng tấm cản cảm biến chạm');
   let t2 = L.lapXe({ sa: [{ gia: 'truoc', u: 0 }], duoi: [], tren: [{ loai: 'gyro', x: -3, z: 3.95 }], co: { loai: 'tay', doan: 2, dau: 'namCham', mau: true }, gam: [{ loai: 'namCham' }] });
   let cong = t2.tacDong.map((t) => t.loai + ':' + t.cong).join(' ');
-  bc.dong(cong == 'tay:outC tay:outD namCham:outE namCham:outF', 'Cần cẩu hai đoạn: cổng động cơ C, D cho hai khớp, E cho nam châm đầu cần, F cho nam châm gầm', cong);
+  bc.dong(cong == 'namCham:outC tay:outD tay:outE namCham:outF', 'Cần cẩu hai đoạn + nam châm gầm: C nam châm gầm, D, E hai khớp, F nam châm đầu cần (thứ tự như GEARS)', cong);
   let sa = L.chuanHoaCauHinh({ sa: [{ gia: 'truoc', u: 0, cao: 2 }], duoi: [], co: { loai: 'truot', dau: 'kep' } }).sa[0];
   bc.dong(sa.cao >= L.CO.caoSa.truot - 1e-6, 'Siêu âm mũi tự nâng lên trên thanh trượt', sa.cao + ' cm');
   let crane = L.chuanHoaCauHinh({ duoi: [{ loai: 'mau', x: -1.5 }, { loai: 'mau', x: 1.5 }], tren: [{ loai: 'gyro', x: -3, z: 3.95 }], co: { loai: 'tay', doan: 2, dau: 'namCham', mau: true } });
@@ -147,7 +147,7 @@ console.log('1. Cấu hình');
   console.log('7. Mã Python khai báo motor');
   await napXe(page, { sraXe: Object.assign({}, RONG, { co: { loai: 'tay', dau: 'kep' }, gam: [{ loai: 'namCham' }] }) });
   let py = await page.evaluate(() => { try { return ev3dev2_generator.genCode(); } catch (e) { return 'LỖI ' + e.message; } });
-  bc.dong(/OUTPUT_C\).*Arm/.test(py) && /OUTPUT_D\).*Swivel/.test(py) && /OUTPUT_E\).*Magnet/.test(py), 'Phần đầu chương trình Python khai báo motor C, D, E', (py.match(/.*OUTPUT_[C-F].*/g) || [py.slice(0, 200)]).join(' | '));
+  bc.dong(/OUTPUT_C\).*Magnet/.test(py) && /OUTPUT_D\).*Arm/.test(py) && /OUTPUT_E\).*Swivel/.test(py), 'Phần đầu chương trình Python khai báo motor C, D, E', (py.match(/.*OUTPUT_[C-F].*/g) || [py.slice(0, 200)]).join(' | '));
 
   console.log('8. Bảng lắp ráp');
   await napXe(page, { sraXe: Object.assign({}, RONG) });
@@ -180,7 +180,9 @@ console.log('1. Cấu hình');
     doubleFollower: 'in1:ColorSensor in2:ColorSensor in3:UltrasonicSensor in4:GyroSensor in5:GPSSensor outC:MagnetActuator',
     maze: 'in1:ColorSensor in2:UltrasonicSensor in3:UltrasonicSensor in4:UltrasonicSensor in5:GyroSensor outC:MagnetActuator',
     tow: 'in1:ColorSensor in2:ColorSensor in3:UltrasonicSensor in4:GyroSensor outC:ArmActuator outD:MagnetActuator',
-    crane: 'in1:ColorSensor in2:ColorSensor in3:UltrasonicSensor in4:GyroSensor in5:ColorSensor outC:ArmActuator outD:ArmActuator outE:MagnetActuator'
+    crane: 'in1:ColorSensor in2:ColorSensor in3:UltrasonicSensor in4:GyroSensor in5:ColorSensor outC:ArmActuator outD:ArmActuator outE:MagnetActuator',
+    paintball: 'in1:ColorSensor in2:ColorSensor in3:LaserRangeSensor in4:GyroSensor in5:GPSSensor outC:MagnetActuator outD:ArmActuator outE:PaintballLauncherActuator',
+    maze2: 'in1:ColorSensor in2:GyroSensor in3:LaserRangeSensor in4:ColorSensor outC:MagnetActuator outD:SwivelActuator'
   };
   for (const ten in MONG) {
     let kq = await page.evaluate(async (ten) => {

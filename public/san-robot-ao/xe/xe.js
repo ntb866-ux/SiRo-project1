@@ -145,6 +145,41 @@ var SRAXe = new function() {
     this.sraLoai = 'servo';
   }
 
+  // Súng bắn bi: dùng lại cách điều khiển và bi sơn của súng robot cũ (chạy lùi: motor quay cam kéo lò xo về,
+  // tối đa 1000°; chạy tới: nhả cò), chỉ thay vận tốc đầu nòng bằng mô hình lò xo: v = vMax × độ kéo / 1000.
+  function SungXe(td, r, scene, nutMe, tamMe) {
+    let S = SRALinhKien.SUNG;
+    let nong = new BABYLON.TransformNode('sraNongSung', scene);
+    nong.parent = nutMe;
+    nong.position = new BABYLON.Vector3(td.vt[0] - tamMe[0], td.vt[1] - tamMe[1], td.vt[2] - tamMe[2]);
+    let g = new PaintballLauncherActuator(scene, nong, [0, -0.25, -5.2], [0, 0, 0], td.cong, Object.assign({ drawBackLimit: -S.keoMax, maxSpeed: S.tocDoMotor, splatterTTL: 30000 }, (r.options.sraCamBien || {}).sung || {}));
+    if (g.body.physicsImpostor) g.body.physicsImpostor.dispose();
+    // hình súng đã có trên xe: bỏ hình của súng cũ, giữ nút gốc làm hệ toạ độ đầu nòng
+    g.body.getChildMeshes().forEach((m) => m.dispose());
+    g.body.physicsImpostor = null; g.body.isVisible = false; g.body.isPickable = false; g.body.sraXe = true;
+    g.loadImpostor = function() {};
+    let taoGoc = g.createPaintball;
+    g.createPaintball = function(luc) {
+      let bi = taoGoc(luc);
+      let imp = bi.physicsImpostor;
+      // bi không vỡ khi chạm chính chiếc xe (súng, cánh tay, thân, bánh): chỉ giữ va chạm làm vỡ với vật ngoài xe
+      let cuaXe = (o) => o && o.object && (o.object === r.body || o.object.sraXe || /^(sraVat|sraBi|wheel)/.test(o.object.name));
+      (imp._onPhysicsCollideCallbacks || []).forEach(function(cb) { cb.otherImpostors = cb.otherImpostors.filter((o) => !cuaXe(o)); });
+      // bi Ø 1 cm như bi của GEARS (đổi scaling lúc này làm Ammo dựng lại vật và mất vận tốc)
+      // đổi khối lượng thẳng trong Ammo: setMass() đánh dấu dựng lại vật ở bước sau và làm mất vận tốc
+      imp._options.mass = S.klBi; imp._physicsEngine.getPhysicsPlugin().setBodyMass(imp, S.klBi);
+      let huong = new BABYLON.Vector3(0, 0, 1).rotateByQuaternionToRef(nong.absoluteRotationQuaternion, new BABYLON.Vector3());
+      let v = huong.scale(S.vMax * Math.max(0, Math.min(1, luc / S.keoMax)));
+      if (r.body && r.body.physicsImpostor) v.addInPlace(r.body.physicsImpostor.getLinearVelocity() || BABYLON.Vector3.Zero());
+      imp.setLinearVelocity(v);
+      imp.setAngularVelocity(BABYLON.Vector3.Zero());
+      g.sraBiCuoi = bi; g.sraVBan = v; g.sraPBan = bi.position.clone();
+      return bi;
+    };
+    g.sraNong = nong;
+    return g;
+  }
+
   // Nam châm điện: lệnh tốc độ của motor (−100…100 %) là độ rộng xung cấp cho cuộn dây
   function NamChamXe(td, nc) {
     let b = this;
@@ -288,6 +323,9 @@ var SRAXe = new function() {
         let v = vl.vatPhu[td.vat];
         c = new KhopXe(td.cong, 'LinearActuator', v.dongCo, v.moTa.dongCo, nut.vatPhu[td.vat], 0, 0, td.hanhTrinh * td.doMoiCm);
         c.doMoiCm = td.doMoiCm;       // độ bánh răng cho mỗi cm xe trượt đi được
+      } else if (td.loai == 'sung') {
+        let vn = td.vat != 'than' && r.sraVatNut[td.vat];
+        c = SungXe(td, r, scene, vn ? vn.nut : r.body, vn ? vn.tam : r.sraKhoiLuong.than.tam);
       } else if (td.loai == 'kep') {
         let v = vl.vatPhu[td.vat[0]];
         c = new KhopXe(td.cong, 'SwivelActuator', v.dongCo, v.moTa.dongCo, nut.vatPhu[td.vat[0]], td.moDau, 0, td.moMax);

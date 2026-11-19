@@ -627,7 +627,184 @@ var SRAXeCamBien = (function() {
     this.dungNot = function() { if (ban) dungNet(); };
   }
 
+  // ======================================================================
+  // VL53L1X: cảm biến khoảng cách bằng thời gian bay của tia laze hồng ngoại 940 nm
+  // ======================================================================
+  const LAZE_MAC_DINH = {
+    tamGan: 4, tamXa: 400,      // cm (chế độ đo xa)
+    nuaGoc: 7.5,                // độ: nửa góc của vùng thu nhỏ nhất (ROI 4 × 4 SPAD ≈ 15°)
+    chuKy: 0.05,                // giây giữa hai lần đo
+    doPhanGiai: 0.1,            // cm
+    nhieu: 0
+  };
+  function Laze(cb, r, scene) {
+    let self = this, kh = new Khung(r, cb);
+    this.type = 'LaserRangeSensor';
+    this.sraLoai = 'laze';
+    this.tuyChon = tuyChon(LAZE_MAC_DINH, (r.options.sraCamBien || {}).laze);
+    let o = this.tuyChon;
+    this.body = new BABYLON.TransformNode('sraLaze', scene);
+    this.body.parent = kh.nut;
+    this.body.position = bVec(V.tru(cb.vt, kh.tam));
+    if (cb.xoay) this.body.rotationQuaternion = new BABYLON.Quaternion(cb.xoay[0], cb.xoay[1], cb.xoay[2], cb.xoay[3]);
+    this.body.component = this;
+    this.position = bVec(cb.vt);
+    // tia giữa và một vòng 6 tia ở mép vùng thu: khoảng cách là vật gần nhất trong vùng thu
+    this.rayVectors = [new BABYLON.Vector3(0, 0, 1)];
+    for (let i = 0; i < 6; i++) {
+      let a = o.nuaGoc * RAD, b = 2 * Math.PI * i / 6;
+      this.rayVectors.push(new BABYLON.Vector3(Math.sin(a) * Math.cos(b), Math.sin(a) * Math.sin(b), Math.cos(a)));
+    }
+    this.options = { rayOrigin: new BABYLON.Vector3(0, 0, 0), rayLength: o.tamXa };
+    this.filterRay = function(mesh) { return khongPhaiXe(mesh) && mesh.laserDetection != 'invisible'; };
+    this.khoangCach = o.tamXa;
+    let lanDo = -1;
+    this.do = function() {
+      let goc = self.body.getAbsolutePosition(), q = self.body.absoluteRotationQuaternion;
+      let ray = new BABYLON.Ray(goc, new BABYLON.Vector3(0, 0, 1), o.tamXa);
+      let gan = Infinity;
+      for (let i = 0; i < self.rayVectors.length; i++) {
+        self.rayVectors[i].rotateByQuaternionToRef(q, ray.direction);
+        let hit = scene.pickWithRay(ray, self.filterRay);
+        if (!hit || !hit.hit || hit.pickedMesh.laserDetection == 'absorb') continue;
+        // tia mép vùng thu chạm mặt sân ở xa (đặt thấp 5 cm thì ~40 cm): cảm biến thật lọc phản xạ yếu này, chỉ tia giữa tính mặt sân
+        if (i > 0 && hit.pickedPoint && hit.pickedPoint.y < 0.5) continue;
+        if (hit.distance < gan) gan = hit.distance;
+      }
+      if (gan == Infinity || gan > o.tamXa) { self.khoangCach = o.tamXa; return; }
+      if (o.nhieu > 0) gan += nhieuChuan() * o.nhieu;
+      gan = Math.max(o.tamGan, gan);
+      self.khoangCach = o.doPhanGiai > 0 ? Math.round(gan / o.doPhanGiai) * o.doPhanGiai : gan;
+    };
+    this.getDistance = function() {
+      let t = r.sraVatLi.thoiGian;
+      if (lanDo < 0 || t - lanDo >= o.chuKy || t < lanDo) { self.do(); lanDo = t; }
+      return self.khoangCach;
+    };
+    this.reset = function() { lanDo = -1; };
+  }
+
+  // ======================================================================
+  // Lidar LD06: quét 360° mỗi vòng 0,1 s, mỗi độ một điểm đo
+  // ======================================================================
+  const LIDAR_MAC_DINH = { tamGan: 2, tamXa: 1200, soTia: 360, chuKy: 0.1, doPhanGiai: 0.1 };
+  function Lidar(cb, r, scene) {
+    let self = this, kh = new Khung(r, cb);
+    this.type = 'LidarSensor';
+    this.sraLoai = 'lidar';
+    this.tuyChon = tuyChon(LIDAR_MAC_DINH, (r.options.sraCamBien || {}).lidar);
+    let o = this.tuyChon;
+    this.body = new BABYLON.TransformNode('sraLidar', scene);
+    this.body.parent = kh.nut;
+    this.body.position = bVec(V.tru(cb.vt, kh.tam));
+    this.body.component = this;
+    this.position = bVec(cb.vt);
+    // tia thứ i quay quanh trục đứng i độ kể từ hướng trước, như lidar của robot cũ (tăng dần theo chiều kim đồng hồ nhìn từ trên)
+    this.rayVectors = [];
+    for (let i = 0; i < o.soTia; i++) {
+      this.rayVectors.push(BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0, 1), BABYLON.Matrix.RotationAxis(BABYLON.Axis.Y, i * 2 * Math.PI / o.soTia)));
+    }
+    this.options = { rayLength: o.tamXa, rayCount: o.soTia };
+    this.filterRay = function(mesh) { return khongPhaiXe(mesh) && mesh.laserDetection != 'invisible'; };
+    let kq = [], lanDo = -1;
+    this.do = function() {
+      let goc = self.body.getAbsolutePosition(), q = self.body.absoluteRotationQuaternion || BABYLON.Quaternion.Identity();
+      let ray = new BABYLON.Ray(goc, new BABYLON.Vector3(0, 0, 1), o.tamXa);
+      kq = self.rayVectors.map(function(v) {
+        v.rotateByQuaternionToRef(q, ray.direction);
+        let hit = scene.pickWithRay(ray, self.filterRay);
+        if (!hit || !hit.hit || hit.pickedMesh.laserDetection == 'absorb' || hit.distance > o.tamXa) return o.tamXa;
+        let d = Math.max(o.tamGan, hit.distance);
+        return o.doPhanGiai > 0 ? Math.round(d / o.doPhanGiai) * o.doPhanGiai : d;
+      });
+    };
+    this.getDistances = function() {
+      let t = r.sraVatLi.thoiGian;
+      if (lanDo < 0 || t - lanDo >= o.chuKy || t < lanDo) { self.do(); lanDo = t; }
+      return kq.slice();
+    };
+    this.reset = function() { lanDo = -1; };
+  }
+
+  // ======================================================================
+  // Camera OV2640 (ảnh 100 × 100 điểm, góc nhìn 74°): dùng lại bộ chụp ảnh, tìm vùng màu của camera robot cũ
+  // ======================================================================
+  function Camera(cb, r, scene) {
+    let kh = new Khung(r, cb);
+    let nut = new BABYLON.TransformNode('sraCamera', scene);
+    nut.parent = kh.nut;
+    nut.position = bVec(V.tru(cb.vt, kh.tam));
+    if (cb.xoay) nut.rotationQuaternion = new BABYLON.Quaternion(cb.xoay[0], cb.xoay[1], cb.xoay[2], cb.xoay[3]);
+    // CameraSensor của GEARS tạo một hộp có va chạm tĩnh: bỏ ngay (trước bước vật lí nào) vì vỏ camera đã có trong hình xe
+    let cam = new CameraSensor(scene, nut, [0, 0, -1.25 + 1.50001], [0, 0, 0], cb.cong, (r.options.sraCamBien || {}).camera || null);
+    if (cam.body.physicsImpostor) cam.body.physicsImpostor.dispose();
+    // vị trí của camera ảo = vị trí hộp + 1,25 cm theo hướng nhìn: đặt hộp lùi 1,25 cm sau ống kính
+    cam.body.position = new BABYLON.Vector3(0, 0, -1.25);
+    cam.body.physicsImpostor = null;
+    cam.body.isVisible = false; cam.body.isPickable = false; cam.body.sraXe = true;
+    cam.sraLoai = 'camera';
+    cam.position = bVec(cb.vt);
+    // ảnh camera không thấy chính chiếc xe
+    let napGoc = cam.loadMeshes;
+    cam.loadMeshes = function(meshes) { napGoc(meshes.filter((m) => !m.sraXe)); };
+    return cam;
+  }
+
+  // ======================================================================
+  // Cảm biến màu nhìn xa: TCS34725 trong ống che sáng có thấu kính, đọc màu vật trong chùm hẹp 30°, xa tới 30 cm
+  // (đơn giản hoá: đọc màu bề mặt như camera nhìn thấy, không tính ánh sáng giảm theo khoảng cách)
+  // ======================================================================
+  const MAU_XA_MAC_DINH = { tamXa: 30, gocNhin: 30 };
+  function MauXa(cb, r, scene) {
+    let self = this, kh = new Khung(r, cb);
+    this.type = 'ColorSensor';
+    this.sraLoai = 'mauXa';
+    this.tuyChon = tuyChon(MAU_XA_MAC_DINH, (r.options.sraCamBien || {}).mauXa);
+    let o = this.tuyChon;
+    this.body = new BABYLON.TransformNode('sraMauXa', scene);
+    this.body.parent = kh.nut;
+    this.body.position = bVec(V.tru(cb.vt, kh.tam));
+    if (cb.xoay) this.body.rotationQuaternion = new BABYLON.Quaternion(cb.xoay[0], cb.xoay[1], cb.xoay[2], cb.xoay[3]);
+    this.body.component = this;
+    this.position = bVec(cb.vt);
+    this.filterRay = function(mesh) { return khongPhaiXe(mesh); };
+    // lưới tia trong chùm: trung bình màu các điểm chạm trong tầm, chỗ không chạm tính là đen
+    let tia = [new BABYLON.Vector3(0, 0, 1)];
+    [[1 / 2, 6], [1, 12]].forEach(function(v) {
+      for (let i = 0; i < v[1]; i++) {
+        let a = o.gocNhin / 2 * RAD * v[0], b = 2 * Math.PI * i / v[1];
+        tia.push(new BABYLON.Vector3(Math.sin(a) * Math.cos(b), Math.sin(a) * Math.sin(b), Math.cos(a)));
+      }
+    });
+    let rgb = [0, 0, 0];
+    this.do = function() {
+      let goc = self.body.getAbsolutePosition(), q = self.body.absoluteRotationQuaternion;
+      let ray = new BABYLON.Ray(goc, new BABYLON.Vector3(0, 0, 1), o.tamXa), tong = [0, 0, 0];
+      for (let v of tia) {
+        v.rotateByQuaternionToRef(q, ray.direction);
+        let hit = scene.pickWithRay(ray, self.filterRay);
+        if (!hit || !hit.hit) continue;
+        let m = mauTaiDiem(hit), c = m.mau || [128, 128, 128];
+        for (let k = 0; k < 3; k++) tong[k] += c[k] * Math.min(1, m.duc == null ? 1 : m.duc);
+      }
+      rgb = tong.map((x) => x / tia.length);
+    };
+    this.getRGB = function() { self.do(); return rgb.slice(); };
+    this.getColorIntensity = function() { self.do(); return (rgb[0] + rgb[1] + rgb[2]) / 3 / 255 * 100; };
+    this.getHSV = function() {
+      self.do();
+      let [R, G, B] = rgb.map((x) => x / 255), mx = Math.max(R, G, B), mn = Math.min(R, G, B), d = mx - mn, h = 0;
+      if (d > 0) h = mx == R ? 60 * (((G - B) / d) % 6) : mx == G ? 60 * ((B - R) / d + 2) : 60 * ((R - G) / d + 4);
+      return [(h + 360) % 360, mx > 0 ? d / mx * 100 : 0, mx * 100];
+    };
+    this.reset = function() {};
+  }
+
   function tao(cb, r, scene, banLap) {
+    if (cb.loai == 'laze') return new Laze(cb, r, scene);
+    if (cb.loai == 'lidar') return new Lidar(cb, r, scene);
+    if (cb.loai == 'camera') return Camera(cb, r, scene);
+    if (cb.loai == 'mauXa') return new MauXa(cb, r, scene);
     if (cb.loai == 'sieuAm') return new SieuAm(cb, r, scene);
     if (cb.loai == 'doLine') return new DoLine(cb, r, scene);
     if (cb.loai == 'mau') return new DoLine(cb, r, scene, true);
@@ -639,5 +816,5 @@ var SRAXeCamBien = (function() {
   }
 
   return { tao: tao, dapUng: dapUng, phanXaHongNgoai: phanXaHongNgoai, tinHieuMatPhang: tinHieuMatPhang,
-    MAC_DINH: { sieuAm: SA_MAC_DINH, doLine: DL_MAC_DINH, mau: MAU_MAC_DINH, gyro: GYRO_MAC_DINH, gps: GPS_MAC_DINH, but: BUT_MAC_DINH } };
+    MAC_DINH: { laze: LAZE_MAC_DINH, lidar: LIDAR_MAC_DINH, mauXa: MAU_XA_MAC_DINH, sieuAm: SA_MAC_DINH, doLine: DL_MAC_DINH, mau: MAU_MAC_DINH, gyro: GYRO_MAC_DINH, gps: GPS_MAC_DINH, but: BUT_MAC_DINH } };
 })();
