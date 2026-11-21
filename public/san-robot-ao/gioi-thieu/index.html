@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giới thiệu · Sân Robot Ảo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --xanh:#1d5fd6; --xanh-dam:#123a8a; --xanh-nhat:#e8f0fd;
+  --chu:#1f2430; --phu:#596273; --vien:#d5dae2; --nen:#ffffff; --nen-xam:#f6f8fa;
+  --cam:#c2410c; --tim:#6d28d9; --la:#15803d; --do:#b91c1c; --ngoc:#0f766e; --hong:#be185d; --vang:#a16207; --cham:#334155;
+  --cot:1200px; --dem:75px; --thanh:68px;
+  --h1:48px; --h1-d:58px; --h2:32px; --h2-d:40px; --h3:22px; --h3-d:30px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:calc(var(--thanh) + 12px)}
+body{margin:0; font:500 16px/24px "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--chu); background:var(--nen)}
+img{display:block; max-width:100%}
+a{color:var(--xanh)}
+h1,h2,h3,h4{margin:0; font-weight:700; letter-spacing:-.01em}
+p{margin:0}
+.cot{max-width:var(--cot); margin:0 auto; padding:0 var(--dem)}
+.nut{white-space:nowrap; display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 20px; border-radius:999px; font-weight:600; font-size:15px; text-decoration:none; background:var(--xanh); color:#fff; border:2px solid transparent; cursor:pointer}
+.nut:hover{filter:brightness(1.08)}
+.nut.vien{background:transparent; color:var(--xanh); border-color:var(--xanh)}
+.nut.trang{background:#fff; color:var(--xanh-dam)}
+.nut.trang.vien{background:transparent; color:#fff; border-color:#fff}
+.lien-ket{font-weight:700; text-decoration:none}
+.lien-ket::after{content:" ›"}
+:focus-visible{outline:3px solid #f59e0b; outline-offset:2px}
+
+/* ===== Thanh trên cố định ===== */
+.thanh{position:fixed; inset:0 0 auto 0; height:var(--thanh); background:var(--xanh); z-index:20; box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.thanh .trong{height:100%; display:flex; align-items:center; justify-content:space-between; padding:0 32px; gap:24px}
+.logo{display:flex; align-items:center; gap:10px; color:#fff; text-decoration:none; font-weight:800; font-size:19px; white-space:nowrap}
+.logo svg{flex:none}
+.menu{display:flex; gap:28px}
+.menu a{color:#fff; text-decoration:none; font-weight:600; font-size:15px; opacity:.92}
+.menu a:hover{opacity:1; text-decoration:underline; text-underline-offset:6px}
+.phai{display:flex; align-items:center; gap:10px}
+.nut-menu{display:none; background:none; border:0; color:#fff; width:40px; height:40px; cursor:pointer}
+
+/* ===== Hero ===== */
+.hero{position:relative; margin-top:var(--thanh); padding:72px 0 250px; overflow:hidden; color:#fff; text-align:center;
+  background:
+    linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px) 0 0/48px 48px,
+    radial-gradient(ellipse at 50% 120%,#3b82f6 0%,var(--xanh) 45%,#1849a8 100%)}
+.hero h1{font-size:var(--h1); line-height:var(--h1-d); margin:0 auto 16px; max-width:980px; padding:0 24px}
+.hero p{font-size:19px; line-height:28px; font-weight:400; max-width:620px; margin:0 auto; padding:0 24px; opacity:.95}
+
+/* ===== Xem mô hình xe (chồng lên mép hero) ===== */
+.mo-hinh{margin-top:-210px; position:relative; z-index:2}
+.khung-xe{background:#fff; border-radius:12px; box-shadow:0 12px 40px rgba(15,35,80,.22); overflow:hidden}
+.khung-xe .anh{position:relative; aspect-ratio:16/9; background:#9aa3ad}
+.khung-xe .anh img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .35s}
+.khung-xe .anh img.hien{opacity:1}
+.nhan-goc{position:absolute; left:16px; top:16px; background:rgba(15,23,42,.72); color:#fff; font-size:13px; font-weight:600; padding:4px 12px; border-radius:999px}
+.goc{display:flex; flex-wrap:wrap; gap:8px; padding:14px 16px; border-top:1px solid var(--vien); align-items:center}
+.goc span{font-size:14px; color:var(--phu); margin-right:4px}
+.goc button{font:600 14px/1 inherit; font-family:inherit; height:34px; padding:0 14px; border-radius:999px; border:1px solid var(--vien); background:#fff; color:var(--chu); cursor:pointer}
+.goc button[aria-pressed=true]{background:var(--xanh); border-color:var(--xanh); color:#fff}
+.thong-so{display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--vien)}
+.thong-so div{padding:14px 16px; border-right:1px solid var(--vien)}
+.thong-so div:last-child{border-right:0}
+.thong-so b{display:block; font-size:20px; line-height:28px; color:var(--xanh-dam)}
+.thong-so small{font-size:13px; color:var(--phu)}
+
+/* ===== Giới thiệu ===== */
+.gioi-thieu{text-align:center; padding-top:56px; padding-bottom:24px}
+.gioi-thieu p{max-width:680px; margin:0 auto 24px; font-size:18px; line-height:30px; color:var(--phu)}
+.gioi-thieu .hang-nut{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
+
+/* ===== Phương châm 3 cột ===== */
+.phuong-cham{display:flex; justify-content:center; padding-top:56px; padding-bottom:96px}
+.pc{width:290px; margin:0 32px; display:flex; flex-direction:column; text-align:center}
+.pc svg{height:120px; margin:0 auto 20px}
+.pc h3{font-size:20px; line-height:30px; margin-bottom:12px}
+.pc p{color:var(--phu); margin-bottom:16px; flex:1}
+
+/* ===== Dải số liệu ===== */
+.dai-so{background:var(--xanh-dam); color:#fff; text-align:center; padding:56px 0;
+  background-image:radial-gradient(circle at 12% 30%,rgba(255,255,255,.08) 0 90px,transparent 91px),radial-gradient(circle at 90% 80%,rgba(255,255,255,.06) 0 130px,transparent 131px)}
+.dai-so p{font-size:30px; line-height:40px; font-weight:300; max-width:760px; margin:0 auto}
+.dai-so b{font-weight:800}
+
+/* ===== Tiêu đề nhóm ===== */
+.dau-nhom{text-align:center; margin:88px auto 56px}
+.dau-nhom h2{font-size:var(--h2); line-height:var(--h2-d); color:var(--xanh-dam); margin-bottom:20px}
+.dau-nhom p{max-width:580px; margin:0 auto; color:var(--phu)}
+
+/* ===== Lưới cảm biến ===== */
+.luoi-cb{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; list-style:none; margin:0; padding:0}
+.the{border:1px solid var(--vien); border-radius:10px; overflow:hidden; background:#fff; display:flex; flex-direction:column}
+.the .hinh{aspect-ratio:4/3; background:#e5e8ec; position:relative; overflow:hidden}
+.the .hinh img{width:100%; height:100%; object-fit:cover}
+.the .hinh svg{position:absolute; inset:0; margin:auto; width:46%; height:46%}
+.the .noi{padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1; border-top:4px solid var(--mau)}
+.the .loai{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--mau)}
+.the h3{font-size:18px; line-height:26px}
+.the p{font-size:15px; line-height:22px; color:var(--phu)}
+.the details{margin-top:auto; padding-top:6px; font-size:14px; line-height:21px}
+.the summary{cursor:pointer; font-weight:700; color:var(--mau); list-style:none}
+.the summary::-webkit-details-marker{display:none}
+.the summary::before{content:"+ "}
+.the details[open] summary::before{content:"− "}
+.the details p{margin-top:8px; font-size:14px}
+.the details p b{color:var(--chu)}
+
+/* ===== Dải xám 2 cột ===== */
+.dai-xam{background:var(--nen-xam); margin-top:96px}
+.hai-cot{display:flex; align-items:center; gap:56px; padding-top:64px; padding-bottom:64px}
+.hai-cot .anh{flex:1.15; border-radius:10px; overflow:hidden; border:1px solid var(--vien)}
+.hai-cot .chu{flex:1}
+.hai-cot h2{font-size:28px; line-height:36px; color:var(--xanh-dam); margin-bottom:16px}
+.hai-cot p{color:var(--phu); margin-bottom:16px}
+.hai-cot ul{margin:0 0 24px; padding-left:20px; color:var(--phu)}
+.hai-cot li{margin-bottom:6px}
+
+/* ===== Khối lập trình: chữ trái, ảnh phải ===== */
+.khoi{display:flex; margin-bottom:56px; min-height:380px; align-items:center}
+.khoi .chu{width:400px; flex:none; padding-right:40px}
+.khoi .anh{flex:1; border-radius:10px; overflow:hidden; border:1px solid var(--vien); box-shadow:0 6px 24px rgba(15,35,80,.08)}
+.khoi .so{display:inline-flex; width:28px; height:28px; border-radius:50%; align-items:center; justify-content:center; background:var(--mau); color:#fff; font-size:14px; font-weight:700; margin-right:8px}
+.khoi .loai{font-weight:700; display:flex; align-items:center; margin-bottom:8px}
+.khoi h3{font-size:26px; line-height:34px; color:var(--mau); margin-bottom:14px}
+.khoi p{color:var(--phu); margin-bottom:20px}
+.khoi .nut{background:var(--mau)}
+.khoi code{font-size:14px; background:var(--nen-xam); padding:1px 6px; border-radius:4px; color:var(--chu)}
+
+/* ===== Lưới sân ===== */
+.luoi-san{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; list-style:none; margin:0; padding:0}
+.san{border:1px solid var(--vien); border-radius:10px; overflow:hidden; background:#fff}
+.san .hinh{aspect-ratio:1/1; background:#2b3140; overflow:hidden; position:relative}
+.san .hinh img{width:100%; height:100%; object-fit:cover}
+.san .meta{padding:12px 14px 14px}
+.san h3{font-size:17px; line-height:24px; margin-bottom:4px}
+.san p{font-size:14px; line-height:21px; color:var(--phu)}
+.san.sap-co{border-style:dashed}
+.san.sap-co .hinh{background:repeating-linear-gradient(45deg,#eef1f5 0 14px,#e4e8ee 14px 28px)}
+.san.sap-co .hinh svg{position:absolute; inset:0; margin:auto; width:42%; height:42%}
+.the-sap{position:absolute; top:12px; left:12px; background:var(--vang); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px}
+.cuoi-nhom{text-align:center; margin:40px 0 96px}
+
+/* ===== Dải kêu gọi + chân trang ===== */
+.keu-goi{background:var(--xanh-dam); color:#fff; text-align:center; padding:64px 24px}
+.keu-goi h2{font-size:30px; line-height:38px; margin-bottom:14px}
+.keu-goi p{max-width:560px; margin:0 auto 28px; opacity:.9}
+.keu-goi .hang-nut{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+footer{background:var(--nen-xam); color:var(--phu); font-size:14px; line-height:22px}
+.chan{display:flex; justify-content:space-between; gap:40px; padding-top:56px; padding-bottom:40px}
+.chan .gt{max-width:300px}
+.chan h4{color:var(--chu); font-size:15px; margin-bottom:10px}
+.chan ul{list-style:none; margin:0; padding:0}
+.chan li{margin-bottom:6px}
+.chan a{color:var(--phu); text-decoration:none}
+.chan a:hover{color:var(--xanh); text-decoration:underline}
+.phap-li{border-top:1px solid var(--vien); padding-top:18px; padding-bottom:28px; font-size:13px}
+
+/* ===== Phản hồi theo màn hình: 1200 / 980 / 720 / 420 ===== */
+@media (max-width:1200px){
+  :root{--dem:48px}
+  .thanh .trong{padding:0 24px}
+  .menu{gap:20px}
+  .pc{margin:0 20px}
+}
+@media (max-width:980px){
+  :root{--dem:40px; --h1:34px; --h1-d:44px; --h2:26px; --h2-d:34px}
+  .luoi-cb{grid-template-columns:repeat(3,1fr)}
+  .luoi-san{grid-template-columns:repeat(2,1fr)}
+  .dai-so p{font-size:24px; line-height:34px}
+  .thong-so{grid-template-columns:repeat(3,1fr)}
+  .thong-so div:nth-child(3){border-right:0}
+  .thong-so div:nth-child(n+4){border-top:1px solid var(--vien)}
+  .khoi .chu{width:340px; padding-right:28px}
+  .hai-cot{gap:32px}
+}
+@media (max-width:820px){
+  .menu,.phai .nut.trang.vien{display:none}
+  .nut-menu{display:block}
+  .thanh .trong{display:grid; grid-template-columns:40px 1fr auto}
+  .logo{justify-self:center}
+  .menu.mo{display:flex; flex-direction:column; gap:0; position:absolute; top:var(--thanh); left:0; right:0; background:var(--xanh); padding:8px 24px 16px; box-shadow:0 8px 20px rgba(0,0,0,.2)}
+  .menu.mo a{padding:12px 0; border-bottom:1px solid rgba(255,255,255,.18)}
+}
+@media (max-width:720px){
+  :root{--dem:24px; --thanh:60px}
+  .hero{padding:44px 0 150px}
+  .logo{font-size:17px}
+  .logo svg{width:28px; height:28px}
+  .gioi-thieu{text-align:left; padding-top:40px}
+  .phai .nut{height:36px; padding:0 14px; font-size:14px}
+  .gioi-thieu p{font-size:17px; line-height:28px}
+  .gioi-thieu .hang-nut{justify-content:flex-start}
+  .hero p{font-size:17px; line-height:26px}
+  .mo-hinh{margin-top:-110px}
+  .phuong-cham{flex-direction:column; padding-top:32px; padding-bottom:56px}
+  .pc{width:100%; margin:0 0 28px; text-align:left}
+  .pc svg{display:none}
+  .luoi-cb{grid-template-columns:repeat(2,1fr); gap:14px}
+  .the details{display:none}
+  .khoi{flex-direction:column-reverse; min-height:0; margin-bottom:56px}
+  .khoi .chu{width:100%; padding:20px 0 0}
+  .khoi .anh{width:100%}
+  .hai-cot{flex-direction:column; align-items:stretch}
+  .chan{flex-wrap:wrap}
+  .chan .gt{max-width:100%; width:100%}
+  .dau-nhom{margin:64px auto 36px; text-align:left}
+  .dau-nhom p{margin:0}
+}
+@media (max-width:420px){
+  .luoi-cb{gap:10px}
+  .the .noi{padding:10px 12px 12px}
+  .the h3{font-size:16px; line-height:22px}
+  .the p{display:none}
+  .luoi-san{gap:10px}
+  .san p{display:none}
+  .san h3{font-size:15px; margin:0}
+  .thong-so{grid-template-columns:repeat(2,1fr)}
+  .thong-so div{border-right:1px solid var(--vien)!important; border-top:1px solid var(--vien)}
+  .thong-so div:nth-child(2n){border-right:0!important}
+  .thong-so div:nth-child(-n+2){border-top:0}
+  .thong-so div:last-child{display:none}
+  .goc span{width:100%}
+  .chan > div{width:45%}
+  .dai-so p{font-size:21px; line-height:30px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} .khung-xe .anh img{transition:none}}
+</style>
+</head>
+<body>
+<!--
+  Sân Robot Ảo – trang giới thiệu.
+  Copyright (C) 2026 những người đóng góp cho Sân Robot Ảo. GPL v3.
+  Ảnh là ảnh chụp màn hình của chính Sân Robot Ảo.
+-->
+
+<header class="thanh">
+  <div class="trong">
+    <button class="nut-menu" aria-label="Mở menu" aria-expanded="false" id="nutMenu">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="logo" href="#">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="8" fill="#fff"/><rect x="8" y="11" width="18" height="12" rx="2.5" fill="#1d5fd6"/><circle cx="13" cy="17" r="2" fill="#fff"/><circle cx="21" cy="17" r="2" fill="#fff"/><rect x="5" y="14" width="3" height="7" rx="1.2" fill="#123a8a"/><rect x="26" y="14" width="3" height="7" rx="1.2" fill="#123a8a"/><path d="M17 11V7" stroke="#1d5fd6" stroke-width="2" stroke-linecap="round"/></svg>
+      Sân Robot Ảo
+    </a>
+    <nav class="menu" id="menu" aria-label="Mục chính">
+      <a href="#xe">Xe</a>
+      <a href="#phuong-cham">Phương châm</a>
+      <a href="#cam-bien">Cảm biến</a>
+      <a href="#lap-trinh">Lập trình</a>
+      <a href="#san">Sân</a>
+    </nav>
+    <div class="phai">
+      <a class="nut trang vien" href="../">Danh sách bài</a>
+      <a class="nut trang" href="../../">Vào sân</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Lập trình robot thật, trên một sân ảo</h1>
+    <p>Lắp cảm biến, kéo khối lệnh hoặc viết Python, rồi xem chiếc xe chạy theo đúng định luật vật lí. Chạy ngay trên trình duyệt, miễn phí.</p>
+  </section>
+
+  <!-- 1. MÔ HÌNH XE -->
+  <section class="mo-hinh cot" id="xe" aria-label="Mô hình xe">
+    <div class="khung-xe">
+      <div class="anh" id="anhXe">
+        <img src="anh/xe-truoc-trai.jpg" alt="Xe lắp mô-đun nhìn từ phía trước bên trái" class="hien" data-goc="truoc">
+        <img src="anh/xe-ben.jpg" alt="Xe nhìn ngang từ bên trái" data-goc="ben">
+        <img src="anh/xe-tren.jpg" alt="Xe nhìn từ trên xuống" data-goc="tren">
+        <img src="anh/xe-sau-trai.jpg" alt="Xe nhìn từ phía sau bên trái" data-goc="sau">
+        <img src="anh/xe-hitbox.jpg" alt="Xe với khung dây xanh lá là hình va chạm" data-goc="hitbox">
+        <span class="nhan-goc" id="nhanGoc">Nhìn từ trước</span>
+      </div>
+      <div class="goc" role="group" aria-label="Chọn góc nhìn">
+        <span>Góc nhìn:</span>
+        <button type="button" data-goc="truoc" aria-pressed="true">Trước</button>
+        <button type="button" data-goc="ben" aria-pressed="false">Bên</button>
+        <button type="button" data-goc="tren" aria-pressed="false">Trên</button>
+        <button type="button" data-goc="sau" aria-pressed="false">Sau</button>
+        <button type="button" data-goc="hitbox" aria-pressed="false">Hình va chạm</button>
+      </div>
+      <div class="thong-so">
+        <div><b>549 g</b><small>khối lượng cả xe</small></div>
+        <div><b>2 × TT 1:48</b><small>motor giảm tốc, mỗi bánh một motor</small></div>
+        <div><b>Ø 6,37 cm</b><small>bánh xe, chu vi 20 cm</small></div>
+        <div><b>8 ổ RJ25</b><small>gắn tới 8 cảm biến</small></div>
+        <div><b>273 khối</b><small>hình va chạm khớp từng chi tiết</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. GIỚI THIỆU -->
+  <section class="gioi-thieu cot">
+    <p>Sân Robot Ảo là phòng thí nghiệm robot chạy trên trình duyệt, viết cho học sinh THCS từ lớp 6. Học sinh đi từ tiến, lùi, quay đến hiệu chỉnh motor, đọc cảm biến, rồi tới mê cung và thi đấu. Mỗi bài có 3 sao để biết mình đã làm được đến đâu.</p>
+    <div class="hang-nut">
+      <a class="nut" href="../">Bắt đầu bài 1</a>
+      <a class="nut vien" href="#cam-bien">Xem cảm biến</a>
+    </div>
+  </section>
+
+  <!-- 3. PHƯƠNG CHÂM -->
+  <section class="cot phuong-cham" id="phuong-cham" aria-label="Phương châm hoạt động">
+    <div class="pc">
+      <svg viewBox="0 0 200 120" aria-hidden="true" fill="none" stroke="#1d5fd6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="52" y="40" width="96" height="42" rx="8"/><circle cx="74" cy="88" r="16"/><circle cx="126" cy="88" r="16"/>
+        <path d="M74 88h-36M126 88h36" stroke="#c2410c"/><path d="M38 88l8-5M38 88l8 5M162 88l-8-5M162 88l-8 5" stroke="#c2410c"/>
+        <path d="M100 40V22M90 22h20" /><path d="M20 106h160" stroke="#9aa3ad"/>
+      </svg>
+      <h3>Vật lí thật, không tính sẵn</h3>
+      <p>Mỗi bánh có motor riêng. Xe đi thẳng hay quay là kết quả của lực ma sát ở hai bánh và bi, đúng như xe ngoài đời.</p>
+      <a class="lien-ket" href="#xe">Xem chiếc xe</a>
+    </div>
+    <div class="pc">
+      <svg viewBox="0 0 200 120" aria-hidden="true" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 96c20-6 30-40 52-40s24 30 46 30 30-50 54-56" stroke="#9aa3ad" stroke-dasharray="6 7"/>
+        <path d="M24 96c30-4 50-30 76-32s48-20 76-34" stroke="#15803d"/>
+        <g fill="#f59e0b" stroke="#a16207" stroke-width="2"><path d="M60 22l5 10 11 1-8 7 2 11-10-6-10 6 2-11-8-7 11-1z"/><path d="M100 14l5 10 11 1-8 7 2 11-10-6-10 6 2-11-8-7 11-1z"/><path d="M140 22l5 10 11 1-8 7 2 11-10-6-10 6 2-11-8-7 11-1z"/></g>
+      </svg>
+      <h3>Sai là một phần của bài</h3>
+      <p>Robot thật không bao giờ hoàn hảo: bánh lệch, motor yếu. Học sinh đo, sửa, chạy lại, và 3 sao cho biết đã tiến được bao xa.</p>
+      <a class="lien-ket" href="#lap-trinh">Cách chấm sao</a>
+    </div>
+    <div class="pc">
+      <svg viewBox="0 0 200 120" aria-hidden="true" fill="none" stroke="#6d28d9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="36" y="18" width="128" height="82" rx="8"/><path d="M36 36h128"/><circle cx="48" cy="27" r="2.5" fill="#6d28d9"/><circle cx="58" cy="27" r="2.5" fill="#6d28d9"/>
+        <path d="M80 56l-14 12 14 12M120 56l14 12-14 12M106 50l-12 36" stroke="#1d5fd6"/>
+      </svg>
+      <h3>Miễn phí, mở, tiếng Việt</h3>
+      <p>Không cài đặt, không tài khoản. Giao diện và khối lệnh tiếng Việt. Mã nguồn mở theo GPL v3, trường nào cũng dùng và sửa được.</p>
+      <a class="lien-ket" href="https://github.com/ntb866-ux/SiRo-project1">Mã nguồn</a>
+    </div>
+  </section>
+
+  <section class="dai-so" aria-label="Con số">
+    <div class="cot"><p>Mỗi giây, xe được tính <b>240 bước vật lí</b>. Cả lớp có <b>27 bài thử thách</b> và <b>81 sao</b> để chinh phục.</p></div>
+  </section>
+
+  <!-- 4. CẢM BIẾN -->
+  <section class="cot" id="cam-bien">
+    <div class="dau-nhom">
+      <h2>Tám loại cảm biến, mô phỏng theo linh kiện thật</h2>
+      <p>Mỗi cảm biến được mô phỏng theo cách linh kiện thật hoạt động: tiếng vọng, ánh sáng phản xạ, công tắc bị ép. Mở “Nguyên lí” để xem cách giải thích cho học sinh.</p>
+    </div>
+    <ul class="luoi-cb">
+      <li class="the" style="--mau:var(--xanh)">
+        <div class="hinh"><img src="anh/cb-sieu-am.jpg" alt="Cảm biến siêu âm HC-SR04 trên giá phía mũi xe"></div>
+        <div class="noi"><span class="loai">Khoảng cách</span><h3>Siêu âm HC-SR04</h3>
+          <p>Đo xa từ 2 đến 400 cm, mỗi 50 ms một lần.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>Phát xung 40 kHz, đo thời gian tiếng vọng t. Khoảng cách d = v·t / 2 với v = 343 m/s. Mô phỏng 37 tia trong nón 15°, mặt nghiêng quá 30° không cho tiếng vọng.</p>
+            <p><b>Nói với học sinh:</b> như con dơi, kêu một tiếng rồi đếm xem bao lâu thì nghe tiếng vọng.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--cham)">
+        <div class="hinh"><img src="anh/cb-do-line.jpg" alt="Hai mắt dò line dưới mũi xe, đèn báo xanh lá đang sáng"></div>
+        <div class="noi"><span class="loai">Ánh sáng</span><h3>Dò line TCRT5000</h3>
+          <p>Phân biệt vạch đen với nền sáng, đọc số hoặc tương tự.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>LED hồng ngoại 950 nm chiếu xuống, phototransistor đo phần ánh sáng dội lại. Nền trắng phản xạ mạnh, mực đen hấp thụ. Tín hiệu mạnh nhất khi cách sân 2,5 mm.</p>
+            <p><b>Nói với học sinh:</b> đèn pin chiếu xuống đất, màu đen “nuốt” ánh sáng nên mắt thấy tối.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--hong)">
+        <div class="hinh" style="background:#fdf2f8"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="38" cy="40" r="24" fill="#ef4444" opacity=".75"/><circle cx="62" cy="40" r="24" fill="#22c55e" opacity=".75"/><circle cx="50" cy="62" r="24" fill="#3b82f6" opacity=".75"/></svg></div>
+        <div class="noi"><span class="loai">Màu sắc</span><h3>Cảm biến màu TCS34725</h3>
+          <p>Đọc ba kênh đỏ, lục, lam của mặt sân.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>LED trắng chiếu xuống, chip đo có ba kính lọc R, G, B. Mỗi kênh đo phần ánh sáng cùng màu bị mặt sân phản xạ, đã cân bằng trắng ở độ cao chuẩn.</p>
+            <p><b>Nói với học sinh:</b> ba con mắt đeo ba cặp kính màu đỏ, xanh lá, xanh dương.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--cam)">
+        <div class="hinh"><img src="anh/cb-cham.jpg" alt="Tấm cản màu cam phía trước xe gắn công tắc chạm"></div>
+        <div class="noi"><span class="loai">Va chạm</span><h3>Công tắc chạm</h3>
+          <p>Tấm cản có bản lề và lò xo, ép vào là đóng mạch.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>Công tắc hành trình nằm sau tấm cản. Đóng khi tấm bị ép còn cách thân dưới 3°, mở lại khi quá 4° (có trễ để không chập chờn).</p>
+            <p><b>Nói với học sinh:</b> như nút chuông cửa, ấn vào là mạch kín.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--tim)">
+        <div class="hinh"><img src="anh/cb-gyro.jpg" alt="Mô-đun gyro và GPS trên nắp mạch chủ"></div>
+        <div class="noi"><span class="loai">Góc quay</span><h3>Con quay (gyro)</h3>
+          <p>Biết xe đã quay bao nhiêu độ, kể cả khi bị đẩy lệch.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>Đo vận tốc góc ω của thân xe rồi cộng dồn theo thời gian: góc hướng θ = Σ ω·Δt. Có thể bật trôi và nhiễu như gyro thật.</p>
+            <p><b>Nói với học sinh:</b> mỗi lần xoay một chút thì cộng vào, cộng mãi ra tổng số độ đã quay.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--ngoc)">
+        <div class="hinh" style="background:#ecfdf5"><svg viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="#0f766e" stroke-width="3"><path d="M10 30h80M10 50h80M10 70h80M30 10v80M50 10v80M70 10v80" opacity=".35"/><path d="M60 22a14 14 0 0 0-14 14c0 11 14 26 14 26s14-15 14-26a14 14 0 0 0-14-14z" fill="#0f766e" stroke="none"/><circle cx="60" cy="36" r="5" fill="#ecfdf5" stroke="none"/></svg></div>
+        <div class="noi"><span class="loai">Vị trí</span><h3>GPS</h3>
+          <p>Cho tọa độ của xe trên sân, 10 lần mỗi giây.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>Trả về tọa độ của ăng-ten trên mặt sân. Có thể bật sai số vài cm để học sinh thấy vì sao phải lấy trung bình.</p>
+            <p><b>Nói với học sinh:</b> sân là bản đồ có ô tọa độ, xe biết mình đang đứng ở ô nào.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--la)">
+        <div class="hinh"><img src="anh/cb-servo.jpg" alt="Servo trên nắp xe, tay quay mang cảm biến siêu âm"></div>
+        <div class="noi"><span class="loai">Cơ cấu</span><h3>Servo SG90</h3>
+          <p>Quay tay quay tới đúng góc 0–180°, mang theo cảm biến.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>Động cơ có mạch đo vị trí và tự điều chỉnh tới góc được lệnh. Mô-men kẹt 1,8 kgf·cm, quay 60° trong 0,1 s.</p>
+            <p><b>Nói với học sinh:</b> động cơ biết tự dừng đúng góc mình bảo.</p></details>
+        </div></li>
+      <li class="the" style="--mau:var(--do)">
+        <div class="hinh"><img src="anh/cb-but.jpg" alt="Xe đang hạ bút vẽ một nét trên sân"></div>
+        <div class="noi"><span class="loai">Vẽ</span><h3>Bút vẽ</h3>
+          <p>Hạ bút để xe vẽ lại đường mình đi.</p>
+          <details><summary>Nguyên lí</summary>
+            <p>Bút đặt đúng giữa trục hai bánh, là tâm quay của xe. Nam châm điện nhấc bút lên 3,5 mm, lò xo đẩy ngòi xuống.</p>
+            <p><b>Nói với học sinh:</b> xe quay tại chỗ thì đầu bút đứng yên, nên góc hình vẽ sắc nét.</p></details>
+        </div></li>
+    </ul>
+  </section>
+
+  <section class="dai-xam" aria-label="Lắp ráp xe">
+    <div class="cot hai-cot">
+      <div class="anh"><img src="anh/lt-lap-rap.jpg" alt="Bảng lắp ráp: sơ đồ xe, khay cảm biến và xe 3D bên cạnh"></div>
+      <div class="chu">
+        <h2>Tự lắp xe bằng kéo thả</h2>
+        <p>Mở <b>Robot → Lắp ráp xe</b>, kéo cảm biến từ khay vào chỗ gắn. Xe 3D dựng lại ngay: hình, hình va chạm và khối lượng đều tính lại.</p>
+        <ul>
+          <li>7 vùng gắn: 4 giá siêu âm, thanh dưới mũi, gầm xe, nắp mạch chủ</li>
+          <li>Bám lưới 0,5 cm, hoàn tác và làm lại</li>
+          <li>Sơn khung, tấm cản và vành bánh</li>
+        </ul>
+        <a class="nut" href="../../">Thử lắp xe</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. LẬP TRÌNH -->
+  <section class="cot" id="lap-trinh">
+    <div class="dau-nhom">
+      <h2>Từ khối lệnh đến Python, cùng một chiếc xe</h2>
+      <p>Học sinh mới bắt đầu kéo khối. Khi đã quen thì chuyển sang Python. Chương trình nào cũng chạy trên cùng một sân và được chấm cùng một cách.</p>
+    </div>
+
+    <div class="khoi" style="--mau:var(--cam)">
+      <div class="chu">
+        <div class="loai"><span class="so">1</span>Khối lệnh</div>
+        <h3>Kéo, thả, ghép</h3>
+        <p>Khối bo tròn, màu theo nhóm, chữ tiếng Việt. Chế độ <b>Cơ bản</b> chỉ hiện khối cần cho bài, <b>Nâng cao</b> mở đủ vòng lặp, biến, phép toán. Mỗi bài có code mẫu để học sinh đọc và sửa.</p>
+        <a class="nut" href="../../">Mở Khối lệnh</a>
+      </div>
+      <div class="anh"><img src="anh/lt-khoi.jpg" alt="Chương trình khối lệnh dò đường bên cạnh sân mô phỏng"></div>
+    </div>
+
+    <div class="khoi" style="--mau:var(--tim)">
+      <div class="chu">
+        <div class="loai"><span class="so">2</span>Python</div>
+        <h3>Viết mã như robot thật</h3>
+        <p>Tab <b>Python</b> dùng thư viện kiểu ev3dev2: <code>LargeMotor</code>, <code>MoveTank</code>, cảm biến theo cổng. Bảng số đo vẽ đồ thị độ sáng theo thời gian để học sinh chọn ngưỡng.</p>
+        <a class="nut" href="../../">Mở Python</a>
+      </div>
+      <div class="anh"><img src="anh/lt-python.jpg" alt="Mã Python, đồ thị độ sáng phản xạ và xe đang dò đường"></div>
+    </div>
+
+    <div class="khoi" style="--mau:var(--la)">
+      <div class="chu">
+        <div class="loai"><span class="so">3</span>Chạy và chấm sao</div>
+        <h3>Bấm ▶ Chạy, xem kết quả</h3>
+        <p>Robot chạy trên sân, hệ thống chấm theo tiêu chí của bài: tới đích, không chạm tường, đúng thời gian, chương trình gọn. Tiến độ lưu ngay trên máy, tải về được dưới dạng tệp.</p>
+        <a class="nut" href="../">Xem danh sách bài</a>
+      </div>
+      <div class="anh"><img src="anh/lt-sao.jpg" alt="Bảng kết quả Xuất sắc với ba sao sau khi vẽ tam giác đều"></div>
+    </div>
+  </section>
+
+  <!-- 6. SÂN -->
+  <section class="cot" id="san">
+    <div class="dau-nhom">
+      <h2>Sân cho từng kĩ năng</h2>
+      <p>Mỗi sân dựng cho một kĩ năng: lưới tọa độ để đo quãng đường, vạch kẻ để dò đường, tường để đo khoảng cách. Sân thi đấu đã chơi được ở chế độ lập trình tự do, bài có chấm sao đang được làm.</p>
+    </div>
+    <ul class="luoi-san">
+      <li class="san"><div class="hinh"><img src="anh/san-do-xe.jpg" alt="Sân lưới tọa độ, ô đỗ xe màu vàng"></div>
+        <div class="meta"><h3>Lưới tọa độ</h3><p>Tiến, lùi, quay, đỗ xe vào ô. Đo quãng đường bằng ô 25 cm.</p></div></li>
+      <li class="san"><div class="hinh"><img src="anh/san-do-line.jpg" alt="Sân dò đường có khúc cua gắt và đồ thị độ sáng"></div>
+        <div class="meta"><h3>Dò đường</h3><p>Một vạch, nhiều vạch, đường cong, cua gắt cho 1 đến 3 mắt dò line.</p></div></li>
+      <li class="san"><div class="hinh"><img src="anh/san-me-cung.jpg" alt="Mê cung nhỏ, xe đo khoảng cách 71 cm tới tường"></div>
+        <div class="meta"><h3>Mê cung</h3><p>Chạm tường, giữ khoảng cách, men theo tường và thoát mê cung.</p></div></li>
+      <li class="san"><div class="hinh"><img src="anh/san-ve-hinh.jpg" alt="Tam giác đều do bút của xe vẽ trên sân"></div>
+        <div class="meta"><h3>Vẽ hình</h3><p>Tam giác, lục giác, ngôi sao: góc quay của xe là góc ngoài của hình.</p></div></li>
+      <li class="san"><div class="hinh"><span class="the-sap">Chơi tự do</span><img src="../../images/worlds/sumo.jpg" alt="Sân sumo: xe đứng giữa vòng tròn, quanh là các khối"></div>
+        <div class="meta"><h3>Sumo</h3><p>Hai xe đẩy nhau ra khỏi vòng tròn. Dùng siêu âm tìm đối thủ, dò line giữ mình trong sân.</p></div></li>
+      <li class="san"><div class="hinh"><span class="the-sap">Chơi tự do</span><img src="../../images/worlds/football.jpg" alt="Sân bóng đá robot với bốn xe và quả bóng"></div>
+        <div class="meta"><h3>Bóng đá robot</h3><p>Đội xe tìm bóng và đưa vào khung thành, mỗi đội tự lập trình chiến thuật.</p></div></li>
+    </ul>
+    <div class="cuoi-nhom"><a class="nut" href="../">Xem 27 bài thử thách</a></div>
+  </section>
+</main>
+
+<section class="keu-goi">
+  <h2>Sẵn sàng cho chiếc xe đầu tiên?</h2>
+  <p>Mở trình duyệt là chạy được. Giáo viên có thể giao bài, học sinh tự lưu tiến độ trên máy.</p>
+  <div class="hang-nut">
+    <a class="nut trang" href="../">Bắt đầu học</a>
+    <a class="nut trang vien" href="../../">Lập trình tự do</a>
+  </div>
+</section>
+
+<footer>
+  <div class="cot chan">
+    <div class="gt">
+      <h4>Sân Robot Ảo</h4>
+      <p>Giả lập robot lập trình bằng khối kéo thả và Python cho học sinh THCS. Tên “Sân Robot Ảo” là tên tạm.</p>
+    </div>
+    <div><h4>Học</h4><ul><li><a href="../">Danh sách bài</a></li><li><a href="../../">Lập trình tự do</a></li><li><a href="#cam-bien">Cảm biến</a></li></ul></div>
+    <div><h4>Giáo viên</h4><ul><li><a href="https://github.com/ntb866-ux/SiRo-project1/tree/master/docs">Tài liệu</a></li><li><a href="https://github.com/ntb866-ux/SiRo-project1/blob/master/docs/huong-dan-them-bai.md">Thêm bài mới</a></li></ul></div>
+    <div><h4>Mã nguồn</h4><ul><li><a href="https://github.com/ntb866-ux/SiRo-project1">GitHub</a></li><li><a href="https://github.com/QuirkyCort/gears">GEARS (dự án gốc)</a></li><li><a href="https://github.com/ntb866-ux/SiRo-project1/blob/master/LICENSE">Giấy phép GPL v3</a></li></ul></div>
+  </div>
+  <div class="cot phap-li">Dựa trên GEARS (GearsBot) của Cort Wee và A Posteriori, phát hành theo GPL v3. Không liên kết với, không được tài trợ hay xác nhận bởi VEX Robotics, Innovation First hay LEGO.</div>
+</footer>
+
+<script>
+(function(){
+  var ten={truoc:'Nhìn từ trước',ben:'Nhìn ngang',tren:'Nhìn từ trên',sau:'Nhìn từ sau',hitbox:'Hình va chạm (khung xanh)'};
+  var anh=document.querySelectorAll('#anhXe img'), nut=document.querySelectorAll('.goc button'), nhan=document.getElementById('nhanGoc');
+  var thuTu=['truoc','ben','tren','sau','hitbox'];
+  function chon(g){
+    anh.forEach(function(i){i.classList.toggle('hien',i.dataset.goc===g)});
+    nut.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.goc===g)});
+    nhan.textContent=ten[g];
+  }
+  nut.forEach(function(b){b.addEventListener('click',function(){chon(b.dataset.goc)})});
+  document.querySelector('.goc').addEventListener('keydown',function(e){
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
+    var hien=document.querySelector('.goc button[aria-pressed=true]').dataset.goc;
+    var i=(thuTu.indexOf(hien)+(e.key==='ArrowRight'?1:thuTu.length-1))%thuTu.length;
+    chon(thuTu[i]); document.querySelector('.goc button[data-goc='+thuTu[i]+']').focus();
+  });
+  var m=document.getElementById('menu'), nm=document.getElementById('nutMenu');
+  nm.addEventListener('click',function(){var mo=m.classList.toggle('mo');nm.setAttribute('aria-expanded',mo)});
+  m.addEventListener('click',function(e){if(e.target.tagName==='A'){m.classList.remove('mo');nm.setAttribute('aria-expanded',false)}});
+})();
+</script>
+</body>
+</html>
