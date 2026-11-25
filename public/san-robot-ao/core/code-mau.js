@@ -37,6 +37,13 @@
     const an = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const vBien = (ten) => '<field name="VAR" id="' + idBien(ten) + '">' + an(ten) + '</field>';
 
+    // Ghi sẵn cổng của cảm biến mà khối sẽ đọc (cảm biến gắn sau cùng của loại đó), để khối trong code
+    // mẫu hiện rõ "cảm biến … ở cổng …". Robot chưa nạp thì để trống: khối tự lấy cảm biến khi mở.
+    function truongCong(nhom) {
+      let cb = (typeof sanRobotAo != 'undefined' && sanRobotAo.camBienDaChon) ? sanRobotAo.camBienDaChon(nhom, null) : null;
+      return cb ? '<field name="CONG">' + cb.cong + '</field>' : '';
+    }
+
     function giaTri(v) {
       if (typeof v == 'number') return '<shadow type="math_number"><field name="NUM">' + v + '</field></shadow>';
       return khoiGiaTri(v);
@@ -47,9 +54,9 @@
     function khoiGiaTri(v) {
       if (!Array.isArray(v)) throw new Error('giá trị lạ: ' + JSON.stringify(v));
       switch (v[0]) {
-        case 'kc': return '<block type="sra_khoang_cach"></block>';
-        case 'cham': return '<block type="sra_dang_cham"></block>';
-        case 'goc': return '<block type="sra_goc_quay"></block>';
+        case 'kc': return '<block type="sra_khoang_cach">' + truongCong('khoangCach') + '</block>';
+        case 'cham': return '<block type="sra_dang_cham">' + truongCong('cham') + '</block>';
+        case 'goc': return '<block type="sra_goc_quay">' + truongCong('gyro') + '</block>';
         case 'sang': return '<block type="sra_do_sang"><field name="CAM_BIEN">' + (v[1] || 'GIUA') + '</field></block>';
         case 'mau': return '<block type="sra_mau_thay"><field name="CAM_BIEN">' + (v[1] || 'GIUA') + '</field><field name="color">' + v[2] + '</field></block>';
         case 'bien': return '<block type="variables_get">' + vBien(v[1]) + '</block>';
@@ -81,7 +88,7 @@
         case 'bip': return '<block type="beep"><field name="block">BLOCK</field>';
         case 'but': return '<block type="sra_ha_but">';
         case 'nhacBut': return '<block type="sra_nhac_but">';
-        case 'goc0': return '<block type="sra_dat_lai_goc">';
+        case 'goc0': return '<block type="sra_dat_lai_goc">' + truongCong('gyro');
         case 'lap': return '<block type="controls_repeat_ext">' + vao('TIMES', l[1]) + '<statement name="DO">' + chuoi(l[2]) + '</statement>';
         case 'lapMai': return '<block type="sra_lap_mai"><statement name="DO">' + chuoi(l[1]) + '</statement>';
         case 'lapDen': return '<block type="controls_whileUntil"><field name="MODE">UNTIL</field><value name="BOOL">' + khoiGiaTri(l[1]) + '</value><statement name="DO">' + chuoi(l[2]) + '</statement>';

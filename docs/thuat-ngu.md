@@ -23,7 +23,7 @@ Nguyên tắc chung:
 | hạ bút / nhấc bút | `sra_ha_but`, `sra_nhac_but` | Bắt đầu / thôi vẽ vết đường đi | |
 | đặt màu bút [đỏ] | `sra_mau_but` | Đổi màu nét vẽ | |
 | đặt nét bút dày [3] | `sra_net_but` | Đổi độ dày nét vẽ | |
-| khoảng cách phía trước (cm) | `sra_khoang_cach` | Số đo của cảm biến siêu âm | "Robot phát tiếng siêu âm rồi nghe tiếng vọng, giống con dơi." |
+| khoảng cách (cm) đo bởi cảm biến siêu âm | `sra_khoang_cach` | Số đo của cảm biến siêu âm | "Robot phát tiếng siêu âm rồi nghe tiếng vọng, giống con dơi." |
 | cảm biến màu thấy [đen]? | `sra_thay_mau` | Đúng / sai | |
 | cảm biến chạm đang bị nhấn? | `sra_dang_cham` | Đúng / sai | |
 | góc quay (độ) | `sra_goc_quay` | Số đo con quay; quay phải thì tăng | "Con quay nhớ robot đã xoay bao nhiêu độ." |

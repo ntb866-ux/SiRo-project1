@@ -146,13 +146,14 @@ var sanRobotAo = new function() {
     '#sra-nhac_but#': { en: 'pen up', vi: 'nhấc bút' },
     '#sra-mau_but#': { en: 'set pen color to %1', vi: 'đặt màu bút %1' },
     '#sra-net_but#': { en: 'set pen width to %1', vi: 'đặt nét bút dày %1' },
-    '#sra-khoang_cach#': { en: 'distance ahead (cm)', vi: 'khoảng cách phía trước (cm)' },
-    '#sra-khoang_cach_tooltip#': { en: 'Distance from the ultrasonic sensor to the nearest obstacle', vi: 'Khoảng cách từ cảm biến siêu âm đến vật cản gần nhất' },
-    '#sra-thay_mau#': { en: 'color sensor sees %1 ?', vi: 'cảm biến màu thấy %1 ?' },
-    '#sra-dang_cham#': { en: 'touch sensor pressed?', vi: 'cảm biến chạm đang bị nhấn?' },
-    '#sra-goc_quay#': { en: 'heading (degrees)', vi: 'góc quay (độ)' },
+    '#sra-khoang_cach#': { en: 'distance (cm) read by %1', vi: 'khoảng cách (cm) đo bởi %1' },
+    '#sra-khoang_cach_tooltip#': { en: 'Distance from the chosen ultrasonic or laser sensor to the nearest obstacle. The sensor and its port are shown in the block', vi: 'Khoảng cách từ cảm biến siêu âm (hoặc laze) đã chọn đến vật cản gần nhất. Tên cảm biến và cổng gắn ghi ngay trong khối' },
+    '#sra-thay_mau#': { en: '%1 sees %2 ?', vi: '%1 thấy %2 ?' },
+    '#sra-dang_cham#': { en: '%1 pressed?', vi: '%1 đang bị nhấn?' },
+    '#sra-dang_cham_tooltip#': { en: 'True while the bumper of the chosen touch sensor is pressed', vi: 'Đúng khi tấm cản của cảm biến chạm đã chọn đang bị ép vào' },
+    '#sra-goc_quay#': { en: 'heading (degrees) read by %1', vi: 'góc quay (độ) đo bởi %1' },
     '#sra-goc_quay_tooltip#': { en: 'How many degrees the robot has turned. Turning right increases it', vi: 'Robot đã quay được bao nhiêu độ. Quay phải thì số tăng' },
-    '#sra-dat_lai_goc#': { en: 'reset heading to 0', vi: 'đặt lại góc quay về 0' },
+    '#sra-dat_lai_goc#': { en: 'reset heading of %1 to 0', vi: 'đặt lại góc quay của %1 về 0' },
     '#sra-cam#': { en: 'orange', vi: 'cam' },
     '#sra-tim#': { en: 'purple', vi: 'tím' },
     '#sra-hong#': { en: 'pink', vi: 'hồng' },
@@ -182,6 +183,169 @@ var sanRobotAo = new function() {
   function soVao(ten) {
     return { type: 'input_value', name: ten, check: 'Number' };
   }
+
+  // ==========================================================================
+  // Chọn cảm biến theo cổng
+  // ==========================================================================
+  // Mỗi khối cảm biến ghi rõ LOẠI cảm biến và CỔNG gắn, ví dụ "cảm biến màu dưới gầm ở cổng 4".
+  // Danh sách chọn lấy từ robot đang dùng, nên gắn thêm hay tháo cảm biến ở bảng Lắp ráp xe
+  // thì chữ trong khối đổi theo. Khối cũ (chưa có trường cổng) vẫn chạy: lấy cảm biến cùng loại
+  // gắn sau cùng, đúng như cách chọn cổng tự động (AUTO) trước đây.
+  const NHOM_CAM_BIEN = {
+    khoangCach: ['UltrasonicSensor', 'LaserRangeSensor'],
+    cham: ['TouchSensor'],
+    gyro: ['GyroSensor'],
+    mau: ['ColorSensor'],
+  };
+  // robot không phải xe lắp mô-đun: suy ra loại từ kiểu linh kiện của GEARS
+  const LOAI_THEO_KIEU = { UltrasonicSensor: 'sieuAm', LaserRangeSensor: 'laze', TouchSensor: 'cham', GyroSensor: 'gyro', ColorSensor: 'mau' };
+  const TEN_LOAI_CB = {
+    sieuAm: sraT('cảm biến siêu âm', 'ultrasonic sensor'),
+    laze: sraT('cảm biến laze', 'laser sensor'),
+    cham: sraT('cảm biến chạm', 'touch sensor'),
+    gyro: sraT('cảm biến gyro', 'gyro sensor'),
+    mau: sraT('cảm biến màu', 'color sensor'),
+    mauXa: sraT('cảm biến màu nhìn xa', 'long-range color sensor'),
+    doLine: sraT('cảm biến dò line', 'line sensor'),
+  };
+  const TEN_NHOM_CB = {
+    khoangCach: sraT('cảm biến siêu âm', 'ultrasonic sensor'),
+    cham: sraT('cảm biến chạm', 'touch sensor'),
+    gyro: sraT('cảm biến gyro', 'gyro sensor'),
+    mau: sraT('cảm biến màu', 'color sensor'),
+  };
+  const TEN_GIA_CB = {
+    truoc: sraT('phía mũi', 'at the front'), trai: sraT('bên trái', 'on the left'),
+    phai: sraT('bên phải', 'on the right'), sau: sraT('phía đuôi', 'at the back'),
+  };
+  const TEN_BEN_CB = [[sraT('trái', 'left'), sraT('phải', 'right')], [sraT('trái', 'left'), sraT('giữa', 'middle'), sraT('phải', 'right')]];
+
+  // Các cảm biến của nhóm đang gắn trên robot, theo thứ tự cổng
+  this.dsCamBien = function(nhom) {
+    let kq = [];
+    try {
+      if (typeof robot == 'undefined' || !robot || !robot.getComponentByPort) return kq;
+      for (let i = 1; i <= 30; i++) {
+        let c = robot.getComponentByPort('in' + i);
+        if (!c) break;
+        if (NHOM_CAM_BIEN[nhom].indexOf(c.type) >= 0) kq.push({ cong: String(i), c: c, type: c.type, loai: c.sraLoai || LOAI_THEO_KIEU[c.type] });
+      }
+    } catch (e) { /* robot đang nạp */ }
+    return kq;
+  };
+
+  // Vị trí gắn của cảm biến, ngắn gọn: "dưới gầm", "dưới mũi, bên trái", "phía mũi"…
+  function viTriCamBien(cb, tatCa) {
+    let m = cb.c.sraCb || {}, cung = tatCa.filter((x) => x.loai == cb.loai);
+    let noi = '';
+    if (m.gam != null) noi = sraT('dưới gầm', 'under the car');
+    else if (m.servo != null) noi = sraT('trên tay quay servo', 'on the servo arm');
+    else if (m.vat) noi = sraT('ở đầu cơ cấu công tác', 'on the tool');
+    else if (m.gia) noi = TEN_GIA_CB[m.gia] || '';
+    else if ((cb.loai == 'doLine' || cb.loai == 'mau') && m.x != null) noi = sraT('dưới mũi', 'under the nose');
+    // nhiều cảm biến cùng loại ở cùng một chỗ: thêm bên trái / giữa / phải
+    let chung = cung.filter((x) => (x.c.sraCb || {}).gam == m.gam && (x.c.sraCb || {}).servo == m.servo && !!(x.c.sraCb || {}).vat == !!m.vat && (x.c.sraCb || {}).gia == m.gia);
+    if (chung.length > 1 && chung.length <= 3 && m.x != null && m.servo == null) {
+      chung.sort((a, b) => (a.c.sraCb || {}).x - (b.c.sraCb || {}).x);
+      noi += (noi ? ' ' : '') + TEN_BEN_CB[chung.length - 2][chung.indexOf(cb)];
+    }
+    return noi;
+  }
+
+  // "cảm biến màu dưới gầm ở cổng 4"
+  this.nhanCamBien = function(cb, tatCa) {
+    let ten = TEN_LOAI_CB[cb.loai] || cb.type;
+    let mauKieu = cb.loai == 'doLine' || cb.loai == 'mau' || cb.loai == 'mauXa';
+    let nhieu = tatCa.filter((x) => x.loai == cb.loai).length > 1;
+    let vt = (mauKieu || nhieu) ? viTriCamBien(cb, tatCa) : '';
+    return ten + (vt ? ' ' + vt : '') + sraT(' ở cổng ', ' on port ') + cb.cong;
+  };
+
+  // Cảm biến mà khối (giá trị trường cổng = giaTri) sẽ đọc. Không có cổng ghi sẵn hoặc cổng đó không còn
+  // cảm biến loại này: lấy cảm biến gắn sau cùng (siêu âm trước, laze sau).
+  this.camBienDaChon = function(nhom, giaTri) {
+    let ds = self.dsCamBien(nhom);
+    let chon = ds.filter((x) => x.cong == giaTri)[0];
+    if (chon) return chon;
+    let sa = ds.filter((x) => x.type == 'UltrasonicSensor');
+    return sa.length ? sa[sa.length - 1] : (ds.length ? ds[ds.length - 1] : null);
+  };
+
+  // Lời gọi báo lỗi dễ hiểu khi chương trình chạy mà robot thiếu cảm biến
+  this.thieuCamBien = function(nhom) {
+    return 'sra_thieu_cb(\'' + ({ khoangCach: 'cam bien sieu am hoac laze', cham: 'cam bien cham', gyro: 'cam bien gyro', mau: 'cam bien mau' })[nhom] + '\')';
+  };
+
+  // Danh sách chọn của trường cổng: [chữ, giá trị]. Giá trị là số cổng ('3'); riêng nhóm màu
+  // là 'GIUA' / 'TRAI' / 'PHAI' (theo vị trí gắn, để một chương trình chạy được trên xe 1 hay 3 mắt)
+  // hoặc 'CONG<n>' cho cảm biến màu không ở thanh dưới mũi.
+  this.tuyChonCamBien = function(nhom) {
+    let ds = self.dsCamBien(nhom), kq = [];
+    if (nhom == 'mau') {
+      let vt = self.congCamBienMau ? self.congCamBienMau() : {}, dung = {};
+      // trái, giữa, phải; hai vị trí trùng một cảm biến (xe chỉ có 2 mắt) thì chỉ liệt kê một lần
+      ['TRAI', 'GIUA', 'PHAI'].forEach(function(k) {
+        let cb = vt[k] ? ds.filter((x) => x.cong == vt[k])[0] : null;
+        if (cb && !dung[cb.cong]) { dung[cb.cong] = true; kq.push([self.nhanCamBien(cb, ds), k]); }
+      });
+      ds.forEach((cb) => { if (!dung[cb.cong]) kq.push([self.nhanCamBien(cb, ds), 'CONG' + cb.cong]); });
+    } else {
+      ds.forEach((cb) => kq.push([self.nhanCamBien(cb, ds), cb.cong]));
+    }
+    if (!kq.length) kq.push([sraT('(robot chưa gắn ' + TEN_NHOM_CB[nhom] + ')', '(no ' + TEN_NHOM_CB[nhom] + ' mounted)'), 'AUTO']);
+    return kq;
+  };
+
+  // Chữ hiện trong khối: tính lại mỗi lần vẽ nên luôn khớp với robot đang dùng
+  function chuTruongCamBien(nhom, giaTri) {
+    let ds = self.dsCamBien(nhom);
+    let ops = self.tuyChonCamBien(nhom).filter((o) => o[1] == giaTri)[0];
+    if (ops) return ops[0];
+    let ten = TEN_NHOM_CB[nhom];
+    if (nhom == 'mau') {
+      // giá trị trái/giữa/phải đã lưu trong khối nhưng bị liệt kê chung với vị trí khác: vẫn hiện cảm biến thật
+      let cong = self.congCamBienMau ? self.congCamBienMau()[giaTri] : null, cb = cong ? self.dsCamBien('mau').filter((x) => x.cong == cong)[0] : null;
+      if (cb) return self.nhanCamBien(cb, self.dsCamBien('mau'));
+      let vt = { GIUA: sraT('giữa', 'middle'), TRAI: sraT('trái', 'left'), PHAI: sraT('phải', 'right') }[giaTri];
+      if (vt) return sraT(ten + ' ' + vt + ' (chưa gắn)', vt + ' ' + ten + ' (not mounted)');
+      return sraT(ten + ' ở cổng ' + String(giaTri).replace('CONG', '') + ' (không còn)', ten + ' on port ' + String(giaTri).replace('CONG', '') + ' (gone)');
+    }
+    if (giaTri == 'AUTO') return sraT('(robot chưa gắn ' + ten + ')', '(no ' + ten + ' mounted)');
+    return sraT(ten + ' ở cổng ' + giaTri + ' (không còn)', ten + ' on port ' + giaTri + ' (gone)');
+  }
+
+  class TruongCamBien extends Blockly.FieldDropdown {
+    constructor(nhom) {
+      let tham = { nhom: nhom };
+      super(function() { return self.tuyChonCamBien(tham.nhom); });
+      this.nhom = nhom;
+      this.maxDisplayLength = 120;
+    }
+    static fromJson(tuyChon) { return new this(tuyChon.nhom); }
+    // giữ nguyên giá trị đã lưu dù robot chưa nạp xong hoặc cảm biến vừa bị tháo
+    doClassValidation_(giaTri) { return (typeof giaTri == 'string' && giaTri) ? giaTri : null; }
+    getText_() { return chuTruongCamBien(this.nhom, this.getValue()); }
+  }
+  Blockly.fieldRegistry.register('field_cam_bien', TruongCamBien);
+
+  // Gọi sau khi robot được dựng lại (gắn / tháo cảm biến): vẽ lại chữ trong khối, và nếu cổng đã
+  // ghi không còn cảm biến loại đó mà robot có cảm biến cùng loại ở cổng khác thì chuyển sang đó.
+  this.lamMoiCamBien = function() {
+    if (typeof Blockly == 'undefined' || !Blockly.Workspace || !Blockly.Workspace.getAll) return;
+    Blockly.Workspace.getAll().forEach(function(ws) {
+      if (ws.isFlyout || !ws.getAllBlocks) return;
+      ws.getAllBlocks(false).forEach(function(b) {
+        b.inputList.forEach(function(inp) {
+          inp.fieldRow.forEach(function(f) {
+            if (!(f instanceof TruongCamBien)) return;
+            let ops = self.tuyChonCamBien(f.nhom);
+            if (!ops.some((o) => o[1] == f.getValue()) && f.nhom != 'mau' && ops[0][1] != 'AUTO') f.setValue(ops[0][1]);
+            f.forceRerender();
+          });
+        });
+      });
+    });
+  };
 
   this.dinhNghiaKhoiMoi = function() {
     return [
@@ -270,23 +434,27 @@ var sanRobotAo = new function() {
       },
       {
         type: 'sra_khoang_cach', message0: '#sra-khoang_cach#',
+        args0: [{ type: 'field_cam_bien', name: 'CONG', nhom: 'khoangCach' }],
         output: 'Number', style: 'sra_cam_bien', tooltip: '#sra-khoang_cach_tooltip#',
       },
       {
         type: 'sra_thay_mau', message0: '#sra-thay_mau#',
-        args0: [{ type: 'field_dropdown', name: 'color', options: MAU_CAM_BIEN }],
+        args0: [{ type: 'field_cam_bien', name: 'CAM_BIEN', nhom: 'mau' }, { type: 'field_dropdown', name: 'color', options: MAU_CAM_BIEN }],
         output: 'Boolean', style: 'sra_cam_bien',
       },
       {
         type: 'sra_dang_cham', message0: '#sra-dang_cham#',
-        output: 'Boolean', style: 'sra_cam_bien',
+        args0: [{ type: 'field_cam_bien', name: 'CONG', nhom: 'cham' }],
+        output: 'Boolean', style: 'sra_cam_bien', tooltip: '#sra-dang_cham_tooltip#',
       },
       {
         type: 'sra_goc_quay', message0: '#sra-goc_quay#',
+        args0: [{ type: 'field_cam_bien', name: 'CONG', nhom: 'gyro' }],
         output: 'Number', style: 'sra_cam_bien', tooltip: '#sra-goc_quay_tooltip#',
       },
       {
         type: 'sra_dat_lai_goc', message0: '#sra-dat_lai_goc#',
+        args0: [{ type: 'field_cam_bien', name: 'CONG', nhom: 'gyro' }],
         previousStatement: null, nextStatement: null, style: 'sra_cam_bien',
       },
     ];
@@ -419,20 +587,37 @@ var sanRobotAo = new function() {
         return 'pen_in' + gen.getPort('AUTO', 'Pen') + '.setColor(' + m[2] + ')\n';
       },
       sra_net_but: uyQuyen(gen, 'penSetWidth', { port: 'AUTO' }),
-      sra_khoang_cach: uyQuyen(gen, 'ultrasonic_sensor', { port: 'AUTO', units: 'CM' }),
+      sra_khoang_cach: function(block) {
+        let cb = self.camBienDaChon('khoangCach', block.getFieldValue('CONG'));
+        if (!cb) return [self.thieuCamBien('khoangCach'), Blockly.Python.ORDER_FUNCTION_CALL];
+        let kieu = cb.type == 'LaserRangeSensor' ? 'laser_sensor' : 'ultrasonic_sensor';
+        return uyQuyen(gen, kieu, { port: cb.cong, units: 'CM' })(block);
+      },
       sra_thay_mau: function(block) {
+        let cong = self.congCamBienMau()[block.getFieldValue('CAM_BIEN') || 'GIUA'];
+        if (!cong) return [self.thieuCamBien('mau'), Blockly.Python.ORDER_FUNCTION_CALL];
         let mau = block.getFieldValue('color');
-        let doc = uyQuyen(gen, 'color_sensor', { port: 'AUTO', type: 'COLOR' })(block)[0];
+        let doc = uyQuyen(gen, 'color_sensor', { port: cong, type: 'COLOR' })(block)[0];
         let ten = uyQuyen(gen, 'color', { color: mau, type: 'NUMBER' })(block)[0];
         return [doc + ' == ' + ten, Blockly.Python.ORDER_RELATIONAL];
       },
-      sra_dang_cham: uyQuyen(gen, 'touch_state', { port: 'AUTO', state: 'PRESSED' }),
-      sra_goc_quay: uyQuyen(gen, 'gyro_sensor', { port: 'AUTO', type: 'ANGLE' }),
+      sra_dang_cham: function(block) {
+        let cb = self.camBienDaChon('cham', block.getFieldValue('CONG'));
+        if (!cb) return [self.thieuCamBien('cham'), Blockly.Python.ORDER_FUNCTION_CALL];
+        return uyQuyen(gen, 'touch_state', { port: cb.cong, state: 'PRESSED' })(block);
+      },
+      sra_goc_quay: function(block) {
+        let cb = self.camBienDaChon('gyro', block.getFieldValue('CONG'));
+        if (!cb) return [self.thieuCamBien('gyro'), Blockly.Python.ORDER_FUNCTION_CALL];
+        return uyQuyen(gen, 'gyro_sensor', { port: cb.cong, type: 'ANGLE' })(block);
+      },
       // Bộ sinh mã Pybricks của GEARS quên tham số angle của reset_angle(), nên tự viết.
       sra_dat_lai_goc: function(block) {
+        let cb = self.camBienDaChon('gyro', block.getFieldValue('CONG'));
+        if (!cb) return self.thieuCamBien('gyro') + '\n';
         let ma = gen === pybricks_generator
-          ? 'gyro_sensor_in' + gen.getPort('AUTO', 'GyroSensor') + '.reset_angle(0)\n'
-          : uyQuyen(gen, 'reset_gyro', { port: 'AUTO' })(block);
+          ? 'gyro_sensor_in' + cb.cong + '.reset_angle(0)\n'
+          : uyQuyen(gen, 'reset_gyro', { port: cb.cong })(block);
         return ma + 'sra_dong_bo_huong()\n';
       },
     };

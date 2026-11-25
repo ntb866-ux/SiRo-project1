@@ -86,7 +86,7 @@ Các loại điều kiện (`loai`) có sẵn, dùng được cả trong `mucTie
 | `dungKhoi` | `khoi` (tên loại khối Blockly, chuỗi hoặc mảng), `toiThieu` (mặc định 1), `tenKhoi` (tên đọc, không bắt buộc) | Chương trình có ít nhất `toiThieu` khối thuộc các loại đó, ví dụ `["controls_repeat_ext", "controls_repeat"]` để bắt buộc dùng vòng lặp, `["sra_ha_but", "penDown"]` cho khối hạ bút. Viết Python thì không đạt. |
 | `veGiongMau` | `mau` (tên trong `hinhMau`), `saiSo` (cm, mặc định 4), `phu`, `chinhXac` (%, mặc định 90) | Nét bút vẽ trùng hình mẫu: ít nhất `phu` % chiều dài hình mẫu có nét vẽ đi qua (cách không quá `saiSo`), và ít nhất `chinhXac` % chiều dài nét vẽ nằm sát hình mẫu. Cách chấm: [bai-gyro-but-ve.md](bai-gyro-but-ve.md#cách-chấm-nét-vẽ-so-với-hình-mẫu). |
 | `dungCamBien` | `toiThieu` | Chương trình khối dùng ít nhất `toiThieu` cảm biến màu khác nhau (giữa, trái, phải). Viết Python thì không đạt. |
-| `khoangCachCuoi` | `tu`, `den` (cm) | Lúc kết thúc, cảm biến khoảng cách (siêu âm) đo được trong khoảng `tu`…`den`. Số đo tính đúng như khối "khoảng cách phía trước (cm)". |
+| `khoangCachCuoi` | `tu`, `den` (cm) | Lúc kết thúc, cảm biến khoảng cách (siêu âm) đo được trong khoảng `tu`…`den`. Số đo tính đúng như khối "khoảng cách (cm) đo bởi cảm biến siêu âm". |
 
 Các điều kiện dựa trên bảng số đo (G5, tệp `core/so-do-chuyen-dong.js`). Số đo tính từ chỗ và hướng của robot lúc bắt đầu lăn bánh:
 

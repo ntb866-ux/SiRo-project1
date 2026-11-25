@@ -385,7 +385,7 @@
       "moSauLanThu": 1
     },
     {
-      "noiDung": "Lời giải: **lặp mãi** { **quay phải 90 độ**; **lặp cho đến khi** ⟨khoảng cách phía trước (cm) > 30⟩ { **quay trái 90 độ** }; **đi tới 50 cm** }.",
+      "noiDung": "Lời giải: **lặp mãi** { **quay phải 90 độ**; **lặp cho đến khi** ⟨khoảng cách (cm) đo bởi cảm biến siêu âm > 30⟩ { **quay trái 90 độ** }; **đi tới 50 cm** }.",
       "moSauLanThu": 2
     }
   ],

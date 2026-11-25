@@ -17,20 +17,17 @@
   if (typeof sanRobotAo == 'undefined') return;
 
   i18n.append({
-    '#sra-do_sang#': { en: 'reflected light of %1 sensor', vi: 'độ sáng phản xạ cảm biến %1' },
+    '#sra-do_sang#': { en: 'reflected light read by %1', vi: 'độ sáng phản xạ đo bởi %1' },
     '#sra-do_sang_tooltip#': {
       en: 'Light reflected back to the sensor: 0 = black (absorbs light), 100 = white (reflects light)',
       vi: 'Ánh sáng hắt ngược về cảm biến: 0 là đen (hấp thụ hết ánh sáng), 100 là trắng (phản xạ gần hết)'
     },
-    '#sra-mau_thay#': { en: '%1 sensor sees %2 ?', vi: 'cảm biến %1 thấy màu %2 ?' },
+    '#sra-mau_thay#': { en: '%1 sees %2 ?', vi: '%1 thấy màu %2 ?' },
     '#sra-mau_thay_tooltip#': { en: 'True when the color sensor sees this color', vi: 'Đúng khi cảm biến màu nhận ra màu này' },
-    '#sra-giua#': { en: 'middle', vi: 'giữa' },
-    '#sra-ben_trai#': { en: 'left', vi: 'trái' },
-    '#sra-ben_phai#': { en: 'right', vi: 'phải' },
   });
 
-  const VI_TRI = [['#sra-giua#', 'GIUA'], ['#sra-ben_trai#', 'TRAI'], ['#sra-ben_phai#', 'PHAI']];
   const TEN_VI_TRI = { GIUA: 'giữa', TRAI: 'trái', PHAI: 'phải' };
+  const TEN_CONG = (viTri) => TEN_VI_TRI[viTri] || ('o cong ' + String(viTri).replace('CONG', ''));
   const MAU = [
     ['#blk-black#', 'BLACK'], ['#blk-white#', 'WHITE'], ['#blk-red#', 'RED'],
     ['#blk-green#', 'GREEN'], ['#blk-blue#', 'BLUE'], ['#blk-yellow#', 'YELLOW'], ['#blk-brown#', 'BROWN'],
@@ -42,13 +39,13 @@
     return dinhNghiaGoc.apply(sanRobotAo, arguments).concat([
       {
         type: 'sra_do_sang', message0: '#sra-do_sang#',
-        args0: [{ type: 'field_dropdown', name: 'CAM_BIEN', options: VI_TRI }],
+        args0: [{ type: 'field_cam_bien', name: 'CAM_BIEN', nhom: 'mau' }],
         output: 'Number', style: 'sra_cam_bien', tooltip: '#sra-do_sang_tooltip#',
       },
       {
         type: 'sra_mau_thay', message0: '#sra-mau_thay#',
         args0: [
-          { type: 'field_dropdown', name: 'CAM_BIEN', options: VI_TRI },
+          { type: 'field_cam_bien', name: 'CAM_BIEN', nhom: 'mau' },
           { type: 'field_dropdown', name: 'color', options: MAU },
         ],
         output: 'Boolean', style: 'sra_cam_bien', tooltip: '#sra-mau_thay_tooltip#',
@@ -84,20 +81,18 @@
   };
 
   // ---------- Đổi giữa/trái/phải ra cổng ----------
-  // Trả về số cổng { GIUA: '1', TRAI: '6', PHAI: '7' } theo vị trí gắn cảm biến màu (x < 0 là bên trái).
+  // Trả về số cổng { GIUA: '1', TRAI: '6', PHAI: '7' } theo vị trí gắn cảm biến màu (x < 0 là bên trái),
+  // kèm CONG<n>: '<n>' cho mọi cảm biến màu của robot (để chọn đúng cổng, kể cả cảm biến dưới gầm).
   sanRobotAo.congCamBienMau = function() {
-    let ds = [];
-    if (typeof robot != 'undefined' && robot.getComponentByPort) {
-      for (let i = 1; i <= 20; i++) {
-        let c = robot.getComponentByPort('in' + i);
-        if (!c) break;
-        if (c.type == 'ColorSensor') ds.push({ cong: String(i), x: c.position ? c.position.x : 0, gam: !!c.sraGam });
-      }
-    }
-    // xe lắp mô-đun có cả mắt dưới mũi lẫn mắt dưới gầm: trái/giữa/phải là các mắt dưới mũi
-    // (mắt dưới gầm đọc bằng khối chọn theo số cổng)
-    if (ds.some((c) => !c.gam)) ds = ds.filter((c) => !c.gam);
+    let ds = sanRobotAo.dsCamBien('mau').map(function(cb) {
+      let c = cb.c;
+      return { cong: cb.cong, x: c.position ? c.position.x : 0, gam: !!c.sraGam || c.sraLoai == 'mauXa' };   // màu nhìn xa không phải mắt dưới mũi
+    });
     let kq = { GIUA: null, TRAI: null, PHAI: null };
+    ds.forEach((c) => { kq['CONG' + c.cong] = c.cong; });
+    // Trái/giữa/phải chọn trong các mắt dưới mũi (thanh dưới mũi, nơi xe để mắt dò line). Xe không có
+    // mắt nào dưới mũi thì chọn trong mọi cảm biến màu (ví dụ xe chỉ có mắt dưới gầm).
+    if (ds.some((c) => !c.gam)) ds = ds.filter((c) => !c.gam);
     if (!ds.length) return kq;
     kq.GIUA = ds.reduce((a, b) => Math.abs(b.x) < Math.abs(a.x) ? b : a).cong;
     let trai = ds.filter(c => c.x < -0.5).sort((a, b) => b.x - a.x)[0];   // gần giữa nhất bên trái
@@ -118,7 +113,7 @@
 
   // Cảm biến được chọn không có trên robot: sinh lời gọi báo lỗi dễ hiểu khi chạy
   function thieuCamBien(viTri) {
-    return 'sra_thieu_cam_bien(\'' + TEN_VI_TRI[viTri] + '\')';
+    return 'sra_thieu_cam_bien(\'' + TEN_CONG(viTri) + '\')';
   }
 
   function boSinhMa(gen) {
@@ -203,6 +198,9 @@
   const MA_THIEU =
     'def sra_thieu_cam_bien(ten):\n' +
     '    raise ValueError("Robot nay khong co cam bien mau ben " + ten + ". Hay chon cam bien khac hoac doi sang robot do duong.")\n' +
+    '\n' +
+    'def sra_thieu_cb(ten):\n' +
+    '    raise ValueError("Robot nay chua gan " + ten + ". Hay mo Robot > Lap rap xe de gan cam bien, roi chon lai cong trong khoi lenh.")\n' +
     '\n';
 
   [[ev3dev2_generator, MA_EV3DEV], [pybricks_generator, MA_PYBRICKS]].forEach(function(cap) {
@@ -217,10 +215,10 @@
         them += cap[1];
         if (gen === ev3dev2_generator && /^sra_dt = None$/m.test(code) && /\bdef sra_dung\(/.test(code)) them += MA_GIU_HUONG;
       }
-      if (/\bsra_thieu_cam_bien\(/.test(code)) them += MA_THIEU;
+      if (/\bsra_thieu_(cam_bien|cb)\(/.test(code)) them += MA_THIEU;
       if (them) code = code.replace(moc, them + moc);
       return code;
     };
   });
-  Blockly.Python.addReservedWords('sra_gioi_han,sra_chay_goc,sra_thieu_cam_bien,sra_giu,sra_sua_huong,sra_doc_sang,sra_doc_mau,sra_tat_giu');
+  Blockly.Python.addReservedWords('sra_gioi_han,sra_chay_goc,sra_thieu_cam_bien,sra_thieu_cb,sra_giu,sra_sua_huong,sra_doc_sang,sra_doc_mau,sra_tat_giu');
 })();

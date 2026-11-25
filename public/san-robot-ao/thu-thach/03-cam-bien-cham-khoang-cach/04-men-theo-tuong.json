@@ -426,7 +426,7 @@
       "moSauLanThu": 1
     },
     {
-      "noiDung": "Lời giải: **lặp lại 4 lần** { **chạy tới**, **chờ đến khi** ⟨khoảng cách phía trước (cm) < 20⟩, **dừng**, **quay phải 90 độ** }. Robot quẹt tường lúc quay? Đuôi xe cần chỗ để xoay: tăng ngưỡng hoặc giảm tốc độ.",
+      "noiDung": "Lời giải: **lặp lại 4 lần** { **chạy tới**, **chờ đến khi** ⟨khoảng cách (cm) đo bởi cảm biến siêu âm < 20⟩, **dừng**, **quay phải 90 độ** }. Robot quẹt tường lúc quay? Đuôi xe cần chỗ để xoay: tăng ngưỡng hoặc giảm tốc độ.",
       "moSauLanThu": 2
     }
   ],

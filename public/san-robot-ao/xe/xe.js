@@ -341,12 +341,14 @@ var SRAXe = new function() {
       banLap.camBien.forEach(function(cb) {
         let c = SRAXeCamBien.tao(cb, r, scene, banLap);
         if (!c) return;
-        c.port = cb.cong; c.componentIndex = r.componentIndex++;
+        c.port = cb.cong; c.sraCb = cb; c.componentIndex = r.componentIndex++;
         r.sensorCount++;
         r.components.push(c);
       });
     }
     if (typeof r.addLabel == 'function') r.addLabel();
+    // khối lệnh cảm biến ghi loại cảm biến và cổng: vẽ lại chữ theo xe vừa lắp
+    if (typeof sanRobotAo != 'undefined' && sanRobotAo.lamMoiCamBien) setTimeout(function() { try { sanRobotAo.lamMoiCamBien(); } catch (e) { console.warn(e); } }, 0);
     return Promise.resolve();
   };
 

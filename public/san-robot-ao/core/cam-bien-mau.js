@@ -194,13 +194,17 @@ SRA.camBienMau = new function() {
   // Các cảm biến (giữa/trái/phải) mà chương trình khối đang dùng; null nếu học sinh viết Python
   this.camBienDangDung = function() {
     if (typeof filesManager != 'undefined' && filesManager.modified) return null;
-    let ds = new Set();
+    // khoá là cổng của cảm biến (hai khối chọn "giữa" và "cổng 1" nhưng cùng một cảm biến chỉ tính một lần);
+    // không tra được cổng (robot chưa nạp) thì dùng chính giá trị chọn
+    let ds = new Map(), cong = sanRobotAo.congCamBienMau ? sanRobotAo.congCamBienMau() : {};
     for (let top of blockly.workspace.getTopBlocks(false)) {
       if (top.previousConnection || top.outputConnection) continue;
       for (let b of top.getDescendants(false)) {
         if (typeof b.isEnabled == 'function' && !b.isEnabled()) continue;
-        if (b.type == 'sra_do_sang' || b.type == 'sra_mau_thay') ds.add(b.getFieldValue('CAM_BIEN'));
-        if (b.type == 'sra_thay_mau') ds.add('GIUA');
+        if (b.type == 'sra_do_sang' || b.type == 'sra_mau_thay' || b.type == 'sra_thay_mau') {
+          let v = b.getFieldValue('CAM_BIEN') || 'GIUA';
+          if (!ds.has(cong[v] || v)) ds.set(cong[v] || v, v);
+        }
       }
     }
     return ds;
@@ -222,7 +226,7 @@ SRA.luat.dungCamBien = {
     return {
       dat: dat,
       lyDo: sraT('Chương trình dùng ' + ds.size + ' cảm biến màu', 'The program uses ' + ds.size + ' color sensors') +
-        (ds.size ? ' (' + Array.from(ds).map(v => ten[v]).join(', ') + ')' : '') +
+        (ds.size ? ' (' + Array.from(ds.values()).map(v => ten[v] || sraT('cổng ', 'port ') + String(v).replace('CONG', '')).join(', ') + ')' : '') +
         (dat ? '.' : sraT(', cần ít nhất ' + can + '.', ', needs at least ' + can + '.'))
     };
   }
