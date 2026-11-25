@@ -1,0 +1,190 @@
+{
+  "bai": "03-cam-bien-mau/07-nga-tu-dem-nga-re",
+  "tenXe": "Xe ba mắt dưới gầm",
+  "giaiThichXe": "Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh 4 cm (giống xe ở bài dò đường cua gắt). Ngã rẽ có thanh ngang đối xứng nên khi thanh ngang chạy qua gầm xe thì mắt trái và mắt phải cùng thấy đen: đó là dấu hiệu \"đang ở ngã rẽ\". Thấy dấu hiệu xong xe đi thêm 4 cm để trục bánh vào giữa ngã rẽ rồi mới quay.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [
+      {
+        "loai": "doLine",
+        "x": -3,
+        "z": 4
+      },
+      {
+        "loai": "doLine",
+        "x": 0,
+        "z": 4
+      },
+      {
+        "loai": "doLine",
+        "x": 3,
+        "z": 4
+      }
+    ],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#ef6c00"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "datBien",
+      "đếm",
+      0
+    ],
+    [
+      "lapDen",
+      [
+        "=",
+        [
+          "bien",
+          "đếm"
+        ],
+        3
+      ],
+      [
+        [
+          "neu",
+          [
+            "va",
+            [
+              "<",
+              [
+                "sang",
+                "TRAI"
+              ],
+              65
+            ],
+            [
+              "<",
+              [
+                "sang",
+                "PHAI"
+              ],
+              65
+            ]
+          ],
+          [
+            [
+              "tangBien",
+              "đếm",
+              1
+            ],
+            [
+              "neu",
+              [
+                "=",
+                [
+                  "bien",
+                  "đếm"
+                ],
+                1
+              ],
+              [
+                [
+                  "di",
+                  6
+                ]
+              ],
+              [
+                [
+                  "neu",
+                  [
+                    "=",
+                    [
+                      "bien",
+                      "đếm"
+                    ],
+                    2
+                  ],
+                  [
+                    [
+                      "di",
+                      4
+                    ],
+                    [
+                      "phai",
+                      90
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "neu",
+              [
+                "<",
+                [
+                  "sang",
+                  "TRAI"
+                ],
+                65
+              ],
+              [
+                [
+                  "banh",
+                  -12,
+                  25
+                ]
+              ],
+              [
+                [
+                  "neu",
+                  [
+                    "<",
+                    [
+                      "sang",
+                      "PHAI"
+                    ],
+                    65
+                  ],
+                  [
+                    [
+                      "banh",
+                      25,
+                      -12
+                    ]
+                  ],
+                  [
+                    [
+                      "neu",
+                      [
+                        "<",
+                        [
+                          "sang",
+                          "GIUA"
+                        ],
+                        65
+                      ],
+                      [
+                        [
+                          "banh",
+                          20,
+                          20
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Biến \"đếm\" ghi số thanh ngang đã gặp. Mỗi lần hai mắt ngoài cùng thấy đen: tăng đếm. Ngã tư 1 (đếm = 1) thì đi thẳng 6 cm cho gầm xe qua khỏi thanh ngang, ngã tư 2 (đếm = 2) thì đi 4 cm cho trục bánh vào giữa rồi quay phải 90°, vạch đích (đếm = 3) thì vòng lặp kết thúc và xe dừng. Ngoài thanh ngang thì bám vạch như bài 6.",
+  "sao": 3
+}

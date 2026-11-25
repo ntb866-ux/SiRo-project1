@@ -1,0 +1,23 @@
+{
+  "worldName": "custom",
+  "tenSan": "Lưới phố",
+  "moTaSan": "Lưới 3 × 3 đường đen rộng 2 cm, có 9 ngã tư. Robot xuất phát ở góc dưới bên trái, vạch đích (ô vàng) ở đầu bên phải hàng ngang trên cùng.",
+  "options": {
+    "imageURL": "san-robot-ao/san/luoi-pho/nen.png",
+    "groundType": "box",
+    "imageScale": 1,
+    "uScale": 1,
+    "vScale": 1,
+    "wall": true,
+    "wallHeight": 7.7,
+    "wallThickness": 4.5,
+    "wallColor": "#3A4A5A",
+    "groundFriction": 1,
+    "wallFriction": 0.1,
+    "groundRestitution": 0,
+    "wallRestitution": 0.1,
+    "timer": "none",
+    "objects": [],
+    "startPos": "center"
+  }
+}

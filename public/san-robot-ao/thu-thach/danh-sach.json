@@ -75,15 +75,18 @@
       "id": "03-cam-bien-mau",
       "ten": "Chặng 4 · Cảm biến màu",
       "tenEn": "Stage 4 · Color sensor",
-      "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ và dò theo đường đen.",
-      "moTaEn": "The robot looks down at the field: stop at a line, count lines, recognise colors to turn, and follow a black line.",
+      "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ, dò theo đường đen và qua các ngã rẽ.",
+      "moTaEn": "The robot looks down at the field: stop at a line, count lines, recognise colors to turn, follow a black line and get through junctions.",
       "moKhoaTuanTu": false,
       "bai": [
         "03-cam-bien-mau/01-dung-o-vach",
         "03-cam-bien-mau/02-dem-vach",
         "03-cam-bien-mau/03-phan-loai-mau",
         "03-cam-bien-mau/04-do-line-1-cam-bien",
-        "03-cam-bien-mau/05-do-line-3-cam-bien"
+        "03-cam-bien-mau/05-do-line-3-cam-bien",
+        "03-cam-bien-mau/06-nga-ba-chu-t",
+        "03-cam-bien-mau/07-nga-tu-dem-nga-re",
+        "03-cam-bien-mau/08-luoi-pho-nhieu-nga-re"
       ]
     },
     {
