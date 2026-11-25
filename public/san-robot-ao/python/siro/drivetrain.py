@@ -82,6 +82,11 @@ class Drivetrain:
 
     def turn_for(self, degrees, velocity=None):
         vmax = self.turn_velocity if velocity is None else _clamp(abs(velocity), 5, 100)
+        # Quay tại chỗ chậm hơn chạy thẳng cùng "tốc độ": trước đây ở 50 % bánh vọt lên gần 500 độ/giây trong
+        # 0,1 giây và thân xe quay 48 độ trong 0,2 giây đầu, nhìn như rẽ tức thì. Nay mỗi bánh tăng tốc dần
+        # và quay tối đa khoảng 230 độ/giây: 90 độ đi đều trong khoảng 0,7 giây rồi chậm lại khi gần tới góc
+        # (đo bằng scripts/xe/do-quay.js).
+        vmax = max(5, vmax * 0.4)
         self.heading = self.heading + degrees
         settled = 0
         t0 = time.time()
@@ -95,6 +100,7 @@ class Drivetrain:
             else:
                 settled = 0
                 v = _clamp(abs(err) * 0.6, 2, vmax)
+                v = min(v, 5 + (time.time() - t0) * 90)             # tăng tốc dần, không đạt tốc độ tối đa ngay
                 if err > 0:
                     self.tank.on(v, -v)
                 else:
