@@ -227,7 +227,7 @@ var sanRobotAo = new function() {
       if (typeof robot == 'undefined' || !robot || !robot.getComponentByPort) return kq;
       for (let i = 1; i <= 30; i++) {
         let c = robot.getComponentByPort('in' + i);
-        if (!c) break;
+        if (!c) continue;                       // số cổng = số ổ trên mạch chủ, có thể không liền nhau
         if (NHOM_CAM_BIEN[nhom].indexOf(c.type) >= 0) kq.push({ cong: String(i), c: c, type: c.type, loai: c.sraLoai || LOAI_THEO_KIEU[c.type] });
       }
     } catch (e) { /* robot đang nạp */ }
@@ -468,9 +468,9 @@ var sanRobotAo = new function() {
     let truc = (Number(o.bodyWidth) || 14) + (Number(o.wheelWidth) || 0.8) + 2 * (Number(o.wheelToBodyOffset) || 0.2);
     let conQuay = null;
     if (typeof robot != 'undefined' && robot.getComponentByPort) {
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 1; i <= 16; i++) {
         let c = robot.getComponentByPort('in' + i);
-        if (!c) break;
+        if (!c) continue;
         if (c.type == 'GyroSensor') { conQuay = i; break; }
       }
     }

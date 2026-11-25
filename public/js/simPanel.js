@@ -539,7 +539,8 @@ var simPanel = new function() {
     var sensor = null;
     self.$sensorsPanel.empty();
     self.sensors = [];
-    while (sensor = robot.getComponentByPort('in' + i)) {
+    for (; i <= 16; i++) {  // cổng cảm biến có thể không liền nhau (xe lắp mô-đun: số cổng = số ổ trên mạch chủ)
+      if (!(sensor = robot.getComponentByPort('in' + i))) continue;
       let tmp = null;
       if (sensor.type == 'ColorSensor') {
         tmp = genDiv(
@@ -613,7 +614,6 @@ var simPanel = new function() {
         self.$sensorsPanel.append(tmp[0]);
         self.sensors.push([sensor, tmp[1]]);
       }
-      i++;
     }
 
     if (robot.processedOptions.wheels) {

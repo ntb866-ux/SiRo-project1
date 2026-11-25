@@ -402,7 +402,7 @@ khi bắt đầu
 
 Quy tắc bàn tay phải: mỗi ô, quay phải trước; còn tường trước mặt thì quay trái cho tới khi trống; đi 50 cm sang ô kế.
 
-## Chặng 3 · Cảm biến màu
+## Chặng 4 · Cảm biến màu
 
 ### Dừng ở vạch đen
 
@@ -515,7 +515,7 @@ khi bắt đầu
 
 Mắt trái thấy đen thì quay trái tại chỗ, mắt phải thấy đen thì quay phải, chỉ mắt giữa thấy đen thì đi thẳng. Cả ba mắt đều thấy trắng thì giữ nguyên lệnh trước (đang quay thì quay tiếp cho tới khi bắt lại đường), nên khối "nếu" cuối không có nhánh "không thì". Ô đích xanh lá hắt hồng ngoại khoảng 57 (nền trắng 90, đường đen 11): khi hai mắt ngoài cùng dưới 75 mà mắt giữa trên 30 thì xe đã vào ô đích (ở góc vuông luôn có một mắt ngoài còn thấy trắng), đi thêm 21 cm cho tâm xe vào giữa ô.
 
-## Chặng 3 · Con quay (gyro)
+## Chặng 5 · Con quay (gyro)
 
 ### Quay đúng 90° trên sân băng
 

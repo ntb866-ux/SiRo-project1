@@ -45,7 +45,8 @@ var pybricks_generator = new function() {
     var sensorsCode = '';
     var i = 1;
     var sensor = null;
-    while (sensor = robot.getComponentByPort('in' + i)) {
+    for (; i <= 16; i++) {  // cổng cảm biến có thể không liền nhau (xe lắp mô-đun: số cổng = số ổ trên mạch chủ)
+      if (!(sensor = robot.getComponentByPort('in' + i))) continue;
       if (sensor.type == 'ColorSensor') {
         sensorsCode += 'color_sensor_in' + i + ' = ColorSensor(Port.S' + i + ')\n';
         self.autoPorts[sensor.type] = i;
@@ -74,7 +75,6 @@ var pybricks_generator = new function() {
         sensorsCode += 'lidar_sensor_in' + i + ' = LidarSensor(Port.S' + i + ')\n';
         self.autoPorts[sensor.type] = i;
       }
-      i++;
     }
 
     let PORT_LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';

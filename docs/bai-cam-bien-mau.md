@@ -1,8 +1,8 @@
 # Bài cảm biến màu và dò đường (gói G7)
 
-Tài liệu cho giáo viên. Năm bài của **chặng 3**, robot nhìn xuống sân bằng cảm biến màu: dừng ở vạch, đếm vạch, nhận màu để rẽ, dò đường bằng 1 rồi 3 cảm biến. Bài 1–4 dùng robot chuẩn `co-ban` (1 cảm biến màu, cổng 1); bài 5 dùng robot `do-line` (3 cảm biến: trái cổng 6, giữa cổng 1, phải cổng 7, cách nhau 3 cm). Cả năm bài ở chế độ khối **Cơ bản**.
+Tài liệu cho giáo viên. Năm bài của **chặng 4**, robot nhìn xuống sân bằng cảm biến màu: dừng ở vạch, đếm vạch, nhận màu để rẽ, dò đường bằng 1 rồi 3 cảm biến. Bài 1–4 dùng robot chuẩn `co-ban` (1 cảm biến màu, cổng 1); bài 5 dùng robot `do-line` (3 cảm biến: trái cổng 6, giữa cổng 1, phải cổng 7, cách nhau 3 cm). Cả năm bài ở chế độ khối **Cơ bản**.
 
-Mở trang chọn bài: `san-robot-ao/`, chặng "Chặng 3 · Cảm biến màu". Giáo viên mở khóa mọi bài bằng `san-robot-ao/?moKhoa=1`.
+Mở trang chọn bài: `san-robot-ao/`, chặng "Chặng 4 · Cảm biến màu". Giáo viên mở khóa mọi bài bằng `san-robot-ao/?moKhoa=1`.
 
 ## Nguyên lí dùng xuyên suốt
 

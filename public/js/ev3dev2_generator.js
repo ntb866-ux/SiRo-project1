@@ -28,10 +28,9 @@ var ev3dev2_generator = new function() {
 
     var i = 1;
     var sensor = robot.getComponentByPort('in' + i);
-    while (sensor) {
+    for (; i <= 16; i++) {  // cổng cảm biến có thể không liền nhau (xe lắp mô-đun: số cổng = số ổ trên mạch chủ)
+      if (!(sensor = robot.getComponentByPort('in' + i))) continue;
       self.autoPorts[sensor.type] = i;
-      i++;
-      sensor = robot.getComponentByPort('in' + i);
     }
 
     let workspaceCode = Blockly.Python.workspaceToCode(blockly.workspace);
@@ -72,7 +71,8 @@ var ev3dev2_generator = new function() {
     var sensorsCode = '';
     i = 1;
     sensor = robot.getComponentByPort('in' + i);
-    while (sensor) {
+    for (; i <= 16; i++) {  // cổng cảm biến có thể không liền nhau (xe lắp mô-đun: số cổng = số ổ trên mạch chủ)
+      if (!(sensor = robot.getComponentByPort('in' + i))) continue;
       if (sensor.type == 'ColorSensor') {
         sensorsCode += 'color_sensor_in' + i + ' = ColorSensor(INPUT_' + i + ')\n';
       } else if (sensor.type == 'UltrasonicSensor') {
@@ -92,8 +92,6 @@ var ev3dev2_generator = new function() {
       } else if (sensor.type == 'LidarSensor') {
         sensorsCode += 'lidar_sensor_in' + i + ' = LidarSensor(INPUT_' + i + ')\n';
       }
-      i++;
-      sensor = robot.getComponentByPort('in' + i)
     }
 
     let PORT_LETTERS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ';

@@ -1,6 +1,6 @@
 // Kiểm tra bảng lắp ráp kéo thả của xe lắp mô-đun.
 // Phần 1 (không cần trình duyệt): mọi bản lắp có thể tạo ra từ bảng (cả kiểu 5 lỗ cũ lẫn đặt tự do trên lưới 0,5 cm)
-// đều dựng được, cổng liền nhau, dây không bắt chéo, không mô-đun nào chồng lên nhau.
+// đều dựng được, số cổng bằng số ổ trên mạch chủ, dây không bắt chéo, không mô-đun nào chồng lên nhau.
 // Phần 2 (trình duyệt): kéo thả bằng chuột (bám lưới, hút, đổi chỗ, xem trước), núm xoay, bấm chọn, bàn phím;
 // xe 3D và cảm biến đổi theo; cấu hình được lưu lại.
 // Chạy: node scripts/xe/kiem-tra-lap-rap.js [thư-mục-lưu-ảnh]
@@ -8,6 +8,13 @@ const path = require('path');
 const { mo, napXe, BaoCao } = require('./chung.js');
 const L = require('../../public/san-robot-ao/xe/linh-kien.js');
 const H = require('../../public/san-robot-ao/xe/hinh-khoi.js');
+// Số cổng cảm biến = số ổ trên mạch chủ (cảm biến không có ổ riêng nhận số từ 9); không trùng cổng
+const congBangO = (b) => {
+  let ds = b.camBien.map((x) => x.cong);
+  return new Set(ds).size == ds.length && b.camBien.every((x) => Number(x.cong.slice(2)) <= 8 ? x.cong == 'in' + x.oMach
+    : !x.oMach || b.camBien.some((y) => y !== x && y.oMach == x.oMach));   // từ 9: cảm biến đi chung ổ với cảm biến khác
+};
+const loaiCb = (s) => s.replace(/in\d+:/g, '').split(' ').sort().join(' ');
 
 function hopBao(k) {      // hộp bao theo trục của một khối đã chuẩn hoá
   let r = k.k == 'hop' ? k.kt.map((x) => x / 2) : (k.k == 'cau' ? [k.d / 2, k.d / 2, k.d / 2] : [k.d / 2, k.h / 2, k.d / 2]);
@@ -82,7 +89,7 @@ function phanTuDo(bc) {
     try {
       let b = L.lapXe(cv), kl = L.tinhXe(b), c = b.cauHinh;
       if (JSON.stringify(L.chuanHoaCauHinh(c)) != JSON.stringify(c)) loi.push('chuẩn hoá hai lần ra khác nhau: ' + ten);
-      if (!b.camBien.every((x, i) => x.cong == 'in' + (i + 1))) loi.push('cổng không liền nhau: ' + ten);
+      if (!congBangO(b)) loi.push('số cổng khác số ổ: ' + ten);
       let o = b.camBien.map((x) => x.oMach);
       if (new Set(o).size != o.length) loi.push('hai cảm biến chung một ổ: ' + ten);
       // mô-đun dưới mũi cắm ổ theo thứ tự trái sang phải (dây không bắt chéo)
@@ -185,8 +192,8 @@ function phanTuDo(bc) {
   let cg = L.chuanHoaCauHinh({ gam: [{ loai: 'doLine', x: 0, z: 2 }, { loai: 'doLine', x: 1, z: 6 }, { loai: 'doLine', x: 4, z: 2 }, { loai: 'doLine', x: -2, z: -1 }, { loai: 'doLine', x: 0.5 * 0 - 3, z: 4 }, { loai: 'cham', x: 3, z: 3 }] });
   bc.dong(cg.gam.map((m) => m.x + '/' + m.z).join() == '-3/4,0/2', 'Gầm xe: bỏ mắt lệch dưới 1,5 cm theo bề ngang, mắt lòi ra ngoài tấm đáy, mắt quá sát đuôi, cảm biến chạm', JSON.stringify(cg.gam));
   let b4 = L.lapXe({ sa: [{ gia: 'truoc' }], tren: [], gam: [{ loai: 'doLine', x: -1.5, z: 3 }, { loai: 'doLine', x: 1.5, z: 3 }] });
-  bc.dong(b4.camBien.map((x) => x.cong + ':' + x.loai + (x.ten ? ' ' + x.ten : '')).join(', ') == 'in1:doLine trái, in2:doLine phải, in3:doLine gầm 1, in4:doLine gầm 2, in5:sieuAm, in6:cham',
-    'Số cổng: mắt dưới mũi trước, rồi mắt dưới gầm (trái sang phải), rồi các cảm biến khác', b4.camBien.map((x) => x.cong + ' ổ ' + x.oMach).join(', '));
+  bc.dong(congBangO(b4) && b4.camBien.length == 6,
+    'Số cổng của mỗi cảm biến bằng số ổ trên mạch chủ mà dây của nó cắm vào', b4.camBien.map((x) => x.cong + ' ổ ' + x.oMach).join(', '));
   bc.dong(c.duoi.length == 1 && c.tren.length == 1, 'Mắt cách nhau dưới 1,5 cm, cảm biến chạm ra ngoài 3 cm, hai mô-đun chồng nhau trên nắp: bị bỏ', JSON.stringify([c.duoi, c.tren]));
 }
 
@@ -208,7 +215,7 @@ function phanMot(bc) {
         if (JSON.stringify(b.cauHinh.lo) != JSON.stringify(lo) || JSON.stringify(b.cauHinh.nap) != JSON.stringify(nap)) loi.push('cấu hình bị đổi: ' + ten);
         // lắp lại từ cấu hình đã chuẩn hoá phải ra đúng xe đó
         if (JSON.stringify(L.lapXe(b.cauHinh).cauHinh) != JSON.stringify(b.cauHinh)) loi.push('chuẩn hoá hai lần ra khác nhau: ' + ten);
-        if (!b.camBien.every((c, i) => c.cong == 'in' + (i + 1))) loi.push('cổng không liền nhau: ' + ten);
+        if (!congBangO(b)) loi.push('số cổng khác số ổ: ' + ten);
         let o = b.camBien.map((c) => c.oMach);
         if (new Set(o).size != o.length || o.some((x) => !(x >= 1 && x <= 8))) loi.push('hai cảm biến chung một ổ: ' + ten);
         if (!(kl.tong > 400 && kl.tong < 600) || !isFinite(kl.than.m) || !kl.tam.every(isFinite)) loi.push('khối lượng lạ: ' + ten);
@@ -217,7 +224,7 @@ function phanMot(bc) {
       } catch (e) { loi.push('không dựng được ' + ten + ': ' + e.message); }
     }
   }
-  bc.dong(loi.length == 0, soBan + ' bản lắp đều dựng được, cổng liền nhau, mỗi cảm biến một ổ, mô-đun không lấn nhau', loi.length ? loi.slice(0, 4).join(' | ') : 'xe nặng từ ' + klMin.toFixed(0) + ' đến ' + klMax.toFixed(0) + ' g');
+  bc.dong(loi.length == 0, soBan + ' bản lắp đều dựng được, số cổng bằng số ổ, mỗi cảm biến một ổ, mô-đun không lấn nhau', loi.length ? loi.slice(0, 4).join(' | ') : 'xe nặng từ ' + klMin.toFixed(0) + ' đến ' + klMax.toFixed(0) + ' g');
 
   let c = L.chuanHoaCauHinh({ doLine: 3, cachMat: 1.5 });
   bc.dong(JSON.stringify(c.lo) == JSON.stringify([null, 'doLine', 'doLine', 'doLine', 'cham']), 'Kiểu viết cũ doLine: 3, cachMat: 1,5 thành 3 lỗ giữa', JSON.stringify(c.lo));
@@ -284,7 +291,7 @@ function phanMot(bc) {
   await chup('bang-lap-rap-mac-dinh');
 
   t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'duoi', x: 0.1 }));
-  bc.dong(t.c.doLine == 3 && t.cb == 'in1:ColorSensor in2:ColorSensor in3:ColorSensor in4:UltrasonicSensor in5:TouchSensor in6:GyroSensor in7:GPSSensor' && t.luoi.indexOf('doLine3') >= 0,
+  bc.dong(t.c.doLine == 3 && loaiCb(t.cb) == loaiCb('ColorSensor ColorSensor ColorSensor UltrasonicSensor TouchSensor GyroSensor GPSSensor') && t.luoi.indexOf('doLine3') >= 0,
     'Kéo mắt dò line thứ ba từ khay vào giữa thanh (bám lưới về x = 0): xe có 3 mắt, 7 cổng', xDuoi(t.c));
   let theDl = await page.evaluate(() => ({ khoa: $('.sra-lr-the[data-loai=doLine]').prop('disabled'), con: $('.sra-lr-the[data-loai=doLine] .sra-lr-con').text() }));
   let thuMat4 = await page.evaluate(() => SRABangLapRap.dat('doLine', 'khay', { vung: 'duoi', x: -3 }).then((kq) => kq.loi || ''));
@@ -311,7 +318,7 @@ function phanMot(bc) {
     'Kéo mắt phải tới x = 1,1 cm: bám lưới về 1 cm, xe 3D dời mắt theo, thước đo ghi 1,5 / 2,5 / 2 cm', thuoc.join(' | '));
 
   t = await keo('[data-cho="duoi:0"]', '[data-cho="duoi:3"]');
-  bc.dong(xDuoi(t.c) == 'c-3 d-1.5 d1 d3' && t.cb.indexOf('in4:UltrasonicSensor in5:TouchSensor') >= 0, 'Thả mắt dò line lên cảm biến chạm: hai mô-đun đổi chỗ', xDuoi(t.c));
+  bc.dong(xDuoi(t.c) == 'c-3 d-1.5 d1 d3' && /TouchSensor/.test(t.cb) && /UltrasonicSensor/.test(t.cb), 'Thả mắt dò line lên cảm biến chạm: hai mô-đun đổi chỗ', xDuoi(t.c));
 
   let truoc = JSON.stringify(t.c);
   t = await keo('[data-cho="tren:1"]', await diem({ vung: 'duoi', x: 0 }));
@@ -495,7 +502,7 @@ function phanMot(bc) {
   // xe vừa lắp chạy và đọc cảm biến bình thường
   await page.waitForFunction(() => robot.sraVatLi && robot.sraVatLi.thoiGian > 0.5, null, { timeout: 30000 });
   let doc = await page.evaluate(async () => {
-    let sa = robot.components.find((c) => c.type == 'UltrasonicSensor'), mat = robot.getComponentByPort('in1');
+    let sa = robot.components.find((c) => c.type == 'UltrasonicSensor'), mat = robot.components.find((c) => c.type == 'ColorSensor');
     robot.leftWheel.speed_sp = 300; robot.rightWheel.speed_sp = 300; robot.leftWheel.runForever(); robot.rightWheel.runForever();
     let z0 = robot.body.position.z, x0 = robot.body.position.x;
     await new Promise((r) => setTimeout(r, 1500));
@@ -533,9 +540,9 @@ function phanMot(bc) {
     chon: $('.sra-lr-che-do .chon').attr('data-xem') }));
   bc.dong(nhinGam.vung == 'gam' && nhinGam.chon == 'gam' && nhinGam.camY < -1, 'Bấm "Nhìn gầm xe": sơ đồ chỉ còn vùng gầm, máy quay 3D hạ xuống dưới gầm', JSON.stringify(nhinGam));
   t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: -2.1, z: 4.9 }));
-  let mGam = await page.evaluate(() => { let c = robot.getComponentByPort('in1'); return c ? { x: c.position.x, y: c.position.y, gam: c.sraGam } : null; });
-  bc.dong(JSON.stringify(t.c.gam) == '[{"loai":"doLine","x":-2,"z":5}]' && t.cb == 'in1:ColorSensor' && t.luoi.indexOf('doLineGam1') >= 0 && mGam && mGam.gam,
-    'Kéo mắt dò line vào gầm ở (−2,1; 4,9): bám lưới về (−2; 5), xe 3D có mắt dưới gầm ở cổng 1', JSON.stringify(t.c.gam) + ' ' + t.tb);
+  let mGam = await page.evaluate(() => { let c = robot.components.find((x) => x.type == 'ColorSensor' && x.sraGam); return c ? { x: c.position.x, y: c.position.y, gam: c.sraGam } : null; });
+  bc.dong(JSON.stringify(t.c.gam) == '[{"loai":"doLine","x":-2,"z":5}]' && /^in\d+:ColorSensor$/.test(t.cb) && t.luoi.indexOf('doLineGam1') >= 0 && mGam && mGam.gam,
+    'Kéo mắt dò line vào gầm ở (−2,1; 4,9): bám lưới về (−2; 5), xe 3D có mắt dưới gầm', JSON.stringify(t.c.gam) + ' ' + t.tb);
   t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: -1.2, z: 5 }));
   bc.dong(t.c.gam.map((m) => m.x + '/' + m.z).join() == '-2/5,-0.5/5', 'Thả mắt thứ hai ngay cạnh (lệch 0,8 cm): tự hút ra x = −0,5 cm cho đủ 1,5 cm', t.c.gam.map((m) => m.x + '/' + m.z).join() + ' | ' + t.tb);
   t = await keo('.sra-lr-the[data-loai=doLine]', await diem({ vung: 'gam', x: 0.5, z: 10.5 }));
