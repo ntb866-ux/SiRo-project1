@@ -609,15 +609,18 @@
     return c;
   }
 
-  // Đổi số cổng theo thuTuCong/thuTuCongDC (chỉ khi là một hoán vị đúng của các cổng đang có)
+  // Số cổng cảm biến trong chương trình = số ổ RJ25 trên mạch chủ mà dây của cảm biến cắm vào (in số cạnh ổ
+  // trên xe 3D), để học sinh nhìn dây cắm ổ nào thì viết đúng cổng đó. Cảm biến không có ổ riêng (màu nhìn xa
+  // đi chung dây với camera trên cột) nhận số sau ổ cuối cùng (9, 10…). thuTuCong cũ (giữ cổng của robot
+  // GearsBot gốc) không dùng cho cảm biến nữa vì sẽ làm số cổng khác số ổ; thuTuCongDC vẫn dùng cho động cơ.
   function doiThuTuCong(c, camBien, dsDC) {
-    let t = c.thuTuCong, n = camBien.length;
-    if (t && t.length == n && t.slice().sort((a, b) => a - b).every((x, i) => x == i + 1)) {
-      let moi = {};
-      t.forEach((cu, k) => moi['in' + cu] = 'in' + (k + 1));
-      camBien.forEach((cb) => cb.cong = moi[cb.cong]);
-      camBien.sort((a, b) => Number(a.cong.slice(2)) - Number(b.cong.slice(2)));
-    } else delete c.thuTuCong;
+    let daDung = {}, thu = SO_O;
+    camBien.forEach((cb) => {
+      if (cb.oMach && !daDung[cb.oMach]) { daDung[cb.oMach] = true; cb.cong = 'in' + cb.oMach; } else cb.cong = null;
+    });
+    camBien.forEach((cb) => { if (!cb.cong) cb.cong = 'in' + (++thu); });
+    camBien.sort((a, b) => Number(a.cong.slice(2)) - Number(b.cong.slice(2)));
+    delete c.thuTuCong;
     let d = c.thuTuCongDC;
     if (!d) return;
     let co = dsDC.map((x) => x.cong.slice(3)).sort();
@@ -1014,7 +1017,7 @@
       hop([3.2, 0.15, 1.2], [0, y0 - 0.075, TS.zBi], 'thep_ma')
     ], trangTri: [] });
 
-    // Số cổng phần mềm ('in1', 'in2', …) đánh theo thứ tự lắp; ổ trên mạch chủ ghi cùng số.
+    // Số cổng phần mềm ('in1', 'in2', …) tạm đánh theo thứ tự lắp; doiThuTuCong đổi lại thành đúng số ổ trên mạch chủ.
     let soCong = 0;
     let cong = () => 'in' + (++soCong);
 

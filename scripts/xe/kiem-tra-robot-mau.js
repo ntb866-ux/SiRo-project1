@@ -34,20 +34,25 @@ const CONG = {
     await nap(ten);
     let co = await page.evaluate(() => {
       let kq = {};
-      for (let i = 1; i <= 8; i++) { let s = robot.getComponentByPort('in' + i); if (s) kq['in' + i] = s.sraLoai || (s.type == 'CameraSensor' ? 'camera' : s.type); }
+      for (let i = 1; i <= 16; i++) { let s = robot.getComponentByPort('in' + i); if (s) kq['in' + i] = s.sraLoai || (s.type == 'CameraSensor' ? 'camera' : s.type); }
       (robot.sraTacDong || []).forEach((t) => kq[t.port] = t.sraLoai);
       if (robot.sraServo) kq[robot.sraServo.port] = 'servo';
       return kq;
     });
-    let muon = CONG[ten], sai = Object.keys(muon).filter((p) => co[p] != muon[p]).concat(Object.keys(co).filter((p) => !muon[p]));
-    bc.dong(!sai.length, ten, sai.length ? 'lệch ở ' + sai.map((p) => p + ' ' + co[p] + '≠' + muon[p]).join(', ') : Object.keys(co).map((p) => p + ' ' + co[p]).join(', '));
+    // Cảm biến: đủ loại như robot GEARS gốc, số cổng = số ổ trên mạch chủ (nên số có thể khác bản gốc). Động cơ: đúng cổng.
+    let muon = CONG[ten], cb = (o) => Object.keys(o).filter((p) => p.indexOf('in') == 0).map((p) => o[p]).sort().join(' ');
+    let sai = Object.keys(muon).filter((p) => p.indexOf('out') == 0 && co[p] != muon[p]).concat(Object.keys(co).filter((p) => p.indexOf('out') == 0 && !muon[p]));
+    let oSai = await page.evaluate(() => robot.sraBanLap.camBien.filter((c) => Number(c.cong.slice(2)) <= 8 && c.cong != 'in' + c.oMach).map((c) => c.cong + ' ổ ' + c.oMach));
+    if (cb(co) != cb(muon)) sai.push('cảm biến ' + cb(co) + ' ≠ ' + cb(muon));
+    if (oSai.length) sai.push('cổng khác ổ: ' + oSai.join(', '));
+    bc.dong(!sai.length, ten, sai.length ? 'lệch ở ' + sai.map((p) => co[p] !== undefined || muon[p] ? p + ' ' + co[p] + '≠' + muon[p] : p).join(', ') : Object.keys(co).map((p) => p + ' ' + co[p]).join(', '));
   }
 
   console.log('2. Xe lồng: úp lồng lên khối, quay tại chỗ rồi lùi');
   await nap('cage');
   let l = await page.evaluate(async () => {
     const cho = (ms) => new Promise((r) => setTimeout(r, ms));
-    let tay = robot.sraTacDong.find((x) => x.sraLoai == 'tay'), mau = robot.getComponentByPort('in3');
+    let tay = robot.sraTacDong.find((x) => x.sraLoai == 'tay'), mau = robot.getComponentByPort(robot.sraBanLap.camBien.find((c) => c.chiTiet == 'mauXaMui' || c.chiTiet == 'dauCongTac').cong);
     let com = robot.sraKhoiLuong.than.tam;
     let truc = () => robot.body.position.subtract(new BABYLON.Vector3(...com).rotateByQuaternionToRef(robot.body.absoluteRotationQuaternion, new BABYLON.Vector3()));
     let huong = (v) => new BABYLON.Vector3(...v).rotateByQuaternionToRef(robot.body.absoluteRotationQuaternion, new BABYLON.Vector3());

@@ -73,8 +73,8 @@
     },
     {
       "id": "03-cam-bien-mau",
-      "ten": "Chặng 3 · Cảm biến màu",
-      "tenEn": "Stage 3 · Color sensor",
+      "ten": "Chặng 4 · Cảm biến màu",
+      "tenEn": "Stage 4 · Color sensor",
       "moTa": "Robot nhìn xuống sân: dừng ở vạch, đếm vạch, nhận màu để rẽ và dò theo đường đen.",
       "moTaEn": "The robot looks down at the field: stop at a line, count lines, recognise colors to turn, and follow a black line.",
       "moKhoaTuanTu": false,
@@ -88,8 +88,8 @@
     },
     {
       "id": "06-gyro",
-      "ten": "Chặng 3 · Con quay (gyro)",
-      "tenEn": "Stage 3 · Gyro",
+      "ten": "Chặng 5 · Con quay (gyro)",
+      "tenEn": "Stage 5 · Gyro",
       "moTa": "Cảm biến con quay đo tốc độ quay, cộng dồn ra góc hướng: quay chính xác trên sân trơn và tự giữ hướng khi bị đẩy lệch.",
       "moTaEn": "The gyro sensor measures turning speed and adds it up into a heading: turn precisely on a slippery field and hold the heading when pushed off course.",
       "moKhoaTuanTu": false,

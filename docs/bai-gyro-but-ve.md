@@ -3,7 +3,7 @@
 Tài liệu cho giáo viên. Sáu bài trên sân **Lưới tọa độ** (200 × 200 cm, ô 25 cm, cột A–H, hàng 1–8), robot chuẩn `co-ban`, chế độ khối **Cơ bản**:
 
 - **Chặng 2 · Bút vẽ và đa giác** (`07-but-ve`): tam giác đều, lục giác đều, ngôi sao năm cánh, ngôi nhà theo hình mẫu. Dạy sau bài "Hình vuông bằng vòng lặp" (buổi 5), vào buổi 6–7.
-- **Chặng 3 · Con quay** (`06-gyro`): quay đúng 90° trên sân băng, giữ hướng khi bị đẩy lệch. Dạy ở đầu chặng cảm biến (buổi 9–10), cạnh các bài cảm biến khoảng cách và màu.
+- **Chặng 5 · Con quay** (`06-gyro`): quay đúng 90° trên sân băng, giữ hướng khi bị đẩy lệch. Dạy ở đầu chặng cảm biến (buổi 9–10), cạnh các bài cảm biến khoảng cách và màu.
 
 Mở trang chọn bài: `san-robot-ao/` trên trang web của dự án. Giáo viên mở khóa mọi bài bằng `san-robot-ao/?moKhoa=1`.
 

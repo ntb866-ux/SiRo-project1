@@ -28,7 +28,7 @@ window.SRA = SRA;
   // -------------------------------------------------------------------------
   SRA.timCamBien = function(loai) {
     if (typeof robot == 'undefined' || !robot.getComponentByPort) return null;
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 16; i++) {
       let c = robot.getComponentByPort('in' + i);
       if (c && c.type == loai) return c;
     }
