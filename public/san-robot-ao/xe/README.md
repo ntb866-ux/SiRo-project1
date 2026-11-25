@@ -73,15 +73,15 @@ Xe có 7 vùng gắn cảm biến: bốn giá siêu âm (mũi, trái, phải, đ
 
 | Vùng gắn | Nhận | Giới hạn | Ổ trên mạch chủ |
 |---|---|---|---|
-| Giá phía mũi | Siêu âm, laze, camera (mỗi giá một mô-đun) | Trượt ngang trong thanh giá (±2,1 cm khi nhìn thẳng, hẹp lại khi xoay), xoay quanh trục đứng ±45° | Ổ trước còn trống gần nó nhất |
-| Giá bên trái, bên phải | Siêu âm, laze, camera | Tấm nhôm bắt vào vách bên; trượt dọc thân (z từ −2,5 đến 8 cm), xoay ±45° | Ổ còn trống gần nó nhất |
-| Giá phía đuôi | Siêu âm, laze, camera | Tấm nhôm sau đuôi xe; trượt ngang như giá mũi, xoay ±45° | Ổ còn trống gần nó nhất |
+| Giá phía mũi | Siêu âm, laze, camera, màu nhìn xa (mỗi giá một mô-đun) | Trượt ngang trong thanh giá (±2,1 cm khi nhìn thẳng, hẹp lại khi xoay), xoay quanh trục đứng ±45° | Ổ trước còn trống gần nó nhất |
+| Giá bên trái, bên phải | Siêu âm, laze, camera, màu nhìn xa | Tấm nhôm bắt vào vách bên; trượt dọc thân (z từ −2,5 đến 8 cm), xoay ±45° | Ổ còn trống gần nó nhất |
+| Giá phía đuôi | Siêu âm, laze, camera, màu nhìn xa | Tấm nhôm sau đuôi xe; trượt ngang như giá mũi, xoay ±45° | Ổ còn trống gần nó nhất |
 | Thanh dưới mũi xe | Mắt dò line (nhiều nhất 3), công tắc chạm (nhiều nhất 1) | x từ −3 đến 3 cm; hai mô-đun cách nhau (tâm đến tâm) ít nhất 1,5 cm | Ổ 1 đến 5, xếp theo thứ tự trái sang phải để dây không bắt chéo |
 | Gầm xe (dưới tấm đáy) | Mắt dò line (nhiều nhất 4) | Tâm mạch: x từ −3,75 đến 3,75 cm, z từ −0,5 đến 10,5 cm; không lấn vào vỏ bi tự do; hai mắt lệch nhau ít nhất 1,5 cm theo bề ngang vì dây mỗi mắt chạy thẳng dọc gầm ra đuôi | Ổ còn trống gần đuôi xe nhất |
 | Nắp mạch chủ | Gyro, GPS, lidar LD06, servo SG90 (mỗi loại nhiều nhất 1) | Cả mô-đun lẫn ổ cắm phía sau nằm gọn trên nắp, hai mô-đun không chồng nhau | Ổ 6 đến 8, theo thứ tự trái sang phải |
 | Tay quay của servo | Siêu âm, laze, mắt dò line, cảm biến màu nhìn xa | Mỗi đầu tay quay một cảm biến, hai cảm biến không chồng nhau; tính chung giới hạn khay (4 siêu âm, 7 mắt dò line) | Ổ còn trống gần servo nhất |
 
-Bảng lắp ráp làm theo cách kéo thả của Tinkercad:
+Bảng lắp ráp làm theo cách kéo thả của Tinkercad. Bảng rộng ra theo khung mô phỏng (640 đến 960 px, chừa phần còn lại để thấy xe 3D); sơ đồ, bảng thuộc tính và khay linh kiện là ba cột cuộn riêng. Khay là các thẻ lớn, mỗi thẻ một cảm biến (hình, tên, số còn lại, mô tả, chỗ gắn); cuộn chuột trên khay một nấc là sang cảm biến kế tiếp, đầu khay có dòng "k/n" cho biết đang ở cảm biến thứ mấy. Kéo thả từ thẻ vẫn như cũ:
 
 - **Bám lưới.** Vị trí làm tròn theo bước 0,5 cm; giữ Alt khi thả thì bước 0,1 cm. Góc xoay bám 15°; giữ Shift thì bám 45°, giữ Alt thì 5°.
 - **Hút.** Thả gần một cảm biến khác (chỗ đó không đủ rộng) thì cảm biến tự trượt tới chỗ trống gần nhất trong 1,5 cm. Thả ngay lên một cảm biến khác cùng vùng thì hai cảm biến đổi chỗ; kéo từ khay thả lên thì cảm biến cũ về khay.
@@ -147,7 +147,7 @@ Cấu hình lắp là trường `sraXe` trong tệp robot:
 | Laze VL53L1X | Một tia giữa và vòng 6 tia ở mép vùng thu 15°, lấy vật gần nhất; tia mép chạm mặt sân thì bỏ (cảm biến thật lọc phản xạ yếu này). Tầm 4 đến 400 cm, bước 0,1 cm, 20 lần mỗi giây (`LaserRangeSensor` như robot cũ). Vật có `laserDetection: 'invisible'` thì tia đi xuyên, `'absorb'` thì không phản xạ. |
 | Lidar LD06 | Quét 360 tia nằm ngang quanh trục đầu quay, mỗi độ một tia (0° là mũi xe, như lidar của GEARS), tầm 2 đến 1200 cm, 10 vòng mỗi giây. `getDistances()` trả 360 số đo. |
 | Camera OV2640 | Dùng `CameraSensor` của GEARS: ảnh 100 × 100 điểm, tìm vùng màu (`findBlobs`). Ống kính ở mặt trước mô-đun, ảnh không thấy chính chiếc xe. |
-| Màu nhìn xa | TCS34725 trong ống che sáng: đọc màu bề mặt trong chùm 30°, xa tới 30 cm (trung bình các tia chạm vật). Không có vật trong tầm thì đọc 0. Chỉ gắn lên tay quay servo. |
+| Màu nhìn xa | TCS34725 trong ống che sáng: đọc màu bề mặt trong chùm 30°, xa tới 30 cm (trung bình các tia chạm vật). Không có vật trong tầm thì đọc 0. Gắn ở đầu xe (giá phía mũi, nhìn thẳng ra trước), giá bên hông, giá đuôi hoặc lên tay quay servo; trên giá cũng xoay ±45° và trượt như siêu âm. |
 
 Nhiễu, trôi, sai số mặc định tắt. Bật trong tệp robot, ví dụ `"sraCamBien": { "sieuAm": { "nhieu": 0.3 }, "gyro": { "troi": 0.5 }, "gps": { "saiSo": 2 } }`.
 
@@ -188,7 +188,11 @@ Súng bắn bi nhựa Ø 1 cm, 0,5 g (`PaintballLauncherActuator` như robot cũ
 
 Các robot mẫu cũ trong menu Robot → Chọn robot đã dựng lại bằng xe khung mBot (`robots/xe-mau.js`, sinh bằng `scripts/robot/tao-xe.js`): Dò đường 1 cảm biến, Dò đường 2 cảm biến, Chạy mê cung, Chạy mê cung đời 2, Xe kéo, Xe cần cẩu, Bắn bóng sơn. Giữ tên, số cảm biến, số cổng (chương trình cũ vẫn chạy) và bộ phận gắn kèm; chỗ nào khung mBot không có vị trí y hệt thì lấy chỗ gần nhất, ghi trong mô tả robot (ví dụ tay của Xe kéo chuyển từ đuôi lên mũi). Bắn bóng sơn (cánh tay mang súng, laze ở mũi) và Chạy mê cung đời 2 (servo tay quay ngang mang laze và cảm biến màu nhìn xa) cũng vậy: bảy robot mẫu GEARS dùng xe mBot.
 
-Các khối lệnh và thư viện Python có sẵn đọc được mọi cảm biến. TCRT5000 đứng ở chỗ của cảm biến màu, nên khối "độ sáng phản xạ" trả về 0 đến 100 %. Khối chọn cảm biến "trái / giữa / phải" chỉ dùng các mắt dưới mũi; mắt dưới gầm đọc bằng khối chọn theo số cổng (ví dụ cảm biến màu cổng 3).
+Các khối lệnh và thư viện Python có sẵn đọc được mọi cảm biến. TCRT5000 đứng ở chỗ của cảm biến màu, nên khối "độ sáng phản xạ" trả về 0 đến 100 %.
+
+**Khối cảm biến ghi rõ loại cảm biến và cổng.** Mỗi khối cảm biến ở chế độ Cơ bản có một ô chọn cảm biến, chữ trong ô là loại cảm biến, chỗ gắn (khi có nhiều cái cùng loại) và số cổng, ví dụ "khoảng cách (cm) đo bởi **cảm biến siêu âm ở cổng 3**", "**cảm biến màu dưới gầm ở cổng 4** thấy màu đen ?", "**cảm biến màu nhìn xa phía mũi ở cổng 5** thấy màu đỏ ?". Danh sách chọn lấy từ chiếc xe đang lắp (siêu âm và laze cho khối khoảng cách; chạm; gyro; mọi cảm biến màu, kể cả mắt dò line, màu dưới mũi, dưới gầm, màu nhìn xa). Gắn thêm hay tháo cảm biến ở bảng Lắp ráp xe thì chữ trong các khối đã kéo ra đổi theo, và nếu cảm biến đổi cổng thì khối tự chuyển sang cổng mới. Khối cũ chưa có ô cổng vẫn chạy: lấy cảm biến cùng loại gắn sau cùng, như cách chọn cổng tự động trước đây. Riêng nhóm cảm biến màu, các lựa chọn "trái / giữa / phải" cũ (chọn trong các mắt dưới mũi theo vị trí x, để một chương trình chạy được trên xe 1 hay 3 mắt) vẫn còn, kèm các lựa chọn theo số cổng cho cảm biến màu không nằm dưới mũi.
+
+**Cảm biến màu gắn được ở ba chỗ:** (1) thanh dưới mũi, ngay chỗ của mắt dò line; (2) gầm xe (bấm "Nhìn gầm xe"); (3) đầu xe, là giá phía mũi (loại "Màu nhìn xa", nhìn thẳng ra trước đọc màu vật tới 30 cm; cũng gắn được lên giá bên hông và đuôi).
 
 ## Số đo
 

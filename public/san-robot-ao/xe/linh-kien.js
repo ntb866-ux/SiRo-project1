@@ -440,7 +440,7 @@
   // Mô-đun vượt số lượng, ra ngoài chỗ gắn hoặc chồng lên mô-đun đứng trước nó trong danh sách thì bị bỏ.
   // Mô-đun bắt lên giá (một mô-đun mỗi giá): siêu âm HC-SR04, laze VL53L1X, camera OV2640,
   // nam châm điện KK-P20/15 (mặt hút nhìn ra ngoài theo giá, nhận cổng động cơ)
-  const LOAI_GIA = ['sieuAm', 'laze', 'camera', 'namCham'];
+  const LOAI_GIA = ['sieuAm', 'laze', 'camera', 'namCham', 'mauXa'];
   function chuanHoaCauHinh(vao) {
     vao = vao || {};
     let c = { banh: vao.banh || MAC_DINH.banh };
@@ -1178,6 +1178,15 @@
         ttSa = [{ k: 'dia', d: 0.55, vt: ra([0, 0, 2.065]), phap: huong, vl: 'kinh_den' },
           { k: 'nhan', kt: [1.2, 0.35], vt: ra([0, 0.82, 0.765]), phap: huong, len: [0, 1, 0], ve: 'chu', chu: 'OV2640' }];
         klSa = 9; tenCt = 'Camera OV2640'; vtCb = ra([0, 0, 2.06]);
+      } else if (loai == 'mauXa') {
+        // cảm biến màu nhìn xa gắn ở đầu xe (hoặc bên hông, đuôi): TCS34725 (mạch 1,4 × 1,5 cm) trong ống che sáng đen
+        // Ø 1,2 cm, dài 1,6 cm, có thấu kính ở đầu ống, trên đế nhựa cùng cỡ chỗ bắt vào giá; nhìn thẳng ra theo giá
+        khoiSa = [hop([2.6, 2.0, 0.4], ra([0, 0, 0.2]), 'nhua_den', { vat: 0.05, xoay: xoay }),
+          hop([1.4, 1.5, 0.16], ra([0, 0, 0.48]), 'mach_xanh_la', { vat: 0.03, xoay: xoay }),
+          tru(1.2, 1.6, 'z', ra([0, 0, 1.36]), 'nhua_den', { xoay: xoay, dTrong: 0.9 }), o.khoi];
+        ttSa = [{ k: 'dia', d: 0.85, vt: ra([0, 0, 2.165]), phap: huong, vl: 'kinh_den' },
+          { k: 'nhan', kt: [1.2, 0.35], vt: ra([0, 0.78, 0.405]), phap: huong, len: [0, 1, 0], ve: 'chu', chu: 'TCS34725' }];
+        klSa = 8; tenCt = 'Cảm biến màu nhìn xa TCS34725'; vtCb = ra([0, 0, 2.17]);
       } else if (loai == 'namCham') {
         // nam châm điện KK-P20/15 bắt vít vào tấm đế nhôm, lõi hút nhìn ra ngoài; mạch điều khiển sau tấm đế
         khoiSa = [hop([3.0, 2.2, 0.3], ra([0, 0, 0.15]), 'nhom', { vat: 0.04, xoay: xoay }),

@@ -153,7 +153,7 @@
   "goiY": [
     "Bài trước robot chờ cảm biến chạm. Bài này robot chờ điều gì? Hãy so sánh số đo khoảng cách với 20.",
     {
-      "noiDung": "**Chạy tới** → **chờ đến khi** ⟨khoảng cách phía trước (cm) < 20⟩ → **dừng**. Khối so sánh \"<\" ở nhóm Phép toán.",
+      "noiDung": "**Chạy tới** → **chờ đến khi** ⟨khoảng cách (cm) đo bởi cảm biến siêu âm < 20⟩ → **dừng**. Khối so sánh \"<\" ở nhóm Phép toán.",
       "moSauLanThu": 1
     },
     {

@@ -96,7 +96,7 @@ window.SRA = SRA;
       return { dat: dat, lyDo: lyDo + '.' };
     }
   };
-  SRA.TEN_KHOI.sra_khoang_cach = sraT('"khoảng cách phía trước (cm)"', '"distance ahead (cm)"');
+  SRA.TEN_KHOI.sra_khoang_cach = sraT('"khoảng cách (cm)"', '"distance (cm)"');
   SRA.TEN_KHOI.sra_dang_cham = sraT('"cảm biến chạm đang bị nhấn?"', '"touch sensor pressed?"');
   SRA.TEN_KHOI.wait_until = sraT('"chờ đến khi"', '"wait until"');
 

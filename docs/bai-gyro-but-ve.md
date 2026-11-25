@@ -107,7 +107,7 @@ Robot chạy từ D1 lên đích D8 trong làn đường giữa hai lề đỏ. 
 
 ```
 đặt lại góc quay về 0
-lặp cho đến khi  khoảng cách phía trước (cm) < 20
+lặp cho đến khi  khoảng cách (cm) đo bởi cảm biến siêu âm < 20
     nếu  góc quay (độ) > 0  thì
         chạy bánh trái 30 %  bánh phải 50 %      (lệch phải → cong về trái)
     nếu không
