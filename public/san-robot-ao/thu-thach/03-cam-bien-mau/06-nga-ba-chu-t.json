@@ -1,0 +1,100 @@
+{
+  "tieuDe": "Ngã ba chữ T: rẽ phải",
+  "tieuDeEn": "T-junction: turn right",
+  "san": "nga-ba",
+  "robot": "do-line",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": 0,
+    "y": -80,
+    "goc": 0
+  },
+  "vung": {
+    "kt1": {
+      "ten": "điểm kiểm tra 1",
+      "tenEn": "checkpoint 1",
+      "x": 35,
+      "y": 20,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt2": {
+      "ten": "điểm kiểm tra 2",
+      "tenEn": "checkpoint 2",
+      "x": 65,
+      "y": 40,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "dich": {
+      "ten": "vạch đích",
+      "tenEn": "finish line",
+      "x": 65,
+      "y": 58,
+      "rong": 16,
+      "dai": 16,
+      "an": true
+    }
+  },
+  "soDo": [
+    "doSangTrai",
+    "doSangGiua",
+    "doSangPhai"
+  ],
+  "nguong": 65,
+  "deBai": "Đường đen đi thẳng rồi gặp một **ngã ba chữ T**. Nhánh trái là **ngõ cụt** (ô đỏ), nhánh phải dẫn tới **vạch đích**: một thanh đen ngắn trong ô vàng.\n\nLuật của bài: **tới ngã ba thì rẽ phải**, rồi bám vạch tới vạch đích và **dừng ngay khi gặp vạch đích**.\n\nQuan sát bảng số đo: khi xe tới ngã ba, độ sáng của mắt trái và mắt phải thay đổi thế nào? Lúc xe chạy trên đường thẳng thì sao?",
+  "nguyenLi": "Ở ngã rẽ, một cảm biến không đủ: robot cần biết **có thanh ngang hay không**. Ba cảm biến đặt cạnh nhau (cách 3 cm) cho biết điều đó: trên đường thẳng vạch rộng 2 cm chỉ che được **một** mắt, nên hai mắt ngoài không bao giờ cùng thấy đen. Khi thanh ngang của ngã rẽ chạy qua gầm xe thì **cả mắt trái lẫn mắt phải** cùng thấy đen. Đó là tín hiệu \"đang ở ngã rẽ\".\n\nMắt dò nằm trước trục bánh 4 cm. Muốn quay đúng tại giữa ngã rẽ, robot phải đi thêm 4 cm cho trục bánh (tâm quay) vào giữa ngã rẽ, rồi mới quay 90°. Quay khi trục bánh chưa tới nơi thì robot rẽ sớm, cắt góc và ra khỏi đường.\n\nVạch đích cũng là một thanh ngang nên robot nhận ra nó y như ngã ba: hai mắt ngoài cùng thấy đen.\n\nNói với học sinh: lái xe tới ngã ba thì phải nhìn thấy cả **hai bên** đường mới biết đang ở ngã ba. Robot cũng cần \"nhìn\" hai bên bằng hai mắt ngoài.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "kt1",
+        "kt2"
+      ],
+      "theoThuTu": true,
+      "moTa": "Robot rẽ phải ở ngã ba và đi theo nhánh phải"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich",
+      "moTa": "Robot dừng ngay trước vạch đích"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi đúng lộ trình và dừng ở vạch đích"
+    },
+    {
+      "moTa": "Dùng cả 3 cảm biến (trái, giữa, phải)",
+      "dieuKien": [
+        {
+          "loai": "dungCamBien",
+          "toiThieu": 3
+        }
+      ]
+    },
+    {
+      "moTa": "Tới đích trong tối đa 35 giây",
+      "dieuKien": [
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 35
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Đường thẳng thì bám vạch như bài 5. Chỉ thêm một câu hỏi: **làm sao biết đã tới ngã ba?** Khi thanh ngang của chữ T chạy qua gầm xe, mắt trái và mắt phải thấy gì?",
+    {
+      "noiDung": "Chương trình có 3 phần nối tiếp: (1) **lặp cho đến khi** mắt trái **và** mắt phải cùng thấy đen { bám vạch }; (2) **đi 4 cm**, **quay phải 90°**; (3) lại **lặp cho đến khi** hai mắt ngoài cùng thấy đen { bám vạch } (đó là vạch đích), rồi **dừng lại**. Ngưỡng đen/trắng ở các bài này là **65** (không phải 50): mắt nằm ngay mép vạch đọc khoảng 60, ngưỡng 65 để mắt nào chạm mép vạch cũng tính là thấy đen.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **lặp cho đến khi** < trái < 65 **và** phải < 65 > { **nếu** trái < 65 **thì** chạy bánh -12 % / 25 % **không thì nếu** phải < 65 **thì** chạy bánh 25 % / -12 % **không thì nếu** giữa < 65 **thì** chạy bánh 20 % / 20 % }; **đi tới 4 cm**; **quay phải 90°**; lặp lại đúng vòng lặp bám vạch đó; **dừng lại**.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 90
+}

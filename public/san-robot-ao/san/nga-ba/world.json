@@ -1,0 +1,23 @@
+{
+  "worldName": "custom",
+  "tenSan": "Ngã ba chữ T",
+  "moTaSan": "Đường đen rộng 2 cm đi thẳng lên rồi gặp một ngã ba chữ T ở y = 20. Nhánh trái cụt (ô đỏ), nhánh phải dẫn tới vạch đích trong ô vàng.",
+  "options": {
+    "imageURL": "san-robot-ao/san/nga-ba/nen.png",
+    "groundType": "box",
+    "imageScale": 1,
+    "uScale": 1,
+    "vScale": 1,
+    "wall": true,
+    "wallHeight": 7.7,
+    "wallThickness": 4.5,
+    "wallColor": "#3A4A5A",
+    "groundFriction": 1,
+    "wallFriction": 0.1,
+    "groundRestitution": 0,
+    "wallRestitution": 0.1,
+    "timer": "none",
+    "objects": [],
+    "startPos": "center"
+  }
+}

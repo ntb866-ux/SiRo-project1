@@ -515,6 +515,120 @@ khi bắt đầu
 
 Mắt trái thấy đen thì quay trái tại chỗ, mắt phải thấy đen thì quay phải, chỉ mắt giữa thấy đen thì đi thẳng. Cả ba mắt đều thấy trắng thì giữ nguyên lệnh trước (đang quay thì quay tiếp cho tới khi bắt lại đường), nên khối "nếu" cuối không có nhánh "không thì". Ô đích xanh lá hắt hồng ngoại khoảng 57 (nền trắng 90, đường đen 11): khi hai mắt ngoài cùng dưới 75 mà mắt giữa trên 30 thì xe đã vào ô đích (ở góc vuông luôn có một mắt ngoài còn thấy trắng), đi thêm 21 cm cho tâm xe vào giữa ô.
 
+### Ngã ba chữ T: rẽ phải
+
+`03-cam-bien-mau/06-nga-ba-chu-t` · sân `nga-ba` · code mẫu đạt **3 sao** · 39 khối
+
+**Xe: Xe ba mắt dưới gầm.** mắt dò line dưới gầm (x = -3, z = 4 cm); mắt dò line dưới gầm (x = 0, z = 4 cm); mắt dò line dưới gầm (x = 3, z = 4 cm); con quay trên nắp.
+
+Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh 4 cm (giống xe ở bài dò đường cua gắt). Ngã rẽ có thanh ngang đối xứng nên khi thanh ngang chạy qua gầm xe thì mắt trái và mắt phải cùng thấy đen: đó là dấu hiệu "đang ở ngã rẽ". Thấy dấu hiệu xong xe đi thêm 4 cm để trục bánh vào giữa ngã rẽ rồi mới quay.
+
+```
+khi bắt đầu
+    lặp đến khi (độ sáng trái < 65) và (độ sáng phải < 65)
+        nếu (độ sáng trái < 65) thì
+            chạy bánh trái -12 % bánh phải 25 %
+        không thì
+            nếu (độ sáng phải < 65) thì
+                chạy bánh trái 25 % bánh phải -12 %
+            không thì
+                nếu (độ sáng giữa < 65) thì
+                    chạy bánh trái 20 % bánh phải 20 %
+    đi tới 4 cm
+    quay phải 90 độ
+    lặp đến khi (độ sáng trái < 65) và (độ sáng phải < 65)
+        nếu (độ sáng trái < 65) thì
+            chạy bánh trái -12 % bánh phải 25 %
+        không thì
+            nếu (độ sáng phải < 65) thì
+                chạy bánh trái 25 % bánh phải -12 %
+            không thì
+                nếu (độ sáng giữa < 65) thì
+                    chạy bánh trái 20 % bánh phải 20 %
+    dừng lại
+```
+
+Hai vòng lặp bám vạch giống hệt nhau, mỗi vòng dừng khi hai mắt ngoài cùng thấy đen (gặp thanh ngang). Vòng đầu dừng ở ngã ba: xe đi 4 cm cho trục bánh tới giữa ngã ba rồi quay phải 90°. Vòng sau dừng ở vạch đích. Ngưỡng 65 thay vì 50 vì mắt nằm đúng mép vạch đọc khoảng 60: ngưỡng 50 để lọt những chỗ cả ba mắt cùng thấy "trắng" dù vạch còn nằm giữa hai mắt.
+
+### Ngã tư: đếm ngã rẽ
+
+`03-cam-bien-mau/07-nga-tu-dem-nga-re` · sân `nga-tu` · code mẫu đạt **3 sao** · 33 khối
+
+**Xe: Xe ba mắt dưới gầm.** mắt dò line dưới gầm (x = -3, z = 4 cm); mắt dò line dưới gầm (x = 0, z = 4 cm); mắt dò line dưới gầm (x = 3, z = 4 cm); con quay trên nắp.
+
+Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh 4 cm (giống xe ở bài dò đường cua gắt). Ngã rẽ có thanh ngang đối xứng nên khi thanh ngang chạy qua gầm xe thì mắt trái và mắt phải cùng thấy đen: đó là dấu hiệu "đang ở ngã rẽ". Thấy dấu hiệu xong xe đi thêm 4 cm để trục bánh vào giữa ngã rẽ rồi mới quay.
+
+```
+khi bắt đầu
+    đặt đếm = 0
+    lặp đến khi (đếm = 3)
+        nếu (độ sáng trái < 65) và (độ sáng phải < 65) thì
+            thay đổi đếm thêm 1
+            nếu (đếm = 1) thì
+                đi tới 6 cm
+            không thì
+                nếu (đếm = 2) thì
+                    đi tới 4 cm
+                    quay phải 90 độ
+        không thì
+            nếu (độ sáng trái < 65) thì
+                chạy bánh trái -12 % bánh phải 25 %
+            không thì
+                nếu (độ sáng phải < 65) thì
+                    chạy bánh trái 25 % bánh phải -12 %
+                không thì
+                    nếu (độ sáng giữa < 65) thì
+                        chạy bánh trái 20 % bánh phải 20 %
+    dừng lại
+```
+
+Biến "đếm" ghi số thanh ngang đã gặp. Mỗi lần hai mắt ngoài cùng thấy đen: tăng đếm. Ngã tư 1 (đếm = 1) thì đi thẳng 6 cm cho gầm xe qua khỏi thanh ngang, ngã tư 2 (đếm = 2) thì đi 4 cm cho trục bánh vào giữa rồi quay phải 90°, vạch đích (đếm = 3) thì vòng lặp kết thúc và xe dừng. Ngoài thanh ngang thì bám vạch như bài 6.
+
+### Lưới phố: lộ trình 5 ngã tư
+
+`03-cam-bien-mau/08-luoi-pho-nhieu-nga-re` · sân `luoi-pho` · code mẫu đạt **3 sao** · 47 khối
+
+**Xe: Xe ba mắt dưới gầm.** mắt dò line dưới gầm (x = -3, z = 4 cm); mắt dò line dưới gầm (x = 0, z = 4 cm); mắt dò line dưới gầm (x = 3, z = 4 cm); con quay trên nắp.
+
+Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh 4 cm (giống xe ở bài dò đường cua gắt). Ngã rẽ có thanh ngang đối xứng nên khi thanh ngang chạy qua gầm xe thì mắt trái và mắt phải cùng thấy đen: đó là dấu hiệu "đang ở ngã rẽ". Thấy dấu hiệu xong xe đi thêm 4 cm để trục bánh vào giữa ngã rẽ rồi mới quay.
+
+```
+khi bắt đầu
+    đặt đếm = 0
+    lặp đến khi (đếm = 6)
+        nếu (độ sáng trái < 65) và (độ sáng phải < 65) thì
+            thay đổi đếm thêm 1
+            nếu (đếm = 1) thì
+                đi tới 6 cm
+            không thì
+                nếu (đếm = 2) thì
+                    đi tới 4 cm
+                    quay phải 90 độ
+                không thì
+                    nếu (đếm = 3) thì
+                        đi tới 6 cm
+                    không thì
+                        nếu (đếm = 4) thì
+                            đi tới 4 cm
+                            quay trái 90 độ
+                        không thì
+                            nếu (đếm = 5) thì
+                                đi tới 4 cm
+                                quay phải 90 độ
+        không thì
+            nếu (độ sáng trái < 65) thì
+                chạy bánh trái -12 % bánh phải 25 %
+            không thì
+                nếu (độ sáng phải < 65) thì
+                    chạy bánh trái 25 % bánh phải -12 %
+                không thì
+                    nếu (độ sáng giữa < 65) thì
+                        chạy bánh trái 20 % bánh phải 20 %
+    dừng lại
+```
+
+Biến "đếm" cho biết đang ở thanh ngang thứ mấy; chuỗi "nếu đếm = …" là bảng lộ trình: 1 thẳng, 2 phải, 3 thẳng, 4 trái, 5 phải. Thanh ngang thứ 6 là vạch đích: vòng lặp kết thúc, xe dừng. Đi thẳng = đi 6 cm (qua khỏi thanh ngang), rẽ = đi 4 cm cho trục bánh vào giữa ngã tư rồi quay 90°.
+
 ## Chặng 5 · Con quay (gyro)
 
 ### Quay đúng 90° trên sân băng

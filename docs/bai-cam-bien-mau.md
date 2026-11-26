@@ -50,9 +50,9 @@ Bài 4 và 5 là **điều khiển vòng kín**: đo → so với ngưỡng → 
 | **cảm biến** | *cảm* (cảm nhận) + *biến* (biến đổi) | Thiết bị cảm nhận một đại lượng và đổi nó thành tín hiệu điện. Tiếng Anh *sensor* từ Latin *sentire* (cảm thấy), cùng gốc với *sense*. |
 | **dò đường** | | Tiếng Anh *line following*; trong cuộc thi robot thường gọi là "dò line". |
 
-## Năm bài và buổi dạy
+## Tám bài và buổi dạy
 
-Chặng 3 trong lộ trình 12 buổi (sau chặng 2 về vòng lặp). Gợi ý chia thành 2–3 buổi: buổi đầu bài 1–2 (cảm biến và ngưỡng, đếm), buổi sau bài 3 (quyết định theo màu), buổi cuối bài 4–5 (dò đường).
+Chặng 3 trong lộ trình 12 buổi (sau chặng 2 về vòng lặp). Gợi ý chia thành 2–3 buổi: buổi đầu bài 1–2 (cảm biến và ngưỡng, đếm), buổi sau bài 3 (quyết định theo màu), buổi sau bài 4–5 (dò đường), rồi bài 6–8 (ngã rẽ) cho một đến hai buổi nữa.
 
 | Buổi | Mã bài | Bài | Kĩ năng mới | Lời giải mẫu |
 |---|---|---|---|---|
@@ -61,6 +61,9 @@ Chặng 3 trong lộ trình 12 buổi (sau chặng 2 về vòng lặp). Gợi ý
 | 2 | `03-cam-bien-mau/03-phan-loai-mau` | Phân loại màu: đỏ rẽ trái, xanh rẽ phải | "nếu … thì … không thì", nhận màu | xem bài 3 (11 khối) |
 | 3 | `03-cam-bien-mau/04-do-line-1-cam-bien` | Dò đường bằng 1 cảm biến | bám mép vạch, điều khiển bật – tắt | lặp đến khi thấy xanh lá { nếu tối thì lái trái, không thì lái phải } |
 | 3 | `03-cam-bien-mau/05-do-line-3-cam-bien` | Dò đường cua gắt bằng 3 cảm biến | dùng nhiều cảm biến, "nếu" lồng nhau | xem bài 5 |
+| 4 | `03-cam-bien-mau/06-nga-ba-chu-t` | Ngã ba chữ T: rẽ phải | nhận ngã rẽ bằng hai mắt ngoài, đi tới tâm quay rồi mới quay | hai vòng bám vạch nối nhau, giữa là đi 4 cm, quay phải 90° (17 khối) |
+| 4 | `03-cam-bien-mau/07-nga-tu-dem-nga-re` | Ngã tư: đếm ngã rẽ | biến đếm làm "bộ nhớ", đi thẳng qua ngã tư | xem bài 7 (16 khối) |
+| 5 | `03-cam-bien-mau/08-luoi-pho-nhieu-nga-re` | Lưới phố: lộ trình 5 ngã tư | bảng tra "nếu đếm = …", tổng quát hóa | xem bài 8 (24 khối) |
 
 **Vì sao vị trí xuất phát hay màu ô đổi mỗi lần chạy?** Bài 1–3 dùng trường `bienThe`: mỗi lần bấm Chạy, robot xuất phát ở một trong vài chỗ (bài 1, 2) hoặc màu các ô đổi ngẫu nhiên (bài 3). Học sinh không thể đo sẵn quãng đường rồi dùng "đi tới … cm"; phải dùng cảm biến. Nếu em nào làm đúng một lần rồi sai lần sau, đó thường là dấu hiệu chương trình đang "học thuộc sân".
 
@@ -146,6 +149,30 @@ Sao 2: dùng cả 3 cảm biến; sao 3: tới đích trong 30 giây.
 Vì sao các cảm biến cách nhau 3 cm: vạch rộng 2 cm, mỗi cảm biến nhìn vòng tròn 2,6 cm. Đặt cách nhau khoảng "bề rộng vạch + đường kính vùng nhìn" trở xuống thì lúc nào cũng có ít nhất một cảm biến thấy vạch, không có "vùng mù". Thử nghiệm của dự án: cách 6 cm robot chạy lệch hẳn một bên và mất vạch khi chạy nhanh, cách 10 cm mất vạch gần như mọi lượt.
 
 > Nói với học sinh: nhắm một mắt rồi chạm hai đầu bút vào nhau thì khó hơn hẳn. Nhiều "mắt" giúp robot biết vạch đang chạy sang trái hay sang phải.
+
+### Bài 6–8. Dò đường có ngã rẽ
+
+Ba sân mới (`nga-ba`, `nga-tu`, `luoi-pho`), độ khó tăng dần. Cả ba dùng xe mẫu "ba mắt dưới gầm" của bài 5 (3 mắt hồng ngoại cách nhau 3 cm, trước trục bánh 4 cm) và cùng một **dấu hiệu ngã rẽ**:
+
+- Trên đường thẳng, vạch rộng 2 cm chỉ che được một mắt; hai mắt ngoài cách nhau 6 cm nên **không bao giờ cùng thấy đen**.
+- Khi thanh ngang của ngã ba chữ T hay ngã tư chạy qua gầm xe, **mắt trái và mắt phải cùng thấy đen**. Đó là tín hiệu "đang ở ngã rẽ".
+- Mắt nằm trước trục bánh 4 cm, nên thấy ngã rẽ xong phải **đi thêm 4 cm** cho trục bánh (tâm quay) vào giữa ngã rẽ rồi mới **quay 90°**. Đi thẳng qua ngã tư thì đi 6 cm cho cả ba mắt qua khỏi thanh ngang, nếu không vòng lặp sau lại thấy thanh ngang và đếm thêm.
+- **Đích là vạch đích**: một thanh đen ngắn vuông góc với đường, trong ô vàng. Robot nhận ra nó y như một ngã rẽ, nên bài 7–8 đếm luôn vạch đích như thanh ngang cuối cùng. (Không dùng ô xanh lá như bài 4–5: mắt hồng ngoại đọc ô xanh lá khoảng 57, quá gần ngưỡng nên lẫn với ngã rẽ.)
+- **Ngưỡng 65** thay vì 50: mắt nằm đúng mép vạch đọc khoảng 60. Với ngưỡng 50, khi vạch nằm giữa mắt giữa và một mắt ngoài thì cả ba mắt cùng "trắng"; ngay sau khi quay ở ngã rẽ (xe đang đứng) xe sẽ đứng yên mãi. Ngưỡng 65 bịt "vùng mù" đó. Có thể cho học sinh tự phát hiện: chạy với ngưỡng 50, xem bảng số đo lúc xe kẹt.
+
+Bám vạch giữa các ngã rẽ giống bài 5 nhưng chậm hơn (đi thẳng 20 %, quay tại chỗ −12/25 %): chạy nhanh thì thanh ngang chỉ nằm dưới gầm xe trong khoảnh khắc, vòng lặp đọc cảm biến có thể bỏ lỡ.
+
+**Máy yếu:** mỗi vòng lặp đọc cảm biến mất thời gian; máy chậm (hoặc mở nhiều thẻ trình duyệt cùng lúc) thì xe phản ứng trễ hơn, chạy lâu hơn và đôi khi rẽ hụt. Giới hạn thời gian sao 3 đã để rộng (khoảng 1,6 lần thời gian code mẫu). Nếu xe của học sinh hay rẽ hụt ở ngã rẽ, cho giảm tốc độ bám vạch (ví dụ đi thẳng 15 %) và đóng bớt thẻ trình duyệt.
+
+**Bài 6. Ngã ba chữ T: rẽ phải.** Không cần biến: hai vòng lặp bám vạch giống hệt nhau nối tiếp, vòng đầu dừng ở ngã ba, vòng sau dừng ở vạch đích. Lời giải: **lặp cho đến khi** < trái < 65 **và** phải < 65 > { bám vạch }; **đi tới 4 cm**; **quay phải 90°**; **lặp cho đến khi** < trái < 65 **và** phải < 65 > { bám vạch }; **dừng lại**. Sao 2: dùng cả 3 cảm biến; sao 3: tới đích trong 35 giây (code mẫu khoảng 22 giây).
+
+**Bài 7. Ngã tư: đếm ngã rẽ.** Hai ngã tư giống hệt nhau, luật "thẳng ở ngã tư 1, phải ở ngã tư 2". Cho học sinh chạy lại chương trình bài 6 trước: robot rẽ ngay ở ngã tư 1 và lao vào ngõ cụt. Robot cần **bộ nhớ**: biến đếm. Lời giải: **đặt** đếm = 0; **lặp cho đến khi** đếm = 3 { **nếu** < trái < 65 **và** phải < 65 > **thì** { **tăng** đếm 1; **nếu** đếm = 1 **thì** đi 6 cm **không thì nếu** đếm = 2 **thì** { đi 4 cm; quay phải 90° } } **không thì** bám vạch }; **dừng lại**. Sao 2: có biến đếm; sao 3: tới đích trong 38 giây (code mẫu khoảng 23–24 giây).
+
+**Bài 8. Lưới phố: lộ trình 5 ngã tư.** Lưới 3 × 3 đường, 9 ngã tư. Lộ trình: ngã tư 1 thẳng, 2 phải, 3 thẳng, 4 trái, 5 phải, rồi tới vạch đích (thanh ngang thứ 6). Học sinh nên **vẽ lộ trình lên giấy** trước. Chương trình là bài 7 kéo dài: chuỗi "nếu đếm = 1 … không thì nếu đếm = 2 …" là một **bảng tra** số đếm → việc làm. Câu hỏi mở rộng: muốn đổi lộ trình thì sửa chỗ nào? (Chỉ sửa bảng tra, phần bám vạch giữ nguyên.) Sao 2: có biến đếm; sao 3: tới đích trong 60 giây (code mẫu khoảng 37 giây).
+
+> Nói với học sinh: chỉ đường cho bạn "tới ngã tư thứ hai thì rẽ phải" thì bạn phải vừa đi vừa nhẩm đếm. Robot cũng vậy: hai mắt ngoài báo "có ngã rẽ", biến đếm nhớ "ngã rẽ thứ mấy", bảng lộ trình nói "làm gì".
+
+Sân và tệp bài sinh bằng `python3 scripts/san/tao-bai-nga-re.py` (sinh luôn code mẫu). Kiểm tra code mẫu: `node scripts/code-mau/kiem-tra-code-mau.js nga-ba nga-tu luoi-pho`.
 
 ## Ghi chú kĩ thuật
 

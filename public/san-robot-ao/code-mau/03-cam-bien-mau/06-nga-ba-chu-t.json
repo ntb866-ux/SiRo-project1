@@ -1,0 +1,215 @@
+{
+  "bai": "03-cam-bien-mau/06-nga-ba-chu-t",
+  "tenXe": "Xe ba mắt dưới gầm",
+  "giaiThichXe": "Ba mắt dò line dưới gầm, cách nhau 3 cm, đặt trước trục bánh 4 cm (giống xe ở bài dò đường cua gắt). Ngã rẽ có thanh ngang đối xứng nên khi thanh ngang chạy qua gầm xe thì mắt trái và mắt phải cùng thấy đen: đó là dấu hiệu \"đang ở ngã rẽ\". Thấy dấu hiệu xong xe đi thêm 4 cm để trục bánh vào giữa ngã rẽ rồi mới quay.",
+  "xe": {
+    "sa": [],
+    "duoi": [],
+    "gam": [
+      {
+        "loai": "doLine",
+        "x": -3,
+        "z": 4
+      },
+      {
+        "loai": "doLine",
+        "x": 0,
+        "z": 4
+      },
+      {
+        "loai": "doLine",
+        "x": 3,
+        "z": 4
+      }
+    ],
+    "tren": [
+      {
+        "loai": "gyro",
+        "x": -3,
+        "z": 3.95
+      }
+    ],
+    "son": {
+      "khung": "#ef6c00"
+    }
+  },
+  "chuongTrinh": [
+    [
+      "lapDen",
+      [
+        "va",
+        [
+          "<",
+          [
+            "sang",
+            "TRAI"
+          ],
+          65
+        ],
+        [
+          "<",
+          [
+            "sang",
+            "PHAI"
+          ],
+          65
+        ]
+      ],
+      [
+        [
+          "neu",
+          [
+            "<",
+            [
+              "sang",
+              "TRAI"
+            ],
+            65
+          ],
+          [
+            [
+              "banh",
+              -12,
+              25
+            ]
+          ],
+          [
+            [
+              "neu",
+              [
+                "<",
+                [
+                  "sang",
+                  "PHAI"
+                ],
+                65
+              ],
+              [
+                [
+                  "banh",
+                  25,
+                  -12
+                ]
+              ],
+              [
+                [
+                  "neu",
+                  [
+                    "<",
+                    [
+                      "sang",
+                      "GIUA"
+                    ],
+                    65
+                  ],
+                  [
+                    [
+                      "banh",
+                      20,
+                      20
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "di",
+      4
+    ],
+    [
+      "phai",
+      90
+    ],
+    [
+      "lapDen",
+      [
+        "va",
+        [
+          "<",
+          [
+            "sang",
+            "TRAI"
+          ],
+          65
+        ],
+        [
+          "<",
+          [
+            "sang",
+            "PHAI"
+          ],
+          65
+        ]
+      ],
+      [
+        [
+          "neu",
+          [
+            "<",
+            [
+              "sang",
+              "TRAI"
+            ],
+            65
+          ],
+          [
+            [
+              "banh",
+              -12,
+              25
+            ]
+          ],
+          [
+            [
+              "neu",
+              [
+                "<",
+                [
+                  "sang",
+                  "PHAI"
+                ],
+                65
+              ],
+              [
+                [
+                  "banh",
+                  25,
+                  -12
+                ]
+              ],
+              [
+                [
+                  "neu",
+                  [
+                    "<",
+                    [
+                      "sang",
+                      "GIUA"
+                    ],
+                    65
+                  ],
+                  [
+                    [
+                      "banh",
+                      20,
+                      20
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "dung"
+    ]
+  ],
+  "giaiThichCode": "Hai vòng lặp bám vạch giống hệt nhau, mỗi vòng dừng khi hai mắt ngoài cùng thấy đen (gặp thanh ngang). Vòng đầu dừng ở ngã ba: xe đi 4 cm cho trục bánh tới giữa ngã ba rồi quay phải 90°. Vòng sau dừng ở vạch đích. Ngưỡng 65 thay vì 50 vì mắt nằm đúng mép vạch đọc khoảng 60: ngưỡng 50 để lọt những chỗ cả ba mắt cùng thấy \"trắng\" dù vạch còn nằm giữa hai mắt.",
+  "sao": 3
+}

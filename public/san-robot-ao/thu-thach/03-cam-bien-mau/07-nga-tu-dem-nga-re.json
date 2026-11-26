@@ -1,0 +1,114 @@
+{
+  "tieuDe": "Ngã tư: đếm ngã rẽ",
+  "tieuDeEn": "Crossroads: count the junctions",
+  "san": "nga-tu",
+  "robot": "do-line",
+  "cheDo": "co-ban",
+  "viTriBatDau": {
+    "x": 0,
+    "y": -80,
+    "goc": 0
+  },
+  "vung": {
+    "kt1": {
+      "ten": "ngã tư 1",
+      "tenEn": "junction 1",
+      "x": 0,
+      "y": -35,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt2": {
+      "ten": "ngã tư 2",
+      "tenEn": "junction 2",
+      "x": 0,
+      "y": 25,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "kt3": {
+      "ten": "điểm kiểm tra",
+      "tenEn": "checkpoint",
+      "x": 65,
+      "y": 42,
+      "rong": 20,
+      "dai": 20,
+      "an": true
+    },
+    "dich": {
+      "ten": "vạch đích",
+      "tenEn": "finish line",
+      "x": 65,
+      "y": 58,
+      "rong": 16,
+      "dai": 16,
+      "an": true
+    }
+  },
+  "soDo": [
+    "doSangTrai",
+    "doSangGiua",
+    "doSangPhai"
+  ],
+  "nguong": 65,
+  "deBai": "Đường dọc giữa sân cắt hai đường ngang tạo thành **hai ngã tư**. Vạch đích (ô vàng) ở cuối nhánh **phải của ngã tư 2**. Mọi đầu đường khác đều là ngõ cụt (ô đỏ).\n\nLuật của bài: **đi thẳng qua ngã tư 1, rẽ phải ở ngã tư 2**, dừng ở vạch đích. Hai ngã tư giống hệt nhau, nên robot phải **đếm** xem mình đã gặp mấy thanh ngang.\n\nThử trước: nếu chạy chương trình bài 6 ở đây thì robot rẽ ở ngã tư nào? Vì sao?",
+  "nguyenLi": "Ở ngã rẽ, một cảm biến không đủ: robot cần biết **có thanh ngang hay không**. Ba cảm biến đặt cạnh nhau (cách 3 cm) cho biết điều đó: trên đường thẳng vạch rộng 2 cm chỉ che được **một** mắt, nên hai mắt ngoài không bao giờ cùng thấy đen. Khi thanh ngang của ngã rẽ chạy qua gầm xe thì **cả mắt trái lẫn mắt phải** cùng thấy đen. Đó là tín hiệu \"đang ở ngã rẽ\".\n\nMắt dò nằm trước trục bánh 4 cm. Muốn quay đúng tại giữa ngã rẽ, robot phải đi thêm 4 cm cho trục bánh (tâm quay) vào giữa ngã rẽ, rồi mới quay 90°. Quay khi trục bánh chưa tới nơi thì robot rẽ sớm, cắt góc và ra khỏi đường.\n\nNgã tư có **đường đi thẳng** nên robot phải chọn: đi thẳng hay rẽ. Hai ngã tư nhìn giống nhau, nên robot cần **bộ nhớ**: một biến đếm cho nó biết \"đây là thanh ngang thứ mấy\". Đi thẳng qua ngã tư thì phải đi đủ xa (6 cm) cho cả ba mắt qua khỏi thanh ngang, nếu không vòng lặp sau lại thấy thanh ngang và đếm thêm một lần.\n\nNói với học sinh: giống như bạn chỉ đường \"tới ngã tư thứ hai thì rẽ phải\": người nghe phải nhẩm đếm.",
+  "mucTieu": [
+    {
+      "loai": "quaCacVung",
+      "vung": [
+        "kt1",
+        "kt2",
+        "kt3"
+      ],
+      "theoThuTu": true,
+      "moTa": "Robot đi thẳng qua ngã tư 1, rẽ phải ở ngã tư 2"
+    },
+    {
+      "loai": "dungTrongVung",
+      "vung": "dich",
+      "moTa": "Robot dừng ngay trước vạch đích"
+    }
+  ],
+  "sao": [
+    {
+      "moTa": "Đi đúng lộ trình và dừng ở vạch đích"
+    },
+    {
+      "moTa": "Đếm ngã rẽ bằng biến",
+      "dieuKien": [
+        {
+          "loai": "dungKhoi",
+          "khoi": [
+            "math_change",
+            "variables_set"
+          ],
+          "tenKhoi": "biến đếm"
+        }
+      ]
+    },
+    {
+      "moTa": "Tới đích trong tối đa 38 giây",
+      "dieuKien": [
+        {
+          "loai": "thoiGianDuoi",
+          "giay": 38
+        }
+      ]
+    }
+  ],
+  "goiY": [
+    "Hai ngã tư và vạch đích nhìn giống hệt nhau với robot (hai mắt ngoài cùng thấy đen). Robot phân biệt chúng bằng cách nào? Gợi ý: **đếm**. Dùng một biến, mỗi lần gặp thanh ngang thì tăng 1.",
+    {
+      "noiDung": "Gặp thanh ngang thì **tăng biến đếm 1**. Nếu đếm = 1 thì **đi thẳng** (đi 6 cm cho gầm xe qua khỏi thanh ngang); nếu đếm = 2 thì **đi 4 cm rồi quay phải 90°**. Lặp cho đến khi đếm = 3 (đã gặp vạch đích) rồi dừng. Ngưỡng đen/trắng ở các bài này là **65** (không phải 50): mắt nằm ngay mép vạch đọc khoảng 60, ngưỡng 65 để mắt nào chạm mép vạch cũng tính là thấy đen.",
+      "moSauLanThu": 1
+    },
+    {
+      "noiDung": "Lời giải: **đặt** đếm = 0; **lặp cho đến khi** đếm = 3 { **nếu** < trái < 65 **và** phải < 65 > **thì** { **tăng** đếm 1; **nếu** đếm = 1 **thì** đi 6 cm **không thì nếu** đếm = 2 **thì** { đi 4 cm; quay phải 90° } } **không thì** bám vạch như bài 6 }; **dừng lại**.",
+      "moSauLanThu": 2
+    }
+  ],
+  "thoiGianToiDa": 120
+}
