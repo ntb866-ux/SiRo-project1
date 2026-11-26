@@ -329,7 +329,11 @@ var simPanel = new function() {
   };
 
   // Toggle virtual joystick
+  // Joystick và phím di chuyển (nút bấm hub) dùng chung một chỗ trên sân, nên bật cái này thì tắt cái kia.
   this.toggleJoystick = function() {
+    if (self.$joystick.hasClass('closed')) {
+      self.$hubButtons.addClass('closed');
+    }
     self.$joystick.toggleClass('closed');
   };
 
@@ -370,6 +374,13 @@ var simPanel = new function() {
 
   // Toggle hub buttons
   this.toggleHubButtons = function() {
+    if (self.$hubButtons.hasClass('closed')) {
+      // Đóng joystick thì dừng bánh xe (nhả hết phím giữ dở)
+      if (!self.$joystick.hasClass('closed')) {
+        self.$joystick.blur();
+      }
+      self.$joystick.addClass('closed');
+    }
     self.$hubButtons.toggleClass('closed');
   };
 
