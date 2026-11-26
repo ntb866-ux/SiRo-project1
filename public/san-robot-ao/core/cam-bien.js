@@ -35,9 +35,16 @@ window.SRA = SRA;
     return null;
   };
 
+  // Cảm biến khoảng cách trên robot: siêu âm hoặc laze (cổng nhỏ nhất), ưu tiên siêu âm
+  // nếu có cả hai. Xe lắp mô-đun có thể chỉ gắn laze, bảng số đo vẫn phải hiện số.
+  SRA.timCamBienKC = function() {
+    return SRA.timCamBien('UltrasonicSensor') || SRA.timCamBien('LaserRangeSensor');
+  };
+
   // Đo từng tia của cảm biến khoảng cách. Trả về
   // { goc: Vector3, tia: [{ huong, dai, hop }], ganNhat: chỉ số tia, khoangCach }
   // hop = true nếu tia được tính (trúng vật, không quá xiên).
+  // Laze: tia giữa tính cả mặt sân, tia mép vùng thu bỏ nếu chạm sân (như Laze.do trong xe/cam-bien.js).
   SRA.doTia = function(cb) {
     let o = cb.options;
     let q = cb.body.absoluteRotationQuaternion;
@@ -56,7 +63,9 @@ window.SRA = SRA;
         t.dai = hit.distance;
         t.trung = true;
         let n = hit.getNormal(true);
-        if (n) {
+        if (cb.type == 'LaserRangeSensor') {
+          t.hop = !(i > 0 && hit.pickedPoint && hit.pickedPoint.y < 0.5);
+        } else if (n) {
           let c = Math.abs(BABYLON.Vector3.Dot(n, huong));
           t.hop = c > o.rayIncidentLimit && c < (Math.PI - o.rayIncidentLimit);
         }
@@ -71,7 +80,7 @@ window.SRA = SRA;
   };
 
   SRA.docKhoangCach = function() {
-    let cb = SRA.timCamBien('UltrasonicSensor');
+    let cb = SRA.timCamBienKC();
     if (!cb || !cb.body || typeof babylon == 'undefined' || !babylon.scene) return null;
     return SRA.doTia(cb).khoangCach;
   };
@@ -229,7 +238,7 @@ window.SRA = SRA;
 
       // Đo tia mỗi 2 khung hình để đỡ nặng máy
       demKhung++;
-      let cb = SRA.timCamBien('UltrasonicSensor');
+      let cb = SRA.timCamBienKC();
       if (!cb || !cb.body) return;
       if (demKhung % 2 && self.kq) { capNhatBang(self.kq.khoangCach, dangCham); return; }
       let kq = SRA.doTia(cb);
@@ -241,6 +250,7 @@ window.SRA = SRA;
         let dai = t.trung ? Math.min(t.dai, DAI_HIEN) : DAI_HIEN;
         return [kq.goc, kq.goc.add(t.huong.scale(dai))];
       });
+      while (duong.length < 21) duong.push([kq.goc, kq.goc]);   // laze chỉ có 7 tia, lưới vẽ cố định 21
       BABYLON.MeshBuilder.CreateLineSystem(null, { lines: duong, instance: m.quat });
 
       if (kq.ganNhat >= 0) {
@@ -272,9 +282,11 @@ window.SRA = SRA;
     SRA.soDo.them({
       id: 'khoangCach', ten: sraT('Khoảng cách phía trước', 'Distance ahead'), nhom: sraT('Cảm biến', 'Sensors'), donVi: 'cm', soLe: 1,
       doc: function() {
-        let cb = SRA.timCamBien('UltrasonicSensor');
-        if (!cb || !SRA.tiaDo.kq) return null;
-        let kc = SRA.tiaDo.kq.khoangCach;
+        // Đo trực tiếp mỗi lần bảng làm mới (10 lần/giây): không chờ bản vẽ tia, nên bài không bật
+        // hienTiaDo, xe gắn laze, hay xe vừa dựng lại đều có số đo chạy theo xe.
+        let cb = SRA.timCamBienKC();
+        if (!cb || !cb.body || typeof babylon == 'undefined' || !babylon.scene) return null;
+        let kc = cb.type == 'LaserRangeSensor' ? cb.getDistance() : SRA.doTia(cb).khoangCach;
         return kc >= cb.options.rayLength ? sraT('không thấy vật', 'nothing seen') : kc;
       }
     });
