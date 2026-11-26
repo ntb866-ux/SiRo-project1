@@ -6,7 +6,7 @@ Tệp này sinh tự động bằng `node scripts/code-mau/tao-tai-lieu.js` từ
 
 Mọi bài chạy bằng xe lắp mô-đun (kiểu mBot); robot cũ của GEARS đã bỏ. Mỗi bài lắp xe theo cách lắp ghi bên dưới. Dưới đề bài có mục **Xe của bài** giải thích vì sao lắp như vậy.
 
-- Nút **Mở code mẫu** nạp chương trình mẫu vào vùng khối (thay chương trình đang có).
+- Nút **Mở code mẫu** lắp lại xe đúng như xe của mẫu (cảm biến đúng chỗ, đúng cổng; bỏ chỗ đã sửa trên bảng lắp ráp) rồi nạp chương trình mẫu vào vùng khối (thay chương trình đang có). Kiểm tra: `node scripts/code-mau/kiem-tra-nut-code-mau.js`.
 - Muốn đổi chỗ cảm biến: menu **Robot → Lắp ráp xe (kéo thả cảm biến)**. Nút **Lắp lại xe của bài** trả xe về đúng cách lắp của bài.
 
 Gửi thẳng cho học sinh bài kèm chương trình mẫu: thêm `&xe=mau` vào địa chỉ bài, ví dụ `index.html?baiTap=03-cam-bien-mau/01-dung-o-vach&xe=mau`.
