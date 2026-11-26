@@ -102,9 +102,52 @@ body.sra-che-do .panels #simPanel {
   body.sra-che-do main { padding-left: 0; }
   #sraKhung { position: relative; width: auto; max-height: 38vh; border-right: none; border-bottom: solid 1px var(--sra-vien); }
   body.sra-che-do .panels .panel[aria-labelledby="navBlocks"],
-  body.sra-che-do .panels .panel[aria-labelledby="navPython"] { width: 100%; height: 50%; }
-  body.sra-che-do .panels #simPanel { left: 0; top: 50%; width: 100%; height: 50%; border-left: none; border-top: solid 2px var(--sra-vien); }
+  body.sra-che-do .panels .panel[aria-labelledby="navPython"] { width: 100%; height: var(--sra-ti-le-doc, 50%); }
+  body.sra-che-do .panels #simPanel { left: 0; top: var(--sra-ti-le-doc, 50%); width: 100%; height: calc(100% - var(--sra-ti-le-doc, 50%)); border-left: none; border-top: solid 2px var(--sra-vien); }
+  body.sra-che-do.sra-khung-thu #sraKhung { max-height: none; }
+  #sraChia { left: 0 !important; top: var(--sra-ti-le-doc, 50%) !important; width: 100% !important; height: 18px !important; transform: translateY(-9px) !important; cursor: row-resize !important; flex-direction: row !important; }
+  #sraChia .sra-chia-tay { width: 44px !important; height: 5px !important; }
+  #sraChia .sra-chia-ve-sau::before { content: '▴'; } #sraChia .sra-chia-ve-truoc::before { content: '▾'; }
+  #sraChia .sra-chia-nut { font-size: 0 !important; } #sraChia .sra-chia-nut::before { font-size: 13px; }
 }
+
+/* Thu gọn bảng thông tin bài và chia vùng kéo được (chia-vung.js) */
+#sraKhung .sra-thu-nut {
+  position: absolute; top: 8px; right: 8px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 4px; font: inherit; font-size: 12.5px; cursor: pointer;
+  padding: 3px 8px; background: #fff; color: var(--sra-chinh); border: solid 1px var(--sra-vien); border-radius: 999px;
+}
+#sraKhung .sra-thu-nut:hover { border-color: var(--sra-chinh); }
+#sraKhung .sra-thu-nut .mui::before { content: '‹'; font-size: 16px; line-height: 1; font-weight: bold; }
+body.sra-che-do.sra-khung-thu { --sra-rong-khung: 42px; }
+body.sra-khung-thu #sraKhung > *:not(.sra-thu-nut) { display: none; }
+body.sra-khung-thu #sraKhung .sra-thu-nut { inset: 0; border-radius: 0; border: 0; flex-direction: column; justify-content: flex-start; padding-top: 12px; background: #f3f6fb; width: 100%; }
+body.sra-khung-thu #sraKhung .sra-thu-nut .mui::before { content: '›'; }
+body.sra-khung-thu #sraKhung .sra-thu-nut .chu { writing-mode: vertical-rl; margin-top: 8px; font-weight: bold; }
+@media (max-width: 900px) {
+  body.sra-khung-thu #sraKhung .sra-thu-nut { position: relative; flex-direction: row; justify-content: center; padding: 6px; height: auto; }
+  body.sra-khung-thu #sraKhung .sra-thu-nut .chu { writing-mode: horizontal-tb; margin: 0 0 0 6px; }
+  body.sra-khung-thu #sraKhung .sra-thu-nut .mui::before { content: '▾'; font-size: 13px; }
+  #sraKhung .sra-thu-nut .mui::before { content: '▴'; font-size: 13px; }
+}
+
+#sraChia {
+  position: absolute; z-index: 6; top: 0; bottom: 0; left: var(--sra-ti-le-khoi); width: 18px; transform: translateX(-9px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  cursor: col-resize; touch-action: none; user-select: none; outline: none;
+}
+#sraChia::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: transparent; transition: background .12s; }
+#sraChia:hover::before, #sraChia:focus-visible::before, body.sra-dang-chia #sraChia::before { background: var(--sra-chinh); }
+#sraChia .sra-chia-tay { position: relative; width: 5px; height: 44px; border-radius: 3px; background: #94a3b8; box-shadow: 0 0 0 2px #fff; }
+#sraChia:hover .sra-chia-tay, #sraChia:focus-visible .sra-chia-tay, body.sra-dang-chia #sraChia .sra-chia-tay { background: var(--sra-chinh); }
+#sraChia .sra-chia-nut {
+  position: relative; width: 18px; height: 22px; padding: 0; font-size: 12px; line-height: 1; cursor: pointer;
+  background: #fff; color: #475569; border: solid 1px var(--sra-vien); border-radius: 5px;
+}
+#sraChia .sra-chia-nut:hover { color: var(--sra-chinh); border-color: var(--sra-chinh); }
+/* đang kéo: chặn khung 3D và Blockly bắt chuột */
+body.sra-dang-chia { cursor: col-resize; }
+body.sra-dang-chia .panels > .panel { pointer-events: none; }
 
 /* Kho code mẫu cho xe lắp mô-đun (code-mau.js) */
 #sraKhung .sra-code-mau { margin-top: 12px; background: #f3f6fb; border-radius: 8px; padding: 2px 10px 8px; }
