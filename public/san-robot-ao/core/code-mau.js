@@ -209,7 +209,12 @@
     if (typeof filesManager != 'undefined') filesManager.modified = false;
     SRA.tienDo.luuMa(SRA.bai.id, blockly.getXmlText());
   };
-  CM.napLai = function() { CM.napCodeMau(); return CM.napLaiXe(); };
+  // Nút "Mở code mẫu": lắp lại đúng xe của mẫu (cảm biến đúng chỗ, đúng cổng) rồi mới nạp chương trình,
+  // để khối cảm biến trong code mẫu ghi cổng theo xe vừa lắp, không theo xe học sinh đã sửa.
+  CM.napLai = function() {
+    if (!CM.mau || (typeof skulpt != 'undefined' && skulpt.running)) return Promise.resolve();
+    return CM.napLaiXe().then(function() { CM.napCodeMau(); });
+  };
 
   function veMuc() {
     let mau = CM.mau;
@@ -224,7 +229,8 @@
       html += '<p>' + sraT('Xe lắp mô-đun kiểu mBot với cảm biến mặc định và bút vẽ.', 'mBot-style modular car with the default sensors and a pen.') + '</p>';
     }
     html +=
-        '<p class="sra-nho">' + sraT('Sửa xe: menu Robot → Lắp ráp xe (kéo thả cảm biến).', 'To change the car: Robot menu → Build car (drag and drop sensors).') + '</p>' +
+        '<p class="sra-nho">' + sraT('Sửa xe: menu Robot → Lắp ráp xe (kéo thả cảm biến).', 'To change the car: Robot menu → Build car (drag and drop sensors).') +
+          (mau ? ' ' + sraT('"Mở code mẫu" lắp lại xe đúng như xe của mẫu rồi mới mở chương trình.', '"Open sample code" rebuilds the car exactly as the sample car, then opens the program.') : '') + '</p>' +
         '<div class="sra-nut-hang">' +
           (mau ? '<button type="button" class="sra-nut phu sra-nap-code-mau">' + sraT('Mở code mẫu', 'Open sample code') + '</button>' : '') +
           '<button type="button" class="sra-nut phu sra-nap-lai-mau">↺ ' + sraT('Lắp lại xe của bài', 'Rebuild lesson car') + '</button>' +
@@ -232,7 +238,7 @@
       '</section>';
     let $s = $(html);
     $('#sraKhung .sra-de').after($s);
-    $s.on('click', '.sra-nap-code-mau', function() { CM.napCodeMau(); });
+    $s.on('click', '.sra-nap-code-mau', function() { CM.napLai(); });
     $s.on('click', '.sra-nap-lai-mau', function() { CM.napLaiXe(); });
   }
 
