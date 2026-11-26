@@ -1707,14 +1707,47 @@ var SRABangLapRap = new function() {
     camTruoc = null;
   }
 
+  // Cạnh phải của bảng kéo được; cỡ chọn được nhớ trong localStorage, bấm đúp để về tự động
+  const LR_RONG_MIN = 750;   // ba cột (300 + 190 + 212 px) cộng khoảng cách và lề
+  let rongTuChon = null;
+  try { rongTuChon = parseInt(localStorage.getItem('sra.lrRong'), 10) || null; } catch (e) {}
+  function luuRongBang() { try { if (rongTuChon) localStorage.setItem('sra.lrRong', rongTuChon); else localStorage.removeItem('sra.lrRong'); } catch (e) {} }
+  function ganThanhKeoRong() {
+    let $c = $bang.find('.sra-lr-chia'), dang = false, x0 = 0, r0 = 0;
+    $c.on('pointerdown', function(e) {
+      e.stopPropagation();
+      if (e.button > 0) return;
+      e.preventDefault();
+      dang = true; x0 = e.clientX; r0 = $bang.outerWidth();
+      this.setPointerCapture(e.pointerId);
+    }).on('pointermove', function(e) {
+      if (!dang) return;
+      rongTuChon = Math.round(r0 + e.clientX - x0);
+      datBoCuc();
+    }).on('pointerup pointercancel', function(e) {
+      if (!dang) return;
+      dang = false; luuRongBang();
+      try { this.releasePointerCapture(e.pointerId); } catch (x) {}
+    }).on('click', function(e) { e.stopPropagation(); })
+      .on('dblclick', function() { rongTuChon = null; luuRongBang(); datBoCuc(); })
+      .on('keydown', function(e) {
+        let b = $bang.outerWidth(), buoc = e.shiftKey ? 100 : 20;
+        if (e.key == 'ArrowLeft') rongTuChon = b - buoc; else if (e.key == 'ArrowRight') rongTuChon = b + buoc;
+        else if (e.key == 'Enter') rongTuChon = null; else return;
+        e.preventDefault(); luuRongBang(); datBoCuc();
+      });
+  }
+
   // Khung mô phỏng hẹp thì bảng chuyển sang nằm ngang ở nửa dưới
   function datBoCuc() {
     if (!$bang) return;
     let rong = $('#simPanel').width() || 0;
     let hep = rong > 0 && rong < 960;
     $bang.toggleClass('hep', hep);
-    // bảng rộng ra theo khung mô phỏng (tối thiểu 640 px, tối đa 960 px), chừa phần còn lại để thấy xe 3D
-    let bangRong = Math.max(640, Math.min(960, Math.round(rong * 0.58)));
+    // bảng rộng ra theo khung mô phỏng (tối thiểu 750 px, tối đa 960 px), chừa phần còn lại để thấy xe 3D
+    let bangRong = Math.max(LR_RONG_MIN, Math.min(960, Math.round(rong * 0.58)));
+    // người dùng kéo cạnh phải của bảng để đổi chỗ giữa bảng và xe 3D: dùng cỡ họ chọn
+    if (rongTuChon) bangRong = Math.max(LR_RONG_MIN, Math.min(Math.max(LR_RONG_MIN, rong - 140), rongTuChon));
     $('#simPanel')[0].style.setProperty('--lr-rong', bangRong + 'px');
     $('#simPanel').toggleClass('sra-lr-dang-mo', !hep);     // dời các nút chạy, đặt lại… ra khỏi vùng bảng che
     datCamera();
@@ -1791,8 +1824,10 @@ var SRABangLapRap = new function() {
               '<div class="sra-lr-vung-thuoc-tinh" role="region" aria-label="' + T('Thông số của thứ đang chọn', 'Settings of the selection') + '"></div></div>' +
             '<div class="sra-lr-cot sra-lr-cot-khay"><p class="sra-lr-goi-y-khay"></p><div class="sra-lr-cuon-khay" tabindex="-1"><div class="sra-lr-vung-khay"></div></div></div>' +
           '</div>' +
+          '<div class="sra-lr-chia" role="separator" aria-orientation="vertical" tabindex="0" title="' + T('Kéo để đổi độ rộng bảng (bấm đúp để về tự động)', 'Drag to resize the builder (double-click to reset)') + '" aria-label="' + T('Đổi độ rộng bảng lắp ráp', 'Resize car builder') + '"></div>' +
         '</section>');
       $('#simPanel').append($bang);
+      ganThanhKeoRong();
       datBoCuc();
       $bang.on('pointerdown', batDauKeo);
       $bang.on('click', '.sra-lr-vung-khay, .sra-lr-vung-so-do', bam);

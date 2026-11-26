@@ -65,6 +65,7 @@
     .then(() => napScript('net-ve.js'))
     .then(() => napScript('vat-li-san.js'))
     .then(() => napScript('code-mau.js'))
+    .then(() => napScript('chia-vung.js'))
     .then(choSanSang)
     .then(() => SRA.napBai(id))
     .catch(function(e) {
