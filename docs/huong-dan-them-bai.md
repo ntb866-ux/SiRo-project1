@@ -1,6 +1,6 @@
 # Cách thêm một bài thử thách mới
 
-Tài liệu cho người viết bài (giáo viên và các gói G4–G9). Thêm bài **không cần sửa mã JS**: chỉ cần một tệp JSON cho bài và một dòng trong mục lục.
+Tài liệu cho người viết bài (giáo viên và các gói G4–G9). Cách chọn tiêu chí, đặt ngưỡng và thiết kế ba sao: xem [huong-dan-dat-tieu-chi.md](huong-dan-dat-tieu-chi.md). Thêm bài **không cần sửa mã JS**: chỉ cần một tệp JSON cho bài và một dòng trong mục lục.
 
 ## 1. Ba bước
 
