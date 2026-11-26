@@ -343,7 +343,7 @@
   }
   // Bút vẽ cắm thẳng đứng qua lỗ giữa tấm đáy, ngay dưới điểm giữa trục bánh (tâm quay của xe):
   // ống giữ bút Ø BUT.dOng chiếm chỗ dưới gầm, mắt dò line dưới gầm không đặt chồng lên được.
-  const BUT = { dOng: 1.5, dBut: 1.1, dauBut: 0.06, nang: 0.35, nuaGam: 0.75, zPinCo: 0.25, zPinBut: 4.85, beRong: 0.5 };
+  const BUT = { dOng: 1.5, dBut: 1.1, dauBut: 0.06, nang: 0.35, nuaGam: 0.75, zPinCo: 0.25, zPinBut: 4.85, beRong: 1.0 };
   function loiGam(x, z, ds, coBut, loai) {
     // mô-đun gầm chiếm |x − x₀| < w và z₀ − w − (ổ cắm 1,9) … z₀ + w (w: nửa bề rộng theo loại); ống bút chiếm |x|, |z| < 0,75
     let w = nuaGam(loai), rB = BUT.dOng / 2, ten = loai == 'namCham' ? T('Nam châm điện', 'The electromagnet') : T('Mắt dò line', 'The line sensor');

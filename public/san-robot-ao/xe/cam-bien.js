@@ -549,6 +549,8 @@ var SRAXeCamBien = (function() {
   // "hạ bút"/"nhấc bút" và phần chấm nét vẽ (core/net-ve.js) dùng được. Nét mực là dải phẳng sát mặt sân
   // vẽ theo đường ngòi bút đi qua; chỉ để nhìn, cảm biến không thấy nó.
   const BUT_MAC_DINH = { thoiGianNang: 0.06, buocNet: 0.15 };
+  const MAU_NET_MAC_DINH = 'e60f0f';
+  const CAO_NET = 0.16;                   // cm: cao hơn hình mẫu (mặt trên ở 0,11) để nét luôn nằm trên
   function But(cb, r, scene, banLap) {
     let self = this, mb = banLap.but, tam = r.sraKhoiLuong.than.tam;
     this.type = 'Pen';
@@ -557,7 +559,7 @@ var SRAXeCamBien = (function() {
     let o = this.tuyChon;
     this.options = { doubleSided: false, traceVisibleToSensors: false };
     this.isDown = false;
-    this.traceColor = '000000';
+    this.traceColor = MAU_NET_MAC_DINH;     // đỏ, đến khi học sinh dùng khối đổi màu bút
     this.traceWidth = mb.rongNet / 2;     // nửa bề rộng nét (cm), như GEARS
     this.traceMeshes = [];
     let doNang = mb.nang;                 // ngòi đang cách sân bao nhiêu (cm), 0 = chạm sân
@@ -577,7 +579,8 @@ var SRAXeCamBien = (function() {
       vlNet = new BABYLON.StandardMaterial('sraNetBut' + self.traceColor, scene);
       vlNet.emissiveColor = BABYLON.Color3.FromHexString('#' + self.traceColor);
       vlNet.disableLighting = true;
-      vlNet.zOffset = -2;
+      vlNet.backFaceCulling = false;
+      vlNet.zOffset = -4;
     }
     function ketThucNet() {
       if (ban) dungNet();
@@ -612,7 +615,7 @@ var SRAXeCamBien = (function() {
       }
       if (!self.isDown || doNang > 0.02) return;
       let p = self.tip.getAbsolutePosition().clone();
-      p.y += 0.03;                        // dải mực sát trên mặt sân
+      p.y += CAO_NET;                     // dải mực nằm trên mặt sân và trên hình mẫu
       if (!cuoi) { cuoi = p; duong = [[], []]; return; }
       let d = p.subtract(cuoi);
       if (d.lengthSquared() < o.buocNet * o.buocNet) return;
